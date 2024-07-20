@@ -1,0 +1,197 @@
+.navbar-component {
+  display: flex;
+  flex-direction: column;
+  background: $default-black;
+  min-height: 100%;
+  min-width: $space-200;
+  font-family: Lato, sans-serif;
+  z-index: 2;
+  position: sticky;
+  bottom: 0;
+
+  &__special-anchor-container {
+    display: flex;
+    box-shadow: inset 0 -1px 0 #ffffff;
+    justify-content: space-around;
+    align-items: center;
+    height: $space-60;
+
+    & a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  &__special-anchor {
+    width: $space-30;
+    height: $space-30;
+
+    & svg {
+      width: $space-30;
+      height: $space-30;
+    }
+  }
+
+  &__linkedin-anchor {
+    display: block;
+  }
+
+  &__main-buttons {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: $space-60;
+
+    & ul {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+      justify-content: space-around;
+
+      & li {
+        &:hover {
+          cursor: pointer;
+          background: $default-grey;
+          transition: background 500ms linear;
+        }
+
+        & a {
+          text-decoration: none;
+
+          .button-component {
+            display: flex;
+            gap: $space-15;
+            justify-content: center;
+            align-items: center;
+            font-size: $font-14;
+
+            & svg {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__qr {
+    display: none;
+  }
+}
+
+@media screen and (min-width: $mobile-small) {
+  .navbar-component {
+    &__special-anchor-container {
+      height: $space-70;
+    }
+
+    &__main-buttons {
+      height: $space-70;
+    }
+
+    &__main-buttons ul li a .button-component {
+      & svg {
+        display: block;
+        width: $space-20;
+        height: $space-20;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $desktop-small) {
+  .navbar-component {
+    &__special-anchor-container {
+      display: flex;
+      box-shadow: inset 0 -1px 0 #ffffff;
+      justify-content: space-around;
+      align-items: center;
+      height: $space-80;
+
+      & svg {
+        width: $space-35;
+        height: $space-35;
+      }
+    }
+
+    &__special-anchor-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 -1px 0 #ffffff;
+      height: $space-80;
+      width: 100%;
+
+      &:hover {
+        cursor: pointer;
+        background: $default-grey;
+        transition: background 500ms linear;
+      }
+    }
+
+    &__main-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    &__main-buttons {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: $space-80;
+      position: sticky;
+      top: 0;
+
+      & ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+
+        & li {
+          display: flex;
+          width: 100%;
+          min-height: 110px;
+          justify-content: center;
+          align-items: center;
+          box-shadow: $shadow-1;
+
+          & a {
+            width: 100%;
+            padding: $space-30 $space-40;
+
+            & .button-component {
+              background: inherit;
+              cursor: inherit;
+              font-size: $font-15;
+
+              & svg {
+                display: block;
+                width: $space-30;
+                height: $space-30;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &__qr {
+      display: block;
+      width: $space-200;
+      height: $space-200;
+    }
+  }
+}

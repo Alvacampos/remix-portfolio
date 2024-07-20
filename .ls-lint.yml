@@ -1,0 +1,30 @@
+ls:
+  .dir: lowercase | kebab-case
+  .js: lowercase | kebab-case
+  .ts: lowercase | kebab-case
+  .jsx: lowercase | PascalCase
+  .tsx: lowercase | PascalCase
+  .html: lowercase | kebab-case
+  .css: lowercase | kebab-case
+  .png: lowercase | kebab-case
+  .svg: lowercase | kebab-case
+
+  app/components:
+    .dir: lowercase | PascalCase | regex:^[A-Z]+[a-z]*(?:\d*(?:[A-Z]+[a-z]*)?)*$ # allow consecutive capital letters
+
+  app/routes:
+    .dir: regex:[a-zA-Z\$-_.]+ # alpha plus special chars (dollar sign, dash, underscore, and period)
+
+ignore:
+  - .git
+  - .github
+  - .cache
+  - .eslintrc.js
+  - .vscode
+  - public
+  - node_modules
+  - build
+  - functions
+  - app/components/icons
+  - playwright/.cache
+  - .test

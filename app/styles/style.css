@@ -1,0 +1,38 @@
+html {
+  min-height: 100%;
+}
+
+body {
+  display: grid;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  grid-template-rows: 1fr min-content;
+  color: $text-color;
+  background: $background-default;
+  font-family: Lato, sans-serif;
+
+  & .navbar-component {
+    grid-row: 2;
+  }
+}
+
+main {
+  padding: 0 $space-5;
+}
+
+@media screen and (min-width: $desktop-small) {
+  body {
+    grid-auto-flow: column;
+    grid-template-columns: min-content 3fr;
+    grid-template-rows: auto;
+
+    & .navbar-component {
+      grid-row: 1;
+    }
+  }
+
+  main {
+    padding: 0;
+  }
+}

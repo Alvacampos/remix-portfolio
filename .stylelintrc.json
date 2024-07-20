@@ -1,0 +1,14 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "alpha-value-notation": "number",
+    "at-rule-no-unknown": null,
+    "color-function-notation": null,
+    "color-hex-length": "long",
+    "comment-empty-line-before": null,
+    "import-notation": "string",
+    "length-zero-no-unit": null,
+    "media-query-no-invalid": null,
+    "selector-class-pattern": null
+  }
+}

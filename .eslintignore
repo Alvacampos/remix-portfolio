@@ -1,0 +1,17 @@
+# Generated Icon component files
+app/components/icons/
+
+# Caches
+.cache/
+
+# Build outputs
+build/
+
+# Binaries
+bin/
+
+# Public assets
+public/
+
+# Node Modules
+node_modules/
