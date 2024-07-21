@@ -1,0 +1,22 @@
+{
+  "plugins": [],
+  "printWidth": 100,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": [
+        "app/styles/constants.js"
+      ],
+      "options": {
+        "quoteProps": "consistent"
+      }
+    },
+    {
+      "files": ["./**/*.json"],
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
+}

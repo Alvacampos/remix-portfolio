@@ -1,0 +1,18 @@
+# Caches
+.cache/
+
+# Build outputs
+build/
+.wrangler/
+
+# Binaries
+bin/
+
+# Public assets
+public/
+
+# Github workflow files
+.github/
+
+# Changelog
+CHANGELOG.md

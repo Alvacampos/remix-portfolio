@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
-import Button, {links as ButtonLinks} from '~/components/Button';
+import Button, { links as ButtonLinks } from '~/components/Button';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
@@ -17,11 +17,7 @@ import styles from './style.css?url';
 
 const { VerticalTimelineElement } = pkg;
 
-export const links = () => [
-  ...cardLinks(),
-  ...ButtonLinks(),
-  { rel: 'stylesheet', href: styles },
-];
+export const links = () => [...cardLinks(), ...ButtonLinks(), { rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
@@ -59,11 +55,13 @@ export default function Skills() {
   const { data } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
   const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
+  const [isFrontEnd, setIsFrontEnd] = useState(false);
+  const [isBackEnd, setIsBackEnd] = useState(false);
 
-  const filter = (word: string) => data.filter((item) => item.skills.find((skill) =>
-      skill.toLowerCase().includes(word.toLowerCase())
-    )
-  );
+  const filter = (word: string) =>
+    data.filter((item) =>
+      item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
+    );
 
   const filterInput = (e: { target: { value: string } }) => {
     if (!e.target.value || e.target.value === '') {
@@ -73,6 +71,26 @@ export default function Skills() {
 
     const filteredArray = filter(e.target.value);
     setFilteredData(filteredArray);
+  };
+
+  const handleFrontEnd = () => {
+    if (isFrontEnd) {
+      setFilteredData(data);
+      setIsFrontEnd(false);
+    } else {
+      setFilteredData(() => filter(formatMessage({ id: 'FRONT_END' })));
+      setIsFrontEnd(true);
+    }
+  };
+
+  const handleBackEnd = () => {
+    if (isBackEnd) {
+      setFilteredData(data);
+      setIsBackEnd(false);
+    } else {
+      setFilteredData(() => filter(formatMessage({ id: 'BACK_END' })));
+      setIsBackEnd(true);
+    }
   };
 
   return (
@@ -90,14 +108,16 @@ export default function Skills() {
           />
           <div className={getClasses('btn-container')}>
             <Button
-              handleClick={() => setFilteredData(()=> filter(formatMessage({ id: 'FRONT_END' })))}
-              className={getClasses('time-line-filter-reset')}
+              handleClick={handleFrontEnd}
+              className={`btn${isFrontEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'FRONT_END' })}
+              children={[<span></span>, <span></span>, <span></span>, <span></span>]}
             />
             <Button
-              handleClick={() => setFilteredData(()=> filter(formatMessage({ id: 'BACK_END' })))}
-              className={getClasses('time-line-filter-reset')}
-              label={formatMessage({ id: 'FRONT_END' })}
+              handleClick={handleBackEnd}
+              className={`btn${isBackEnd ? '--active' : ''}`}
+              label={formatMessage({ id: 'BACK_END' })}
+              children={[<span></span>, <span></span>, <span></span>, <span></span>]}
             />
           </div>
         </div>

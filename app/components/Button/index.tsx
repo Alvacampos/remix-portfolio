@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { getClassMaker, noop } from '~/utils/utils';
@@ -18,6 +18,7 @@ type ButtonProps = {
   leftIcon?: ComponentType<{ className: string }>;
   btnType?: 'button' | 'submit';
   handleClick?: () => void;
+  children?: ReactNode[];
 };
 
 export default function Button({
@@ -28,19 +29,13 @@ export default function Button({
   leftIcon: LeftIcon = undefined,
   btnType = 'button',
   handleClick = noop,
+  children = undefined,
 }: ButtonProps) {
   return (
-    <ConditionalLink
-      to={url}
-      condition={!!url}
-      className={getClasses('link-wrapper')}
-    >
-      <button
-        className={getClasses(className)}
-        onClick={handleClick}
-        type={btnType}
-      >
+    <ConditionalLink to={url} condition={!!url} className={getClasses('link-wrapper')}>
+      <button className={getClasses(className)} onClick={handleClick} type={btnType}>
         {LeftIcon && <LeftIcon className={getClasses('icon', 'left')} />}
+        {children && children.map((child, index) => child)}
         {label && label}
         {RightIcon && <RightIcon className={getClasses('icon', 'right')} />}
       </button>

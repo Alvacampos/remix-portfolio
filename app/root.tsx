@@ -28,19 +28,14 @@ export function links() {
 const BLOCK = 'root';
 const getClasses = getClassMaker(BLOCK);
 
-export const meta: MetaFunction = () => [
-  { title: 'Gonzalo Alvarez Campos Cv' },
-];
+export const meta: MetaFunction = () => [{ title: 'Gonzalo Alvarez Campos Cv' }];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width,initial-scale=1,minimum-scale=1"
-        />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
         <Meta />
         <Links />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
