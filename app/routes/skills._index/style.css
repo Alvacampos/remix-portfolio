@@ -1,12 +1,24 @@
 .skills-route {
+  & h2 {
+    text-align: center;
+  }
+
   &__time-line {
     display: flex;
     flex-direction: column;
     gap: $space-20;
+
+    &-controls {
+      display: flex;
+      justify-content: space-between;
+
+    }
   }
 
-  & h2 {
-    text-align: center;
+  &__btn-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-20;
   }
 
   &__time-line-filter {

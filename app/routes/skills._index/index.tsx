@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
+import Button, {links as ButtonLinks} from '~/components/Button';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
@@ -18,6 +19,7 @@ const { VerticalTimelineElement } = pkg;
 
 export const links = () => [
   ...cardLinks(),
+  ...ButtonLinks(),
   { rel: 'stylesheet', href: styles },
 ];
 
@@ -58,17 +60,18 @@ export default function Skills() {
   const { formatMessage } = useIntl();
   const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
 
-  const filter = (e: { target: { value: string } }) => {
+  const filter = (word: string) => data.filter((item) => item.skills.find((skill) =>
+      skill.toLowerCase().includes(word.toLowerCase())
+    )
+  );
+
+  const filterInput = (e: { target: { value: string } }) => {
     if (!e.target.value || e.target.value === '') {
       setFilteredData(data);
       return;
     }
 
-    const filteredArray = data.filter((item) =>
-      item.skills.find((skill) =>
-        skill.toLowerCase().includes(e.target.value.toLowerCase())
-      )
-    );
+    const filteredArray = filter(e.target.value);
     setFilteredData(filteredArray);
   };
 
@@ -78,13 +81,25 @@ export default function Skills() {
         <FormattedMessage id="WORK_EXPERIENCE" />
       </h2>
       <div className={getClasses('time-line')}>
-        <div>
+        <div className={getClasses('time-line-controls')}>
           <input
             type="text"
-            onChange={filter}
+            onChange={filterInput}
             className={getClasses('time-line-filter')}
             placeholder={formatMessage({ id: 'FILTER_BY_SPECIFIC_TECHNOLOGY' })}
           />
+          <div className={getClasses('btn-container')}>
+            <Button
+              handleClick={() => setFilteredData(()=> filter(formatMessage({ id: 'FRONT_END' })))}
+              className={getClasses('time-line-filter-reset')}
+              label={formatMessage({ id: 'FRONT_END' })}
+            />
+            <Button
+              handleClick={() => setFilteredData(()=> filter(formatMessage({ id: 'BACK_END' })))}
+              className={getClasses('time-line-filter-reset')}
+              label={formatMessage({ id: 'FRONT_END' })}
+            />
+          </div>
         </div>
 
         <VerticalTimeline>

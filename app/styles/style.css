@@ -21,6 +21,13 @@ main {
   padding: 0 $space-5;
 }
 
+.error-boundary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+}
+
 @media screen and (min-width: $desktop-small) {
   body {
     grid-auto-flow: column;
