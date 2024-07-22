@@ -18,6 +18,9 @@ export default function Index() {
       <p>
         <FormattedMessage id="I_AM_A_SOFTWARE_ENGINEER" />
       </p>
+      <p>
+        <FormattedMessage id="DISCLAIMER" />
+      </p>
     </div>
   );
 }
