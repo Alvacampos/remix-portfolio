@@ -1,8 +1,8 @@
 .skills-id-route {
   display: flex;
   flex-direction: column;
-  padding: 0 20px;
-  gap: 20px;
+  padding: 0;
+  gap: $space-20;
   line-height: 2rem;
 
   &__title {
@@ -27,15 +27,15 @@
   &__info-container {
     display: flex;
     flex-direction: column;
-    max-width: 60%;
-    width: 100%;
-    gap: 20px;
+    max-width: initial;
+    gap: $space-20;
   }
 
   .card-component {
     &__main-text-wrapper {
       display: flex;
-      gap: 20px;
+      gap: $space-20;
+      flex-wrap: wrap;
     }
   }
 }
@@ -43,8 +43,22 @@
 @media screen and (min-width: $mobile-small) {
   .skills-id-route {
     &__img-container {
-      display: block;
+      display: none;
       max-width: 300px;
+    }
+  }
+}
+
+@media screen and (min-width: $desktop-small) {
+  .skills-id-route {
+    padding: 0 $space-20;
+
+    &__img-container {
+      display: block;
+    }
+
+    &__info-container {
+      max-width: 60%;
     }
   }
 }
