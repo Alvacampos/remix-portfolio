@@ -11,7 +11,7 @@
     &-controls {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       gap: $space-20;
     }
   }
@@ -21,10 +21,14 @@
     border-radius: border-6;
     border: 1px solid $card-border;
     background-color: $background-variation;
-    color: #8b949e;
   }
 
   &__btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-20;
+
     & button {
       background: none;
       border: none;
@@ -38,7 +42,8 @@
       letter-spacing: 4px;
       overflow: hidden;
 
-      &:hover {
+      &:hover,
+      &:focus {
         cursor: pointer;
         background: #03e9f4;
         color: #050801;
@@ -280,7 +285,7 @@
 
       &.vertical-timeline--two-columns {
         width: 100%;
-        padding: 0 20px;
+        padding: 0 $space-20;
       }
 
       & .vertical-timeline-element-icon {

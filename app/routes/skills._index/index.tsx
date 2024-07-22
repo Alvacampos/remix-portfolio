@@ -93,6 +93,15 @@ export default function Skills() {
     }
   };
 
+  const renderSpan = () => {
+    const spans = [];
+    for (let i = 1; i <= 4; i++) {
+      const key = uuid();
+      spans.push(<span key={key}></span>);
+    }
+    return spans;
+  };
+
   return (
     <div className={getClasses()}>
       <h2>
@@ -111,13 +120,13 @@ export default function Skills() {
               handleClick={handleFrontEnd}
               className={`btn${isFrontEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'FRONT_END' })}
-              children={[<span></span>, <span></span>, <span></span>, <span></span>]}
+              children={renderSpan()}
             />
             <Button
               handleClick={handleBackEnd}
               className={`btn${isBackEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'BACK_END' })}
-              children={[<span></span>, <span></span>, <span></span>, <span></span>]}
+              children={renderSpan()}
             />
           </div>
         </div>
