@@ -107,7 +107,7 @@ const WORK_ITEMS = [
     projects: 'Teaching vanilla JavaScript fundamentals over the weekend.',
   },
   {
-    id: 6,
+    id: 7,
     title: 'Qubika',
     startDate: '2022-04-01T00:00:00',
     rol: 'Senior Frontend developer.',
