@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import { getClassMaker } from '~/utils/utils';
 
@@ -11,21 +12,23 @@ const getClasses = getClassMaker(BLOCK);
 
 type CardProps = {
   title: string;
-  texts: string[];
+  texts?: string[];
   itemList?: {
     title: string;
     text: string;
   }[];
   isStyleless?: boolean;
   skills?: string[];
+  children?: ReactNode;
 };
 
 export default function Card({
   title,
-  texts,
+  texts = undefined,
   itemList = undefined,
   isStyleless = false,
   skills = undefined,
+  children = undefined,
 }: CardProps) {
   const { formatMessage } = useIntl();
 
@@ -78,6 +81,7 @@ export default function Card({
             </div>
           </>
         )}
+        {children && <div className={getClasses('children')}>{children}</div>}
       </div>
     </div>
   );

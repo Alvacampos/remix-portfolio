@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export const getClassMaker =
   (block = '') =>
   (element = '', modifier: string | object | undefined = '') => {
@@ -20,3 +22,15 @@ export const getClassMaker =
   };
 
 export const noop = () => {};
+
+export const formatDate = (dateA: string, dateB?: string) => {
+  if (dateB === null || dateB === undefined) {
+    return `${format(new Date(dateA), 'MM/yyyy')} - Present`;
+  }
+
+  if (dateB === '') {
+    return format(new Date(dateA), 'MMMM yyyy');
+  }
+
+  return `${format(new Date(dateA), 'MM/yyyy')} - ${format(new Date(dateB), 'MM/yyyy')}`;
+};

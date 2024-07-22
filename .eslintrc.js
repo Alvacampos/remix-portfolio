@@ -44,9 +44,6 @@ module.exports = {
       {
         devDependencies: [
           '/**/*.cy.{ts,tsx,js,jsx}',
-          'cypress/**/*.{ts,js}',
-          'cypress.config.cjs',
-          'mocks/**/*.{ts,js}',
           'tests/**/*.{ts,js}',
           'playwright.config.ts',
           '/**/*.spec.ts',
@@ -152,17 +149,6 @@ module.exports = {
       files: ['.eslintrc.js'],
       env: {
         node: true,
-      },
-    },
-
-    // Cypress
-    {
-      files: ['cypress/**/*.{ts,js}', '**/*.cy.{ts,js}'],
-      plugins: ['cypress'],
-      extends: ['plugin:cypress/recommended'],
-      rules: {
-        'cypress/no-unnecessary-waiting': 'off',
-        'no-unused-expressions': ['off'],
       },
     },
 

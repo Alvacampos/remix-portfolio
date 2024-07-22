@@ -37,10 +37,15 @@
     text-align: center;
     box-shadow: inset 0 -1px 0 #21262d;
     background-color: $background-variation;
+    padding: 0 $space-5;
   }
 
   &__text-container {
     padding: $space-20;
+  }
+
+  &__main-text-wrapper {
+    margin-bottom: $space-10;
   }
 
   &__list {
@@ -54,6 +59,8 @@
   &__divider {
     margin: $space-10 auto;
     width: 80%;
+    border: 0;
+    border-bottom: $card-border;
   }
 
   &__skills-container {

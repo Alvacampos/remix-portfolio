@@ -12,7 +12,9 @@ const WORK_ITEMS = [
     title: 'Globant',
     startDate: '2018-08-01T00:00:00.000',
     endDate: '2020-12-01T00:00:00.000',
-    subtitle: 'Jr Web developer.',
+    rol: 'Jr Web developer.',
+    description:
+      'Worked as a software developer in the analytics team, developing web applications using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.',
     skills: [
       'HTML',
       'CSS',
@@ -27,13 +29,11 @@ const WORK_ITEMS = [
     projects: [
       {
         title: 'Project: eVestment',
-        description:
-          'Worked on analytics web development using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.',
+        text: 'Worked on analytics web development using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.',
       },
       {
         title: 'Project: Smile Direct Club',
-        description:
-          'Developed web applications for Smile Direct Club using Vue.js, Nuxt.js, and JavaScript, prioritizing performance optimization through Nuxt server-side rendering. Utilized Vue-axios, Bootstrap-Vue, and ECMA 6+.',
+        text: 'Developed web applications for Smile Direct Club using Vue.js, Nuxt.js, and JavaScript, prioritizing performance optimization through Nuxt server-side rendering. Utilized Vue-axios, Bootstrap-Vue, and ECMA 6+.',
       },
     ],
   },
@@ -42,27 +42,18 @@ const WORK_ITEMS = [
     title: 'Cliengo',
     startDate: '2020-12-01T00:00:00.000',
     endDate: '2021-08-01T00:00:00.000',
-    subtitle: 'Mid Level Full-stack developer.',
-    skills: [
-      'HTML',
-      'CSS',
-      'Storybook',
-      'Highcharts',
-      'React',
-      'Front End',
-      'Cypress',
-      'Agile',
-    ],
+    rol: 'Mid Level Full-stack developer.',
+    description:
+      'Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku.',
+    skills: ['HTML', 'CSS', 'Storybook', 'Highcharts', 'React', 'Front End', 'Cypress', 'Agile'],
     projects: [
       {
         title: 'Project: Conversational',
-        description:
-          'Conversational App. Web development using ReactJs, also working with mobile apps using React Native. Tech migrations from angular to react. Use of Axios, Bootstrap, ECMA 6+.',
+        text: 'Conversational App. Web development using ReactJs, also working with mobile apps using React Native. Tech migrations from angular to react. Use of Axios, Bootstrap, ECMA 6+.',
       },
       {
         title: 'Project: Live/Lit',
-        description:
-          'Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku. ',
+        text: 'Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku. ',
       },
     ],
   },
@@ -72,7 +63,7 @@ const WORK_ITEMS = [
     startDate: '2021-06-01T00:00:00.000',
     endDate: '2022-03-01T00:00:00.000',
     skills: ['Teaching', 'C', 'Programming'],
-    subtitle: 'Software Engineering Professor.',
+    rol: 'Software Engineering Professor.',
     projects: 'Teaching programming in a university to first year students.',
   },
   {
@@ -80,7 +71,9 @@ const WORK_ITEMS = [
     title: 'Endava',
     startDate: '2021-08-01T00:00:00.000',
     endDate: '2022-04-01T00:00:00.000',
-    subtitle: 'Senior Full-stack developer.',
+    rol: 'Senior Full-stack developer.',
+    description:
+      'Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University’s data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program.',
     skills: [
       'HTML',
       'CSS',
@@ -96,13 +89,11 @@ const WORK_ITEMS = [
     projects: [
       {
         title: 'Project: Marklogic',
-        description:
-          'Lead developer and technical consultant for MarkLogic projects, specializing in semantics database implementation for Yale University. Utilized JavaScript and JSON-LD technologies to develop robust solutions.',
+        text: 'Lead developer and technical consultant for MarkLogic projects, specializing in semantics database implementation for Yale University. Utilized JavaScript and JSON-LD technologies to develop robust solutions.',
       },
       {
         title: 'Endava Argentina Intership',
-        description:
-          'Organized and mentored the Endava Argentina Internship program. Responsible for delivering lectures on JavaScript and general programming topics.',
+        text: 'Organized and mentored the Endava Argentina Internship program. Responsible for delivering lectures on JavaScript and general programming topics.',
       },
     ],
   },
@@ -112,15 +103,16 @@ const WORK_ITEMS = [
     startDate: '2022-03-01T00:00:00.000',
     endDate: '2023-03-01T00:00:00.000',
     skills: ['Teaching', 'JavaScript', 'Programming'],
-    subtitle: 'Javascript course Teacher.',
+    rol: 'Javascript course Teacher.',
     projects: 'Teaching vanilla JavaScript fundamentals over the weekend.',
   },
   {
     id: 6,
     title: 'Qubika',
     startDate: '2022-04-01T00:00:00',
-    subtitle: 'Senior Frontend developer.',
-    isCurrent: true,
+    rol: 'Senior Frontend developer.',
+    description:
+      'Fully integrated as a client developer, my day to day tasks where to develop and maintain the client’s application and assist other developers with their tasks.',
     skills: [
       'HTML',
       'CSS',
@@ -140,13 +132,11 @@ const WORK_ITEMS = [
     projects: [
       {
         title: 'Project Avant',
-        description:
-          'Full-stack project for Avant, a US loan company. Utilizes React with Remix.run and PostCSS for responsiveness. Implements Cypress and Playwright for testing. Currently transitioning from JavaScript to TypeScript.',
+        text: 'Full-stack project for Avant, a US loan company. Utilizes React with Remix.run and PostCSS for responsiveness. Implements Cypress and Playwright for testing. Currently transitioning from JavaScript to TypeScript.',
       },
       {
         title: 'Project Customer Dashboard',
-        description:
-          'Assisting with maintenance and updates for the legacy dashboard, utilizing TypeScript, React class components, and GraphQL technology stack.',
+        text: 'Assisting with maintenance and updates for the legacy dashboard, utilizing TypeScript, React class components, and GraphQL technology stack.',
       },
     ],
   },

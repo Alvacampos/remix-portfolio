@@ -12,7 +12,7 @@ import { v4 as uuid } from 'uuid';
 import Card, { links as cardLinks } from '~/components/Card';
 import { SuccessFilled } from '~/components/icons';
 import { WORK_ITEMS } from '~/utils/data';
-import { getClassMaker } from '~/utils/utils';
+import { getClassMaker, formatDate } from '~/utils/utils';
 
 import styles from './style.css?url';
 
@@ -31,20 +31,12 @@ type DataTypes = {
   skills: string[];
 };
 
-const FormatDate = (startDate: string, endDate?: string) => {
-  if (!endDate) {
-    return `${format(new Date(startDate), 'MM/yyyy')} - Present`;
-  }
-
-  return `${format(new Date(startDate), 'MM/yyyy')} - ${format(new Date(endDate), 'MM/yyyy')}`;
-};
-
 export async function loader() {
   const data: DataTypes[] = WORK_ITEMS.map((item) => ({
     id: item.id,
     title: item.title,
-    date: FormatDate(item.startDate, item.endDate),
-    texts: [item.subtitle],
+    date: formatDate(item.startDate, item.endDate),
+    texts: [item.rol],
     skills: item.skills,
   }));
   return json({

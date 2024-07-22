@@ -1,0 +1,50 @@
+.skills-id-route {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  gap: 20px;
+  line-height: 2rem;
+
+  &__title {
+    text-align: center;
+  }
+
+  &__main-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__img-container {
+    display: none;
+
+    & img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &__info-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 60%;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .card-component {
+    &__main-text-wrapper {
+      display: flex;
+      gap: 20px;
+    }
+  }
+}
+
+@media screen and (min-width: $mobile-small) {
+  .skills-id-route {
+    &__img-container {
+      display: block;
+      max-width: 300px;
+    }
+  }
+}

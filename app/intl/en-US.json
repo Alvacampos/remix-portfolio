@@ -1,12 +1,18 @@
 {
-  "HOME": "Home",
+  "BACK_END": "Back End",
   "CV": "CV",
   "EDUCATION": "Education",
-  "WELCOME_MY_NAME_IS": "Welcome, my name is Gonzalo Alvarez Campos.",
-  "I_AM_A_SOFTWARE_ENGINEER": "I'm a Software Engineer and I made this page so you can get to know me a little better",
-  "WORK_EXPERIENCE": "Work Experience",
+  "END_DATE": "End Date",
   "FILTER_BY_SPECIFIC_TECHNOLOGY": "Filter by a specific technology",
   "FRONT_END": "Front End",
-  "BACK_END": "Back End",
-  "MORE": "More"
+  "HIRE_DATES": "Hire Date",
+  "HOME": "Home",
+  "I_AM_A_SOFTWARE_ENGINEER": "I'm a Software Engineer and I made this page so you can get to know me a little better",
+  "MORE": "More",
+  "PROJECTS": "Projects",
+  "ROLL_JOB_DESCRIPTION": "Role / Job Description",
+  "SKILLS": "Skills",
+  "START_DATE": "Start Date",
+  "WELCOME_MY_NAME_IS": "Welcome, my name is Gonzalo Alvarez Campos.",
+  "WORK_EXPERIENCE": "Work Experience"
 }
