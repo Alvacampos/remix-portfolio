@@ -19,7 +19,7 @@ import { getClassMaker } from '~/utils/utils';
 export function links() {
   return [
     ...NavBarLinks(),
-    { rel: 'icon', href: '../public/favicon.ico', type: 'image/x-icon' },
+    { rel: 'icon', href: '../favicon.ico', type: 'image/x-icon' },
     { rel: 'stylesheet', href: tailwind },
     { rel: 'stylesheet', href: styles },
   ];
