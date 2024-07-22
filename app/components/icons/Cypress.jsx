@@ -26,15 +26,8 @@ const SvgCypress = (props) => (
         filterUnits="objectBoundingBox"
       >
         <feOffset in="SourceAlpha" result="shadowOffsetOuter1" />
-        <feGaussianBlur
-          in="shadowOffsetOuter1"
-          result="shadowBlurOuter1"
-          stdDeviation={2}
-        />
-        <feColorMatrix
-          in="shadowBlurOuter1"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"
-        />
+        <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation={2} />
+        <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
       </filter>
     </defs>
     <mask id="cypress_svg__b" fill="#fff">

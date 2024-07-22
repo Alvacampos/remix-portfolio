@@ -1,11 +1,5 @@
 const SvgLinkedinIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 256 256"
-    height="100%"
-    role="img"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="100%" role="img" {...props}>
     <g fill="none">
       <path
         fill="#069"

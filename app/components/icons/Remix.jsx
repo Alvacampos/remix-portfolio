@@ -45,15 +45,8 @@ const SvgRemix = (props) => (
         <feGaussianBlur stdDeviation={32} />
         <feComposite in2="hardAlpha" operator="out" />
         <feColorMatrix values="0 0 0 0 0.223529 0 0 0 0 0.572549 0 0 0 0 1 0 0 0 0.9 0" />
-        <feBlend
-          in2="effect1_dropShadow_126_53"
-          result="effect2_dropShadow_126_53"
-        />
-        <feBlend
-          in="SourceGraphic"
-          in2="effect2_dropShadow_126_53"
-          result="shape"
-        />
+        <feBlend in2="effect1_dropShadow_126_53" result="effect2_dropShadow_126_53" />
+        <feBlend in="SourceGraphic" in2="effect2_dropShadow_126_53" result="shape" />
       </filter>
     </defs>
   </svg>

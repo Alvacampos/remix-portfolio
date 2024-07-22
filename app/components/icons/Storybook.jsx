@@ -12,21 +12,9 @@ const SvgStorybook = (props) => (
         <path fill="#FFF" d="M2161 253h1020v288H2161z" />
       </clipPath>
       <g clipPath="url(#storybook_svg__a)">
-        <use
-          xlinkHref="#storybook_svg__b"
-          fill="#B57EE5"
-          transform="translate(2166 275)"
-        />
-        <use
-          xlinkHref="#storybook_svg__c"
-          fill="#F1618C"
-          transform="translate(2180 261)"
-        />
-        <use
-          xlinkHref="#storybook_svg__d"
-          fill="#FFF"
-          transform="translate(2326 261.5)"
-        />
+        <use xlinkHref="#storybook_svg__b" fill="#B57EE5" transform="translate(2166 275)" />
+        <use xlinkHref="#storybook_svg__c" fill="#F1618C" transform="translate(2180 261)" />
+        <use xlinkHref="#storybook_svg__d" fill="#FFF" transform="translate(2326 261.5)" />
         <g transform="translate(2393 300)">
           <use xlinkHref="#storybook_svg__e" fill="#6DABF5" />
           <use xlinkHref="#storybook_svg__f" fill="#F3AD38" />
@@ -35,11 +23,7 @@ const SvgStorybook = (props) => (
           <use xlinkHref="#storybook_svg__i" fill="#B57EE5" />
           <use xlinkHref="#storybook_svg__j" fill="#A2E05E" />
         </g>
-        <use
-          xlinkHref="#storybook_svg__k"
-          fill="#FFF"
-          transform="translate(2220 301)"
-        />
+        <use xlinkHref="#storybook_svg__k" fill="#FFF" transform="translate(2220 301)" />
       </g>
     </g>
     <defs>

@@ -9,7 +9,7 @@ import Button, { links as ButtonLinks } from '~/components/Button';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
-import { Job } from '~/components/icons';
+import { CheckMark, Job, JobSearch, SuccessFilled, Suitcase } from '~/components/icons';
 import { WORK_ITEMS } from '~/utils/data';
 import { getClassMaker } from '~/utils/utils';
 
@@ -138,7 +138,7 @@ export default function Skills() {
               <VerticalTimelineElement
                 className={getClasses('element')}
                 date={item.date}
-                icon={<Job />}
+                icon={<SuccessFilled />}
                 key={key}
               >
                 <Link
