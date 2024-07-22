@@ -1,6 +1,7 @@
 import 'react-vertical-timeline-component/style.min.css';
 
-import { json, Link, useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
+import { json } from '@remix-run/cloudflare';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -9,7 +10,7 @@ import Button, { links as ButtonLinks } from '~/components/Button';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
-import { CheckMark, Job, JobSearch, SuccessFilled, Suitcase } from '~/components/icons';
+import { SuccessFilled } from '~/components/icons';
 import { WORK_ITEMS } from '~/utils/data';
 import { getClassMaker } from '~/utils/utils';
 
@@ -145,6 +146,7 @@ export default function Skills() {
                   to={`/skills/${item.id}`}
                   tabIndex={-1}
                   className={getClasses('element-link')}
+                  state={{ item: item.id }}
                 >
                   <Card {...item} isStyleless />
                 </Link>

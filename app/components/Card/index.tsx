@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-
+import { useIntl } from 'react-intl';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -27,12 +27,19 @@ export default function Card({
   isStyleless = false,
   skills = undefined,
 }: CardProps) {
-  const renderSkills = () =>
-    skills &&
-    skills.map((skill) => {
+  const { formatMessage } = useIntl();
+
+  const renderSkills = () => {
+    const skillsLength = skills && skills.length <= 7 ? skills?.length : 7;
+    const array = [];
+    for (let i = 0; i < skillsLength; i++) {
       const key = uuid();
-      return <span key={key}>{skill}</span>;
-    });
+      array.push(skills && <span key={key}>{skills[i]}</span>);
+    }
+    const key = uuid();
+    array.push(skills && <span key={key}>- {formatMessage({ id: 'MORE' })}...</span>);
+    return array;
+  };
 
   return (
     <div className={getClasses('', { styleless: isStyleless })}>
@@ -64,9 +71,12 @@ export default function Card({
           </ul>
         )}
         {skills && (
-          <div className={getClasses('skills-container')}>
-            <p>Skills:{renderSkills()}</p>
-          </div>
+          <>
+            <hr className={getClasses('divider')} />
+            <div className={getClasses('skills-container')}>
+              <p>Skills:{renderSkills()}</p>
+            </div>
+          </>
         )}
       </div>
     </div>

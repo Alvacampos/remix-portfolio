@@ -51,6 +51,11 @@
     list-style-type: none;
   }
 
+  &__divider {
+    margin: $space-10 auto;
+    width: 80%;
+  }
+
   &__skills-container {
     display: flex;
     flex-wrap: wrap;
