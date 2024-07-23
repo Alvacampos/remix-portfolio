@@ -19,6 +19,7 @@
     display: none;
 
     & img {
+      width: 100%;
       max-width: 500px;
     }
   }
@@ -54,6 +55,7 @@
 
     &__img-container {
       display: block;
+      min-width: 50%;
     }
 
     &__info-container {

@@ -56,8 +56,6 @@ export default function Skills() {
   const [isFrontEnd, setIsFrontEnd] = useState(false);
   const [isBackEnd, setIsBackEnd] = useState(false);
 
-  console.log(yearsOfExp);
-
   const filter = (word: string) =>
     data.filter((item) =>
       item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
