@@ -13,6 +13,7 @@ import Card, { links as cardLinks } from '~/components/Card';
 import { SuccessFilled } from '~/components/icons';
 import { WORK_ITEMS } from '~/utils/data';
 import { getClassMaker, formatDate } from '~/utils/utils';
+import { formatDuration, intervalToDuration } from 'date-fns';
 
 import styles from './style.css?url';
 
@@ -41,15 +42,21 @@ export async function loader() {
   }));
   return json({
     data,
+    yearsOfExp: formatDuration(
+      intervalToDuration({ start: new Date(WORK_ITEMS[0].startDate), end: new Date() }),
+      { format: ['years', 'months'] }
+    ),
   });
 }
 
 export default function Skills() {
-  const { data } = useLoaderData<typeof loader>();
+  const { data, yearsOfExp } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
   const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
   const [isFrontEnd, setIsFrontEnd] = useState(false);
   const [isBackEnd, setIsBackEnd] = useState(false);
+
+  console.log(yearsOfExp);
 
   const filter = (word: string) =>
     data.filter((item) =>
@@ -146,6 +153,9 @@ export default function Skills() {
             );
           })}
         </VerticalTimeline>
+        <div className={getClasses('years-of-exp')}>
+          <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
+        </div>
       </div>
     </div>
   );

@@ -199,6 +199,21 @@
     color: inherit;
     text-decoration: none;
   }
+
+  &__years-of-exp {
+    display: flex;
+    /* justify-content: center; */
+
+    & .card-component {
+      width: 100%;
+      text-align: center;
+
+      &__main-text-wrapper {
+        font-size: $font-20;
+        font-weight: $weight-700;
+      }
+    }
+  }
 }
 
 .button-component {
@@ -299,6 +314,15 @@
           top: 40%;
           left: 40%;
         }
+      }
+    }
+
+    &__years-of-exp {
+      display: flex;
+      justify-content: center;
+
+      & .card-component {
+        width: 80%;
       }
     }
   }
