@@ -40,11 +40,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
   if (id) {
     data = WORK_ITEMS.find((item) => item.id === +id);
     if (data?.title.includes('Professor') && id === '3') {
-      imagePath = data && `/app/assets/img/unsta2.jpg`;
+      imagePath = data && '../../assets/img/unsta2.jpg';
     } else if (data?.title.includes('Teacher') && id === '6') {
-      imagePath = data && `/app/assets/img/coderhouse.png`;
+      imagePath = data && '../../assets/img/coderhouse.png';
     } else {
-      imagePath = data && `/app/assets/img/${data.title.toLowerCase()}.png`;
+      imagePath = data && `../../assets/img/${data.title.toLowerCase()}.png`;
     }
   }
 
@@ -75,6 +75,11 @@ export default function UuidIndex() {
         {data?.endDate && (
           <p>
             <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
+          </p>
+        )}
+        {!data?.endDate && (
+          <p>
+            <FormattedMessage id="END_DATE" />: Present
           </p>
         )}
       </div>
