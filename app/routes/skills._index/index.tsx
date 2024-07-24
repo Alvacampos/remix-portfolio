@@ -2,16 +2,16 @@ import 'react-vertical-timeline-component/style.min.css';
 
 import { Link, useLoaderData } from '@remix-run/react';
 import { json } from '@remix-run/cloudflare';
-import { format } from 'date-fns';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
-import Button, { links as ButtonLinks } from '~/components/Button';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
+import Button, { links as buttonLinks } from '~/components/Button';
+import Input, { links as inputLinks } from '~/components/Input';
 import { SuccessFilled } from '~/components/icons';
-import { WORK_ITEMS } from '~/utils/data';
+import { WORK_ITEMS, SKILLS_IMG } from '~/utils/data';
 import { getClassMaker, formatDate } from '~/utils/utils';
 import { formatDuration, intervalToDuration } from 'date-fns';
 
@@ -19,7 +19,12 @@ import styles from './style.css?url';
 
 const { VerticalTimelineElement } = pkg;
 
-export const links = () => [...cardLinks(), ...ButtonLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [
+  ...cardLinks(),
+  ...inputLinks(),
+  ...buttonLinks(),
+  { rel: 'stylesheet', href: styles },
+];
 
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
@@ -40,17 +45,19 @@ export async function loader() {
     texts: [item.rol],
     skills: item.skills,
   }));
+  const skills = SKILLS_IMG.map((item) => item.title);
   return json({
     data,
     yearsOfExp: formatDuration(
       intervalToDuration({ start: new Date(WORK_ITEMS[0].startDate), end: new Date() }),
       { format: ['years', 'months'] }
     ),
+    skills,
   });
 }
 
 export default function Skills() {
-  const { data, yearsOfExp } = useLoaderData<typeof loader>();
+  const { data, yearsOfExp, skills } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
   const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
   const [isFrontEnd, setIsFrontEnd] = useState(false);
@@ -61,13 +68,13 @@ export default function Skills() {
       item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
     );
 
-  const filterInput = (e: { target: { value: string } }) => {
-    if (!e.target.value || e.target.value === '') {
+  const filterInput = (word: string) => {
+    if (!word || word === '') {
       setFilteredData(data);
       return;
     }
 
-    const filteredArray = filter(e.target.value);
+    const filteredArray = filter(word);
     setFilteredData(filteredArray);
   };
 
@@ -107,10 +114,9 @@ export default function Skills() {
       </h2>
       <div className={getClasses('time-line')}>
         <div className={getClasses('time-line-controls')}>
-          <input
-            type="text"
-            onChange={filterInput}
-            className={getClasses('time-line-filter')}
+          <Input
+            possibleValues={skills}
+            handleInput={filterInput}
             placeholder={formatMessage({ id: 'FILTER_BY_SPECIFIC_TECHNOLOGY' })}
           />
           <div className={getClasses('btn-container')}>
@@ -128,7 +134,6 @@ export default function Skills() {
             />
           </div>
         </div>
-
         <VerticalTimeline>
           {filteredData.map((item) => {
             const key = uuid();

@@ -16,13 +16,6 @@
     }
   }
 
-  &__time-line-filter {
-    height: $space-30;
-    border-radius: border-6;
-    border: 1px solid $card-border;
-    background-color: $background-variation;
-  }
-
   &__btn-container {
     display: flex;
     align-items: center;
@@ -202,7 +195,6 @@
 
   &__years-of-exp {
     display: flex;
-    /* justify-content: center; */
 
     & .card-component {
       width: 100%;
@@ -230,11 +222,6 @@
 
 @media screen and (min-width: $mobile-small) {
   .skills-route {
-    &__time-line-filter {
-      width: 75vw;
-      align-self: center;
-    }
-
     &__time-line {
       &-controls {
         display: flex;
@@ -272,11 +259,6 @@
       display: flex;
       justify-content: flex-end;
       gap: $space-20;
-    }
-
-    &__time-line-filter {
-      width: 30vw;
-      margin-left: $space-20;
     }
 
     & .vertical-timeline {

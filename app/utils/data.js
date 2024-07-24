@@ -25,6 +25,7 @@ const WORK_ITEMS = [
       'Agile',
       'Front End',
       'Back End',
+      'Axios',
     ],
     projects: [
       {
@@ -45,7 +46,22 @@ const WORK_ITEMS = [
     rol: 'Mid Level Full-stack developer.',
     description:
       'Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku.',
-    skills: ['HTML', 'CSS', 'Storybook', 'Highcharts', 'React', 'Front End', 'Cypress', 'Agile'],
+    skills: [
+      'HTML',
+      'CSS',
+      'Sass',
+      'Storybook',
+      'Highcharts',
+      'React',
+      'Router',
+      'Front End',
+      'Cypress',
+      'Heroku',
+      'Agile',
+      'Back End',
+      'Express',
+      'Axios',
+    ],
     projects: [
       {
         title: 'Project: Conversational',
@@ -62,7 +78,7 @@ const WORK_ITEMS = [
     title: 'Professor (part-time)',
     startDate: '2021-06-01T00:00:00.000',
     endDate: '2022-03-01T00:00:00.000',
-    skills: ['Teaching', 'C', 'Programming'],
+    skills: ['Teaching', 'C', 'Programming', 'Mentoring'],
     rol: 'Software Engineering Professor.',
     projects: 'Teaching programming in a university to first year students.',
   },
@@ -128,6 +144,7 @@ const WORK_ITEMS = [
       'Playwright',
       'Front End',
       'Agile',
+      'Cloudflare',
     ],
     projects: [
       {

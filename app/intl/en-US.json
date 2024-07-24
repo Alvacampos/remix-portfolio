@@ -8,7 +8,7 @@
   "HIRE_DATES": "Hire Date",
   "HOME": "Home",
   "I_AM_A_SOFTWARE_ENGINEER": "I'm a Software Engineer and I made this page so you can get to know me a little better",
-  "MORE": "More",
+  "CLICK_FOR_MORE": "Click for more",
   "PROJECTS": "Projects",
   "ROLL_JOB_DESCRIPTION": "Role / Job Description",
   "SKILLS": "Skills",
@@ -16,5 +16,6 @@
   "WELCOME_MY_NAME_IS": "Welcome, my name is Gonzalo Alvarez Campos.",
   "WORK_EXPERIENCE": "Work Experience",
   "TOTAL_YEARS_OF_EXPERIENCE": "Total years of experience",
-  "DISCLAIMER": "This page is a work in progress, so some features might not be fully functional. If you have any questions or suggestions, please feel free to contact me."
+  "DISCLAIMER": "This page is a work in progress, so some features might not be fully functional. If you have any questions or suggestions, please feel free to contact me.",
+  "NO_MATCHES_FOUND": "No matches found"
 }

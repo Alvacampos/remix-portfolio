@@ -40,7 +40,7 @@ export default function Card({
       array.push(skills && <span key={key}>{skills[i]}</span>);
     }
     const key = uuid();
-    array.push(skills && <span key={key}>- {formatMessage({ id: 'MORE' })}...</span>);
+    array.push(skills && <span key={key}>- {formatMessage({ id: 'CLICK_FOR_MORE' })}</span>);
     return array;
   };
 

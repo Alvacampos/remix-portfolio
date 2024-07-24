@@ -1,0 +1,61 @@
+.input-component {
+  height: $space-30;
+  border-radius: $border-6;
+  border: $card-border;
+  background-color: $background-variation;
+  padding: 0;
+  padding-left: $space-5;
+  color: #f0f6fc;
+  width: 100%;
+
+  &__wrapper {
+    position: relative;
+  }
+
+  &__suggestions-list {
+    position: absolute;
+    background-color: $background-variation;
+    border-radius: $border-6;
+    border: $card-border;
+    z-index: 1;
+    padding: $space-10;
+    margin-top: $space-10;
+    color: #f0f6fc;
+    list-style-type: none;
+    width: 80vw;
+
+    & li {
+      cursor: pointer;
+      padding: $space-5;
+      border-radius: $border-6;
+      transition: background 0.5s linear;
+
+      &:hover {
+        background: #60686c99;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: $mobile-small) {
+  .input-component {
+    width: 75vw;
+    align-self: center;
+
+    &__suggestions-list {
+      width: 75vw;
+    }
+  }
+}
+
+@media screen and (min-width: $desktop-small) {
+  .input-component {
+    width: 30vw;
+    margin-left: $space-20;
+
+    &__suggestions-list {
+      width: 100%;
+      left: $space-20;
+    }
+  }
+}
