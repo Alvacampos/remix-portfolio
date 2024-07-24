@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -17,6 +18,7 @@ export default function Autocomplete({
   placeholder: string;
   handleInput: (value: string) => void;
 }) {
+  const { formatMessage } = useIntl();
   const [inputValue, setInputValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -28,7 +30,11 @@ export default function Autocomplete({
       const filteredSuggestions = possibleValues.filter((suggestion) =>
         suggestion.toLowerCase().includes(value.toLowerCase())
       );
-      setSuggestions(filteredSuggestions.length > 0 ? filteredSuggestions : ['No matches found']);
+      setSuggestions(
+        filteredSuggestions.length > 0
+          ? filteredSuggestions
+          : [formatMessage({ id: 'NO_MATCHES_FOUND' })]
+      );
     } else {
       setSuggestions([]);
     }

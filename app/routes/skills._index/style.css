@@ -206,6 +206,10 @@
       }
     }
   }
+
+  &__skills-and-tools {
+    width: 100%;
+  }
 }
 
 .button-component {

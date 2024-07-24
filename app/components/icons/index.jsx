@@ -2,6 +2,7 @@ export { default as AgileSoftware } from './AgileSoftware';
 export { default as Axios } from './Axios';
 export { default as CheckMark } from './CheckMark';
 export { default as CloseButton } from './CloseButton';
+export { default as Cloudflare } from './Cloudflare';
 export { default as CodeIcon } from './CodeIcon';
 export { default as Css } from './Css';
 export { default as Cypress } from './Cypress';

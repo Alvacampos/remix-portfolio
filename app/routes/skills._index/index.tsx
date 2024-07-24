@@ -10,6 +10,7 @@ import { v4 as uuid } from 'uuid';
 import Card, { links as cardLinks } from '~/components/Card';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
+import Carousel, { links as carouselLinks } from '~/components/Carousel';
 import { SuccessFilled } from '~/components/icons';
 import { WORK_ITEMS, SKILLS_IMG } from '~/utils/data';
 import { getClassMaker, formatDate } from '~/utils/utils';
@@ -23,6 +24,7 @@ export const links = () => [
   ...cardLinks(),
   ...inputLinks(),
   ...buttonLinks(),
+  ...carouselLinks(),
   { rel: 'stylesheet', href: styles },
 ];
 
@@ -57,8 +59,8 @@ export async function loader() {
 }
 
 export default function Skills() {
-  const { data, yearsOfExp, skills } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
+  const { data, yearsOfExp, skills } = useLoaderData<typeof loader>();
   const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
   const [isFrontEnd, setIsFrontEnd] = useState(false);
   const [isBackEnd, setIsBackEnd] = useState(false);
@@ -159,6 +161,12 @@ export default function Skills() {
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>
+      </div>
+      <div className={getClasses('skills-and-tools')}>
+        <h2>
+          <FormattedMessage id="TECHNOLOGIES" />
+        </h2>
+        <Carousel />
       </div>
     </div>
   );

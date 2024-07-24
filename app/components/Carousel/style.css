@@ -1,0 +1,22 @@
+.carousel-component {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  background-color: $default-black;
+  border: $card-border;
+  padding: 20px;
+
+  &__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+  }
+
+  & svg {
+    width: 100%;
+    height: 100%;
+  }
+}

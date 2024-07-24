@@ -2,8 +2,8 @@
   display: flex;
   justify-content: center;
   border-radius: 10px;
-  background-color: #0d1117;
-  border: 1px solid #30363d;
+  background-color: $default-black;
+  border: $card-border;
   flex-direction: column;
   overflow: hidden;
 
@@ -27,7 +27,7 @@
 
       animation: border-highlight 0.5s ease-in-out forwards;
       border: 1px solid transparent;
-      background: #60686c99;
+      background: $default-grey;
       cursor: pointer;
       transition: background 0.5s linear;
     }

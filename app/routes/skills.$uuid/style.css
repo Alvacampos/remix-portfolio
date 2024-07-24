@@ -44,7 +44,6 @@
   .skills-id-route {
     &__img-container {
       display: none;
-      max-width: 300px;
     }
   }
 }
@@ -54,7 +53,8 @@
     padding: 0 $space-20;
 
     &__img-container {
-      display: block;
+      display: flex;
+      justify-content: center;
       min-width: 50%;
     }
 
