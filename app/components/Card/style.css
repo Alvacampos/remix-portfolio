@@ -1,7 +1,7 @@
 .card-component {
   display: flex;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: $border-10;
   background-color: $default-black;
   border: $card-border;
   flex-direction: column;

@@ -62,12 +62,11 @@ export default function Carousel() {
 
   const keys = Object.keys(items);
 
-  // className={getClasses('item')}
   return (
     <div className={getClasses()}>
       {keys.map((key) => {
         const uuidKey = uuid();
-        return <>{items[key as keyof typeof items]}</>;
+        return <div className={getClasses('item')}>{items[key as keyof typeof items]}</div>;
       })}
     </div>
   );

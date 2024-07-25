@@ -1,11 +1,15 @@
 .carousel-component {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-radius: 10px;
+  justify-content: space-between;
   background-color: $default-black;
   border: $card-border;
-  padding: 20px;
+  padding: $space-30;
+  gap: $space-20;
+  overflow: scroll;
+  min-width: fill-available;
+  border-radius: $border-10;
+  max-width: 300px;
 
   &__item {
     display: flex;
@@ -16,7 +20,7 @@
   }
 
   & svg {
-    width: 100%;
     height: 100%;
+    width: 100px;
   }
 }

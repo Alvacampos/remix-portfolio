@@ -1,4 +1,8 @@
 .skills-route {
+  display: flex;
+  flex-direction: column;
+  gap: $space-30;
+
   & h2 {
     text-align: center;
   }
