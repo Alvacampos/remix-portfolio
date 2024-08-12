@@ -1,0 +1,13 @@
+.bar-chart-component {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $default-black;
+  border: $card-border;
+  padding: $space-30;
+  border-radius: $border-10;
+
+  & div {
+    width: 100%;
+  }
+}

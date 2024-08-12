@@ -7,7 +7,7 @@
   padding: $space-30;
   gap: $space-20;
   overflow: scroll;
-  min-width: fill-available;
+  min-width: stretch;
   border-radius: $border-10;
   max-width: 300px;
   -ms-overflow-style: none; /* IE and Edge */

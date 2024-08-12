@@ -363,63 +363,63 @@ const NAV_BAR = [
 const SKILL_CHART_DATA = [
   {
     name: 'JavaScript',
-    startDate: '20180801',
+    startDate: '2018-08-01T00:00:00.000',
   },
   {
     name: 'TypeScript',
-    startDate: '20220401',
+    startDate: '2022-04-01T00:00:00.000',
   },
   {
     name: 'ReactJs',
-    startDate: '20201201',
+    startDate: '2020-12-01T00:00:00.000',
   },
   {
     name: 'Cypress',
-    startDate: '20201201',
+    startDate: '2020-12-01T00:00:00.000',
   },
   {
     name: 'GraphQL',
-    startDate: '20220401',
+    startDate: '2022-04-01T00:00:00.000',
   },
   {
     name: 'Storybook',
-    startDate: '20180801',
+    startDate: '2018-08-01T00:00:00.000',
   },
   {
     name: 'Remix',
-    startDate: '20220401',
+    startDate: '2022-04-01T00:00:00.000',
   },
   {
     name: 'Css',
-    startDate: '20180801',
+    startDate: '2018-08-01T00:00:00.000',
   },
   {
     name: 'PostCss',
-    startDate: '20220401',
+    startDate: '2022-04-01T00:00:00.000',
   },
   {
     name: 'HTML',
-    startDate: '20180801',
+    startDate: '2018-08-01T00:00:00.000',
   },
   {
     name: 'Playwright',
-    startDate: '20240101',
+    startDate: '2024-04-01T00:00:00.000',
   },
   {
     name: 'NodeJs',
-    startDate: '20230101',
+    startDate: '2023-01-01T00:00:00.000',
   },
   {
     name: 'ExpressJs',
-    startDate: '20230101',
+    startDate: '2023-08-01T00:00:00.000',
   },
   {
     name: 'Git',
-    startDate: '20180801',
+    startDate: '2018-08-01T00:00:00.000',
   },
   {
     name: 'Agile',
-    startDate: '20180801',
+    startDate: '2018-08-01T00:00:00.000',
   },
 ];
 

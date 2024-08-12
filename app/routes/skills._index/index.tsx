@@ -12,9 +12,10 @@ import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
 import Carousel, { links as carouselLinks } from '~/components/Carousel';
 import { SuccessFilled } from '~/components/icons';
-import { WORK_ITEMS, SKILLS_IMG } from '~/utils/data';
+import { WORK_ITEMS, SKILLS_IMG, SKILL_CHART_DATA } from '~/utils/data';
 import { getClassMaker, formatDate } from '~/utils/utils';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
+import BarChart, { links as barChartLinks } from '~/components/BarChart';
 
 import styles from './style.css?url';
 
@@ -25,6 +26,7 @@ export const links = () => [
   ...inputLinks(),
   ...buttonLinks(),
   ...carouselLinks(),
+  ...barChartLinks(),
   { rel: 'stylesheet', href: styles },
 ];
 
@@ -47,7 +49,14 @@ export async function loader() {
     texts: [item.rol],
     skills: item.skills,
   }));
+
   const skills = SKILLS_IMG.map((item) => item.title);
+
+  const chartData = SKILL_CHART_DATA.map((data) => [
+    data.name,
+    differenceInMonths(new Date(), new Date(data.startDate)) / 12,
+  ]);
+
   return json({
     data,
     yearsOfExp: formatDuration(
@@ -55,12 +64,13 @@ export async function loader() {
       { format: ['years', 'months'] }
     ),
     skills,
+    chartData,
   });
 }
 
 export default function Skills() {
   const { formatMessage } = useIntl();
-  const { data, yearsOfExp, skills } = useLoaderData<typeof loader>();
+  const { data, yearsOfExp, skills, chartData } = useLoaderData<typeof loader>();
   const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
   const [isFrontEnd, setIsFrontEnd] = useState(false);
   const [isBackEnd, setIsBackEnd] = useState(false);
@@ -167,6 +177,9 @@ export default function Skills() {
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
         <Carousel />
+      </div>
+      <div>
+        <BarChart data={chartData} />
       </div>
     </div>
   );
