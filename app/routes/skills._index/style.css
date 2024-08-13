@@ -212,6 +212,9 @@
   }
 
   &__skills-and-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     width: 100%;
   }
 }
@@ -291,7 +294,6 @@
 
       &.vertical-timeline--two-columns {
         width: 100%;
-        padding: 0 $space-20;
       }
 
       & .vertical-timeline-element-icon {

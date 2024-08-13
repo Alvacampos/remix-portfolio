@@ -177,9 +177,13 @@ export default function Skills() {
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
         <Carousel />
+        <BarChart data={chartData} />
       </div>
       <div>
-        <BarChart data={chartData} />
+        <h2>
+          <FormattedMessage id="EXTRA_ACTIVITIES" />
+          <p>in progress...</p>
+        </h2>
       </div>
     </div>
   );
