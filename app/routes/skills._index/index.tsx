@@ -12,7 +12,7 @@ import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
 import Carousel, { links as carouselLinks } from '~/components/Carousel';
 import { SuccessFilled } from '~/components/icons';
-import { WORK_ITEMS, SKILLS_IMG, SKILL_CHART_DATA } from '~/utils/data';
+import { WORK_ITEMS, SKILLS_IMG, SKILL_CHART_DATA, EXTRA_ACTIVITIES } from '~/utils/data';
 import { getClassMaker, formatDate } from '~/utils/utils';
 import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
 import BarChart, { links as barChartLinks } from '~/components/BarChart';
@@ -179,11 +179,16 @@ export default function Skills() {
         <Carousel />
         <BarChart data={chartData} />
       </div>
-      <div>
+      <div className={getClasses('extra-activities')}>
         <h2>
           <FormattedMessage id="EXTRA_ACTIVITIES" />
-          <p>in progress...</p>
         </h2>
+        <div className={getClasses('extra-activities-wrapper')}>
+          {EXTRA_ACTIVITIES.map((activity) => {
+            const key = uuid();
+            return <Card title={activity.title} itemList={activity.data} key={key} />;
+          })}
+        </div>
       </div>
     </div>
   );

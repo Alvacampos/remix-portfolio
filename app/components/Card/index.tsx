@@ -11,7 +11,7 @@ const BLOCK = 'card-component';
 const getClasses = getClassMaker(BLOCK);
 
 type CardProps = {
-  title: string;
+  title?: string;
   texts?: string[];
   itemList?: {
     title: string;
@@ -23,7 +23,7 @@ type CardProps = {
 };
 
 export default function Card({
-  title,
+  title = undefined,
   texts = undefined,
   itemList = undefined,
   isStyleless = false,

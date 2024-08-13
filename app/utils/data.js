@@ -1,11 +1,3 @@
-const SECTION_TITLES = [
-  'Work Experience',
-  'Total years of experience',
-  'Skills & Tools',
-  'Years of experience',
-  'Extra Activities',
-];
-
 const WORK_ITEMS = [
   {
     id: 1,
@@ -274,89 +266,49 @@ const SKILLS_IMG = [
 
 const TOP_SKILLS = ['Front End', 'Back End'];
 
-const ENDAVA_EXTRA = [
+const EXTRA_ACTIVITIES = [
   {
-    title: 'Endava Argentina Internship',
-    text: 'Organizer and mentor for Endava Argentina Internship Program 2022. In charge of lectures related to JS and general programming.',
+    title: 'Endava',
+    data: [
+      {
+        title: 'Endava Argentina Internship',
+        text: 'Organizer and mentor for Endava Argentina Internship Program 2022. In charge of lectures related to JS and general programming.',
+      },
+      {
+        title: 'Mentorship',
+        text: 'Mentor for 3 Jr developers in the company. In charge of guiding them in their career path and helping them with their technical issues.',
+      },
+    ],
   },
   {
-    title: 'Mentorship',
-    text: 'Mentor for 3 Jr developers in the company. In charge of guiding them in their career path and helping them with their technical issues.',
-  },
-];
-
-const ENDAVA_EXTRA_IMG = {
-  src: '../assets/img/endava.png',
-  className: 'skills__work--icon',
-  id: 'endava',
-  alt: 'Endava Logo',
-};
-
-const UNSTA_EXTRA = [
-  {
-    title: 'Technical Leader',
-    text: 'Technical Leader of the project for the career of Software Engineering. In charge of the development of the project and the team.',
+    title: 'University',
+    data: [
+      {
+        title: 'Technical Leader',
+        text: 'Technical Leader of the project for the career of Software Engineering. In charge of the development of the project and the team.',
+      },
+      {
+        title: 'Career coaching',
+        text: 'Help students with their career path and guide them in their technical issues.',
+      },
+    ],
   },
   {
-    title: 'Professor',
-    text: 'Teaching programming to first year students Engineering Career.',
-  },
-];
-
-const UNSTA_EXTRA_IMG = {
-  src: '../assets/img/unsta.png',
-  className: 'skills__work--icon',
-  alt: 'UNSTA Logo',
-};
-
-const QUBIKA_EXTRA = [
-  {
-    title: 'Remix Introduction Talk',
-    text: 'Organize and gave a talk about Remix.run a react server side rendering framework that was just released and my project was working with.',
-  },
-  {
-    title: 'Team Induction',
-    text: 'Induction of new team members to the project.',
-  },
-];
-
-const QUBIKA_EXTRA_IMG = {
-  src: '../assets/img/qubika.png',
-  className: 'skills__work--icon',
-  id: 'qubika',
-  alt: 'Qubika Logo',
-};
-
-const NAV_BAR = [
-  {
-    path: '../index.html',
-    name: 'Home',
-    src: '../assets/icons/home.svg',
-    className: ['nav-bar__icon'],
-    alt: 'Home Logo',
-    title: 'Home',
-    tabindex: '-1',
-    location: 'Home',
-  },
-  {
-    path: './views/skills.html',
-    name: 'CV',
-    src: '../assets/icons/paper.svg',
-    className: ['nav-bar__icon'],
-    alt: 'CV Logo',
-    title: 'CV',
-    tabindex: '-1',
-    location: 'CV',
-  },
-  {
-    path: './views/education.html',
-    name: 'Education',
-    src: '../assets/icons/education.svg',
-    className: ['nav-bar__icon'],
-    alt: 'Education Logo',
-    title: 'Education',
-    tabindex: '-1',
-    location: 'Education',
+    title: 'Qubika',
+    data: [
+      {
+        title: 'Remix Introduction Talk',
+        text: 'Organize and gave a talk about Remix.run a react server side rendering framework that was just released and my project was working with.',
+      },
+      {
+        title: 'Team Induction',
+        text: 'Induction of new team members to the project.',
+      },
+      {
+        title: 'Dev Lead Loan Team',
+        text: 'Dev Lead of the Loan Team, in charge of the coordinating effort and unblocking the team on front end topics.',
+      },
+    ],
   },
 ];
 
@@ -428,18 +380,4 @@ const INTRO = [
   "I'm a Software Developer and I made this page so you can get to know me a little better",
 ];
 
-export {
-  ENDAVA_EXTRA,
-  ENDAVA_EXTRA_IMG,
-  INTRO,
-  NAV_BAR,
-  QUBIKA_EXTRA,
-  QUBIKA_EXTRA_IMG,
-  SECTION_TITLES,
-  SKILL_CHART_DATA,
-  SKILLS_IMG,
-  TOP_SKILLS,
-  UNSTA_EXTRA,
-  UNSTA_EXTRA_IMG,
-  WORK_ITEMS,
-};
+export { INTRO, SKILL_CHART_DATA, SKILLS_IMG, TOP_SKILLS, WORK_ITEMS, EXTRA_ACTIVITIES };
