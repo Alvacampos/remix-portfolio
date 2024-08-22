@@ -235,7 +235,13 @@
 
         &__text-container {
           display: flex;
-          height: 320px;
+          height: 350px;
+
+          & ul {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+          }
         }
       }
     }
