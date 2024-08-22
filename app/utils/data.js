@@ -1,3 +1,8 @@
+const INTRO = [
+  'Welcome, my name is Gonzalo Alvarez Campos.',
+  "I'm a Software Developer and I made this page so you can get to know me a little better",
+];
+
 const WORK_ITEMS = [
   {
     id: 1,
@@ -153,113 +158,69 @@ const WORK_ITEMS = [
 
 const SKILLS_IMG = [
   {
-    src: '../assets/icons/html.svg',
-    alt: 'HTML Logo',
     title: 'HTML',
   },
   {
-    src: '../assets/icons/css.svg',
-    alt: 'CSS Logo',
     title: 'CSS',
   },
   {
-    src: '../assets/icons/tailwind.svg',
-    alt: 'Tailwind Logo',
     title: 'Tailwind',
   },
   {
-    src: '../assets/icons/js.svg',
-    alt: 'JavaScript Logo',
     title: 'JavaScript',
   },
   {
-    src: '../assets/icons/ts.svg',
-    alt: 'TypeScript Logo',
     title: 'TypeScript',
   },
   {
-    src: '../assets/icons/react.svg',
-    alt: 'React Logo',
     title: 'React',
   },
   {
-    src: '../assets/icons/remix.svg',
-    alt: 'Remix.run Logo',
     title: 'Remix.run',
   },
   {
-    src: '../assets/icons/redux.svg',
-    alt: 'Redux Logo',
     title: 'Redux',
   },
   {
-    src: '../assets/icons/git-icon.svg',
-    alt: 'Git Logo',
     title: 'Git',
   },
   {
-    src: '../assets/icons/graphql.svg',
-    alt: 'GraphQL Logo',
     title: 'GraphQL',
   },
   {
-    src: '../assets/icons/cypress.svg',
-    alt: 'Cypress Logo',
     title: 'Cypress',
   },
   {
-    src: '../assets/icons/playwright.svg',
-    alt: 'Playwright Logo',
     title: 'Playwright',
   },
   {
-    src: '../assets/icons/storybook.svg',
-    alt: 'Storybook Logo',
     title: 'Storybook',
   },
   {
-    src: '../assets/icons/nodejs.svg',
-    alt: 'Nodejs Logo',
     title: 'NodeJs',
   },
   {
-    src: '../assets/icons/axios.svg',
-    alt: 'Axios Logo',
     title: 'Axios',
   },
   {
-    src: '../assets/icons/express.svg',
-    alt: 'Express Logo',
     title: 'Express',
   },
   {
-    src: '../assets/icons/mongodb.svg',
-    alt: 'Mongodb Logo',
     title: 'Mongodb',
   },
   {
-    src: '../assets/icons/vue-js.svg',
-    alt: 'Vue Logo',
     title: 'Vue',
   },
   {
-    src: '../assets/icons/highcharts.svg',
-    alt: 'Highcharts Logo',
     title: 'Highcharts',
   },
   {
-    src: '../assets/icons/agile-software.svg',
-    alt: 'Agile Logo',
     title: 'Agile Development',
   },
   {
-    src: '../assets/icons/sass.svg',
-    alt: 'Sass Logo',
     title: 'Sass',
   },
   {
-    src: '../assets/icons/heroku.svg',
-    alt: 'Heroku Logo',
     title: 'Heroku',
   },
 ];
@@ -375,9 +336,60 @@ const SKILL_CHART_DATA = [
   },
 ];
 
-const INTRO = [
-  'Welcome, my name is Gonzalo Alvarez Campos.',
-  "I'm a Software Developer and I made this page so you can get to know me a little better",
-];
+const EDUCATION = {
+  degree: [
+    {
+      title: 'Software Development and Quality Control Technician',
+      startDate: '2019-03-01T00:00:00.000',
+      endDate: '2021-09-01T00:00:00.000',
+      institution: 'Universidad del Norte Santo Tomas de Aquino',
+      description:
+        'Software Engineering degree with a focus on web development and software architecture.',
+    },
+  ],
+  certifications: [
+    {
+      title: 'English Certification',
+      startDate: '2007-03-01T00:00:00.000',
+      institution: 'University of Cambridge',
+      description: 'Level 1 Certificate in English (ESOL), First Certificate in English',
+    },
+    {
+      title: 'English Certification',
+      startDate: '2022-04-01T00:00:00.000',
+      institution: 'EF SET English',
+      description: 'Certificate 74/100 (C2 Proficient)',
+      url: 'https://cert.efset.org/Vob85P',
+    },
+    {
+      title: 'Certification',
+      startDate: '2021-02-01T00:00:00.000',
+      institution: 'JavaScript: Understanding the Weird Parts',
+      description: 'Credential ID: UC-c532815e-d057-4b92-81fe-abc4762f714c',
+      url: 'https://www.udemy.com/certificate/UC-c532815e-d057-4b92-81fe-abc4762f714c/',
+    },
+    {
+      title: 'Certification',
+      startDate: '2018-08-01T00:00:00.000',
+      institution: 'The Complete Web Developer in 2018: Zero to Mastery',
+      description: 'Credential ID: UC-FL354HLN',
+      url: 'https://www.udemy.com/certificate/UC-FL354HLN/',
+    },
+    {
+      title: 'Certification',
+      startDate: '2018-08-01T00:00:00.000',
+      institution: 'The Modern JavaScript Bootcamp',
+      description: 'Credential ID: UC-HUFMTDC3',
+      url: 'https://www.udemy.com/certificate/UC-HUFMTDC3/',
+    },
+    {
+      title: 'Certification',
+      startDate: '2018-08-01T00:00:00.000',
+      institution: 'The Complete JavaScript Course 2023: From Zero to Expert!',
+      description: 'Credential ID: UC-MBOB6U0K',
+      url: 'https://www.udemy.com/certificate/UC-MBOB6U0K/',
+    },
+  ],
+};
 
-export { INTRO, SKILL_CHART_DATA, SKILLS_IMG, TOP_SKILLS, WORK_ITEMS, EXTRA_ACTIVITIES };
+export { INTRO, SKILL_CHART_DATA, SKILLS_IMG, TOP_SKILLS, WORK_ITEMS, EXTRA_ACTIVITIES, EDUCATION };
