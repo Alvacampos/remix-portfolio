@@ -337,25 +337,23 @@ const SKILL_CHART_DATA = [
 ];
 
 const EDUCATION = {
-  degree: [
-    {
-      title: 'Software Development and Quality Control Technician',
-      startDate: '2019-03-01T00:00:00.000',
-      endDate: '2021-09-01T00:00:00.000',
-      institution: 'Universidad del Norte Santo Tomas de Aquino',
-      description:
-        'Software Engineering degree with a focus on web development and software architecture.',
-    },
-  ],
+  degree: {
+    title: 'Software Development and Quality Control Technician',
+    startDate: '2019-03-01T00:00:00.000',
+    endDate: '2021-09-01T00:00:00.000',
+    institution: 'Universidad del Norte Santo Tomas de Aquino',
+    description: 'Associate degree with a focus on web development and software architecture.',
+  },
+
   certifications: [
     {
-      title: 'English Certification',
+      title: 'Certification',
       startDate: '2007-03-01T00:00:00.000',
       institution: 'University of Cambridge',
       description: 'Level 1 Certificate in English (ESOL), First Certificate in English',
     },
     {
-      title: 'English Certification',
+      title: 'Certification',
       startDate: '2022-04-01T00:00:00.000',
       institution: 'EF SET English',
       description: 'Certificate 74/100 (C2 Proficient)',

@@ -2,7 +2,7 @@ import 'react-vertical-timeline-component/style.min.css';
 
 import { Link, useLoaderData } from '@remix-run/react';
 import { json } from '@remix-run/cloudflare';
-import { useState } from 'react';
+import { Children, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { EDUCATION } from '~/utils/data';
 import { v4 as uuid } from 'uuid';
@@ -18,22 +18,49 @@ const BLOCK = 'education-route';
 const getClasses = getClassMaker(BLOCK);
 
 type DataTypes = {
-  id: number;
-  title: string;
-  date: string;
-  texts: string[];
-  skills: string[];
+  degree: {
+    title: string;
+    startDate: string;
+    endDate: string;
+    institution: string;
+    description: string;
+  };
+  certifications: {
+    title: string;
+    startDate: string;
+    institution: string;
+    description: string;
+    url?: string;
+  }[];
 };
 
 export async function loader() {
-  const { degree, certifications } = EDUCATION;
+  const { degree, certifications }: DataTypes = EDUCATION;
+
   return json({ degree, certifications });
 }
 
 export default function Skills() {
-  const { formatMessage } = useIntl();
-  const data = useLoaderData<typeof loader>();
-  console.log(data);
+  const { degree, certifications } = useLoaderData<typeof loader>();
+
+  const degreeCard = {
+    title: degree.title,
+    texts: [
+      `Date: ${formatDate(degree.startDate, degree.endDate)}`,
+      degree.institution,
+      degree.description,
+    ],
+  };
+
+  const certificationsCards = certifications.map((certification) => ({
+    title: certification.title,
+    texts: [
+      `Date: ${formatDate(certification.startDate, '')}`,
+      certification.institution,
+      certification.description,
+    ],
+    children: certification?.url && <Link to={certification.url}>Certification Link</Link>,
+  }));
 
   return (
     <div className={getClasses()}>
@@ -41,14 +68,20 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="DEGREE" />
         </h2>
+        <div className={getClasses('card-wrapper')}>
+          <Card {...degreeCard} />
+        </div>
       </div>
       <div className={getClasses('certification')}>
         <h2>
           <FormattedMessage id="CERTIFICATION" />
         </h2>
+        <div className={getClasses('card-wrapper', 'certification-wrapper')}>
+          {certificationsCards.map((card) => (
+            <Card {...card} key={uuid()} />
+          ))}
+        </div>
       </div>
-
-      <h1>In progress...</h1>
     </div>
   );
 }

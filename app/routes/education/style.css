@@ -1,350 +1,63 @@
-.skills-route {
+.education-route {
   display: flex;
   flex-direction: column;
-  gap: $space-30;
+  align-items: center;
+  gap: $space-20;
+  width: 100%;
 
-  & h2 {
-    text-align: center;
-  }
-
-  &__time-line {
+  &__degree,
+  &__certification {
     display: flex;
     flex-direction: column;
     gap: $space-20;
-
-    &-controls {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: $space-20;
-    }
-  }
-
-  &__btn-container {
-    display: flex;
+    width: 100%;
     align-items: center;
-    justify-content: center;
-    gap: $space-20;
-
-    & button {
-      background: none;
-      border: none;
-      position: relative;
-      display: inline-block;
-      padding: 5px $space-10;
-      color: #03e9f4;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: 0.5s;
-      letter-spacing: 4px;
-      overflow: hidden;
-
-      &:hover,
-      &:focus {
-        cursor: pointer;
-        background: #03e9f4;
-        color: #050801;
-        box-shadow:
-          0 0 5px #03e9f4,
-          0 0 25px #03e9f4,
-          0 0 50px #03e9f4;
-        -webkit-box-reflect: below 1px linear-gradient(transparent, #00000055);
-      }
-
-      &:nth-child(1) {
-        filter: hue-rotate(270deg);
-      }
-
-      & span {
-        position: absolute;
-        display: block;
-
-        &:nth-child(1) {
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #03e9f4);
-          animation: animate1 1s linear infinite;
-        }
-
-        @keyframes animate1 {
-          0% {
-            left: -100%;
-          }
-
-          50%,
-          100% {
-            left: 100%;
-          }
-        }
-
-        &:nth-child(2) {
-          top: -100%;
-          right: 0;
-          width: 2px;
-          height: 100%;
-          background: linear-gradient(180deg, transparent, #03e9f4);
-          animation: animate2 1s linear infinite;
-          animation-delay: 0.25s;
-        }
-
-        @keyframes animate2 {
-          0% {
-            top: -100%;
-          }
-
-          50%,
-          100% {
-            top: 100%;
-          }
-        }
-
-        &:nth-child(3) {
-          bottom: 0;
-          right: 0;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(270deg, transparent, #03e9f4);
-          animation: animate3 1s linear infinite;
-          animation-delay: 0.5s;
-        }
-
-        @keyframes animate3 {
-          0% {
-            right: -100%;
-          }
-
-          50%,
-          100% {
-            right: 100%;
-          }
-        }
-
-        &:nth-child(4) {
-          bottom: -100%;
-          left: 0;
-          width: 2px;
-          height: 100%;
-          background: linear-gradient(360deg, transparent, #03e9f4);
-          animation: animate4 1s linear infinite;
-          animation-delay: 0.75s;
-        }
-
-        @keyframes animate4 {
-          0% {
-            bottom: -100%;
-          }
-
-          50%,
-          100% {
-            bottom: 100%;
-          }
-        }
-      }
-    }
   }
 
-  & .vertical-timeline-element-content {
-    background: none;
-    box-shadow: none;
-
-    & .bounce-in {
-      border-radius: $border-10;
-      overflow: hidden;
-    }
-
-    & h2 {
-      color: $text-color;
-    }
-
-    & svg {
-      width: $space-40;
-    }
-  }
-
-  & .vertical-timeline--two-columns {
-    &::before {
-      background: $alternative-green;
-    }
-
-    & .vertical-timeline-element-content {
-      padding: 0;
-    }
-
-    & .vertical-timeline-element-content-arrow {
-      border-right-color: $alternative-green;
-    }
-  }
-
-  & .vertical-timeline-element-icon {
-    background: $background-default;
-    color: $alternative-green;
-    box-shadow:
-      0 0 0 4px $alternative-green,
-      inset 0 2px 0 rgba(0, 0, 0, 0.08),
-      0 3px 0 4px rgba(0, 0, 0, 0.05);
-
-    svg {
-      top: 50%;
-      left: 50%;
-      fill: $alternative-green;
-    }
-  }
-
-  &__element-link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  &__years-of-exp {
-    display: flex;
-
-    & .card-component {
-      width: 100%;
-      text-align: center;
-
-      &__main-text-wrapper {
-        font-size: $font-20;
-        font-weight: $weight-700;
-      }
-    }
-  }
-
-  &__skills-and-tools {
+  &__card-wrapper {
     display: flex;
     flex-direction: column;
     gap: $space-20;
     width: 100%;
   }
 
-  &__extra-activities {
+  &__card-wrapper--certification-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: $space-20;
-
-    &-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: $space-20;
-      width: 100%;
-
-      & .card-component {
-        width: 100%;
-
-        &__text-container {
-          display: flex;
-          height: 320px;
-        }
-      }
-    }
+    width: 100%;
   }
-}
 
-.button-component {
-  &__btn--active {
-    background: #03e9f4;
-    color: #050801;
-    box-shadow:
-      0 0 5px #03e9f4,
-      0 0 25px #03e9f4,
-      0 0 50px #03e9f4;
-    -webkit-box-reflect: below 1px linear-gradient(transparent, #00000055);
-  }
-}
+  .card-component {
+    &__children a {
+      color: $variation-green;
+      text-decoration: none;
 
-@media screen and (min-width: $mobile-small) {
-  .skills-route {
-    &__time-line {
-      &-controls {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: $space-20;
+      &:hover {
+        text-decoration: underline;
       }
-    }
-
-    &__btn-container {
-      display: flex;
-      justify-content: center;
-      gap: $space-20;
-    }
-
-    & .vertical-timeline {
-      max-width: 95%;
     }
   }
 }
 
 @media screen and (min-width: $desktop-small) {
-  .skills-route {
-    &__time-line {
+  .education-route {
+    &__degree {
+      width: 60%;
+    }
+
+    &__card-wrapper--certification-wrapper {
       display: flex;
       gap: $space-20;
-      margin: 0;
-
-      &-controls {
-        flex-direction: row;
-      }
-    }
-
-    &__btn-container {
-      display: flex;
-      justify-content: flex-end;
-      gap: $space-20;
-    }
-
-    & .vertical-timeline {
-      &.vertical-timeline--two-columns {
-        width: 100%;
-      }
-    }
-
-    &__extra-activities {
-      &-wrapper {
-        flex-direction: row;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: $desktop-medium) {
-  .skills-route {
-    &__time-line {
-      display: flex;
-      gap: $space-20;
-      margin: 0;
-    }
-
-    & .vertical-timeline {
-      max-width: 100%;
-      margin: 0;
-
-      &.vertical-timeline--two-columns {
-        width: 100%;
-      }
-
-      & .vertical-timeline-element-icon {
-        height: $space-80;
-        width: $space-80;
-        margin-left: -$space-40;
-
-        svg {
-          width: $space-40;
-          height: $space-40;
-          top: 40%;
-          left: 40%;
-        }
-      }
-    }
-
-    &__years-of-exp {
-      display: flex;
+      flex-flow: row wrap;
       justify-content: center;
+    }
 
-      & .card-component {
-        width: 80%;
+    .card-component {
+      min-width: 500px;
+
+      &__text-container {
+        height: 100%;
       }
     }
   }
