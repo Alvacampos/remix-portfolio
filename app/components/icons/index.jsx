@@ -16,6 +16,7 @@ export { default as Heroku } from './Heroku';
 export { default as Highcharts } from './Highcharts';
 export { default as Home } from './Home';
 export { default as Html } from './Html';
+export { default as Inbox } from './Inbox';
 export { default as JobSearch } from './JobSearch';
 export { default as Job } from './Job';
 export { default as Js } from './Js';

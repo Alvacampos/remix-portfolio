@@ -3,21 +3,12 @@ import { useIntl } from 'react-intl';
 import LinkedInQR from '~/assets/img/linkedin_dark.png';
 import Button, { links as ButtonLinks } from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
-import {
-  Education,
-  GithubIcon,
-  Home,
-  LinkedinIcon,
-  Paper,
-} from '~/components/icons';
+import { Education, GithubIcon, Home, Inbox, LinkedinIcon, Paper } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-export const links = () => [
-  ...ButtonLinks(),
-  { rel: 'stylesheet', href: styles },
-];
+export const links = () => [...ButtonLinks(), { rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'navbar-component';
 const getClasses = getClassMaker(BLOCK);
@@ -50,6 +41,11 @@ export default function NavBar() {
       url: './education',
       label: formatMessage({ id: 'EDUCATION' }),
       leftIcon: Education,
+    },
+    {
+      url: './contact',
+      label: formatMessage({ id: 'CONTACT' }),
+      leftIcon: Inbox,
     },
   ];
 
