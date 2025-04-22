@@ -28,7 +28,17 @@ export function links() {
 const BLOCK = 'root';
 const getClasses = getClassMaker(BLOCK);
 
-export const meta: MetaFunction = () => [{ title: 'Gonzalo Alvarez Campos Cv' }];
+export const meta: MetaFunction = () => [
+  { title: 'Gonzalo Alvarez Campos Cv' },
+  {
+    property: 'og:title',
+    content: 'Gonzalo Alvarez Campos Cv',
+  },
+  {
+    name: 'description',
+    content: 'Gonzalo Alvarez Campos CV',
+  },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
