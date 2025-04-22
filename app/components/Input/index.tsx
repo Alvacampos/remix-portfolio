@@ -25,7 +25,8 @@ export default function Autocomplete({
   const handleInputChange = (event: { target: { value: string } }) => {
     const value = event.target.value;
     setInputValue(value);
-    handleInput(inputValue);
+    handleInput(value);
+  
     if (value.length > 0) {
       const filteredSuggestions = possibleValues.filter((suggestion) =>
         suggestion.toLowerCase().includes(value.toLowerCase())
@@ -51,13 +52,17 @@ export default function Autocomplete({
         type="text"
         value={inputValue}
         onChange={handleInputChange}
+        onFocus={handleInputChange}
         className={getClasses()}
         placeholder={placeholder}
+        role="combobox"
         aria-autocomplete="list"
         aria-controls="autocomplete-list"
+        aria-expanded={suggestions.length > 0}
+        aria-activedescendant=""
       />
       {suggestions.length > 0 && (
-        <ul className={getClasses('suggestions-list')}>
+        <ul className={getClasses('suggestions-list')} id="autocomplete-list">
           {suggestions.map((suggestion, index) => (
             <li
               key={index}
@@ -66,6 +71,7 @@ export default function Autocomplete({
               role="option"
               className={getClasses('suggestion-item')}
               tabIndex={0}
+              aria-label={suggestion || 'Suggestion'}
             >
               {suggestion}
             </li>

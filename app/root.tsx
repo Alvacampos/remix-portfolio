@@ -28,7 +28,15 @@ export function links() {
 const BLOCK = 'root';
 const getClasses = getClassMaker(BLOCK);
 
-export const meta: MetaFunction = () => [{ title: 'Gonzalo Alvarez Campos Cv' }];
+export const meta: MetaFunction = () => [
+  { title: 'Gonzalo Alvarez Campos CV' },
+  {
+    name: 'description',
+    content: 'Curriculum Vitae of Gonzalo Alvarez Campos – Frontend Software Developer.',
+  },
+  { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+  { name: 'theme-color', content: '#ffffff' },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -38,11 +46,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
         <Meta />
         <Links />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-        />
       </head>
       <body className={getClasses()}>
         {children}

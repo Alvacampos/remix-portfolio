@@ -32,7 +32,7 @@ export default function Button({
   children = undefined,
 }: ButtonProps) {
   return (
-    <ConditionalLink to={url} condition={!!url} className={getClasses('link-wrapper')}>
+    <ConditionalLink to={url} condition={!!url} label={label} className={getClasses('link-wrapper')}>
       <button className={getClasses(className)} onClick={handleClick} type={btnType}>
         {LeftIcon && <LeftIcon className={getClasses('icon', 'left')} />}
         {children && children.map((child, index) => child)}

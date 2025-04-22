@@ -25,12 +25,13 @@ export default function ConditionalWrapper({
 // overwrite 'to' property on LinkProps interface to allow it to be optional
 interface ConditionalLinkProps extends Omit<LinkProps, 'to'> {
   to?: LinkProps['to'];
+  label?: string;
   condition: boolean;
 }
 
-export function ConditionalLink({ to = '#', condition, children, ...rest }: ConditionalLinkProps) {
+export function ConditionalLink({ to = '#', condition, children, label, ...rest }: ConditionalLinkProps) {
   const wrapper = (linkChildren: ReactNode) => (
-    <Link to={to} tabIndex={-1} {...rest}>
+    <Link to={to} tabIndex={-1} aria-label={label || 'Link'} {...rest}>
       {linkChildren}
     </Link>
   );

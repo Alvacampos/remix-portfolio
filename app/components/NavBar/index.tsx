@@ -18,11 +18,13 @@ export default function NavBar() {
 
   const GIT_LINK_ICON = {
     url: 'https://github.com/Alvacampos',
+    label: 'Github',
     className: 'special-anchor',
   };
 
   const LINKEDIN_LINK_ICON = {
     url: 'https://www.linkedin.com/in/gonzaloalvarezcampos/',
+    label: 'Linkedin',
     className: 'special-anchor',
   };
 
@@ -40,6 +42,7 @@ export default function NavBar() {
     {
       url: './education',
       label: formatMessage({ id: 'EDUCATION' }),
+
       leftIcon: Education,
     },
     {
@@ -52,7 +55,7 @@ export default function NavBar() {
   return (
     <nav className={getClasses()}>
       <div className={getClasses('special-anchor-container')}>
-        <ConditionalLink to={GIT_LINK_ICON.url} condition={!!GIT_LINK_ICON.url}>
+        <ConditionalLink to={GIT_LINK_ICON.url} condition={!!GIT_LINK_ICON.url} label={GIT_LINK_ICON.label}>
           <div className={getClasses('special-anchor-wrapper')}>
             <GithubIcon className={getClasses('special-anchor')} />
           </div>
@@ -61,6 +64,7 @@ export default function NavBar() {
           to={LINKEDIN_LINK_ICON.url}
           condition={!!LINKEDIN_LINK_ICON.url}
           className={getClasses('linkedin-anchor')}
+          label={LINKEDIN_LINK_ICON.label}
         >
           <div className={getClasses('special-anchor-wrapper')}>
             <LinkedinIcon className={getClasses('special-anchor')} />

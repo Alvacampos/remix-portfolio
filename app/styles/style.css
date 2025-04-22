@@ -1,3 +1,4 @@
+/* stylelint-disable font-family-name-quotes */
 html {
   min-height: 100%;
 }
@@ -10,7 +11,7 @@ body {
   grid-template-rows: 1fr min-content;
   color: $text-color;
   background: $background-default;
-  font-family: Lato, sans-serif;
+  font-family: 'Roboto', sans-serif;
 
   & .navbar-component {
     grid-row: 2;
@@ -26,6 +27,15 @@ main {
   justify-content: center;
   align-items: center;
   width: 100vw;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
 }
 
 @media screen and (min-width: $desktop-small) {
