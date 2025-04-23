@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { getClassMaker } from '~/utils/utils';
+import { ClientOnly } from 'remix-utils/client-only';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
 import {
   Html,
@@ -67,29 +68,22 @@ export default function Carousel() {
     cloudflare: <Cloudflare />,
   };
 
-  const [isHydrated, setIsHydrated] = useState(!isHydrating);
-
-  useEffect(() => {
-    isHydrating = false;
-    setIsHydrated(true);
-  }, []);
-
   const keys = Object.keys(items);
 
-  if (isHydrated) {
-    return (
-      <div className={getClasses()}>
-        {keys.map((key) => {
-          const uuidKey = uuid();
-          return (
-            <div key={uuidKey} className={getClasses('item')}>
-              {items[key as keyof typeof items]}
-            </div>
-          );
-        })}
-      </div>
-    );
-  } else {
-    return <LoadingSpinner />;
-  }
+  return (
+    <ClientOnly fallback={<LoadingSpinner />}>
+      {() => (
+        <div className={getClasses()}>
+          {keys.map((key) => {
+            const uuidKey = uuid();
+            return (
+              <div key={uuidKey} className={getClasses('item')}>
+                {items[key as keyof typeof items]}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </ClientOnly>
+  );
 }
