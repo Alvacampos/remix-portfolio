@@ -1,6 +1,7 @@
-import type { ComponentType } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { getClassMaker } from '~/utils/utils';
+import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
 import {
   Html,
   Css,
@@ -28,10 +29,12 @@ import {
 } from '~/components/icons';
 import styles from './style.css?url';
 
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+export const links = () => [...loadingSpinnerLinks(), { rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'carousel-component';
 const getClasses = getClassMaker(BLOCK);
+
+let isHydrating = true;
 
 export default function Carousel() {
   const items = {
@@ -60,18 +63,29 @@ export default function Carousel() {
     cloudflare: <Cloudflare />,
   };
 
+  const [isHydrated, setIsHydrated] = useState(!isHydrating);
+
+  useEffect(() => {
+    isHydrating = false;
+    setIsHydrated(true);
+  }, []);
+
   const keys = Object.keys(items);
 
-  return (
-    <div className={getClasses()}>
-      {keys.map((key) => {
-        const uuidKey = uuid();
-        return (
-          <div key={uuidKey} className={getClasses('item')}>
-            {items[key as keyof typeof items]}
-          </div>
-        );
-      })}
-    </div>
-  );
+  if (isHydrated) {
+    return (
+      <div className={getClasses()}>
+        {keys.map((key) => {
+          const uuidKey = uuid();
+          return (
+            <div key={uuidKey} className={getClasses('item')}>
+              {items[key as keyof typeof items]}
+            </div>
+          );
+        })}
+      </div>
+    );
+  } else {
+    return <LoadingSpinner />;
+  }
 }

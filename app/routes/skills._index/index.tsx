@@ -1,17 +1,16 @@
 import 'react-vertical-timeline-component/style.min.css';
 
-import { Link, useLoaderData } from '@remix-run/react';
+import {  useLoaderData } from '@remix-run/react';
 import { json } from '@remix-run/cloudflare';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
 import Carousel, { links as carouselLinks } from '~/components/Carousel';
-import { SuccessFilled } from '~/components/icons';
+import Timeline, { DataTypes, links as timelineLinks } from '~/components/Timeline';
 import { WORK_ITEMS, SKILLS_IMG, SKILL_CHART_DATA, EXTRA_ACTIVITIES } from '~/utils/data';
 import { getClassMaker, formatDate } from '~/utils/utils';
 import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
@@ -19,27 +18,20 @@ import BarChart, { links as barChartLinks } from '~/components/BarChart';
 
 import styles from './style.css?url';
 
-const { VerticalTimelineElement } = pkg;
-
 export const links = () => [
   ...cardLinks(),
   ...inputLinks(),
   ...buttonLinks(),
   ...carouselLinks(),
   ...barChartLinks(),
+  ...timelineLinks(),
   { rel: 'stylesheet', href: styles },
 ];
 
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
-type DataTypes = {
-  id: number;
-  title: string;
-  date: string;
-  texts: string[];
-  skills: string[];
-};
+
 
 export async function loader() {
   const data: DataTypes[] = WORK_ITEMS.map((item) => ({
@@ -146,28 +138,7 @@ export default function Skills() {
             />
           </div>
         </div>
-        <VerticalTimeline>
-          {filteredData.map((item) => {
-            const key = uuid();
-            return (
-              <VerticalTimelineElement
-                className={getClasses('element')}
-                date={item.date}
-                icon={<SuccessFilled />}
-                key={key}
-              >
-                <Link
-                  to={`/skills/${item.id}`}
-                  tabIndex={-1}
-                  className={getClasses('element-link')}
-                  state={{ item: item.id }}
-                >
-                  <Card {...item} isStyleless />
-                </Link>
-              </VerticalTimelineElement>
-            );
-          })}
-        </VerticalTimeline>
+        <Timeline filteredData={filteredData} />
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>

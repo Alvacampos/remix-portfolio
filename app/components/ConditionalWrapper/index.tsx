@@ -29,7 +29,13 @@ interface ConditionalLinkProps extends Omit<LinkProps, 'to'> {
   condition: boolean;
 }
 
-export function ConditionalLink({ to = '#', condition, children, label, ...rest }: ConditionalLinkProps) {
+export function ConditionalLink({
+  to = '#',
+  condition,
+  children,
+  label,
+  ...rest
+}: ConditionalLinkProps) {
   const wrapper = (linkChildren: ReactNode) => (
     <Link to={to} tabIndex={-1} aria-label={label || 'Link'} {...rest}>
       {linkChildren}

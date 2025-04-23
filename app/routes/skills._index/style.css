@@ -145,57 +145,7 @@
     }
   }
 
-  & .vertical-timeline-element-content {
-    background: none;
-    box-shadow: none;
-
-    & .bounce-in {
-      border-radius: $border-10;
-      overflow: hidden;
-    }
-
-    & h2 {
-      color: $text-color;
-    }
-
-    & svg {
-      width: $space-40;
-    }
-  }
-
-  & .vertical-timeline--two-columns {
-    &::before {
-      background: $alternative-green;
-    }
-
-    & .vertical-timeline-element-content {
-      padding: 0;
-    }
-
-    & .vertical-timeline-element-content-arrow {
-      border-right-color: $alternative-green;
-    }
-  }
-
-  & .vertical-timeline-element-icon {
-    background: $background-default;
-    color: $alternative-green;
-    box-shadow:
-      0 0 0 4px $alternative-green,
-      inset 0 2px 0 rgba(0, 0, 0, 0.08),
-      0 3px 0 4px rgba(0, 0, 0, 0.05);
-
-    svg {
-      top: 50%;
-      left: 50%;
-      fill: $alternative-green;
-    }
-  }
-
-  &__element-link {
-    color: inherit;
-    text-decoration: none;
-  }
+  
 
   &__years-of-exp {
     display: flex;
@@ -276,10 +226,6 @@
       justify-content: center;
       gap: $space-20;
     }
-
-    & .vertical-timeline {
-      max-width: 95%;
-    }
   }
 }
 
@@ -301,12 +247,6 @@
       gap: $space-20;
     }
 
-    & .vertical-timeline {
-      &.vertical-timeline--two-columns {
-        width: 100%;
-      }
-    }
-
     &__extra-activities {
       &-wrapper {
         flex-direction: row;
@@ -321,28 +261,6 @@
       display: flex;
       gap: $space-20;
       margin: 0;
-    }
-
-    & .vertical-timeline {
-      max-width: 100%;
-      margin: 0;
-
-      &.vertical-timeline--two-columns {
-        width: 100%;
-      }
-
-      & .vertical-timeline-element-icon {
-        height: $space-80;
-        width: $space-80;
-        margin-left: -$space-40;
-
-        svg {
-          width: $space-40;
-          height: $space-40;
-          top: 40%;
-          left: 40%;
-        }
-      }
     }
 
     &__years-of-exp {

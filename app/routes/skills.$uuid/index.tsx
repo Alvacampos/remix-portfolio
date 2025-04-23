@@ -4,7 +4,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { WORK_ITEMS } from '~/utils/data';
 import Card, { links as cardLinks } from '~/components/Card';
 import { getClassMaker, formatDate } from '~/utils/utils';
-import globant from '~/assets/img/globant.png';
 
 import styles from './style.css?url';
 import { eachWeekOfInterval } from 'date-fns';
@@ -37,14 +36,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const id = params && params?.uuid;
   let data: DataTypes;
   let imagePath: string | undefined;
+
   if (id) {
     data = WORK_ITEMS.find((item) => item.id === +id);
     if (data?.title.includes('Professor') && id === '3') {
-      imagePath = data && '/assets/img/unsta2.jpg';
+      imagePath = data && '/assets/img/unsta2.webp';
     } else if (data?.title.includes('Teacher') && id === '6') {
-      imagePath = data && '/assets/img/coderhouse.png';
+      imagePath = data && '/assets/img/coderhouse.webp';
     } else {
-      imagePath = data && `/assets/img/${data.title.toLowerCase()}.png`;
+      imagePath = data && `/assets/img/${data.title.toLowerCase()}.webp`;
     }
   }
 

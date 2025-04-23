@@ -1,6 +1,6 @@
 import { useIntl } from 'react-intl';
 
-import LinkedInQR from '~/assets/img/linkedin_dark.png';
+import LinkedInQR from '~/../public/assets/img/linkedin_dark.webp';
 import Button, { links as ButtonLinks } from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, Inbox, LinkedinIcon, Paper } from '~/components/icons';

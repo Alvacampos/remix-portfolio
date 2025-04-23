@@ -7,6 +7,7 @@ ls:
   .html: lowercase | kebab-case
   .css: lowercase | kebab-case
   .png: lowercase | kebab-case
+  .webp: lowercase | kebab-case
   .svg: lowercase | kebab-case
 
   app/components:
