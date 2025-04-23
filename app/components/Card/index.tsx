@@ -2,10 +2,12 @@ import { v4 as uuid } from 'uuid';
 import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import { getClassMaker } from '~/utils/utils';
+import { ClientOnly } from 'remix-utils/client-only';
+import LoadingSkeleton, { links as loadingSkeletonLinks } from '../LoadingSkeleton';
 
 import styles from './style.css?url';
 
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+export const links = () => [...loadingSkeletonLinks(), { rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'card-component';
 const getClasses = getClassMaker(BLOCK);
@@ -45,44 +47,49 @@ export default function Card({
   };
 
   return (
-    <div className={getClasses('', { styleless: isStyleless })}>
-      {title && (
-        <div className={getClasses('title-wrapper')}>
-          <h2>{title}</h2>
-        </div>
-      )}
-      <div className={getClasses('text-container')}>
-        {texts && (
-          <div className={getClasses('main-text-wrapper')}>
-            {texts.map((text) => {
-              const key = uuid();
-              return <p key={key}>{text}</p>;
-            })}
+    <ClientOnly fallback={<LoadingSkeleton />}>
+       {() => (
+        <div className={getClasses('', { styleless: isStyleless })}>
+        {title && (
+          <div className={getClasses('title-wrapper')}>
+            <h2>{title}</h2>
           </div>
         )}
-        {itemList && (
-          <ul className={getClasses('list')}>
-            {itemList.map((item) => {
-              const key = uuid();
-              return (
-                <li key={key} className={getClasses('list-item')}>
-                  {item.title && <h3>{item.title}</h3>}
-                  {item.text && <p>{item.text}</p>}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {skills && (
-          <>
-            <hr className={getClasses('divider')} />
-            <div className={getClasses('skills-container')}>
-              <p>Skills:{renderSkills()}</p>
+        <div className={getClasses('text-container')}>
+          {texts && (
+            <div className={getClasses('main-text-wrapper')}>
+              {texts.map((text) => {
+                const key = uuid();
+                return <p key={key}>{text}</p>;
+              })}
             </div>
-          </>
-        )}
-        {children && <div className={getClasses('children')}>{children}</div>}
+          )}
+          {itemList && (
+            <ul className={getClasses('list')}>
+              {itemList.map((item) => {
+                const key = uuid();
+                return (
+                  <li key={key} className={getClasses('list-item')}>
+                    {item.title && <h3>{item.title}</h3>}
+                    {item.text && <p>{item.text}</p>}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {skills && (
+            <>
+              <hr className={getClasses('divider')} />
+              <div className={getClasses('skills-container')}>
+                <p>Skills:{renderSkills()}</p>
+              </div>
+            </>
+          )}
+          {children && <div className={getClasses('children')}>{children}</div>}
+        </div>
       </div>
-    </div>
+       )}
+    </ClientOnly>
+    
   );
 }
