@@ -82,7 +82,7 @@ export default function NavBar() {
           </ul>
         </div>
         <div>
-          <img src={LinkedInQR} alt="LinkedIn" className={getClasses('qr')} />
+          <img loading="lazy" src={LinkedInQR} alt="LinkedIn" className={getClasses('qr')} />
         </div>
       </div>
     </nav>

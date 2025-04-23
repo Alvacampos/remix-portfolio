@@ -100,7 +100,7 @@ export default function UuidIndex() {
       <h1 className={getClasses('title')}>{title}</h1>
       <div className={getClasses('main-container')}>
         <div className={getClasses('img-container')}>
-          <img src={imagePath} alt={title} className={getClasses('company-logo')} />
+          <img loading="lazy" src={imagePath} alt={title} className={getClasses('company-logo')} />
         </div>
         <div className={getClasses('info-container')}>
           <Card title={formatMessage({ id: 'HIRE_DATES' })} children={renderDates()} />
