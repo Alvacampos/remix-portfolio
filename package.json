@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix vite:build",
+    "build": "NODE_ENV=production remix vite:build",
     "build:svg": "svgo -f ./app/assets/icons",
     "build:icons": "npx @svgr/cli --config-file ./svgr.config.cjs -- ./app/assets/icons",
     "deploy": "npm run build && wrangler pages deploy",

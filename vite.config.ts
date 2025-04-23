@@ -11,6 +11,12 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    minify: 'terser', // Use Terser for JavaScript minification
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console logs in production
+      },
+    },
   },
   plugins: [
     remixCloudflareDevProxy(),

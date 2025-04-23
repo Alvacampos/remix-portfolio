@@ -145,8 +145,6 @@
     }
   }
 
-  
-
   &__years-of-exp {
     display: flex;
 
@@ -185,7 +183,6 @@
 
         &__text-container {
           display: flex;
-          height: 350px;
 
           & ul {
             display: flex;
@@ -225,6 +222,16 @@
       display: flex;
       justify-content: center;
       gap: $space-20;
+    }
+
+    &__extra-activities {
+      & .card-component {
+        width: 80%;
+
+        &__text-container {
+          height: 350px;
+        }
+      }
     }
   }
 }

@@ -1,5 +1,7 @@
 import constants from './app/styles/constants.js';
 
+const isProd = process.env.NODE_ENV === 'production';
+
 export default {
   plugins: {
     'postcss-extend-rule': {},
@@ -13,6 +15,6 @@ export default {
       },
     },
     autoprefixer: {},
-    cssnano: {},
+    ...(isProd ? { cssnano: {} } : {}),
   },
 };
