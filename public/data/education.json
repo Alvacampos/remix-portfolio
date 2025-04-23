@@ -1,0 +1,52 @@
+{
+  "degree": {
+    "title": "Software Development and Quality Control Technician",
+    "startDate": "2019-03-01T00:00:00.000",
+    "endDate": "2021-09-01T00:00:00.000",
+    "institution": "Universidad del Norte Santo Tomas de Aquino",
+    "description": "Associate degree with a focus on web development and software architecture."
+  },
+  "certifications": [
+    {
+      "title": "Certification",
+      "startDate": "2007-03-01T00:00:00.000",
+      "institution": "University of Cambridge",
+      "description": "Level 1 Certificate in English (ESOL), First Certificate in English"
+    },
+    {
+      "title": "Certification",
+      "startDate": "2022-04-01T00:00:00.000",
+      "institution": "EF SET English",
+      "description": "Certificate 74/100 (C2 Proficient)",
+      "url": "https://cert.efset.org/Vob85P"
+    },
+    {
+      "title": "Certification",
+      "startDate": "2021-02-01T00:00:00.000",
+      "institution": "JavaScript: Understanding the Weird Parts",
+      "description": "Credential ID: UC-c532815e-d057-4b92-81fe-abc4762f714c",
+      "url": "https://www.udemy.com/certificate/UC-c532815e-d057-4b92-81fe-abc4762f714c/"
+    },
+    {
+      "title": "Certification",
+      "startDate": "2018-08-01T00:00:00.000",
+      "institution": "The Complete Web Developer in 2018: Zero to Mastery",
+      "description": "Credential ID: UC-FL354HLN",
+      "url": "https://www.udemy.com/certificate/UC-FL354HLN/"
+    },
+    {
+      "title": "Certification",
+      "startDate": "2018-08-01T00:00:00.000",
+      "institution": "The Modern JavaScript Bootcamp",
+      "description": "Credential ID: UC-HUFMTDC3",
+      "url": "https://www.udemy.com/certificate/UC-HUFMTDC3/"
+    },
+    {
+      "title": "Certification",
+      "startDate": "2018-08-01T00:00:00.000",
+      "institution": "The Complete JavaScript Course 2023: From Zero to Expert!",
+      "description": "Credential ID: UC-MBOB6U0K",
+      "url": "https://www.udemy.com/certificate/UC-MBOB6U0K/"
+    }
+  ]
+}

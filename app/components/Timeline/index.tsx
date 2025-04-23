@@ -24,12 +24,12 @@ const { VerticalTimelineElement } = pkg;
 let isHydrating = true;
 
 export type DataTypes = {
-  id: number;
-  title: string;
-  date: string;
-  texts: string[];
-  skills: string[];
-};
+  id: string;
+    title: string;
+    date: string;
+    texts: string[];
+    skills: string[];
+}
 
 type FilteredDataTypes = {
   filteredData: DataTypes[];

@@ -1,7 +1,6 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { WORK_ITEMS } from '~/utils/data';
 import Card, { links as cardLinks } from '~/components/Card';
 import { getClassMaker, formatDate } from '~/utils/utils';
 
@@ -14,31 +13,37 @@ export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }]
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-type DataTypes =
-  | {
-      id: number;
+type skillsDataTypes = {
+  WORK_ITEMS: {
+    id: string | number;
+    title: string;
+    startDate: string;
+    endDate: string;
+    rol: string;
+    skills: string[];
+    projects?: {
       title: string;
-      projects:
-        | {
-            title: string;
-            text: string;
-          }[]
-        | string;
-      rol: string;
-      description?: string;
-      skills: string[];
-      endDate?: string;
-      startDate: string;
-    }
-  | undefined;
+      text: string;
+    }[] | string;
+    description: string;
+  }[];
+} | undefined;
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const id = params && params?.uuid;
-  let data: DataTypes;
+  const url = new URL('/data/skills.json', request.url);
+  
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      throw new Error('Failed to fetch skills.json');
+    }
+  
+  const skillsData: skillsDataTypes = await response.json();
+  let data;
   let imagePath: string | undefined;
 
   if (id) {
-    data = WORK_ITEMS.find((item) => item.id === +id);
+    data = skillsData?.WORK_ITEMS.find((item) => item.id === +id);
     if (data?.title.includes('Professor') && id === '3') {
       imagePath = data && '/assets/img/unsta2.webp';
     } else if (data?.title.includes('Teacher') && id === '6') {
@@ -114,7 +119,7 @@ export default function UuidIndex() {
         {Array.isArray(projects) ? (
           <Card title={formatMessage({ id: 'PROJECTS' })} itemList={projects} />
         ) : (
-          <Card title={formatMessage({ id: 'PROJECTS' })} texts={[projects]} />
+          <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
         )}
       </div>
       {skills && (

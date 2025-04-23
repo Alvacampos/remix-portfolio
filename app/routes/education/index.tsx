@@ -1,10 +1,7 @@
 import 'react-vertical-timeline-component/style.min.css';
-
+import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
-import { json } from '@remix-run/cloudflare';
-import { Children, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { EDUCATION } from '~/utils/data';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
@@ -28,21 +25,27 @@ type DataTypes = {
   certifications: {
     title: string;
     startDate: string;
+    endDate: string;
     institution: string;
     description: string;
     url?: string;
   }[];
 };
 
-export async function loader() {
-  const { degree, certifications }: DataTypes = EDUCATION;
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL('/data/education.json', request.url);
 
-  return json({ degree, certifications });
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error('Failed to fetch skills.json');
+  }
+
+  const educationData: DataTypes = await response.json();
+  return json({ degree: educationData.degree, certifications: educationData.certifications });
 }
 
 export default function Skills() {
   const { degree, certifications } = useLoaderData<typeof loader>();
-
   const degreeCard = {
     title: degree.title,
     texts: [

@@ -1,7 +1,6 @@
 import 'react-vertical-timeline-component/style.min.css';
-
-import {  useLoaderData } from '@remix-run/react';
-import { json } from '@remix-run/cloudflare';
+import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { useLoaderData } from '@remix-run/react';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
@@ -10,8 +9,7 @@ import Card, { links as cardLinks } from '~/components/Card';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
 import Carousel, { links as carouselLinks } from '~/components/Carousel';
-import Timeline, { DataTypes, links as timelineLinks } from '~/components/Timeline';
-import { WORK_ITEMS, SKILLS_IMG, SKILL_CHART_DATA, EXTRA_ACTIVITIES } from '~/utils/data';
+import Timeline, { links as timelineLinks } from '~/components/Timeline';
 import { getClassMaker, formatDate } from '~/utils/utils';
 import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
 import BarChart, { links as barChartLinks } from '~/components/BarChart';
@@ -31,10 +29,44 @@ export const links = () => [
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
+type skillsDataTypes = {
+  WORK_ITEMS: {
+    id: string;
+    title: string;
+    startDate: string;
+    endDate: string;
+    rol: string;
+    skills: string[];
+  }[];
+  SKILLS_IMG: {
+    title: string;
+    img: string;
+  }[];
+  SKILL_CHART_DATA: {
+    name: string;
+    startDate: string;
+    endDate: string;
+  }[];
+  EXTRA_ACTIVITIES: {
+    title: string;
+    data: {
+      title: string;
+      text: string;
+    }[];
+  }[];
+};
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL('/data/skills.json', request.url);
 
-export async function loader() {
-  const data: DataTypes[] = WORK_ITEMS.map((item) => ({
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error('Failed to fetch skills.json');
+  }
+
+  const skillsData: skillsDataTypes = await response.json();
+
+  const data = skillsData.WORK_ITEMS.map((item) => ({
     id: item.id,
     title: item.title,
     date: formatDate(item.startDate, item.endDate),
@@ -42,9 +74,9 @@ export async function loader() {
     skills: item.skills,
   }));
 
-  const skills = SKILLS_IMG.map((item) => item.title);
+  const skills = skillsData.SKILLS_IMG.map((item) => item.title);
 
-  const chartData = SKILL_CHART_DATA.map((data) => [
+  const chartData = skillsData.SKILL_CHART_DATA.map((data) => [
     data.name,
     differenceInMonths(new Date(), new Date(data.startDate)) / 12,
   ]);
@@ -52,18 +84,19 @@ export async function loader() {
   return json({
     data,
     yearsOfExp: formatDuration(
-      intervalToDuration({ start: new Date(WORK_ITEMS[0].startDate), end: new Date() }),
+      intervalToDuration({ start: new Date(skillsData.WORK_ITEMS[0].startDate), end: new Date() }),
       { format: ['years', 'months'] }
     ),
     skills,
     chartData,
+    extraActivities: skillsData.EXTRA_ACTIVITIES,
   });
 }
 
 export default function Skills() {
   const { formatMessage } = useIntl();
-  const { data, yearsOfExp, skills, chartData } = useLoaderData<typeof loader>();
-  const [filteredData, setFilteredData] = useState<DataTypes[]>(data);
+  const { data, yearsOfExp, skills, chartData, extraActivities } = useLoaderData<typeof loader>();
+  const [filteredData, setFilteredData] = useState(data);
   const [isFrontEnd, setIsFrontEnd] = useState(false);
   const [isBackEnd, setIsBackEnd] = useState(false);
 
@@ -155,7 +188,7 @@ export default function Skills() {
           <FormattedMessage id="EXTRA_ACTIVITIES" />
         </h2>
         <div className={getClasses('extra-activities-wrapper')}>
-          {EXTRA_ACTIVITIES.map((activity) => {
+          {extraActivities.map((activity) => {
             const key = uuid();
             return <Card title={activity.title} itemList={activity.data} key={key} />;
           })}
