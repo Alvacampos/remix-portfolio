@@ -11,6 +11,7 @@ import styles from './style.css?url';
 export const links = () => [
   ...loadingSpinnerLinks(),
   ...cardLinks(),
+  { rel: 'preload', href: styles, as: 'style' },
   { rel: 'stylesheet', href: styles },
 ];
 

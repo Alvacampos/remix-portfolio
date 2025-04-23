@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { getClassMaker } from '~/utils/utils';
+import { ClientOnly } from 'remix-utils/client-only';
 
 import styles from './style.css?url';
 
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+export const links = () => [
+  { rel: 'preload', href: styles, as: 'style' },
+  { rel: 'stylesheet', href: styles },
+];
 
 const BLOCK = 'input-component';
 const getClasses = getClassMaker(BLOCK);
@@ -26,7 +30,7 @@ export default function Autocomplete({
     const value = event.target.value;
     setInputValue(value);
     handleInput(value);
-  
+
     if (value.length > 0) {
       const filteredSuggestions = possibleValues.filter((suggestion) =>
         suggestion.toLowerCase().includes(value.toLowerCase())
@@ -47,37 +51,41 @@ export default function Autocomplete({
   };
 
   return (
-    <div className={getClasses('wrapper')}>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        onFocus={handleInputChange}
-        className={getClasses()}
-        placeholder={placeholder}
-        role="combobox"
-        aria-autocomplete="list"
-        aria-controls="autocomplete-list"
-        aria-expanded={suggestions.length > 0}
-        aria-activedescendant=""
-      />
-      {suggestions.length > 0 && (
-        <ul className={getClasses('suggestions-list')} id="autocomplete-list">
-          {suggestions.map((suggestion, index) => (
-            <li
-              key={index}
-              onClick={() => handleSuggestionClick(suggestion)}
-              onKeyDown={(event) => event.keyCode === 13 && handleSuggestionClick(suggestion)}
-              role="option"
-              className={getClasses('suggestion-item')}
-              tabIndex={0}
-              aria-label={suggestion || 'Suggestion'}
-            >
-              {suggestion}
-            </li>
-          ))}
-        </ul>
+    <ClientOnly fallback={null}>
+      {() => (
+        <div className={getClasses('wrapper')}>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onFocus={handleInputChange}
+            className={getClasses()}
+            placeholder={placeholder}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="autocomplete-list"
+            aria-expanded={suggestions.length > 0}
+            aria-activedescendant=""
+          />
+          {suggestions.length > 0 && (
+            <ul className={getClasses('suggestions-list')} id="autocomplete-list">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  onKeyDown={(event) => event.keyCode === 13 && handleSuggestionClick(suggestion)}
+                  role="option"
+                  className={getClasses('suggestion-item')}
+                  tabIndex={0}
+                  aria-label={suggestion || 'Suggestion'}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
-    </div>
+    </ClientOnly>
   );
 }
