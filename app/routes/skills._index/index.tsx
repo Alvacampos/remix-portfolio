@@ -81,16 +81,26 @@ export async function loader({ request }: LoaderFunctionArgs) {
     differenceInMonths(new Date(), new Date(data.startDate)) / 12,
   ]);
 
-  return json({
-    data,
-    yearsOfExp: formatDuration(
-      intervalToDuration({ start: new Date(skillsData.WORK_ITEMS[0].startDate), end: new Date() }),
-      { format: ['years', 'months'] }
-    ),
-    skills,
-    chartData,
-    extraActivities: skillsData.EXTRA_ACTIVITIES,
-  });
+  return json(
+    {
+      data,
+      yearsOfExp: formatDuration(
+        intervalToDuration({
+          start: new Date(skillsData.WORK_ITEMS[0].startDate),
+          end: new Date(),
+        }),
+        { format: ['years', 'months'] }
+      ),
+      skills,
+      chartData,
+      extraActivities: skillsData.EXTRA_ACTIVITIES,
+    },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+      },
+    }
+  );
 }
 
 export default function Skills() {
