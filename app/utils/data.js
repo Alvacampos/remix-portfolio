@@ -131,6 +131,8 @@ const WORK_ITEMS = [
       'CSS',
       'JavaScript',
       'TypeScript',
+      'Python',
+      'Django',
       'Storybook',
       'Highcharts',
       'React',
@@ -146,7 +148,7 @@ const WORK_ITEMS = [
     projects: [
       {
         title: 'Project Avant',
-        text: 'Full-stack project for Avant, a US loan company. Utilizes React with Remix.run and PostCSS for responsiveness. Implements Cypress and Playwright for testing. Currently transitioning from JavaScript to TypeScript.',
+        text: 'Full-stack project for Avant, a US loan company. Utilizes React with Remix.run and PostCSS for responsiveness. Implements Cypress and Playwright for testing. Currently transitioning from JavaScript to TypeScript. Exposure and worked on some api using Python and Django.',
       },
       {
         title: 'Project Customer Dashboard',
@@ -171,6 +173,12 @@ const SKILLS_IMG = [
   },
   {
     title: 'TypeScript',
+  },
+  {
+    title: 'Python',
+  },
+  {
+    title: 'Django',
   },
   {
     title: 'React',
@@ -281,6 +289,14 @@ const SKILL_CHART_DATA = [
   {
     name: 'TypeScript',
     startDate: '2022-04-01T00:00:00.000',
+  },
+  {
+    name: 'Python',
+    startDate: '2024-04-01T00:00:00.000',
+  },
+  {
+    name: 'Django',
+    startDate: '2024-04-01T00:00:00.000',
   },
   {
     name: 'ReactJs',
