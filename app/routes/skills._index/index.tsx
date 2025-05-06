@@ -10,6 +10,7 @@ import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
 import Carousel, { links as carouselLinks } from '~/components/Carousel';
 import Timeline, { links as timelineLinks } from '~/components/Timeline';
+import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
 import { getClassMaker, formatDate } from '~/utils/utils';
 import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
 import BarChart, { links as barChartLinks } from '~/components/BarChart';
@@ -23,6 +24,7 @@ export const links = () => [
   ...carouselLinks(),
   ...barChartLinks(),
   ...timelineLinks(),
+  ...loadingSpinnerLinks(),
   { rel: 'stylesheet', href: styles },
 ];
 
@@ -181,7 +183,7 @@ export default function Skills() {
             />
           </div>
         </div>
-        <Timeline filteredData={filteredData} />
+        {filteredData.length === 0 ? <LoadingSpinner /> : <Timeline filteredData={filteredData} />}
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>

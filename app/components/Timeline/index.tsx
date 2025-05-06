@@ -34,8 +34,7 @@ type FilteredDataTypes = {
 
 export default function Timeline({ filteredData }: FilteredDataTypes) {
   return (
-    <ClientOnly fallback={<LoadingSpinner />}>
-      {() => (
+
         <div className={getClasses()}>
           <VerticalTimeline>
             {filteredData.map((item) => {
@@ -59,7 +58,5 @@ export default function Timeline({ filteredData }: FilteredDataTypes) {
             })}
           </VerticalTimeline>
         </div>
-      )}
-    </ClientOnly>
   );
 }
