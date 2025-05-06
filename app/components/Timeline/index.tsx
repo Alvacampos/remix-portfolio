@@ -6,7 +6,6 @@ import { v4 as uuid } from 'uuid';
 import { SuccessFilled } from '~/components/icons';
 import Card, { links as cardLinks } from '~/components/Card';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
-import LoadingSkeleton, { links as loadingSkeletonLinks } from '../LoadingSkeleton';
 import styles from './style.css?url';
 
 export const links = () => [

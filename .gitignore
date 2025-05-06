@@ -1,4 +1,5 @@
 node_modules
+.DS_Store
 
 /.cache
 /build
@@ -6,3 +7,4 @@ node_modules
 .dev.vars
 
 .wrangler
+git commit -m "Remove .DS_Store from the repository"
