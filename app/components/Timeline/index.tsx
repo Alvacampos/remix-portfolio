@@ -20,8 +20,6 @@ const getClasses = getClassMaker(BLOCK);
 
 const { VerticalTimelineElement } = pkg;
 
-let isHydrating = true;
-
 export type DataTypes = {
   id: string;
     title: string;
@@ -51,7 +49,6 @@ export default function Timeline({ filteredData }: FilteredDataTypes) {
                 >
                   <Link
                     to={`/skills/${item.id}`}
-                    tabIndex={-1}
                     className={getClasses('element-link')}
                     state={{ item: item.id }}
                   >
