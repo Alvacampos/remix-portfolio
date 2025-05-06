@@ -193,7 +193,7 @@ export default function Skills() {
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
         <Carousel />
-        <BarChart data={chartData} />
+        {chartData.length === 0 ? <LoadingSpinner /> :  <BarChart data={chartData} />}
       </div>
       <div className={getClasses('extra-activities')}>
         <h2>

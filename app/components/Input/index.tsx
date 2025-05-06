@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { getClassMaker } from '~/utils/utils';
-import { ClientOnly } from 'remix-utils/client-only';
 
 import styles from './style.css?url';
 
@@ -51,41 +50,37 @@ export default function Autocomplete({
   };
 
   return (
-    <ClientOnly fallback={null}>
-      {() => (
-        <div className={getClasses('wrapper')}>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            onFocus={handleInputChange}
-            className={getClasses()}
-            placeholder={placeholder}
-            role="combobox"
-            aria-autocomplete="list"
-            aria-controls="autocomplete-list"
-            aria-expanded={suggestions.length > 0}
-            aria-activedescendant=""
-          />
-          {suggestions.length > 0 && (
-            <ul className={getClasses('suggestions-list')} id="autocomplete-list">
-              {suggestions.map((suggestion, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                  onKeyDown={(event) => event.keyCode === 13 && handleSuggestionClick(suggestion)}
-                  role="option"
-                  className={getClasses('suggestion-item')}
-                  tabIndex={0}
-                  aria-label={suggestion || 'Suggestion'}
-                >
-                  {suggestion}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+    <div className={getClasses('wrapper')}>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        onFocus={handleInputChange}
+        className={getClasses()}
+        placeholder={placeholder}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="autocomplete-list"
+        aria-expanded={suggestions.length > 0}
+        aria-activedescendant=""
+      />
+      {suggestions.length > 0 && (
+        <ul className={getClasses('suggestions-list')} id="autocomplete-list">
+          {suggestions.map((suggestion, index) => (
+            <li
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion)}
+              onKeyDown={(event) => event.keyCode === 13 && handleSuggestionClick(suggestion)}
+              role="option"
+              className={getClasses('suggestion-item')}
+              tabIndex={0}
+              aria-label={suggestion || 'Suggestion'}
+            >
+              {suggestion}
+            </li>
+          ))}
+        </ul>
       )}
-    </ClientOnly>
+    </div>
   );
 }

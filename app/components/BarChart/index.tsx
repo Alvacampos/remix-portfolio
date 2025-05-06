@@ -1,14 +1,12 @@
 import { useIntl } from 'react-intl';
 import { useState } from 'react';
-import { ClientOnly } from 'remix-utils/client-only';
 import { getClassMaker } from '~/utils/utils';
-import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 import styles from './style.css?url';
 
-export const links = () => [...loadingSpinnerLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'bar-chart-component';
 const getClasses = getClassMaker(BLOCK);
@@ -102,12 +100,8 @@ export default function BarChart({ data }: { data: (string | number)[][] }) {
   });
 
   return (
-    <ClientOnly fallback={<LoadingSpinner />}>
-      {() => (
-        <div className={getClasses()}>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </div>
-      )}
-    </ClientOnly>
+    <div className={getClasses()}>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
   );
 }

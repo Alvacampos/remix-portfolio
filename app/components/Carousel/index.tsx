@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { getClassMaker } from '~/utils/utils';
-import { ClientOnly } from 'remix-utils/client-only';
-import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
 import {
   Html,
   Css,
@@ -32,12 +30,10 @@ import {
 } from '~/components/icons';
 import styles from './style.css?url';
 
-export const links = () => [...loadingSpinnerLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'carousel-component';
 const getClasses = getClassMaker(BLOCK);
-
-let isHydrating = true;
 
 export default function Carousel() {
   const items = {
@@ -71,19 +67,15 @@ export default function Carousel() {
   const keys = Object.keys(items);
 
   return (
-    <ClientOnly fallback={<LoadingSpinner />}>
-      {() => (
-        <div className={getClasses()}>
-          {keys.map((key) => {
-            const uuidKey = uuid();
-            return (
-              <div key={uuidKey} className={getClasses('item')}>
-                {items[key as keyof typeof items]}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </ClientOnly>
+    <div className={getClasses()}>
+      {keys.map((key) => {
+        const uuidKey = uuid();
+        return (
+          <div key={uuidKey} className={getClasses('item')}>
+            {items[key as keyof typeof items]}
+          </div>
+        );
+      })}
+    </div>
   );
 }
