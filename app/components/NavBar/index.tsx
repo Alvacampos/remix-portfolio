@@ -45,11 +45,12 @@ export default function NavBar() {
 
       leftIcon: Education,
     },
-    {
-      url: './contact',
-      label: formatMessage({ id: 'CONTACT' }),
-      leftIcon: Inbox,
-    },
+    // TODO: Uncomment when the contact page is ready
+    // {
+    //   url: './contact',
+    //   label: formatMessage({ id: 'CONTACT' }),
+    //   leftIcon: Inbox,
+    // },
   ];
 
   return (

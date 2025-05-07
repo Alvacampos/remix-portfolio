@@ -21,6 +21,14 @@ export default function Index() {
       <p>
         <FormattedMessage id="DISCLAIMER" />
       </p>
+      <p className={getClasses('repo-url')}>
+        <FormattedMessage id="CHECK_THIS_PROJECT_REPO" />
+        <span>
+          <a href="https://github.com/Alvacampos/remix-portfolio" target="_blank" rel="noopener noreferrer">
+            <FormattedMessage id="REPO_GITHUB" />
+          </a>
+        </span>
+      </p>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export const meta: MetaFunction = () => [
   { title: 'Gonzalo Alvarez Campos CV' },
   {
     name: 'description',
-    content: 'Curriculum Vitae of Gonzalo Alvarez Campos – Frontend Software Developer.',
+    content: 'Curriculum Vitae of Gonzalo Alvarez Campos – Software Developer.',
   },
   { name: 'viewport', content: 'width=device-width, initial-scale=1' },
   { name: 'theme-color', content: '#ffffff' },

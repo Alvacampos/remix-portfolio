@@ -14,6 +14,20 @@
   p {
     font-size: $font-12;
   }
+
+  &__repo-url {
+    margin-top: 1rem;
+    /* font-size: $font-12; */
+    /* color: $color-primary; */
+    text-decoration: none;
+    display: flex;
+    gap: $space-5;
+
+    & a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
 }
 
 @media screen and (min-width: $desktop-small) {
