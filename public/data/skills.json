@@ -129,6 +129,7 @@
         "Highcharts",
         "React",
         "Remix",
+        "NextJs",
         "Post-css",
         "GraphQL",
         "Cypress",
@@ -145,6 +146,10 @@
         {
           "title": "Project Customer Dashboard",
           "text": "Assisting with maintenance and updates for the legacy dashboard, utilizing TypeScript, React class components, and GraphQL technology stack."
+        },
+        {
+          "title": "Adalabs AI Model",
+          "text": "Assisted in developing an interface for a US company's AI model using Next.js and deployed on Vercel. The model serves as a centralized source of truth for documenting and managing all client data."
         }
       ]
     }
@@ -226,6 +231,7 @@
     { "name": "TypeScript", "startDate": "2022-04-01T00:00:00.000" },
     { "name": "Python", "startDate": "2024-04-01T00:00:00.000" },
     { "name": "Django", "startDate": "2024-04-01T00:00:00.000" },
+    { "name": "NextJs", "startDate": "2024-04-01T00:00:00.000" },
     { "name": "ReactJs", "startDate": "2020-12-01T00:00:00.000" },
     { "name": "Cypress", "startDate": "2020-12-01T00:00:00.000" },
     { "name": "GraphQL", "startDate": "2022-04-01T00:00:00.000" },
@@ -233,6 +239,7 @@
     { "name": "Remix", "startDate": "2022-04-01T00:00:00.000" },
     { "name": "Css", "startDate": "2018-08-01T00:00:00.000" },
     { "name": "PostCss", "startDate": "2022-04-01T00:00:00.000" },
+    { "name": "Tailwind", "startDate": "2022-04-01T00:00:00.000" },
     { "name": "HTML", "startDate": "2018-08-01T00:00:00.000" },
     { "name": "Playwright", "startDate": "2024-04-01T00:00:00.000" },
     { "name": "NodeJs", "startDate": "2023-01-01T00:00:00.000" },

@@ -183,7 +183,7 @@ export default function Skills() {
             />
           </div>
         </div>
-        <Timeline filteredData={filteredData} />
+        {filteredData.length === 0 ? <LoadingSpinner /> : <Timeline filteredData={filteredData} />}
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>
@@ -192,7 +192,7 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
-        {filteredData.length === 0 ? <LoadingSpinner /> : <Carousel />}
+        <Carousel />
         <BarChart data={chartData} />
       </div>
       <div className={getClasses('extra-activities')}>

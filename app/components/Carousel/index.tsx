@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 import { getClassMaker } from '~/utils/utils';
 import {
@@ -11,6 +10,7 @@ import {
   Django,
   React,
   Remix,
+  Nextjs,
   Redux,
   GitIcon,
   Graphql,
@@ -46,6 +46,7 @@ export default function Carousel() {
     django: <Django />,
     react: <React />,
     remix: <Remix />,
+    
     redux: <Redux />,
     gitIcon: <GitIcon />,
     graphql: <Graphql />,

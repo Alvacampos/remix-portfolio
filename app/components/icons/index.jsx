@@ -27,6 +27,7 @@ export { default as Mongodb } from './Mongodb';
 export { default as NewJob } from './NewJob';
 export { default as NewProject } from './NewProject';
 export { default as NewPromotion } from './NewPromotion';
+export { default as Nextjs } from './Nextjs';
 export { default as Nodejs } from './Nodejs';
 export { default as Npm } from './Npm';
 export { default as Paper } from './Paper';
