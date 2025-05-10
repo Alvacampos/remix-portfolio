@@ -148,8 +148,8 @@
           "text": "Assisting with maintenance and updates for the legacy dashboard, utilizing TypeScript, React class components, and GraphQL technology stack."
         },
         {
-          "title": "Adalabs AI Model",
-          "text": "Assisted in developing an interface for a US company's AI model using Next.js and deployed on Vercel. The model serves as a centralized source of truth for documenting and managing all client data."
+          "title": "Project Adalabs",
+          "text": "Contributed to building a client-facing interface for a U.S.-based AI platform using Next.js, deployed on Vercel. The AI model—designed to assist fintechs and financial service providers—serves as a centralized source of truth for organizing and managing finance-related documentation and client data."
         }
       ]
     }
