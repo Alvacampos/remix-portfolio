@@ -2,6 +2,8 @@
 
 Welcome to my personal portfolio project! This is an ongoing project built with [Remix](https://remix.run/) and deployed on [Cloudflare Pages](https://pages.cloudflare.com/). The goal of this project is to showcase my skills, experience, and education in a visually appealing and interactive way. While the current focus is on the frontend, the backend will eventually be developed using Python and Django. Additionally, a contact form will be added in the future to make it easier for visitors to reach out.
 
+The project has been deployed and is hosted in this url https://gonzalo-alvarez-campos-cv.com/
+
 Although the project is currently built with Remix, a migration to [React Router](https://reactrouter.com/) or [Next.js](https://nextjs.org/) is a possibility in the future, but it is not planned for the near term.
 
 ---
