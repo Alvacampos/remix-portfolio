@@ -1,7 +1,7 @@
 import 'react-vertical-timeline-component/style.min.css';
 import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 
@@ -30,6 +30,7 @@ export const links = () => [
 
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
+const LazyTimeline = lazy(() => import('~/components/Timeline'));
 
 type skillsDataTypes = {
   WORK_ITEMS: {
@@ -183,7 +184,13 @@ export default function Skills() {
             />
           </div>
         </div>
-        {filteredData.length === 0 ? <LoadingSpinner /> : <Timeline filteredData={filteredData} />}
+        {filteredData.length === 0 ? (
+          <LoadingSpinner />
+        ) : (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyTimeline filteredData={filteredData} />
+          </Suspense>
+        )}
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>

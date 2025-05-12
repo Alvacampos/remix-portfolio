@@ -4,8 +4,7 @@ import { Link } from '@remix-run/react';
 import { SuccessFilled } from '~/components/icons';
 import { links as cardLinks } from '~/components/Card';
 import styles from './style.css?url';
-import { memo } from 'react';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, memo } from 'react';
 
 export const links = () => [
   ...cardLinks(),
