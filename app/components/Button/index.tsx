@@ -35,7 +35,7 @@ export default function Button({
     <ConditionalLink to={url} condition={!!url} label={label} className={getClasses('link-wrapper')}>
       <button className={getClasses(className)} onClick={handleClick} type={btnType}>
         {LeftIcon && <LeftIcon className={getClasses('icon', 'left')} />}
-        {children && children.map((child, index) => child)}
+        {children && children.map((child) => child)}
         {label && label}
         {RightIcon && <RightIcon className={getClasses('icon', 'right')} />}
       </button>

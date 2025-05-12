@@ -7,9 +7,31 @@
   padding: $space-5;
   border-radius: $border-10;
 
-  & div {
-    width: 100%;
-  }
+  &__custom-tooltip {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #c9d1d9;
+    font-size: 14px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+&__tooltip-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+&__tooltip-label {
+  font-weight: 600;
+  color: #f0f6fc;
+}
+
+&__tooltip-value {
+  font-weight: 500;
+  color: #8b949e;
+}
 }
 
 @media screen and (min-width: $mobile-small) {

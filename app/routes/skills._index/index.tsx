@@ -13,7 +13,7 @@ import Timeline, { links as timelineLinks } from '~/components/Timeline';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
 import { getClassMaker, formatDate } from '~/utils/utils';
 import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
-import BarChart, { links as barChartLinks } from '~/components/BarChart';
+import CustomBarChart, { links as barChartLinks } from '~/components/BarChart';
 
 import styles from './style.css?url';
 
@@ -193,7 +193,7 @@ export default function Skills() {
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
         <Carousel />
-        <BarChart data={chartData} />
+        <CustomBarChart data={chartData} />
       </div>
       <div className={getClasses('extra-activities')}>
         <h2>
