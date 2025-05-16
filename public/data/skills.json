@@ -13,6 +13,7 @@
         "Storybook",
         "Highcharts",
         "Vue",
+        "React",
         ".Net",
         "Agile",
         "Front End",
@@ -26,7 +27,7 @@
         },
         {
           "title": "Project: Smile Direct Club",
-          "text": "Developed web applications for Smile Direct Club using Vue.js, Nuxt.js, and JavaScript, prioritizing performance optimization through Nuxt server-side rendering. Utilized Vue-axios, Bootstrap-Vue, and ECMA 6+."
+          "text": "Developed web applications for Smile Direct Club using Vue.js, ReactJs, and JavaScript, prioritizing performance optimization through Nuxt server-side rendering. Utilized Vue-axios, Bootstrap-Vue, and ECMA 6+."
         }
       ]
     },
@@ -40,6 +41,8 @@
       "skills": [
         "HTML",
         "CSS",
+        "JavaScript",
+        "TypeScript",
         "Sass",
         "Storybook",
         "Highcharts",
@@ -50,8 +53,11 @@
         "Heroku",
         "Agile",
         "Back End",
+        "NodeJs",
         "Express",
-        "Axios"
+        "Axios",
+        "Tailwind",
+        "Styled Components"
       ],
       "projects": [
         {
@@ -136,7 +142,9 @@
         "Playwright",
         "Front End",
         "Agile",
-        "Cloudflare"
+        "Cloudflare",
+        "PostCSS",
+        "Tailwind"
       ],
       "projects": [
         {
@@ -227,24 +235,217 @@
     }
   ],
   "SKILL_CHART_DATA": [
-    { "name": "JavaScript", "startDate": "2018-08-01T00:00:00.000" },
-    { "name": "TypeScript", "startDate": "2022-04-01T00:00:00.000" },
-    { "name": "Python", "startDate": "2024-04-01T00:00:00.000" },
-    { "name": "Django", "startDate": "2024-04-01T00:00:00.000" },
-    { "name": "NextJs", "startDate": "2022-04-01T00:00:00.000" },
-    { "name": "ReactJs", "startDate": "2020-12-01T00:00:00.000" },
-    { "name": "Cypress", "startDate": "2020-12-01T00:00:00.000" },
-    { "name": "GraphQL", "startDate": "2022-04-01T00:00:00.000" },
-    { "name": "Storybook", "startDate": "2018-08-01T00:00:00.000" },
-    { "name": "Remix", "startDate": "2022-04-01T00:00:00.000" },
-    { "name": "Css", "startDate": "2018-08-01T00:00:00.000" },
-    { "name": "PostCss", "startDate": "2022-04-01T00:00:00.000" },
-    { "name": "Tailwind", "startDate": "2022-04-01T00:00:00.000" },
-    { "name": "HTML", "startDate": "2018-08-01T00:00:00.000" },
-    { "name": "Playwright", "startDate": "2024-04-01T00:00:00.000" },
-    { "name": "NodeJs", "startDate": "2023-01-01T00:00:00.000" },
-    { "name": "ExpressJs", "startDate": "2023-08-01T00:00:00.000" },
-    { "name": "Git", "startDate": "2018-08-01T00:00:00.000" },
-    { "name": "Agile", "startDate": "2018-08-01T00:00:00.000" }
+    {
+      "name": "JavaScript",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "dates": [
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        },
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Python",
+      "dates": [
+        {
+          "startDate": "2024-04-01T00:00:00.000",
+          "endDate": "2025-04-01T00:00:00.000"
+        }
+      ]
+    },
+    {
+      "name": "Django",
+      "dates": [
+        {
+          "startDate": "2024-04-01T00:00:00.000",
+          "endDate": "2025-04-01T00:00:00.000"
+        }
+      ]
+    },
+    {
+      "name": "NextJs",
+      "dates": [
+        {
+          "startDate": "2022-04-01T00:00:00.000",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "ReactJs",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": "2020-12-01T00:00:00.000"
+        },
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        },
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Cypress",
+      "dates": [
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        },
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "dates": [
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Storybook",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": "2020-12-01T00:00:00.000"
+        },
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        },
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Remix",
+      "dates": [
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Css",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "PostCss",
+      "dates": [
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Tailwind",
+      "dates": [
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        },
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "HTML",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Playwright",
+      "dates": [
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "NodeJs",
+      "dates": [
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        }
+      ]
+    },
+    {
+      "name": "ExpressJs",
+      "dates": [
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        }
+      ]
+    },
+    {
+      "name": "Git",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Agile",
+      "dates": [
+        {
+          "startDate": "2018-08-01T00:00:00.000",
+          "endDate": null
+        }
+      ]
+    },
+    {
+      "name": "Styled Components",
+      "dates": [
+        {
+          "startDate": "2020-12-01T00:00:00.000",
+          "endDate": "2021-08-01T00:00:00.000"
+        },
+        {
+          "startDate": "2022-04-01T00:00:00",
+          "endDate": null
+        }
+      ]
+    }
   ]
 }

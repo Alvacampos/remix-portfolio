@@ -37,6 +37,28 @@
       gap: $space-20;
       flex-wrap: wrap;
     }
+
+      &__list-item {
+    position: relative;
+    margin-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    list-style: none;
+    color: #c9d1d9; /* GitHub dark mode text */
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.95em;
+      width: 0.55em;
+      height: 0.55em;
+      background: linear-gradient(135deg, #238636 40%, #58a6ff 100%);
+      border-radius: 50%;
+      transform: translateY(-50%);
+      box-shadow: 0 1px 4px rgba(56, 139, 253, 0.12);
+      border: 2px solid #161b22; /* subtle border for contrast */
+    }
+  }
   }
 }
 
@@ -60,6 +82,13 @@
 
     &__info-container {
       max-width: 60%;
+    }
+
+    .card-component {
+      &__list {
+        padding-left: 1.5rem;
+        margin: 1rem 0;
+      }
     }
   }
 }

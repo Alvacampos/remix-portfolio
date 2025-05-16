@@ -5,8 +5,6 @@ import Card, { links as cardLinks } from '~/components/Card';
 import { getClassMaker, formatDate } from '~/utils/utils';
 
 import styles from './style.css?url';
-import { eachWeekOfInterval } from 'date-fns';
-import { useEffect } from 'react';
 
 export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
 

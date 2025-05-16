@@ -9,10 +9,9 @@ import Card, { links as cardLinks } from '~/components/Card';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Input, { links as inputLinks } from '~/components/Input';
 import Carousel, { links as carouselLinks } from '~/components/Carousel';
-import Timeline, { links as timelineLinks } from '~/components/Timeline';
+import { links as timelineLinks } from '~/components/Timeline';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
-import { getClassMaker, formatDate } from '~/utils/utils';
-import { formatDuration, intervalToDuration, differenceInMonths } from 'date-fns';
+import { getClassMaker, formatDate, getSkillChartData } from '~/utils/utils';
 import CustomBarChart, { links as barChartLinks } from '~/components/BarChart';
 
 import styles from './style.css?url';
@@ -47,8 +46,10 @@ type skillsDataTypes = {
   }[];
   SKILL_CHART_DATA: {
     name: string;
-    startDate: string;
-    endDate: string;
+    dates: {
+      startDate: string;
+      endDate: string | null;
+    }[]
   }[];
   EXTRA_ACTIVITIES: {
     title: string;
@@ -79,21 +80,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const skills = skillsData.SKILLS_IMG.map((item) => item.title);
 
-  const chartData = skillsData.SKILL_CHART_DATA.map((data) => [
-    data.name,
-    differenceInMonths(new Date(), new Date(data.startDate)) / 12,
-  ]);
+  const chartData = getSkillChartData(skillsData.SKILL_CHART_DATA);
 
   return json(
     {
       data,
-      yearsOfExp: formatDuration(
-        intervalToDuration({
-          start: new Date(skillsData.WORK_ITEMS[0].startDate),
-          end: new Date(),
-        }),
-        { format: ['years', 'months'] }
-      ),
+      yearsOfExp: formatDate(skillsData.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills,
       chartData,
       extraActivities: skillsData.EXTRA_ACTIVITIES,
