@@ -61,7 +61,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export function ErrorBoundary() {
   const error = useRouteError();
   console.error(error);
-  return <h1>There was a problem while loading this work experience</h1>;
+  return <h1 className={getClasses('error')}>There was a problem while loading this work experience</h1>;
 }
 
 export default function UuidIndex() {

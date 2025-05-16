@@ -12,6 +12,7 @@ export default {
   'background-default': '#010408',
   'background-variation': '#161b22',
   'card-border': '1px solid #30363d',
+  'error-red': '#f85149',
 
   // Border
   'border-10': '10px',

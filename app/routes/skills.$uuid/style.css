@@ -38,27 +38,43 @@
       flex-wrap: wrap;
     }
 
-      &__list-item {
-    position: relative;
-    margin-bottom: 0.75rem;
-    padding-left: 1.25rem;
-    list-style: none;
-    color: #c9d1d9; /* GitHub dark mode text */
+    &__list-item {
+      position: relative;
+      margin-bottom: 0.75rem;
+      padding-left: 1.25rem;
+      list-style: none;
+      color: #c9d1d9; /* GitHub dark mode text */
 
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.95em;
-      width: 0.55em;
-      height: 0.55em;
-      background: linear-gradient(135deg, #238636 40%, #58a6ff 100%);
-      border-radius: 50%;
-      transform: translateY(-50%);
-      box-shadow: 0 1px 4px rgba(56, 139, 253, 0.12);
-      border: 2px solid #161b22; /* subtle border for contrast */
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.95em;
+        width: 0.55em;
+        height: 0.55em;
+        background: linear-gradient(135deg, #238636 40%, #58a6ff 100%);
+        border-radius: 50%;
+        transform: translateY(-50%);
+        box-shadow: 0 1px 4px rgba(56, 139, 253, 0.12);
+        border: 2px solid #161b22; /* subtle border for contrast */
+      }
     }
   }
+
+  &__error {
+    color: $error-red;
+    background: $background-variation;
+    border: $card-border;
+    border-radius: $border-10;
+    padding: $space-20 $space-16;
+    margin: $space-40 auto;
+    max-width: 600px;
+    text-align: center;
+    font-size: $font-24;
+    font-weight: $weight-700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 16px rgba(31, 35, 40, 0.15);
+    font-family: inherit;
   }
 }
 
