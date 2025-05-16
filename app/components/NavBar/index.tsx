@@ -1,5 +1,4 @@
 import { useIntl } from 'react-intl';
-import LinkedInQR from '~/../public/assets/img/linkedin_dark.webp';
 import Button, { links as ButtonLinks } from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, Inbox, LinkedinIcon, Paper } from '~/components/icons';
@@ -85,7 +84,7 @@ export default function NavBar() {
           </ul>
         </div>
         <div>
-          <img loading="lazy" src={LinkedInQR} alt="LinkedIn" className={getClasses('qr')} />
+          <img loading="lazy" src="/assets/img/linkedin_dark.webp" alt="LinkedIn" className={getClasses('qr')} />
         </div>
       </div>
     </nav>
