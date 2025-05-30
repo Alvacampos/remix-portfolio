@@ -1,0 +1,21 @@
+.download-btn {
+  display: inline-block;
+  padding: $space-10 $space-20;
+  background: $background-variation;
+  color: $text-color;
+  border: $card-border;
+  border-radius: $border-6;
+  font-size: $font-16;
+  font-weight: $weight-700;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(31, 35, 40, 0.08);
+
+  &:hover,
+  &:focus {
+    background: $success-green;
+    color: $default-white;
+    box-shadow: 0 4px 16px rgba(56, 139, 253, 0.15);
+    text-decoration: none;
+  }
+}

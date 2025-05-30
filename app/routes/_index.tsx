@@ -1,10 +1,11 @@
 import { FormattedMessage } from 'react-intl';
+import DownloadButton, { links as downloadButtonLinks } from '~/components/DownloadBtn';
 
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+export const links = () => [...downloadButtonLinks(), { rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'home-route';
 const getClasses = getClassMaker(BLOCK);
@@ -29,6 +30,13 @@ export default function Index() {
           </a>
         </span>
       </p>
+      <DownloadButton
+        fileUrl="/assets/files/cv.pdf"
+        fileName="Gonzalo_Alvarez_CV.pdf"
+        className={getClasses('download-btn')}
+      >
+         <FormattedMessage id="DOWNLOAD_CV" />
+      </DownloadButton>
     </div>
   );
 }
