@@ -31,7 +31,7 @@ export default function Index() {
         </span>
       </p>
       <DownloadButton
-        fileUrl="/assets/files/gonzalo-alvarez-campos_cv.pdf"
+        fileUrl="/assets/files/gonzalo_alvarez_campos_cv.pdf"
         fileName="Gonzalo_Alvarez_CV.pdf"
       >
          <FormattedMessage id="DOWNLOAD_CV" />
