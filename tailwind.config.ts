@@ -10,4 +10,7 @@ export default {
     },
   },
   plugins: [],
+  corePlugins: {
+    preflight: false,
+  },
 } satisfies Config;

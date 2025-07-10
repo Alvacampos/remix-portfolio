@@ -24,8 +24,13 @@ export default function Index() {
       </p>
       <p className={getClasses('repo-url')}>
         <FormattedMessage id="CHECK_THIS_PROJECT_REPO" />
-        <span>
-          <a href="https://github.com/Alvacampos/remix-portfolio" target="_blank" rel="noopener noreferrer">
+        <span className={getClasses('repo-link')}>
+          <a
+            href="https://github.com/Alvacampos/remix-portfolio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent hover:underline hover:brightness-125 transition"
+          >
             <FormattedMessage id="REPO_GITHUB" />
           </a>
         </span>
@@ -34,7 +39,7 @@ export default function Index() {
         fileUrl="/assets/files/gonzalo_alvarez_campos_cv.pdf"
         fileName="Gonzalo_Alvarez_CV.pdf"
       >
-         <FormattedMessage id="DOWNLOAD_CV" />
+        <FormattedMessage id="DOWNLOAD_CV" />
       </DownloadButton>
     </div>
   );
