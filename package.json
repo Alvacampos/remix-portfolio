@@ -36,7 +36,7 @@
     "react-intl": "^6.6.8",
     "react-vertical-timeline-component": "^3.6.0",
     "recharts": "^2.15.3",
-    "remix-utils": "^7.6.0",
+    "remix-utils": "^8.8.0",
     "svgo": "^3.3.2",
     "uuid": "^10.0.0"
   },
