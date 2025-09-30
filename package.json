@@ -50,6 +50,7 @@
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-prettier": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
+    "@tailwindcss/postcss": "^4.1.13",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@types/react-vertical-timeline-component": "^3.3.6",

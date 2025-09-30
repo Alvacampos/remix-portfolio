@@ -14,6 +14,7 @@ export default {
         node.warn(result, `Unknown variable "${name}" at ${trace}`);
       },
     },
+    '@tailwindcss/postcss': {},
     tailwindcss: {},
     autoprefixer: {},
     ...(isProd ? { cssnano: {} } : {}),
