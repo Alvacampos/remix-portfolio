@@ -78,7 +78,7 @@
     "terser": "^5.44.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.45.0",
-    "vite": "^5.2.10",
+    "vite": "^7.1.8",
     "vite-tsconfig-paths": "^5.1.4",
     "wrangler": "^3.57.1"
   },
