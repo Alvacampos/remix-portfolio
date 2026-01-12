@@ -29,7 +29,6 @@ export default function Index() {
             href="https://github.com/Alvacampos/remix-portfolio"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent hover:underline hover:brightness-125 transition"
           >
             <FormattedMessage id="REPO_GITHUB" />
           </a>
