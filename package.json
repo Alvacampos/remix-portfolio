@@ -42,7 +42,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250927.0",
+    "@cloudflare/workers-types": "^4.20251014.0",
     "@eslint/compat": "^1.4.0",
     "@eslint/js": "^8.57.0",
     "@ls-lint/ls-lint": "^2.3.1",
