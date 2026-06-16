@@ -11,8 +11,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 ## Stage order (decided)
 
 1. ✅ **Stage 1 — Tests** (Vitest + React Testing Library for units, Playwright for E2E)
-2. 🟡 **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
-3. ⬜ **Stage 3 — Storybook** for every component in `app/components/`
+2. ✅ **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
+3. 🟡 **Stage 3 — Storybook** for every component in `app/components/`
 4. ⬜ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
 5. ⬜ **Stage 5 — Code optimization** (loading time, bundle, lazy-loading, hints — no visual change)
 
@@ -91,8 +91,8 @@ These weren't introduced by Stage 1 but were red on `main` and would have made C
 **Goal:** make `WORK_ITEMS` the single source of truth for skill experience, derive the chart automatically, and eliminate `SKILL_CHART_DATA` drift.
 
 **Branch:** `stage-2-data-restructure`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### Problem solved
 
@@ -153,40 +153,45 @@ Anchored to 2026-06-16, post-refactor chart contents (sorted desc):
 
 **Branch:** `stage-3-storybook`
 **PR:** _(fill in once opened)_
-**Status:** ⬜
+**Status:** 🟡 ready for PR
 
 ### Tooling decisions
 
-- Storybook 9 (latest at time of writing) with the React + Vite framework — it composes natively with our Vite config. `eslint-plugin-storybook` is already a dev-dep ([package.json:70](package.json#L70)) and the ESLint config already extends `plugin:storybook/recommended`.
-- Wire up the same PostCSS pipeline so stories render with real styles.
-- One `*.stories.tsx` per component, colocated next to the `index.tsx`.
+- **Storybook 10** (Vite framework) — was the current latest at time of init; the AGENTS plan said v9, the actual install pulled v10. `eslint-plugin-storybook` had to be bumped to v10 to match — its peerDependency is exact-major.
+- **Custom Vite config for Storybook**: the project's root [vite.config.ts](vite.config.ts) wires up `@remix-run/dev`'s plugin, which only works inside Remix's own dev/build pipeline. Storybook crashes if it loads it. Solution: a tiny [.storybook/vite.config.ts](.storybook/vite.config.ts) with just `tsconfig-paths` and let PostCSS auto-discover from `postcss.config.js`. Pointed Storybook at it via `framework.options.builder.viteConfigPath`.
+- **Global decorator**: stories run through `IntlProvider` + `createMemoryRouter` so `FormattedMessage` and `@remix-run/react`'s `<Link>` work without per-story setup. Same dependency that Stage 1 caught — Remix's Link uses the data router context, not plain `MemoryRouter`.
+- **Add-ons removed from default scaffold**: dropped `@storybook/addon-mcp` (no MCP setup), `@storybook/addon-vitest` (would re-run tests inside Storybook with browser-mode against a separate Playwright installation — overlaps with our existing Vitest job and changes `vitest.config.ts` shape). Kept a11y, docs, chromatic.
+- One `index.stories.tsx` per component, colocated next to the `index.tsx`.
 
 ### Tasks
 
-- [ ] `npx storybook@latest init --type react-vite`.
-- [ ] Configure `.storybook/main.ts` to use Vite + path alias `~`.
-- [ ] Configure `.storybook/preview.ts` with `IntlProvider` decorator (so `FormattedMessage` works), `MemoryRouter` decorator from `@remix-run/react` for `<Link>`, and global CSS imports (`app/styles/style.css`, fonts).
-- [ ] Stories for each component:
-  - [ ] `BarChart` — with sample data.
-  - [ ] `Button` — variants: label only, with `leftIcon`, with `rightIcon`, as link (`url` set), as click handler.
-  - [ ] `Card` — variants: title+texts, itemList, skills, styleless, with children.
-  - [ ] `Carousel` — default.
-  - [ ] `ConditionalWrapper` / `ConditionalLink` — both states.
-  - [ ] `DownloadBtn` — default.
-  - [ ] `Input` — autocomplete with sample suggestions; "no matches" state.
-  - [ ] `LoadingSpinner` — default.
-  - [ ] `NavBar` — default.
-  - [ ] `Timeline` — with sample items.
-- [ ] Add `npm run storybook` and `npm run build-storybook` scripts.
-- [ ] Update `.ls-lint.yml` if needed for `*.stories.tsx` (PascalCase / kebab-case rule should already cover it).
-- [ ] (Optional) Wire Chromatic or just commit `storybook-static/` artifact upload to CI for visual diff.
+- [x] `npx storybook@latest init --type react --builder vite --no-dev --skip-install`.
+- [x] Bumped `eslint-plugin-storybook` 9 → 10 to match storybook major.
+- [x] Wrote [.storybook/main.ts](.storybook/main.ts), [.storybook/preview.tsx](.storybook/preview.tsx), [.storybook/vite.config.ts](.storybook/vite.config.ts).
+- [x] Re-enabled `plugin:storybook/recommended` in [.eslintrc.cjs](.eslintrc.cjs) (was disabled in Stage 1 to unblock CI before Storybook was installed).
+- [x] Reverted the `vitest.config.ts` mangling that the Storybook init introduced (it tried to wedge `@storybook/addon-vitest`'s browser-mode setup into our config; fully removed).
+- [x] Added `storybook-static/` to [.eslintignore](.eslintignore), [.prettierignore](.prettierignore), and [.ls-lint.yml](.ls-lint.yml). `.gitignore` was already updated by the init.
+- [x] Stories for each component (10 components, 23 story variants total):
+  - [x] `BarChart` — `RealisticPortfolio`, `Sparse`.
+  - [x] `Button` — `LabelOnly`, `WithLeftIcon`, `WithRightIcon`, `AsLink`.
+  - [x] `Card` — `TitleAndTexts`, `ItemList`, `SkillsCappedAtSeven`, `Styleless`, `WithChildren`.
+  - [x] `Carousel` — `Default`.
+  - [x] `ConditionalLink` — `ConditionTrue`, `ConditionFalse`.
+  - [x] `DownloadBtn` — `Default`, `FallbackLabel`.
+  - [x] `Input` — `Empty`, `FewSuggestions`.
+  - [x] `LoadingSpinner` — `Default`.
+  - [x] `NavBar` — `Default` (fullscreen layout).
+  - [x] `Timeline` — `ThreeJobs`, `SingleJob`.
+- [x] Added `storybook-build` job to [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
 ### Exit criteria
 
-- [ ] `npm run storybook` boots, every component is reachable.
-- [ ] `npm run build-storybook` succeeds.
-- [ ] All tests + lint + typecheck still green.
-- [ ] AGENTS.md gains a "Storybook" section under Component patterns.
+- [x] `npm run storybook` boots on port 6006, all 10 component groups reachable.
+- [x] `npm run build-storybook` succeeds (clean static output to `storybook-static/`).
+- [x] `npm test` — 41/41 unit tests pass.
+- [x] `npm run test:e2e --project=chromium` — 15/15 E2E pass.
+- [x] `npm run lint` and `npm run typecheck` clean.
+- [x] AGENTS.md updated: new "Storybook" section, stack table mentions Storybook, checklist includes `build-storybook`.
 
 ---
 
@@ -284,7 +289,7 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | Stage | Branch                     | PR          | Status | Merged |
 | ----- | -------------------------- | ----------- | ------ | ------ |
 | 1     | `stage-1-tests`            | merged      | ✅     | yes    |
-| 2     | `stage-2-data-restructure` | _(opening)_ | 🟡     | —      |
-| 3     | `stage-3-storybook`        | _(pending)_ | ⬜     | —      |
+| 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
+| 3     | `stage-3-storybook`        | _(opening)_ | 🟡     | —      |
 | 4     | `stage-4-deps`             | _(pending)_ | ⬜     | —      |
 | 5     | `stage-5-optimize`         | _(pending)_ | ⬜     | —      |

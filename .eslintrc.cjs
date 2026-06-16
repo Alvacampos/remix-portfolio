@@ -22,7 +22,13 @@ module.exports = {
 
   // Base config
   plugins: ['prettier', 'simple-import-sort'],
-  extends: ['eslint:recommended', 'airbnb', 'airbnb/hooks', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'airbnb',
+    'airbnb/hooks',
+    'prettier',
+    'plugin:storybook/recommended',
+  ],
   rules: {
     'comma-dangle': [
       'error',
@@ -46,6 +52,8 @@ module.exports = {
           'vite.config.ts',
           'tailwind.config.ts',
           'postcss.config.js',
+          '.storybook/**/*.{ts,tsx,js,jsx}',
+          '**/*.stories.{ts,tsx,js,jsx}',
           '/**/*.spec.ts',
         ],
       },
