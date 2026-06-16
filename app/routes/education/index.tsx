@@ -1,9 +1,8 @@
 import 'react-vertical-timeline-component/style.min.css';
 
-import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
-import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
@@ -11,6 +10,15 @@ import { formatDate, getClassMaker } from '~/utils/utils';
 import styles from './style.css?url';
 
 export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
+
+export const meta: MetaFunction = () => [
+  { title: 'Education — Gonzalo Alvarez Campos' },
+  {
+    name: 'description',
+    content:
+      'Software Development associate degree from Universidad del Norte Santo Tomas de Aquino, plus Cambridge / EF SET English certifications and Udemy programming courses.',
+  },
+];
 
 const BLOCK = 'education-route';
 const getClasses = getClassMaker(BLOCK);
@@ -57,6 +65,8 @@ export default function Skills() {
   };
 
   const certificationsCards = certifications.map((certification) => ({
+    // institution is unique across certifications in education.json — stable key.
+    key: certification.institution,
     title: certification.title,
     texts: [
       `Date: ${formatDate(certification.startDate, '')}`,
@@ -81,8 +91,8 @@ export default function Skills() {
           <FormattedMessage id="CERTIFICATION" />
         </h2>
         <div className={getClasses('card-wrapper', 'certification-wrapper')}>
-          {certificationsCards.map((card) => (
-            <Card {...card} key={uuid()} />
+          {certificationsCards.map(({ key, ...card }) => (
+            <Card {...card} key={key} />
           ))}
         </div>
       </div>

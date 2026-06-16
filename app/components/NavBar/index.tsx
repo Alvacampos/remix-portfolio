@@ -34,17 +34,19 @@ export default function NavBar() {
       url: './',
       label: formatMessage({ id: 'HOME' }),
       leftIcon: Home,
+      prefetch: 'intent' as const,
     },
     {
       url: './skills',
       label: formatMessage({ id: 'CV' }),
       leftIcon: Paper,
+      prefetch: 'intent' as const,
     },
     {
       url: './education',
       label: formatMessage({ id: 'EDUCATION' }),
-
       leftIcon: Education,
+      prefetch: 'intent' as const,
     },
     // TODO: Uncomment when the contact page is ready
     // {
@@ -93,7 +95,10 @@ export default function NavBar() {
           <img
             loading="lazy"
             src="/assets/img/linkedin_dark.webp"
-            alt="LinkedIn"
+            alt=""
+            aria-hidden="true"
+            width={1500}
+            height={1500}
             className={getClasses('qr')}
           />
         </div>

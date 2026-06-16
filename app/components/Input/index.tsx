@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
@@ -25,58 +25,100 @@ export default function Autocomplete({
   const { formatMessage } = useIntl();
   const [inputValue, setInputValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+
+  const reactId = useId();
+  const listboxId = `${reactId}-listbox`;
+  const inputId = `${reactId}-input`;
+  const optionId = (i: number) => `${reactId}-option-${i}`;
+
+  const updateSuggestions = (value: string) => {
+    if (value.length === 0) {
+      setSuggestions([]);
+      setActiveIndex(-1);
+      return;
+    }
+    const filtered = possibleValues.filter((suggestion) =>
+      suggestion.toLowerCase().includes(value.toLowerCase())
+    );
+    setSuggestions(filtered.length > 0 ? filtered : [formatMessage({ id: 'NO_MATCHES_FOUND' })]);
+    setActiveIndex(-1);
+  };
 
   const handleInputChange = (event: { target: { value: string } }) => {
     const { value } = event.target;
     setInputValue(value);
     handleInput(value);
+    updateSuggestions(value);
+  };
 
-    if (value.length > 0) {
-      const filteredSuggestions = possibleValues.filter((suggestion) =>
-        suggestion.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(
-        filteredSuggestions.length > 0
-          ? filteredSuggestions
-          : [formatMessage({ id: 'NO_MATCHES_FOUND' })]
-      );
-    } else {
-      setSuggestions([]);
+  const selectSuggestion = (value: string) => {
+    setInputValue(value);
+    handleInput(value);
+    setSuggestions([]);
+    setActiveIndex(-1);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (suggestions.length === 0) return;
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setActiveIndex((i) => (i + 1) % suggestions.length);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setActiveIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+        break;
+      case 'Enter':
+        if (activeIndex >= 0) {
+          event.preventDefault();
+          selectSuggestion(suggestions[activeIndex]);
+        }
+        break;
+      case 'Escape':
+        setSuggestions([]);
+        setActiveIndex(-1);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleSuggestionClick = (value: string) => {
-    setInputValue(value);
-    setSuggestions([]);
-  };
+  const isOpen = suggestions.length > 0;
 
   return (
     <div className={getClasses('wrapper')}>
+      <label htmlFor={inputId} className={getClasses('label')}>
+        {placeholder}
+      </label>
       <input
+        id={inputId}
         type="text"
         value={inputValue}
         onChange={handleInputChange}
         onFocus={handleInputChange}
+        onKeyDown={handleKeyDown}
         className={getClasses()}
         placeholder={placeholder}
         role="combobox"
         aria-autocomplete="list"
-        aria-controls="autocomplete-list"
-        aria-expanded={suggestions.length > 0}
-        aria-activedescendant=""
+        aria-controls={listboxId}
+        aria-expanded={isOpen}
+        aria-activedescendant={isOpen && activeIndex >= 0 ? optionId(activeIndex) : undefined}
       />
-      {suggestions.length > 0 && (
-        <ul className={getClasses('suggestions-list')} id="autocomplete-list">
-          {suggestions.map((suggestion) => (
+      {isOpen && (
+        <ul className={getClasses('suggestions-list')} id={listboxId} role="listbox">
+          {suggestions.map((suggestion, i) => (
             <li
               key={suggestion}
-              onClick={() => handleSuggestionClick(suggestion)}
-              onKeyDown={(event) => event.keyCode === 13 && handleSuggestionClick(suggestion)}
+              id={optionId(i)}
+              onClick={() => selectSuggestion(suggestion)}
+              onKeyDown={(event) => event.key === 'Enter' && selectSuggestion(suggestion)}
               role="option"
-              aria-selected={inputValue === suggestion}
-              className={getClasses('suggestion-item')}
+              aria-selected={inputValue === suggestion || activeIndex === i}
+              className={getClasses('suggestion-item', { active: activeIndex === i })}
               tabIndex={0}
-              aria-label={suggestion || 'Suggestion'}
             >
               {suggestion}
             </li>

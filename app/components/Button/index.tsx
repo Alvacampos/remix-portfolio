@@ -19,6 +19,10 @@ type ButtonProps = {
   btnType?: 'button' | 'submit';
   handleClick?: () => void;
   children?: ReactNode;
+  // Forwarded to @remix-run/react's <Link prefetch> when `url` is set.
+  // 'intent' pre-warms the route on hover/focus — sensible default for
+  // primary nav.
+  prefetch?: 'intent' | 'render' | 'none' | 'viewport';
 };
 
 export default function Button({
@@ -30,6 +34,7 @@ export default function Button({
   btnType = 'button',
   handleClick = noop,
   children = undefined,
+  prefetch = undefined,
 }: ButtonProps) {
   return (
     <ConditionalLink
@@ -37,6 +42,7 @@ export default function Button({
       condition={!!url}
       label={label}
       className={getClasses('link-wrapper')}
+      prefetch={prefetch}
     >
       {/* eslint-disable-next-line react/button-has-type */}
       <button className={getClasses(className)} onClick={handleClick} type={btnType}>

@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -8,6 +8,17 @@ import { formatDate, getClassMaker } from '~/utils/utils';
 import styles from './style.css?url';
 
 export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  const title = data?.data?.title ?? 'Work item';
+  return [
+    { title: `${title} — Gonzalo Alvarez Campos` },
+    {
+      name: 'description',
+      content: data?.data?.rol ?? 'Work experience detail.',
+    },
+  ];
+};
 
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
@@ -38,6 +49,19 @@ type skillsDataTypes =
     }
   | undefined;
 
+// Intrinsic dimensions for each company logo, fed to <img width> / <img height>
+// to reserve layout space (fixes CLS). Captured from the source webp files;
+// keep in sync if logos are replaced with different-sized variants.
+const LOGO_DIMS: Record<string, { width: number; height: number }> = {
+  'unsta2.webp': { width: 968, height: 519 },
+  'coderhouse.webp': { width: 976, height: 272 },
+  'globant.webp': { width: 3000, height: 2000 },
+  'cliengo.webp': { width: 999, height: 300 },
+  'endava.webp': { width: 541, height: 184 },
+  'qubika.webp': { width: 800, height: 600 },
+};
+const FALLBACK_DIMS = { width: 1000, height: 500 };
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const id = params && params?.uuid;
   const url = new URL('/data/skills.json', request.url);
@@ -63,9 +87,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (data === undefined) throw new Error('Oh no! Something went wrong!');
+
+  const fileName = imagePath?.split('/').pop() ?? '';
+  const imageDims = LOGO_DIMS[fileName] ?? FALLBACK_DIMS;
+
   return json({
     data,
     imagePath,
+    imageDims,
   });
 }
 
@@ -78,7 +107,7 @@ export function ErrorBoundary() {
 }
 
 export default function UuidIndex() {
-  const { data, imagePath } = useLoaderData<typeof loader>();
+  const { data, imagePath, imageDims } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
   const { title, projects, startDate, skills } = data;
 
@@ -112,7 +141,14 @@ export default function UuidIndex() {
       <h1 className={getClasses('title')}>{title}</h1>
       <div className={getClasses('main-container')}>
         <div className={getClasses('img-container')}>
-          <img loading="lazy" src={imagePath} alt={title} className={getClasses('company-logo')} />
+          <img
+            loading="lazy"
+            src={imagePath}
+            alt={title}
+            width={imageDims.width}
+            height={imageDims.height}
+            className={getClasses('company-logo')}
+          />
         </div>
         <div className={getClasses('info-container')}>
           <Card title={formatMessage({ id: 'HIRE_DATES' })}>{renderDates()}</Card>

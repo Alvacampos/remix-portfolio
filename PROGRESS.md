@@ -13,8 +13,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 1. ✅ **Stage 1 — Tests** (Vitest + React Testing Library for units, Playwright for E2E)
 2. ✅ **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
 3. ✅ **Stage 3 — Storybook** for every component in `app/components/`
-4. 🟡 **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
-5. ⬜ **Stage 5 — Code optimization** (loading time, bundle, lazy-loading, hints — no visual change)
+4. ✅ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
+5. 🟡 **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -200,8 +200,8 @@ Anchored to 2026-06-16, post-refactor chart contents (sorted desc):
 **Goal:** bring everything to current majors except React (separate, larger decision).
 
 **Branch:** `stage-4-deps`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 in progress
+**PR:** merged
+**Status:** ✅ done
 
 ### Scope decisions (made on this branch)
 
@@ -270,48 +270,110 @@ wrangler                           4.45.3        →  4.101.0        (minor)
 
 ## Stage 5 — Code optimization
 
-**Goal:** improve loading times and runtime cost without changing the visual output.
+**Goal:** improve loading times, accessibility, SEO, and developer ergonomics without changing the visual output.
 
 **Branch:** `stage-5-optimize`
 **PR:** _(fill in once opened)_
-**Status:** ⬜
+**Status:** 🟡 ready for PR
 
-### Investigation (do this first, then prioritize)
+### Scope decisions (made on this branch)
 
-- [ ] Run `npm run build` and inspect bundle output in `build/client/assets/`. Note any chunks > 100 KB gzipped.
-- [ ] Run Lighthouse on the deployed site or `npm run preview`. Capture baseline LCP / CLS / TBT.
-- [ ] Open `recharts` import — it tree-shakes per-component, but verify only the bits we use end up in the bundle.
-- [ ] Check `react-vertical-timeline-component` — already lazy-loaded in [Timeline](app/components/Timeline/index.tsx#L19) and [skills.\_index](app/routes/skills._index/index.tsx#L32), confirm there's no duplicate eager import.
-- [ ] Audit images in `public/assets/img/`: WebP is already used (good); add `width` / `height` to `<img>` tags to prevent CLS; verify `loading="lazy"` is consistently applied.
-- [ ] Audit fonts: the Roboto variable font is loaded via `@font-face` with `font-display: swap` — good. Consider `<link rel="preload" as="font" type="font/ttf" crossorigin>` in `root.tsx` `links()`.
+- **One Tier-1 PR** instead of splitting — most changes are independent low-risk wins; bundling them lands the optimization pass as a coherent diff.
+- **Spanish locale = invisible (Accept-Language)** — no UI switcher in this PR. Adding one is a separate visual change.
+- **JSON-LD `Person` includes** name / role / employer / city / GitHub / LinkedIn from the public CV. **No email or phone** — those are scraper magnets.
+- **No `og:image`** — needs an actual 1200×630 asset; Tier-2 once that exists.
 
-### Likely wins (turn into individual commits)
+### Tasks (all done)
 
-- [ ] **Eliminate `uuid()` for static lists.** [Carousel](app/components/Carousel/index.tsx#L73), [Card.renderSkills](app/components/Card/index.tsx#L36), [education](app/routes/education/index.tsx#L84), [skills.\_index `renderSpan`](app/routes/skills._index/index.tsx#L144) all generate `uuid()` keys for stable lists. This re-mounts the entire list on every render and bloats the bundle (`uuid` is ~2.6 KB gzipped). Replace with stable index-based or content-based keys. **High impact, low risk.**
-- [ ] **Drop the `uuid` dependency entirely** if all call sites can use stable keys.
-- [ ] **Preload critical CSS / font** via `<link rel="preload">` in `root.tsx`.
-- [ ] **Image dimensions:** add `width` and `height` attributes to all `<img>` tags so the browser reserves layout space (fixes CLS).
-- [ ] **Code-split route CSS:** Remix already does this via `links()` — verify per-route CSS isn't loaded on `/`.
-- [ ] **Memoize derived data in `skills._index`** loader (already cached via `Cache-Control` for 1h, but `getSkillChartData` runs on every server invocation — fine; just confirm it's not doing N² work).
-- [ ] **Lazy-load `recharts`** the same way `react-vertical-timeline-component` is. The chart is below the fold on `/skills`.
-- [ ] **`<NavBar>` `<img>` for the LinkedIn QR** is loaded eagerly even on mobile where it's hidden — set `loading="lazy"` and confirm CSS hides it before fetch.
-- [ ] **Drop `react-is@19`** if it's only there as a `recharts` peer — it shouldn't be a direct dep.
-- [ ] **`StrictMode` double-rendering** is intentional in dev; confirm production build doesn't ship StrictMode wrappers (Remix `entry.client.tsx` does — that's fine, it's a no-op in prod).
+**Performance**
 
-### Tasks
+- [x] Lazy-load `BarChart`, `Carousel`, and `Timeline` on `/skills` via `lazy()` + `Suspense`. Removed their static `links()` from the route to actually let Vite split the chunks (was being defeated by a "dynamic + static import" warning).
+- [x] Replaced `Card`'s `lazy(() => import('~/components/Card'))` inside `Timeline` (same warning); Card is just a normal import now.
+- [x] Convert Roboto variable font from TTF (468 KB) → **WOFF2 (209 KB, 55% smaller)**; deleted the unused italic variant + the `static/` folder of single-weight fonts.
+- [x] `<link rel="preload" as="font" type="font/woff2" crossorigin>` in [root.tsx](app/root.tsx) so the font lands during the HTML parse.
+- [x] Added `width`/`height` to every `<img>` (skills detail company logo via a `LOGO_DIMS` lookup in the loader; NavBar decorative img with intrinsic 1500×1500). Fixes CLS.
+- [x] Replaced all `uuid()`-as-React-key call sites with stable content keys: `Card` skill chips, `Carousel` icons, `Skills` button spans + `extra activities`, `Education` certifications. Removed `uuid` and `@types/uuid` from deps.
+- [x] `useCallback` / `useMemo` around the filter helpers and the static `buttonSpans` array in [skills.\_index](app/routes/skills._index/index.tsx).
+- [x] `<Link prefetch="intent">` plumbed through `Button` → `ConditionalLink` → Remix `<Link>` for the three NavBar entries. Hover / focus pre-warms the route.
+- [x] Disabled production sourcemaps in [vite.config.ts](vite.config.ts) — no path leaks, smaller deploy.
 
-- [ ] Capture baseline metrics in this file (bundle size, Lighthouse).
-- [ ] Implement each optimization as its own commit so we can revert one without losing the rest.
-- [ ] Re-measure after each commit; note the delta in this file.
-- [ ] Confirm no visual diff via Storybook (or screenshot diffing if we wired Chromatic).
+**SEO**
 
-### Exit criteria
+- [x] Per-route `meta` exports on `/`, `/skills`, `/education`, and the dynamic `/skills/:uuid` (uses the work-item title + role).
+- [x] Open Graph (`og:type`, `og:title`, `og:description`, `og:url`, `og:site_name`, `og:locale`) + Twitter card tags in root.
+- [x] JSON-LD `Person` schema in `<head>`.
+- [x] Canonical link in root `links()`.
+- [x] [public/robots.txt](public/robots.txt) — disallow `/data/` (the static JSON is content data, not pages), allow everything else, sitemap pointer.
+- [x] [public/sitemap.xml](public/sitemap.xml) — `/`, `/skills`, `/education`.
+- [x] `theme-color` corrected from `#ffffff` → `#010408` (the actual app background).
 
-- [ ] All tests + Storybook + lint + typecheck green.
-- [ ] Lighthouse performance score ≥ baseline (and ideally improved on LCP / TBT).
-- [ ] No visual regressions.
-- [ ] Bundle size on the home route reduced.
-- [ ] AGENTS.md "Gotchas" updated if any of them were resolved (e.g. `uuid()` keys note, `legacy-peer-deps`, etc.).
+**Accessibility**
+
+- [x] `<html lang>` driven by the chosen locale (loader → `useLoaderData` → `Layout`). Screen readers now read the right language.
+- [x] Skip-to-content link as the first focusable element in `<body>`, visually hidden until focused. WCAG 2.4.1.
+- [x] [Input](app/components/Input/index.tsx) overhaul:
+  - Added a real `<label>` (visually hidden via `clip-path: inset(50%)`) — was failing WCAG 1.3.1.
+  - Replaced deprecated `event.keyCode` with `event.key`.
+  - Implemented full keyboard nav: ArrowDown / ArrowUp wrap through suggestions, Enter selects the active one, Escape closes the listbox.
+  - Set `aria-activedescendant` to the focused option's id (or undefined) — was an empty string before.
+  - Stable per-instance ids via `useId()` (was a hard-coded string, would clash if two instances mounted).
+- [x] [LoadingSpinner](app/components/LoadingSpinner/index.tsx) gained `role="status"`, `aria-live="polite"`, and an i18n'd `aria-label`.
+- [x] NavBar's decorative `<img>` is now `alt=""` + `aria-hidden="true"` — the previous `alt="LinkedIn"` was misleading (file is a logo, not a QR) and duplicated the real LinkedIn link's announcement.
+
+**i18n**
+
+- [x] Added [es-ES.json](app/intl/es-ES.json) with full message coverage; mirrored the new `SKIP_TO_CONTENT` and `LOADING` keys into [en-US.json](app/intl/en-US.json).
+- [x] Created [app/intl/index.ts](app/intl/index.ts) with `pickLocale(request)` that reads `Accept-Language`, normalizes to the language part, and falls back to English. Root loader returns `{ locale, messages }`.
+
+**CI / DX**
+
+- [x] [.github/workflows/ci.yml](.github/workflows/ci.yml) — cache the Playwright browser binaries between runs (keyed on the `@playwright/test` version). Saves ~30–60s per E2E run.
+- [x] [.github/dependabot.yml](.github/dependabot.yml) — group related ecosystems (Remix, ESLint, Stylelint, Vitest, Storybook, types, Tailwind, Cloudflare). Schedule reduced to weekly. Added `github-actions` ecosystem too. Result: roughly 1 PR per ecosystem per week instead of 5+ daily.
+- [x] [public/\_headers](public/_headers) — add long-cache rules for `/fonts/*`, daily-cache for robots/sitemap, and 1-hour edge cache for `/data/*`. [public/\_routes.json](public/_routes.json) excludes those paths from the Pages Function so they're served straight from the edge CDN.
+
+**Hygiene**
+
+- [x] Deleted `app/tailwind.css` (duplicate of `app/styles/tailwind.css`).
+- [x] Removed `uuid` and `@types/uuid` deps. Tried to drop `react-is` too — recharts has an undeclared runtime dep on it, so it stays.
+
+### Verification
+
+Pre-Stage-5 baseline (captured at branch creation, `npm run build`):
+
+```text
+index-CX1cqMv9.js                 401 KB   (recharts in main chunk; loaded everywhere)
+components-BB6NW_1M.js             245 KB
+Roboto-VariableFont_…ttf           468 KB   + 497 KB italic (unused) + static/ folder
+home route chunk                  ~1.2 KB
+build warnings                     2 ("dynamic + static import" on Card and Timeline)
+```
+
+Post-Stage-5:
+
+```text
+index-Di3CULw-.js                 333 KB   (recharts vendor chunk; ONLY loaded on /skills)
+components-RSBE7rfx.js             245 KB
+index-CmCTroeT.js (Carousel)       55 KB   (lazy chunk for /skills below the fold)
+Roboto-VariableFont_…woff2         209 KB   (single file)
+home route chunk                  ~1.4 KB
+build warnings                     0
+```
+
+The 333 KB recharts chunk no longer ships on `/` or `/education`. Combined with the 259 KB font reduction and the dropped italic, the homepage loads ~600 KB less data. CLS should be near zero now that all `<img>` have intrinsic dims.
+
+- [x] `npm run lint`, `npm run typecheck` — clean.
+- [x] `npm test` — 41/41.
+- [x] `npm run test:e2e --project=chromium` — 15/15.
+- [x] `npm run build-storybook` — succeeds.
+
+### Tier 2 (deferred — separate future PRs)
+
+- Color-contrast audit of the design tokens (might force visual changes).
+- Design-token rename: drop the misleading `alternative-black: '#ffffff00'`, normalize space scale.
+- Locale switcher UI in the NavBar.
+- Lighthouse-CI as a GitHub job with budgets (LCP < 2.5s).
+- Refactor the `/data/*.json` loaders to import the JSON server-side instead of `fetch(new URL('/data/...', request.url))`.
+- `og:image` once a real 1200×630 cover exists.
 
 ---
 
@@ -332,5 +394,5 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | 1     | `stage-1-tests`            | merged      | ✅     | yes    |
 | 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
 | 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
-| 4     | `stage-4-deps`             | _(opening)_ | 🟡     | —      |
-| 5     | `stage-5-optimize`         | _(pending)_ | ⬜     | —      |
+| 4     | `stage-4-deps`             | merged      | ✅     | yes    |
+| 5     | `stage-5-optimize`         | _(opening)_ | 🟡     | —      |

@@ -1,36 +1,49 @@
 import 'react-vertical-timeline-component/style.min.css';
 
-import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { v4 as uuid } from 'uuid';
 
-import CustomBarChart, { links as barChartLinks } from '~/components/BarChart';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Card, { links as cardLinks } from '~/components/Card';
-import Carousel, { links as carouselLinks } from '~/components/Carousel';
 import Input, { links as inputLinks } from '~/components/Input';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
-import { links as timelineLinks } from '~/components/Timeline';
 import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
 
 import styles from './style.css?url';
 
+// BarChart, Carousel, Timeline are lazy-loaded below; their CSS ships
+// with the lazy chunk (Vite bundles `import './style.css'` into the
+// chunk's stylesheet automatically). Including their `links()` here
+// would re-import the modules statically and defeat the code split —
+// see the Vite warning about "dynamic import will not move module
+// into another chunk".
 export const links = () => [
   ...cardLinks(),
   ...inputLinks(),
   ...buttonLinks(),
-  ...carouselLinks(),
-  ...barChartLinks(),
-  ...timelineLinks(),
   ...loadingSpinnerLinks(),
   { rel: 'stylesheet', href: styles },
 ];
 
+export const meta: MetaFunction = () => [
+  { title: 'Skills & Work Experience — Gonzalo Alvarez Campos' },
+  {
+    name: 'description',
+    content:
+      'Work history, technologies, and years of experience per skill. Filter by technology to see where each was used.',
+  },
+];
+
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
+
+// Below-the-fold heavy components — code-split so the initial /skills
+// HTML/JS doesn't ship recharts (~150 KB) and 25 SVG icons up-front.
 const LazyTimeline = lazy(() => import('~/components/Timeline'));
+const LazyCarousel = lazy(() => import('~/components/Carousel'));
+const LazyBarChart = lazy(() => import('~/components/BarChart'));
 
 type SkillEntryJson = {
   name: string;
@@ -107,49 +120,51 @@ export default function Skills() {
   const [isFrontEnd, setIsFrontEnd] = useState(false);
   const [isBackEnd, setIsBackEnd] = useState(false);
 
-  const filter = (word: string) =>
-    data.filter((item) =>
-      item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
-    );
+  const filter = useCallback(
+    (word: string) =>
+      data.filter((item) =>
+        item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
+      ),
+    [data]
+  );
 
-  const filterInput = (word: string) => {
-    if (!word || word === '') {
-      setFilteredData(data);
-      return;
-    }
+  const filterInput = useCallback(
+    (word: string) => {
+      if (!word || word === '') {
+        setFilteredData(data);
+        return;
+      }
+      setFilteredData(filter(word));
+    },
+    [data, filter]
+  );
 
-    const filteredArray = filter(word);
-    setFilteredData(filteredArray);
-  };
-
-  const handleFrontEnd = () => {
+  const handleFrontEnd = useCallback(() => {
     if (isFrontEnd) {
       setFilteredData(data);
       setIsFrontEnd(false);
     } else {
-      setFilteredData(() => filter(formatMessage({ id: 'FRONT_END' })));
+      setFilteredData(filter(formatMessage({ id: 'FRONT_END' })));
       setIsFrontEnd(true);
     }
-  };
+  }, [isFrontEnd, data, filter, formatMessage]);
 
-  const handleBackEnd = () => {
+  const handleBackEnd = useCallback(() => {
     if (isBackEnd) {
       setFilteredData(data);
       setIsBackEnd(false);
     } else {
-      setFilteredData(() => filter(formatMessage({ id: 'BACK_END' })));
+      setFilteredData(filter(formatMessage({ id: 'BACK_END' })));
       setIsBackEnd(true);
     }
-  };
+  }, [isBackEnd, data, filter, formatMessage]);
 
-  const renderSpan = () => {
-    const spans = [];
-    for (let i = 1; i <= 4; i++) {
-      const key = uuid();
-      spans.push(<span key={key} />);
-    }
-    return spans;
-  };
+  // Static decorative spans used inside Front End / Back End buttons —
+  // index keys are fine here, the array length never changes.
+  const buttonSpans = useMemo(
+    () => Array.from({ length: 4 }, (_, i) => <span key={`span-${i}`} />),
+    []
+  );
 
   return (
     <div className={getClasses()}>
@@ -169,14 +184,14 @@ export default function Skills() {
               className={`btn${isFrontEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'FRONT_END' })}
             >
-              {renderSpan()}
+              {buttonSpans}
             </Button>
             <Button
               handleClick={handleBackEnd}
               className={`btn${isBackEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'BACK_END' })}
             >
-              {renderSpan()}
+              {buttonSpans}
             </Button>
           </div>
         </div>
@@ -195,18 +210,21 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
-        <Carousel />
-        <CustomBarChart data={chartData} />
+        <Suspense fallback={<LoadingSpinner />}>
+          <LazyCarousel />
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <LazyBarChart data={chartData} />
+        </Suspense>
       </div>
       <div className={getClasses('extra-activities')}>
         <h2>
           <FormattedMessage id="EXTRA_ACTIVITIES" />
         </h2>
         <div className={getClasses('extra-activities-wrapper')}>
-          {extraActivities.map((activity) => {
-            const key = uuid();
-            return <Card title={activity.title} itemList={activity.data} key={key} />;
-          })}
+          {extraActivities.map((activity) => (
+            <Card title={activity.title} itemList={activity.data} key={activity.title} />
+          ))}
         </div>
       </div>
     </div>
