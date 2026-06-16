@@ -10,4 +10,11 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
+  // SVGR-generated icon components (app/components/icons/*.jsx) don't import
+  // React explicitly — make sure esbuild applies the automatic JSX runtime,
+  // same trick as vitest.config.ts. Without this, Storybook falls back to
+  // the classic runtime and every icon throws "React is not defined".
+  esbuild: {
+    jsx: 'automatic',
+  },
 });
