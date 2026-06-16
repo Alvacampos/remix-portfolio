@@ -374,6 +374,8 @@ The 333 KB recharts chunk no longer ships on `/` or `/education`. Combined with 
 - Lighthouse-CI as a GitHub job with budgets (LCP < 2.5s).
 - Refactor the `/data/*.json` loaders to import the JSON server-side instead of `fetch(new URL('/data/...', request.url))`.
 - `og:image` once a real 1200×630 cover exists.
+- **Re-attempt JS code-split for BarChart / Carousel / Timeline on `/skills`.** Stage 5's first attempt broke SSR because removing the components' `links()` from the route stripped their CSS from `<head>`, leaving the page unstyled until hydration. The fix-path is "manual CSS preload": keep `lazy()`+`Suspense` for the JS, but pass each component's `style.css?url` directly to the route's `links()` so the CSS ships in `<head>` while the JS module stays dynamically imported. Brittle (hard-coded URLs, needs care for `react-vertical-timeline-component/style.min.css` in `node_modules`), so deferred until the savings on `/skills` are worth the carry cost.
+- **Timeline node alignment polish.** Visually the date span and the card sit at slightly different vertical positions because the card has padding/borders the bare date span doesn't. Wrap the `vertical-timeline-element-date` span in a sibling box with the same height as the card so the icon/date/card baselines align cleanly. Cosmetic only; happens after the alignment looks good in a real browser screenshot loop.
 
 ---
 
