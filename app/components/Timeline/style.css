@@ -1,4 +1,11 @@
 .timeline-component {
+  /*
+   * react-vertical-timeline-component v4 introduced a `--line-color`
+   * custom property (default #fff) for the vertical line. Override it
+   * here to keep the brand green from the previous v3 styling.
+   */
+  --line-color: #2ea043;
+
   & .vertical-timeline-element-content {
     background: none;
     box-shadow: none;
@@ -31,19 +38,29 @@
     }
   }
 
-  & .vertical-timeline-element-icon {
+  /*
+   * v4 of the library ships per-size shadow modifier classes
+   * (.shadow-size-small/medium/large) whose `box-shadow` declarations
+   * win over a bare `.vertical-timeline-element-icon` rule because
+   * they're more specific. Match the modifier chain so our green ring
+   * paints on top.
+   */
+  & .vertical-timeline-element-icon,
+  & .vertical-timeline-element-icon.shadow-size-small,
+  & .vertical-timeline-element-icon.shadow-size-medium,
+  & .vertical-timeline-element-icon.shadow-size-large {
     background: $background-default;
     color: $alternative-green;
     box-shadow:
       0 0 0 4px $alternative-green,
       inset 0 2px 0 rgba(0, 0, 0, 0.08),
       0 3px 0 4px rgba(0, 0, 0, 0.05);
+  }
 
-    svg {
-      top: 50%;
-      left: 50%;
-      fill: $alternative-green;
-    }
+  & .vertical-timeline-element-icon svg {
+    top: 50%;
+    left: 50%;
+    fill: $alternative-green;
   }
 
   &__element-link {

@@ -29,9 +29,30 @@ main {
   width: 100vw;
 }
 
+/*
+ * Visually hidden until focused — keyboard users hitting Tab as the first
+ * action get a "Skip to content" link they can activate to bypass the nav.
+ * WCAG 2.4.1.
+ */
+.root__skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 1000;
+  padding: $space-10 $space-15;
+  color: $text-color;
+  background: $background-variation;
+  text-decoration: none;
+  border-radius: 0 0 $border-4 0;
+}
+
+.root__skip-link:focus {
+  top: 0;
+}
+
 @font-face {
   font-family: 'Roboto';
-  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2') format('woff2');
   font-weight: 100 900;
   font-stretch: 75% 100%;
   font-style: normal;

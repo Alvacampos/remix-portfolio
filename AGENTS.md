@@ -22,13 +22,13 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Layer             | Tech                                                                                             |
 | ----------------- | ------------------------------------------------------------------------------------------------ |
 | Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                            |
-| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification, sourcemaps on                        |
+| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)              |
 | Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                                   |
 | Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                              |
 | UI                | React 18 + TypeScript                                                                            |
 | Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                      |
 | Styling           | PostCSS (extend-rule, import, nested, simple-vars, mixins) + Tailwind v4                         |
-| i18n              | `react-intl` (English only — [app/intl/en-US.json](app/intl/en-US.json))                         |
+| i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/))     |
 | Charts            | `recharts` (custom horizontal bar chart in [app/components/BarChart/](app/components/BarChart/)) |
 | Timeline          | `react-vertical-timeline-component`                                                              |
 | Dates             | `date-fns`                                                                                       |
@@ -72,19 +72,19 @@ remix-portfolio/
 │   │   ├── Timeline/             # Wraps react-vertical-timeline-component
 │   │   └── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
 │   ├── assets/icons/             # Source .svg files (kebab-case)
-│   ├── intl/en-US.json           # Translation messages
+│   ├── intl/                     # en-US.json + es-ES.json + Accept-Language picker (index.ts)
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   ├── style.css             # Global body/html/main + @font-face Roboto
 │   │   └── tailwind.css          # @tailwind directives
-│   ├── tailwind.css              # Duplicate of styles/tailwind.css (root.tsx imports styles/)
 │   └── utils/utils.tsx           # getClassMaker, formatDate, getSkillChartData, noop
 ├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
+│   ├── robots.txt + sitemap.xml  # SEO basics
+│   ├── fonts/roboto/             # Roboto VariableFont (WOFF2)
 │   ├── assets/img/               # webp logos for each company
 │   ├── assets/files/             # CV PDF
-│   ├── fonts/roboto/             # Roboto VariableFont
 │   ├── _headers                  # Cloudflare Pages cache-control headers
 │   └── _routes.json              # Pages Functions invocation rules
 ├── build/                        # Vite output (gitignored): build/client + build/server
@@ -216,14 +216,16 @@ Tailwind v4 is installed via `@tailwindcss/postcss`, but **`corePlugins.prefligh
 
 ## 8. Internationalization
 
-`IntlProvider` wraps the app in [app/root.tsx](app/root.tsx#L61) with `locale="en"` and messages loaded from [app/intl/en-US.json](app/intl/en-US.json).
+`IntlProvider` wraps the app in [app/root.tsx](app/root.tsx) with the locale and messages chosen by the **root loader**: it calls `pickLocale(request)` from [app/intl/index.ts](app/intl/index.ts), which reads the `Accept-Language` header and returns `'en'` or `'es'` (falling back to English). Messages live next to that helper in [en-US.json](app/intl/en-US.json) and [es-ES.json](app/intl/es-ES.json).
 
 Use one of:
 
 - `<FormattedMessage id="KEY" />` for inline copy.
 - `useIntl().formatMessage({ id: 'KEY' })` when you need a string (placeholders, aria-labels, conditional class strings).
 
-Add new copy by appending an `UPPER_SNAKE_CASE` key to `en-US.json`. There is no second locale today; if one is added, switch from a static import to a loader-driven message bundle.
+Adding a key: append it to **both** `en-US.json` and `es-ES.json` — the registry is case-sensitive and will warn at runtime when a key is missing in one locale. Both files share the same `UPPER_SNAKE_CASE` shape; sort keys alphabetically by convention.
+
+Adding a third locale: extend `SUPPORTED_LOCALES` and the `MESSAGES` map in `app/intl/index.ts`, drop a sibling JSON next to the existing two. There is no UI switcher today — locale is browser-driven via `Accept-Language`.
 
 ---
 
@@ -404,14 +406,15 @@ When adding a new route:
 
 ## 15. Gotchas
 
-- **Two `tailwind.css` files** exist: [app/styles/tailwind.css](app/styles/tailwind.css) (imported by `root.tsx`) and [app/tailwind.css](app/tailwind.css) (currently unreferenced duplicate). Edit the one in `styles/`.
 - **Tailwind preflight is disabled** — don't expect Tailwind to reset margins / box-sizing / etc. Existing global resets live in [app/styles/style.css](app/styles/style.css).
 - **`app/components/icons/` is generated** — it's in `.eslintignore` and `.ls-lint.yml`'s ignore list, and the lint pipeline will fail if you check it in by hand with bad names. Always go through SVGR.
 - **`legacy-peer-deps=true`** is on (`.npmrc`) because of mismatched React-major peer ranges between deps (e.g. `@types/react@19` while `react@18` is installed). Don't remove it without testing `npm install` end-to-end.
-- **Type annotations on dates**: `formatDate(start, end)` has three overloaded behaviors keyed off `formatType` and the shape of `end` (`undefined` → `"MM/yyyy - Present"`, `''` → `"MMMM yyyy"`, otherwise → `"MM/yyyy - MM/yyyy"`); see [app/utils/utils.tsx](app/utils/utils.tsx#L26).
+- **`react-is` is a direct dep** because `recharts` requires it at runtime but doesn't list it in its own dependencies. Don't try to drop it — tests fail with `Cannot find module 'react-is'`.
+- **Type annotations on dates**: `formatDate(start, end)` has three overloaded behaviors keyed off `formatType` and the shape of `end` (`undefined` → `"MM/yyyy - Present"`, `''` → `"MMMM yyyy"`, otherwise → `"MM/yyyy - MM/yyyy"`); see [app/utils/utils.tsx](app/utils/utils.tsx).
 - **Skills route loader 1h cache**: `/skills` sets `Cache-Control: public, max-age=3600`. After editing `skills.json`, expect up to an hour of stale data on prod.
-- **Image path lookup in `skills.$uuid`** lowercases the work-item title; new companies need a `public/assets/img/<lowercased-title>.webp` file or another override branch.
-- **`recharts@3` + `react-is@19`** are installed alongside `react@18` — peer-deps mismatch survives because of `legacy-peer-deps`. Pin carefully if upgrading.
+- **Image path lookup in `skills.$uuid`** lowercases the work-item title; new companies need a `public/assets/img/<lowercased-title>.webp` file or another override branch. Also add an entry to `LOGO_DIMS` in the loader so the `<img>` gets `width`/`height` and doesn't cause CLS.
+- **Don't lazy-load + statically import the same component.** Vite emits a "dynamic import will not move module into another chunk" warning and silently falls back to eager loading — defeats the code split. If you `lazy(() => import('~/components/Foo'))` in a route, do **not** also `import { links as fooLinks }` from the same path; let Foo's CSS ride along with the lazy chunk.
+- **Production sourcemaps are off** ([vite.config.ts](vite.config.ts)). Stack traces show minified names. Re-enable temporarily if you're debugging a prod-only crash.
 - **Verify UI changes in a browser.** `npm run dev` is the truth source for visual regressions — type-check, lint, and tests catch a lot but not everything (CSS layout, font rendering, animation timing).
 
 ---

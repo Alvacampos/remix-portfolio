@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import type { ReactElement } from 'react';
 
 import {
   AgileSoftware,
@@ -36,48 +36,44 @@ export const links = () => [{ rel: 'stylesheet', href: styles }];
 const BLOCK = 'carousel-component';
 const getClasses = getClassMaker(BLOCK);
 
+// Static module-level list — keys are the technology names so React can use
+// content-stable keys without paying for uuid generation on every render.
+const ICONS: { name: string; Icon: () => ReactElement }[] = [
+  { name: 'html', Icon: Html },
+  { name: 'css', Icon: Css },
+  { name: 'tailwind', Icon: Tailwind },
+  { name: 'js', Icon: Js },
+  { name: 'ts', Icon: Ts },
+  { name: 'python', Icon: Python },
+  { name: 'django', Icon: Django },
+  { name: 'react', Icon: React },
+  { name: 'remix', Icon: Remix },
+  { name: 'redux', Icon: Redux },
+  { name: 'git', Icon: GitIcon },
+  { name: 'graphql', Icon: Graphql },
+  { name: 'cypress', Icon: Cypress },
+  { name: 'playwright', Icon: Playwright },
+  { name: 'storybook', Icon: Storybook },
+  { name: 'nodejs', Icon: Nodejs },
+  { name: 'axios', Icon: Axios },
+  { name: 'express', Icon: Express },
+  { name: 'mongodb', Icon: Mongodb },
+  { name: 'vue', Icon: VueJs },
+  { name: 'highcharts', Icon: Highcharts },
+  { name: 'agile', Icon: AgileSoftware },
+  { name: 'sass', Icon: Sass },
+  { name: 'heroku', Icon: Heroku },
+  { name: 'cloudflare', Icon: Cloudflare },
+];
+
 export default function Carousel() {
-  const items = {
-    html: <Html />,
-    css: <Css />,
-    tailwind: <Tailwind />,
-    js: <Js />,
-    ts: <Ts />,
-    python: <Python />,
-    django: <Django />,
-    react: <React />,
-    remix: <Remix />,
-
-    redux: <Redux />,
-    gitIcon: <GitIcon />,
-    graphql: <Graphql />,
-    cypress: <Cypress />,
-    playwright: <Playwright />,
-    storybook: <Storybook />,
-    nodejs: <Nodejs />,
-    axios: <Axios />,
-    express: <Express />,
-    mongodb: <Mongodb />,
-    vueJs: <VueJs />,
-    highcharts: <Highcharts />,
-    agileSoftware: <AgileSoftware />,
-    sass: <Sass />,
-    heroku: <Heroku />,
-    cloudflare: <Cloudflare />,
-  };
-
-  const keys = Object.keys(items);
-
   return (
     <div className={getClasses()}>
-      {keys.map((key) => {
-        const uuidKey = uuid();
-        return (
-          <div key={uuidKey} className={getClasses('item')}>
-            {items[key as keyof typeof items]}
-          </div>
-        );
-      })}
+      {ICONS.map(({ name, Icon }) => (
+        <div key={name} className={getClasses('item')}>
+          <Icon />
+        </div>
+      ))}
     </div>
   );
 }

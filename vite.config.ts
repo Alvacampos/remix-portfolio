@@ -10,11 +10,14 @@ export default defineConfig({
     port: 8788,
   },
   build: {
-    sourcemap: true,
-    minify: 'terser', // Use Terser for JavaScript minification
+    // No sourcemaps in production — they leak source paths and add MB to
+    // the deploy. Stack traces in browser tools still show minified names,
+    // which is fine for a personal site.
+    sourcemap: false,
+    minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console logs in production
+        drop_console: true,
       },
     },
   },

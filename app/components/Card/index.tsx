@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import { v4 as uuid } from 'uuid';
 
 import { getClassMaker } from '~/utils/utils';
 
@@ -10,6 +9,8 @@ export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 const BLOCK = 'card-component';
 const getClasses = getClassMaker(BLOCK);
+
+const MAX_SKILL_CHIPS = 7;
 
 type CardProps = {
   title?: string;
@@ -33,18 +34,6 @@ export default function Card({
 }: CardProps) {
   const { formatMessage } = useIntl();
 
-  const renderSkills = () => {
-    const skillsLength = skills && skills.length <= 7 ? skills?.length : 7;
-    const array = [];
-    for (let i = 0; i < skillsLength; i++) {
-      const key = uuid();
-      array.push(skills && <span key={key}>{skills[i]}</span>);
-    }
-    const key = uuid();
-    array.push(skills && <span key={key}>- {formatMessage({ id: 'CLICK_FOR_MORE' })}</span>);
-    return array;
-  };
-
   return (
     <div className={getClasses('', { styleless: isStyleless })}>
       {title && (
@@ -55,30 +44,32 @@ export default function Card({
       <div className={getClasses('text-container')}>
         {texts && (
           <div className={getClasses('main-text-wrapper')}>
-            {texts.map((text) => {
-              const key = uuid();
-              return <p key={key}>{text}</p>;
-            })}
+            {texts.map((text) => (
+              <p key={text}>{text}</p>
+            ))}
           </div>
         )}
         {itemList && (
           <ul className={getClasses('list')}>
-            {itemList.map((item) => {
-              const key = uuid();
-              return (
-                <li key={key} className={getClasses('list-item')}>
-                  {item.title && <h3>{item.title}</h3>}
-                  {item.text && <p>{item.text}</p>}
-                </li>
-              );
-            })}
+            {itemList.map((item) => (
+              <li key={item.title} className={getClasses('list-item')}>
+                {item.title && <h3>{item.title}</h3>}
+                {item.text && <p>{item.text}</p>}
+              </li>
+            ))}
           </ul>
         )}
         {skills && (
           <>
             <hr className={getClasses('divider')} />
             <div className={getClasses('skills-container')}>
-              <p>Skills:{renderSkills()}</p>
+              <p>
+                Skills:
+                {skills.slice(0, MAX_SKILL_CHIPS).map((skill) => (
+                  <span key={skill}>{skill}</span>
+                ))}
+                <span key="__more">- {formatMessage({ id: 'CLICK_FOR_MORE' })}</span>
+              </p>
             </div>
           </>
         )}

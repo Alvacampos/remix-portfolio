@@ -1,8 +1,8 @@
 import { Link } from '@remix-run/react';
-import { lazy, memo, Suspense } from 'react';
+import { memo } from 'react';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 
-import { links as cardLinks } from '~/components/Card';
+import Card, { links as cardLinks } from '~/components/Card';
 import { SuccessFilled } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
@@ -16,8 +16,6 @@ export const links = () => [
 
 const BLOCK = 'timeline-component';
 const getClasses = getClassMaker(BLOCK);
-
-const LazyCard = lazy(() => import('~/components/Card'));
 
 export type DataTypes = {
   id: string;
@@ -43,9 +41,7 @@ function TimelineElementInner({ item }: { item: DataTypes }) {
         className={getClasses('element-link')}
         state={{ item: item.id }}
       >
-        <Suspense fallback={<div style={{ height: 100 }} />}>
-          <LazyCard {...item} isStyleless />
-        </Suspense>
+        <Card {...item} isStyleless />
       </Link>
     </VerticalTimelineElement>
   );

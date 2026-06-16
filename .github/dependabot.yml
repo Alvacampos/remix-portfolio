@@ -3,7 +3,54 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore(deps)"
+    # Group related ecosystems into single PRs so Dependabot opens
+    # roughly one PR per ecosystem per week instead of 5+ per day.
+    groups:
+      remix:
+        patterns:
+          - "@remix-run/*"
+      react-router:
+        patterns:
+          - "react-router-dom"
+          - "react-router"
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@typescript-eslint/*"
+          - "typescript-eslint"
+      stylelint:
+        patterns:
+          - "stylelint"
+          - "stylelint-*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+          - "@chromatic-com/*"
+          - "eslint-plugin-storybook"
+      types:
+        patterns:
+          - "@types/*"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+      cloudflare:
+        patterns:
+          - "wrangler"
+          - "@cloudflare/*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(ci)"

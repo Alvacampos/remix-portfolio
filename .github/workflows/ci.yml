@@ -56,8 +56,28 @@ jobs:
 
       - run: npm ci
 
+      # Cache the downloaded Chromium binary across runs. Saves ~30–60s
+      # per CI run; keyed on the @playwright/test version so a Playwright
+      # bump invalidates the cache automatically.
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          echo "version=$(npm ls @playwright/test --depth=0 --json | node -e 'const j=JSON.parse(require("fs").readFileSync(0)); console.log(j.dependencies["@playwright/test"].version)')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - run: npm run test:e2e -- --project=chromium
 
