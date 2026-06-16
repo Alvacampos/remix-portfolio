@@ -1,6 +1,6 @@
 import { Link } from '@remix-run/react';
 import { lazy, memo, Suspense } from 'react';
-import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
+import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 
 import { links as cardLinks } from '~/components/Card';
 import { SuccessFilled } from '~/components/icons';
@@ -17,7 +17,6 @@ export const links = () => [
 const BLOCK = 'timeline-component';
 const getClasses = getClassMaker(BLOCK);
 
-const { VerticalTimelineElement } = pkg;
 const LazyCard = lazy(() => import('~/components/Card'));
 
 export type DataTypes = {

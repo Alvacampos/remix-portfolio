@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { getClassMaker } from '~/utils/utils';
@@ -53,8 +52,6 @@ type Props = {
 };
 
 export default function CustomBarChart({ data }: Props) {
-  const { formatMessage } = useIntl();
-
   const sortedData = [...data]
     .map(([name, value]) => ({ name: String(name), value: Number(value) }))
     .sort((a, b) => b.value - a.value); // sort descending
@@ -67,14 +64,7 @@ export default function CustomBarChart({ data }: Props) {
           <YAxis type="category" dataKey="name" stroke="#f0f6fc" width={100} />
           <Tooltip
             wrapperClassName={getClasses('custom-tooltip')}
-            contentStyle={{}} // reset inline styles so CSS applies
-            itemStyle={{}}
-            labelStyle={{}}
             cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-            formatter={(value: number) => [
-              `${value.toFixed(2)} ${formatMessage({ id: 'YEARS' })}`,
-              '',
-            ]}
             content={<CustomTooltip />}
           />
           <Bar dataKey="value">

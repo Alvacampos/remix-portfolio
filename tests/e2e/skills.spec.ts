@@ -48,7 +48,9 @@ test.describe('Skills (/skills)', () => {
     await expect(page.locator('.bar-chart-component').first()).toBeVisible();
     // Chart is derived from WORK_ITEMS — read y-axis labels and assert that
     // core technologies are present and excluded filter-chips are not.
-    const chartLabels = page.locator('.bar-chart-component .recharts-yAxis text');
+    // recharts 3.8+ renders tick labels under `.recharts-yAxis-tick-labels`
+    // (was bare `<text>` children of `.recharts-yAxis` in older versions).
+    const chartLabels = page.locator('.bar-chart-component .recharts-yAxis-tick-labels text');
     await expect(chartLabels.first()).toBeVisible();
     const labelTexts = (await chartLabels.allTextContents()).map((t) => t.trim());
     expect(labelTexts).toContain('React');

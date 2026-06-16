@@ -274,7 +274,7 @@ Two layers, both opt-in via npm scripts and run on CI ([.github/workflows/ci.yml
 - Tests live next to the component as `index.test.tsx`. Pattern: `app/**/*.{test,spec}.{ts,tsx}`.
 - Run: `npm test` (one shot), `npm run test:watch`, `npm run test:ui`.
 
-> **Router dedupe matters.** `react-router-dom` is pinned to `6.30.0` (exact, no caret) in `devDependencies` so it dedupes with the copy bundled by `@remix-run/react@2.17.1`. Two copies = two `Router` contexts = `useHref() may be used only in the context of a <Router> component`. Don't bump it past 6.30.0 without re-checking the Remix dep tree.
+> **Router dedupe matters.** `react-router-dom` is pinned to an **exact** version (no caret) in `devDependencies` and must match whatever copy `@remix-run/react` ships internally. Two copies = two `Router` contexts = `useHref() may be used only in the context of a <Router> component`. When you bump `@remix-run/react`, run `npm ls react-router-dom` and re-pin our dev-dep to whatever Remix is now bundling. Current pin: `6.30.4` against `@remix-run/react@2.17.5`.
 
 ### E2E — Playwright
 
