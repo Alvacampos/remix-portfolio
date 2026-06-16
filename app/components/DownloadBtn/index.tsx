@@ -1,5 +1,6 @@
-import styles from './style.css?url';
 import { getClassMaker } from '~/utils/utils';
+
+import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
 
@@ -12,7 +13,11 @@ type DownloadButtonProps = {
 const BLOCK = 'download-btn';
 const getClasses = getClassMaker(BLOCK);
 
-export default function DownloadButton({ fileUrl, fileName, children }: DownloadButtonProps) {
+export default function DownloadButton({
+  fileUrl,
+  fileName = undefined,
+  children = undefined,
+}: DownloadButtonProps) {
   return (
     <a
       href={fileUrl}

@@ -1,8 +1,9 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
+
 import Card, { links as cardLinks } from '~/components/Card';
-import { getClassMaker, formatDate } from '~/utils/utils';
+import { formatDate, getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 
@@ -11,31 +12,35 @@ export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }]
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-type skillsDataTypes = {
-  WORK_ITEMS: {
-    id: string | number;
-    title: string;
-    startDate: string;
-    endDate: string;
-    rol: string;
-    skills: string[];
-    projects?: {
-      title: string;
-      text: string;
-    }[] | string;
-    description: string;
-  }[];
-} | undefined;
+type skillsDataTypes =
+  | {
+      WORK_ITEMS: {
+        id: string | number;
+        title: string;
+        startDate: string;
+        endDate: string;
+        rol: string;
+        skills: string[];
+        projects?:
+          | {
+              title: string;
+              text: string;
+            }[]
+          | string;
+        description: string;
+      }[];
+    }
+  | undefined;
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const id = params && params?.uuid;
   const url = new URL('/data/skills.json', request.url);
-  
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      throw new Error('Failed to fetch skills.json');
-    }
-  
+
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error('Failed to fetch skills.json');
+  }
+
   const skillsData: skillsDataTypes = await response.json();
   let data;
   let imagePath: string | undefined;
@@ -61,7 +66,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export function ErrorBoundary() {
   const error = useRouteError();
   console.error(error);
-  return <h1 className={getClasses('error')}>There was a problem while loading this work experience</h1>;
+  return (
+    <h1 className={getClasses('error')}>There was a problem while loading this work experience</h1>
+  );
 }
 
 export default function UuidIndex() {
@@ -69,34 +76,30 @@ export default function UuidIndex() {
   const { formatMessage } = useIntl();
   const { title, projects, startDate, skills } = data;
 
-  const renderDates = () => {
-    return (
-      <div>
+  const renderDates = () => (
+    <div>
+      <p>
+        <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
+      </p>
+      {data?.endDate && (
         <p>
-          <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
+          <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
         </p>
-        {data?.endDate && (
-          <p>
-            <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
-          </p>
-        )}
-        {!data?.endDate && (
-          <p>
-            <FormattedMessage id="END_DATE" />: Present
-          </p>
-        )}
-      </div>
-    );
-  };
+      )}
+      {!data?.endDate && (
+        <p>
+          <FormattedMessage id="END_DATE" />: Present
+        </p>
+      )}
+    </div>
+  );
 
-  const renderJobDescription = () => {
-    return (
-      <div>
-        <p>{data.rol}</p>
-        <p>{data.description}</p>
-      </div>
-    );
-  };
+  const renderJobDescription = () => (
+    <div>
+      <p>{data.rol}</p>
+      <p>{data.description}</p>
+    </div>
+  );
 
   return (
     <div className={getClasses()}>
@@ -106,11 +109,10 @@ export default function UuidIndex() {
           <img loading="lazy" src={imagePath} alt={title} className={getClasses('company-logo')} />
         </div>
         <div className={getClasses('info-container')}>
-          <Card title={formatMessage({ id: 'HIRE_DATES' })} children={renderDates()} />
-          <Card
-            title={formatMessage({ id: 'ROLL_JOB_DESCRIPTION' })}
-            children={renderJobDescription()}
-          />
+          <Card title={formatMessage({ id: 'HIRE_DATES' })}>{renderDates()}</Card>
+          <Card title={formatMessage({ id: 'ROLL_JOB_DESCRIPTION' })}>
+            {renderJobDescription()}
+          </Card>
         </div>
       </div>
       <div className={getClasses('projects')}>

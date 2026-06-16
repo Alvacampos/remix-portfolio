@@ -1,11 +1,12 @@
 import 'react-vertical-timeline-component/style.min.css';
+
 import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 
 import Card, { links as cardLinks } from '~/components/Card';
-import { getClassMaker, formatDate } from '~/utils/utils';
+import { formatDate, getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 

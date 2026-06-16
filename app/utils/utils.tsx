@@ -1,4 +1,4 @@
-import { format, differenceInMonths, formatDuration, intervalToDuration } from 'date-fns';
+import { differenceInMonths, format, formatDuration, intervalToDuration } from 'date-fns';
 
 export const getClassMaker =
   (block = '') =>
@@ -46,7 +46,7 @@ export function getSkillChartData(
   skillChartData: { name: string; dates: { startDate: string; endDate: string | null }[] }[]
 ): [string, number][] {
   const now = new Date();
-  return skillChartData.map(skill => {
+  return skillChartData.map((skill) => {
     const totalMonths = skill.dates.reduce((sum, { startDate, endDate }) => {
       const start = new Date(startDate);
       const end = endDate ? new Date(endDate) : now;

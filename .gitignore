@@ -7,4 +7,9 @@ node_modules
 .dev.vars
 
 .wrangler
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
 git commit -m "Remove .DS_Store from the repository"

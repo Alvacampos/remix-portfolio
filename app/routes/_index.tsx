@@ -1,6 +1,6 @@
 import { FormattedMessage } from 'react-intl';
-import DownloadButton, { links as downloadButtonLinks } from '~/components/DownloadBtn';
 
+import DownloadButton, { links as downloadButtonLinks } from '~/components/DownloadBtn';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';

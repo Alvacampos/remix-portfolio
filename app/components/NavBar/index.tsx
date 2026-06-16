@@ -1,7 +1,8 @@
 import { useIntl } from 'react-intl';
+
 import Button, { links as ButtonLinks } from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
-import { Education, GithubIcon, Home, Inbox, LinkedinIcon, Paper } from '~/components/icons';
+import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -18,14 +19,14 @@ export default function NavBar() {
     url: 'https://github.com/Alvacampos',
     label: 'Github',
     className: 'special-anchor',
-    target: "_blank"
+    target: '_blank',
   };
 
   const LINKEDIN_LINK_ICON = {
     url: 'https://www.linkedin.com/in/gonzaloalvarezcampos/',
     label: 'Linkedin',
     className: 'special-anchor',
-    target: "_blank"
+    target: '_blank',
   };
 
   const MAIN_NAV = [
@@ -56,7 +57,12 @@ export default function NavBar() {
   return (
     <nav className={getClasses()}>
       <div className={getClasses('special-anchor-container')}>
-        <ConditionalLink to={GIT_LINK_ICON.url} condition={!!GIT_LINK_ICON.url} label={GIT_LINK_ICON.label} target={GIT_LINK_ICON.target}>
+        <ConditionalLink
+          to={GIT_LINK_ICON.url}
+          condition={!!GIT_LINK_ICON.url}
+          label={GIT_LINK_ICON.label}
+          target={GIT_LINK_ICON.target}
+        >
           <div className={getClasses('special-anchor-wrapper')}>
             <GithubIcon className={getClasses('special-anchor')} />
           </div>
@@ -84,7 +90,12 @@ export default function NavBar() {
           </ul>
         </div>
         <div>
-          <img loading="lazy" src="/assets/img/linkedin_dark.webp" alt="LinkedIn" className={getClasses('qr')} />
+          <img
+            loading="lazy"
+            src="/assets/img/linkedin_dark.webp"
+            alt="LinkedIn"
+            className={getClasses('qr')}
+          />
         </div>
       </div>
     </nav>

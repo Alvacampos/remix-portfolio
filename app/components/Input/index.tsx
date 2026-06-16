@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -26,7 +27,7 @@ export default function Autocomplete({
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const handleInputChange = (event: { target: { value: string } }) => {
-    const value = event.target.value;
+    const { value } = event.target;
     setInputValue(value);
     handleInput(value);
 
@@ -66,12 +67,13 @@ export default function Autocomplete({
       />
       {suggestions.length > 0 && (
         <ul className={getClasses('suggestions-list')} id="autocomplete-list">
-          {suggestions.map((suggestion, index) => (
+          {suggestions.map((suggestion) => (
             <li
-              key={index}
+              key={suggestion}
               onClick={() => handleSuggestionClick(suggestion)}
               onKeyDown={(event) => event.keyCode === 13 && handleSuggestionClick(suggestion)}
               role="option"
+              aria-selected={inputValue === suggestion}
               className={getClasses('suggestion-item')}
               tabIndex={0}
               aria-label={suggestion || 'Suggestion'}

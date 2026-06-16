@@ -11,32 +11,38 @@ Although the project is currently built with Remix, a migration to [React Router
 ## Getting Started
 
 ### Prerequisites
+
 To run this project locally, you will need:
+
 - **Node.js** (v16 or higher)
 - **npm** (v7 or higher)
 - **Wrangler CLI** (for Cloudflare Pages)
 
 ### Installation
+
 1. Clone the repository:
    ```sh
    git clone https://github.com/Alvacampos/remix-portfolio.git
    cd remix-portfolio
    ```
 2. Install dependencies:
-    ```sh
-    npm install
-    ```
+   ```sh
+   npm install
+   ```
 3. Run the development server:
-    ```sh
-    npm run dev
-    ```
+   ```sh
+   npm run dev
+   ```
 
 ### Useful Scripts
+
 Here’s a quick summary of the most useful scripts in the package.json file:
+
 1. `build:svg`: This script uses svgo (SVG Optimizer) to optimize all SVG files in the icons directory. Run this script whenever you add or update SVG files in the icons directory to ensure they are optimized for performance.
 2. `build:icons`: This script uses @svgr/cli to convert SVG files in the icons directory into React components. Run this script whenever you add or update SVG files and need them converted into React components for use in your project.
 
 ## Future Plans
+
 This project is a work in progress, and here are some planned features and improvements:
 
 Backend Development: The backend will be built using Python and Django to handle dynamic content and data.

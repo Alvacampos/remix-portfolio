@@ -1,6 +1,7 @@
-import { v4 as uuid } from 'uuid';
 import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
+import { v4 as uuid } from 'uuid';
+
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';

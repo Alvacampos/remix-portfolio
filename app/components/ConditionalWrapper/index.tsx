@@ -33,11 +33,11 @@ export function ConditionalLink({
   to = '#',
   condition,
   children,
-  label,
+  label = 'Link',
   ...rest
 }: ConditionalLinkProps) {
   const wrapper = (linkChildren: ReactNode) => (
-    <Link to={to} aria-label={label || 'Link'} {...rest}>
+    <Link to={to} aria-label={label} {...rest}>
       {linkChildren}
     </Link>
   );
