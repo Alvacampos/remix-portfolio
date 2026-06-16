@@ -9,7 +9,7 @@ export default defineConfig({
     jsx: 'automatic',
   },
   test: {
-    environment: 'jsdom',
+    environment: 'happy-dom',
     globals: true,
     setupFiles: ['./test/setup.ts'],
     css: false,

@@ -251,7 +251,7 @@ Two layers, both opt-in via npm scripts and run on CI ([.github/workflows/ci.yml
 
 ### Unit / component — Vitest + React Testing Library
 
-- Config: [vitest.config.ts](vitest.config.ts) (jsdom env, globals, `~/*` alias via `vite-tsconfig-paths`).
+- Config: [vitest.config.ts](vitest.config.ts) (happy-dom env, globals, `~/*` alias via `vite-tsconfig-paths`).
 - Setup: [test/setup.ts](test/setup.ts) — adds `jest-dom` matchers, RTL `cleanup`, and stub polyfills for `ResizeObserver` and `IntersectionObserver` (recharts and `react-vertical-timeline-component` need them).
 - Render helper: [test/test-utils.tsx](test/test-utils.tsx) — wraps trees in a `createMemoryRouter` data-router (so `@remix-run/react`'s `Link` works) plus an `IntlProvider` populated from `app/intl/en-US.json`.
 - Tests live next to the component as `index.test.tsx`. Pattern: `app/**/*.{test,spec}.{ts,tsx}`.
@@ -278,7 +278,7 @@ CI installs Chromium with `npx playwright install --with-deps chromium` and uplo
 
 ### Polyfills note
 
-If you add a component that uses a browser API jsdom doesn't implement (matchMedia, IntersectionObserver, etc.), add a stub to [test/setup.ts](test/setup.ts) rather than mocking per-test.
+If you add a component that uses a browser API happy-dom doesn't implement (matchMedia, etc.), add a stub to [test/setup.ts](test/setup.ts) rather than mocking per-test. (`ResizeObserver` and `IntersectionObserver` are already stubbed there as a holdover from the jsdom era — happy-dom has them natively, but the stubs are harmless.)
 
 ---
 
