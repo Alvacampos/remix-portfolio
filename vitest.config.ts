@@ -3,6 +3,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
+  // SVGR-generated icon components (app/components/icons/*.jsx) don't import
+  // React explicitly — make sure esbuild applies the automatic JSX runtime.
+  esbuild: {
+    jsx: 'automatic',
+  },
   test: {
     environment: 'jsdom',
     globals: true,
