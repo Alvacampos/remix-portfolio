@@ -32,6 +32,12 @@ const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 const LazyTimeline = lazy(() => import('~/components/Timeline'));
 
+type SkillEntryJson = {
+  name: string;
+  start?: string;
+  end?: string | null;
+};
+
 type skillsDataTypes = {
   WORK_ITEMS: {
     id: string;
@@ -39,7 +45,7 @@ type skillsDataTypes = {
     startDate: string;
     endDate?: string | null;
     rol: string;
-    skills: string[];
+    skills: SkillEntryJson[];
   }[];
   SKILLS_IMG: {
     title: string;
@@ -69,7 +75,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     title: item.title,
     date: formatDate(item.startDate, item.endDate ?? undefined),
     texts: [item.rol],
-    skills: item.skills,
+    // Card chips and the autocomplete filter only need names — flatten here
+    // and let getSkillChartData() consume the date-aware shape directly.
+    skills: item.skills.map((s) => s.name),
   }));
 
   const skills = skillsData.SKILLS_IMG.map((item) => item.title);
