@@ -31,4 +31,5 @@ ignore:
   - playwright/.cache
   - playwright-report
   - test-results
+  - storybook-static
   - .test

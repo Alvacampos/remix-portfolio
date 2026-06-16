@@ -13,3 +13,5 @@ playwright-report/
 test-results/
 playwright/.cache/
 git commit -m "Remove .DS_Store from the repository"
+*storybook.log
+storybook-static
