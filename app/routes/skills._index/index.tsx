@@ -2,27 +2,34 @@ import 'react-vertical-timeline-component/style.min.css';
 
 import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import BarChart, { links as barChartLinks } from '~/components/BarChart';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Card, { links as cardLinks } from '~/components/Card';
+import Carousel, { links as carouselLinks } from '~/components/Carousel';
 import Input, { links as inputLinks } from '~/components/Input';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
+import Timeline, { links as timelineLinks } from '~/components/Timeline';
 import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-// BarChart, Carousel, Timeline are lazy-loaded below; their CSS ships
-// with the lazy chunk (Vite bundles `import './style.css'` into the
-// chunk's stylesheet automatically). Including their `links()` here
-// would re-import the modules statically and defeat the code split —
-// see the Vite warning about "dynamic import will not move module
-// into another chunk".
+// All component CSS ships in <head> via Remix's <Links> at SSR time
+// so the page renders styled on first paint. We tried lazy()+Suspense
+// for BarChart / Carousel / Timeline to defer their JS, but routing
+// their CSS through `links()` re-couples the modules to the route
+// chunk anyway (Vite warns "dynamic import will not move module into
+// another chunk"). Keep them as plain imports until we add a manual
+// CSS-preload strategy that decouples the two.
 export const links = () => [
   ...cardLinks(),
   ...inputLinks(),
   ...buttonLinks(),
+  ...carouselLinks(),
+  ...barChartLinks(),
+  ...timelineLinks(),
   ...loadingSpinnerLinks(),
   { rel: 'stylesheet', href: styles },
 ];
@@ -38,12 +45,6 @@ export const meta: MetaFunction = () => [
 
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
-
-// Below-the-fold heavy components — code-split so the initial /skills
-// HTML/JS doesn't ship recharts (~150 KB) and 25 SVG icons up-front.
-const LazyTimeline = lazy(() => import('~/components/Timeline'));
-const LazyCarousel = lazy(() => import('~/components/Carousel'));
-const LazyBarChart = lazy(() => import('~/components/BarChart'));
 
 type SkillEntryJson = {
   name: string;
@@ -195,13 +196,7 @@ export default function Skills() {
             </Button>
           </div>
         </div>
-        {filteredData.length === 0 ? (
-          <LoadingSpinner />
-        ) : (
-          <Suspense fallback={<LoadingSpinner />}>
-            <LazyTimeline filteredData={filteredData} />
-          </Suspense>
-        )}
+        {filteredData.length === 0 ? <LoadingSpinner /> : <Timeline filteredData={filteredData} />}
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>
@@ -210,12 +205,8 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
-        <Suspense fallback={<LoadingSpinner />}>
-          <LazyCarousel />
-        </Suspense>
-        <Suspense fallback={<LoadingSpinner />}>
-          <LazyBarChart data={chartData} />
-        </Suspense>
+        <Carousel />
+        <BarChart data={chartData} />
       </div>
       <div className={getClasses('extra-activities')}>
         <h2>
