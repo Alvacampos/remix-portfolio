@@ -12,8 +12,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 
 1. ✅ **Stage 1 — Tests** (Vitest + React Testing Library for units, Playwright for E2E)
 2. ✅ **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
-3. 🟡 **Stage 3 — Storybook** for every component in `app/components/`
-4. ⬜ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
+3. ✅ **Stage 3 — Storybook** for every component in `app/components/`
+4. 🟡 **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
 5. ⬜ **Stage 5 — Code optimization** (loading time, bundle, lazy-loading, hints — no visual change)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
@@ -152,8 +152,8 @@ Anchored to 2026-06-16, post-refactor chart contents (sorted desc):
 **Goal:** every component in `app/components/` has a story for visual regression and isolated development.
 
 **Branch:** `stage-3-storybook`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### Tooling decisions
 
@@ -201,29 +201,70 @@ Anchored to 2026-06-16, post-refactor chart contents (sorted desc):
 
 **Branch:** `stage-4-deps`
 **PR:** _(fill in once opened)_
-**Status:** ⬜
+**Status:** 🟡 in progress
 
-### Scope decision
+### Scope decisions (made on this branch)
 
-- **Bump:** ESLint 8 → 9 (with flat-config migration), `eslint-config-airbnb` replacement (airbnb hasn't published a v20 for ESLint 9 — likely switch to `eslint-config-airbnb-typescript` or directly to `@typescript-eslint`'s recommended plus jsx-a11y/react), recharts, date-fns, wrangler, all dev deps.
-- **Hold:** `react@18` and `react-dom@18`. `@types/react@19` is already on 19 — pin that back to 18 to remove the `legacy-peer-deps` workaround **or** keep it pending the React 19 migration. Flag this in the PR description.
-- **Hold:** anything that requires React 19 as a peer (re-evaluate if recharts or react-vertical-timeline-component force the upgrade).
+- **Bump:** all patch + minor inside current majors; `react-vertical-timeline-component` 3 → 4 (still supports React 18); `stylelint-config-standard` 39 → 40; `eslint-plugin-simple-import-sort` 12 → 13.
+- **Hold (this PR):**
+  - **ESLint 8** — migration to flat-config + airbnb-shim is its own PR. ESLint 8 is EOL but stable.
+  - **Vitest 3** — Stage 1 hit a rolldown native-binding bug under `npm ci`; the underlying npm issue ([npm/cli#4828](https://github.com/npm/cli/issues/4828)) hasn't moved. Revisit when rolldown drops native bindings.
+  - **Vite 5** — Remix 2's plugin pins Vite 5 as a peer; v6+ requires Remix v3 / React Router v7, which is a separate migration listed in the project README.
+  - **React 18** — entire React 19 / React Router 7 migration is its own future stage.
+- **Note:** the legacy-peer-deps workaround in `.npmrc` still stands while React stays at 18 (recharts and `@types/react@19` mismatch).
+
+### Pre-bump snapshot (`npm outdated` at branch creation)
+
+```text
+@cloudflare/workers-types          4.20251014.0  →  4.20260616.1   (patch)
+@remix-run/* (cloudflare, dev, react, cloudflare-pages)            (patch  2.17.1 → 2.17.5)
+@tailwindcss/postcss               4.1.13        →  4.3.1          (minor)
+@types/react                       19.1.16       →  19.2.17        (minor)
+@types/react-dom                   19.1.9        →  19.2.3         (minor)
+@typescript-eslint/eslint-plugin   8.45.0        →  8.61.1         (minor)
+typescript-eslint                  8.45.0        →  8.61.1         (minor)
+autoprefixer                       10.4.21       →  10.5.0         (minor)
+cssnano                            7.1.1         →  7.1.9          (patch)
+date-fns                           4.1.0         →  4.4.0          (minor)
+eslint-import-resolver-typescript  4.4.4         →  4.4.5          (patch)
+eslint-plugin-prettier             5.5.4         →  5.5.6          (patch)
+eslint-plugin-simple-import-sort   12.1.1        →  13.0.0         (major)
+isbot                              5.1.31        →  5.1.43         (patch)
+react-intl                         7.1.11        →  7.1.14         (patch)
+react-vertical-timeline-component  3.6.0         →  4.0.0          (major, React 18 still ok)
+recharts                           3.2.1         →  3.8.1          (minor)
+stylelint                          16.24.0       →  16.26.1        (patch — held at 16; v17 = separate)
+stylelint-config-standard          39.0.0        →  40.0.0         (major)
+tailwindcss                        4.1.13        →  4.3.1          (minor)
+terser                             5.44.0        →  5.48.0         (patch)
+typescript                         5.9.2         →  5.9.3          (patch — held at 5; v6 = separate)
+uuid                               13.0.0        →  13.0.2         (patch — held at 13; v14 = separate)
+wrangler                           4.45.3        →  4.101.0        (minor)
+```
 
 ### Tasks
 
-- [ ] `npm outdated` — record the snapshot in this file.
-- [ ] Bump dev tooling first (eslint, prettier, stylelint, tsc, vite, wrangler, @types/\*).
-- [ ] Resolve ESLint 9 flat-config migration. The current `.eslintrc.js` is legacy — convert to `eslint.config.js` flat config or use `@eslint/compat` (already a dev-dep).
-- [ ] Bump runtime deps (`recharts`, `date-fns`, `react-intl`, `remix-utils`, `uuid`, etc.).
-- [ ] Decide `@types/react@19` → `@types/react@18` to drop `legacy-peer-deps=true` from `.npmrc`. If keeping legacy-peer-deps, document why.
-- [ ] Re-run unit tests + E2E + storybook build.
-- [ ] Smoke-test `npm run dev` and `npm run preview` manually.
+- [x] Snapshot captured above.
+- [x] Applied all patch + minor bumps within current majors.
+- [x] Bumped `react-vertical-timeline-component` 3 → 4.
+- [x] Bumped `eslint-plugin-simple-import-sort` 12 → 13.
+- [x] Bumped `stylelint-config-standard` 39 → 40.
+- [x] Re-pinned `react-router-dom` to **6.30.4** (Remix 2.17.5 ships 6.30.4 internally; the pin in our `devDependencies` had to follow it for context dedup — same hazard from Stage 1).
+- [x] Resolved fallout from the bumps:
+  - **recharts 3.8** tightened the `Tooltip.formatter` type and broke our overload. The `formatter` was dead code anyway (we pass `content={<CustomTooltip />}` which fully overrides default tooltip rendering). Removed `formatter`, `contentStyle`, `itemStyle`, `labelStyle`, plus the now-unused `useIntl` import in [BarChart](app/components/BarChart/index.tsx).
+  - **recharts 3.8** also moved tick-label rendering from bare `<text>` children of `.recharts-yAxis` into a `.recharts-yAxis-tick-labels` group. Updated the E2E selector in [tests/e2e/skills.spec.ts](tests/e2e/skills.spec.ts).
+  - **react-vertical-timeline-component 4** dropped its CommonJS default export shape; `VerticalTimelineElement` is now a named ESM export. Replaced the `import pkg, …` + destructure dance with a clean named import in [Timeline](app/components/Timeline/index.tsx).
+  - **`cssnano@8`** is currently a prerelease; my initial `cssnano@latest` accidentally pulled it. Pinned back to `^7.1.9`.
+- [x] Re-ran the full pipeline.
 
 ### Exit criteria
 
-- [ ] All linters, type-check, tests, Storybook build green on the new versions.
-- [ ] No new runtime warnings in dev console.
-- [ ] AGENTS.md "Stack" table updated with new versions; "Gotchas" updated re: legacy-peer-deps if it was removed.
+- [x] `npm run lint` and `npm run typecheck` clean.
+- [x] `npm test` 41/41 unit tests pass.
+- [x] `npm run test:e2e` 30/30 (chromium + mobile).
+- [x] `npm run build-storybook` succeeds.
+- [x] No new runtime warnings introduced in dev console (the existing Remix v3-flag warnings are pre-existing).
+- [x] AGENTS.md "Stack" table version markers updated for visible changes.
 
 ---
 
@@ -290,6 +331,6 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | ----- | -------------------------- | ----------- | ------ | ------ |
 | 1     | `stage-1-tests`            | merged      | ✅     | yes    |
 | 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
-| 3     | `stage-3-storybook`        | _(opening)_ | 🟡     | —      |
-| 4     | `stage-4-deps`             | _(pending)_ | ⬜     | —      |
+| 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
+| 4     | `stage-4-deps`             | _(opening)_ | 🟡     | —      |
 | 5     | `stage-5-optimize`         | _(pending)_ | ⬜     | —      |
