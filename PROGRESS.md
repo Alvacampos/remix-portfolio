@@ -10,8 +10,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 
 ## Stage order (decided)
 
-1. 🟡 **Stage 1 — Tests** (Vitest + React Testing Library for units, Playwright for E2E)
-2. ⬜ **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
+1. ✅ **Stage 1 — Tests** (Vitest + React Testing Library for units, Playwright for E2E)
+2. 🟡 **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
 3. ⬜ **Stage 3 — Storybook** for every component in `app/components/`
 4. ⬜ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
 5. ⬜ **Stage 5 — Code optimization** (loading time, bundle, lazy-loading, hints — no visual change)
@@ -25,8 +25,8 @@ Tests come first so every later stage has a safety net. Deps come before optimiz
 **Goal:** automated verification that every component renders and every route loads/behaves correctly.
 
 **Branch:** `stage-1-tests`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### Tooling decisions
 
@@ -92,55 +92,58 @@ These weren't introduced by Stage 1 but were red on `main` and would have made C
 
 **Branch:** `stage-2-data-restructure`
 **PR:** _(fill in once opened)_
-**Status:** ⬜
+**Status:** 🟡 ready for PR
 
-### Problem (recorded so future-me remembers)
+### Problem solved
 
-Today `WORK_ITEMS[i].skills` is a flat list of strings, and `SKILL_CHART_DATA` is a separate hand-maintained array of `{ name, dates: [{startDate, endDate}] }`. `getSkillChartData()` trusts `SKILL_CHART_DATA` blindly, so:
+`WORK_ITEMS[i].skills` is the source-of-truth list of skills used at each job, but the chart was reading a **separate** hand-maintained `SKILL_CHART_DATA` array of `{ name, dates: [{startDate, endDate}] }`. Two problems:
 
-- Duplication — adding a job means updating both places.
-- The chart can drift from real experience (skills used in a job but not in `SKILL_CHART_DATA` get under-counted, or vice versa).
+- Duplication — adding a job meant editing both places.
+- Drift — skills present in `WORK_ITEMS` but missing from `SKILL_CHART_DATA` (or vice-versa) got mis-counted. Concrete pre-refactor examples: Python/Django showed 1 yr instead of 4.17, JavaScript showed 7.83 yr from a `null`-end interval that didn't even pretend to track per-job tenure.
 
-### Proposed shape
+### What this stage did
 
-Derive everything from `WORK_ITEMS`. Each work item already has `startDate`, `endDate`, and `skills: string[]`, which is enough.
+- Rewrote [`getSkillChartData`](app/utils/utils.tsx) to take `WorkItemForChart[]` (`{ startDate, endDate?, skills: string[] }`). For every work item, every entry in its `skills` array is credited with the item's full duration; totals are summed across jobs and divided by 12. Pre-sorted descending by years.
+- Added a `CHART_EXCLUDE` set inside the util to filter out filter-chip / generic skills (`Front End`, `Back End`, `Agile`, `Teaching`, `Mentoring`, `Programming`, `C`, `Leadership`, `Interviewing`, `Router`).
+- Updated the [skills loader](app/routes/skills._index/index.tsx) to pass `WORK_ITEMS` directly to the util; dropped the `SKILL_CHART_DATA` field from `skillsDataTypes`.
+- Edited [public/data/skills.json](public/data/skills.json):
+  - Removed `SKILL_CHART_DATA` (~210 lines).
+  - Removed `TOP_SKILLS` (was unreferenced dead data).
+  - Fixed Qubika's duplicate `Post-css` / `PostCSS` casing.
+  - Added missing implicit skills based on job descriptions:
+    - Globant `+= JavaScript`
+    - Cliengo `+= Redux, Jest`, replaced `Router` (chart-excluded placeholder) with `Redux` (the actual library described).
+- Added 2 unit tests for the new `getSkillChartData` covering: per-skill summing across multiple work items, null-endDate "Present" handling, and exclude-list filtering.
+- Strengthened the chart E2E assertion: now reads `.recharts-yAxis text` labels and verifies (a) `React` and `TypeScript` are present, (b) `Front End` / `Back End` / `Agile` are NOT in the chart axis. Used `allTextContents()` because SVG `<text>` doesn't expose `innerText` consistently.
 
-```ts
-// app/utils/utils.tsx
-export function getSkillChartData(workItems: WorkItem[]): [string, number][] {
-  const now = new Date();
-  const totals = new Map<string, number>(); // skill → months
-  for (const w of workItems) {
-    const start = new Date(w.startDate);
-    const end = w.endDate ? new Date(w.endDate) : now;
-    const months = differenceInMonths(end, start);
-    for (const skill of w.skills) {
-      totals.set(skill, (totals.get(skill) ?? 0) + months);
-    }
-  }
-  return [...totals.entries()].map(([name, months]) => [name, +(months / 12).toFixed(2)]);
-}
-```
+### Verification
 
-If a skill should be **excluded** from the chart (e.g. soft-skill labels like `"Agile"`, `"Front End"`, `"Back End"` that are filter chips, not technologies), introduce a `chartExclude: string[]` constant or a `displayInChart: false` flag. Decide during the stage — don't pre-bake it.
+Anchored to 2026-06-16, post-refactor chart contents (sorted desc):
 
-### Tasks
-
-- [ ] Snapshot the current chart (write a small one-off script or copy the rendered values) so we can sanity-check the derived numbers post-refactor.
-- [ ] Decide on the exclude-list (probably: `Front End`, `Back End`, `Agile`, `Teaching`, `Mentoring`, `Programming`, `C`, generic labels). Document the decision in this file.
-- [ ] Update [app/utils/utils.tsx](app/utils/utils.tsx) `getSkillChartData` signature + impl per the snippet above.
-- [ ] Update [app/routes/skills.\_index/index.tsx:83](app/routes/skills._index/index.tsx#L83) loader to pass `WORK_ITEMS` (filtered by exclude-list) directly.
-- [ ] Remove `SKILL_CHART_DATA` from [public/data/skills.json](public/data/skills.json) and the `skillsDataTypes` definitions.
-- [ ] (Optional) Normalize skill casing inside `WORK_ITEMS` — `"NodeJs"` vs `"Nodejs"` vs `"Node.js"` will collide in the totals map otherwise. Either a `normalizeSkill()` helper or a one-time edit pass over `skills.json`.
-- [ ] Update unit tests for `getSkillChartData` with new input shape.
-- [ ] Update / add E2E assertions on the chart (count of bars, ordering).
+| Skill                                                                         | Years | Notes                                          |
+| ----------------------------------------------------------------------------- | ----- | ---------------------------------------------- |
+| JavaScript                                                                    | 8.83  | Globant + Cliengo + Endava + Teacher + Qubika  |
+| HTML                                                                          | 7.83  | Same as old chart ✓                            |
+| CSS                                                                           | 7.83  | Same as old chart ✓                            |
+| Storybook                                                                     | 7.17  | Same as old chart ✓                            |
+| Highcharts                                                                    | 7.17  | NEW — was missing from old chart               |
+| React                                                                         | 7.17  | Same as old chart's "ReactJs" entry ✓          |
+| TypeScript                                                                    | 4.83  | Same as old chart ✓                            |
+| Cypress                                                                       | 4.83  | Same as old chart ✓                            |
+| Tailwind                                                                      | 4.83  | Same as old chart ✓                            |
+| Python                                                                        | 4.17  | Was 1.0 — old chart understated by 3+ years    |
+| Django                                                                        | 4.17  | Was 1.0 — same fix                             |
+| Remix, NextJs, PostCSS, GraphQL, Playwright, Cloudflare                       | 4.17  | Cloudflare was missing entirely from old chart |
+| Axios                                                                         | 3     | NEW — was missing                              |
+| Vue, .Net                                                                     | 2.33  | NEW — was missing                              |
+| Sass, Redux, Jest, Heroku, NodeJs, Express, Styled Components, SQL, Marklogic | 0.67  | Several were missing or under-counted          |
 
 ### Exit criteria
 
-- [ ] Chart renders the same set of skills (modulo intentional exclusions) with values that match the pre-refactor snapshot ±0.1 yr.
-- [ ] `SKILL_CHART_DATA` no longer exists in the codebase.
-- [ ] All tests green.
-- [ ] AGENTS.md "Data" section updated to reflect the single-source-of-truth model.
+- [x] Chart values match what `WORK_ITEMS` actually says — and where they differ from the pre-refactor snapshot, the new value is the correct one (Python/Django, Highcharts, Cloudflare, Axios, Vue, .Net etc. were all under- or un-counted).
+- [x] `SKILL_CHART_DATA` no longer exists in the codebase.
+- [x] All tests green: 38/38 unit, 30/30 E2E across chromium + mobile, lint + typecheck clean.
+- [x] AGENTS.md "Data" section updated to describe the single-source-of-truth model.
 
 ---
 
@@ -280,8 +283,8 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 
 | Stage | Branch                     | PR          | Status | Merged |
 | ----- | -------------------------- | ----------- | ------ | ------ |
-| 1     | `stage-1-tests`            | _(opening)_ | 🟡     | —      |
-| 2     | `stage-2-data-restructure` | _(pending)_ | ⬜     | —      |
+| 1     | `stage-1-tests`            | merged      | ✅     | yes    |
+| 2     | `stage-2-data-restructure` | _(opening)_ | 🟡     | —      |
 | 3     | `stage-3-storybook`        | _(pending)_ | ⬜     | —      |
 | 4     | `stage-4-deps`             | _(pending)_ | ⬜     | —      |
 | 5     | `stage-5-optimize`         | _(pending)_ | ⬜     | —      |

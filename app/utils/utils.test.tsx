@@ -44,17 +44,52 @@ describe('formatDate', () => {
 });
 
 describe('getSkillChartData', () => {
-  it('sums months across multiple intervals and converts to years', () => {
+  it('sums months across work items that share a skill', () => {
     const result = getSkillChartData([
       {
-        name: 'React',
-        dates: [
-          { startDate: '2020-01-01T00:00:00.000', endDate: '2021-01-01T00:00:00.000' },
-          { startDate: '2022-01-01T00:00:00.000', endDate: '2024-01-01T00:00:00.000' },
-        ],
+        startDate: '2020-01-01T00:00:00.000',
+        endDate: '2021-01-01T00:00:00.000',
+        skills: ['React', 'TypeScript'],
+      },
+      {
+        startDate: '2022-01-01T00:00:00.000',
+        endDate: '2024-01-01T00:00:00.000',
+        skills: ['React'],
       },
     ]);
-    expect(result).toEqual([['React', 3]]);
+    // React: 1 yr + 2 yr = 3 yr ; TypeScript: 1 yr ; sorted desc by years
+    expect(result).toEqual([
+      ['React', 3],
+      ['TypeScript', 1],
+    ]);
+  });
+
+  it('treats null/missing endDate as Present', () => {
+    const FIVE_YEARS_AGO = new Date();
+    FIVE_YEARS_AGO.setFullYear(FIVE_YEARS_AGO.getFullYear() - 5);
+    const result = getSkillChartData([
+      {
+        startDate: FIVE_YEARS_AGO.toISOString(),
+        endDate: null,
+        skills: ['Remix'],
+      },
+    ]);
+    expect(result).toHaveLength(1);
+    const [name, years] = result[0];
+    expect(name).toBe('Remix');
+    expect(years).toBeGreaterThanOrEqual(4.9);
+    expect(years).toBeLessThanOrEqual(5.1);
+  });
+
+  it('excludes filter-chip and generic-descriptor skills', () => {
+    const result = getSkillChartData([
+      {
+        startDate: '2020-01-01T00:00:00.000',
+        endDate: '2021-01-01T00:00:00.000',
+        skills: ['React', 'Front End', 'Back End', 'Agile', 'Teaching', 'Mentoring'],
+      },
+    ]);
+    expect(result.map(([name]) => name)).toEqual(['React']);
   });
 });
 

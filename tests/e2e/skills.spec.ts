@@ -46,6 +46,16 @@ test.describe('Skills (/skills)', () => {
     await expect(page.getByRole('heading', { name: /Technologies/i })).toBeVisible();
     // Bar chart container
     await expect(page.locator('.bar-chart-component').first()).toBeVisible();
+    // Chart is derived from WORK_ITEMS — read y-axis labels and assert that
+    // core technologies are present and excluded filter-chips are not.
+    const chartLabels = page.locator('.bar-chart-component .recharts-yAxis text');
+    await expect(chartLabels.first()).toBeVisible();
+    const labelTexts = (await chartLabels.allTextContents()).map((t) => t.trim());
+    expect(labelTexts).toContain('React');
+    expect(labelTexts).toContain('TypeScript');
+    expect(labelTexts).not.toContain('Front End');
+    expect(labelTexts).not.toContain('Back End');
+    expect(labelTexts).not.toContain('Agile');
   });
 
   test('renders the Extra Activities section', async ({ page }) => {

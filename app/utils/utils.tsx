@@ -42,17 +42,44 @@ export const formatDate = (dateA: string, dateB?: string, formatType?: string) =
   return `${format(new Date(dateA), 'MM/yyyy')} - ${format(new Date(dateB), 'MM/yyyy')}`;
 };
 
-export function getSkillChartData(
-  skillChartData: { name: string; dates: { startDate: string; endDate: string | null }[] }[]
-): [string, number][] {
+export type WorkItemForChart = {
+  startDate: string;
+  endDate?: string | null;
+  skills: string[];
+};
+
+// Skills that appear in WORK_ITEMS as filter chips or generic descriptors,
+// not technologies — excluded from the chart.
+const CHART_EXCLUDE = new Set([
+  'Front End',
+  'Back End',
+  'Agile',
+  'Teaching',
+  'Mentoring',
+  'Programming',
+  'Leadership',
+  'Interviewing',
+  'C',
+  'Router',
+]);
+
+export function getSkillChartData(workItems: WorkItemForChart[]): [string, number][] {
   const now = new Date();
-  return skillChartData.map((skill) => {
-    const totalMonths = skill.dates.reduce((sum, { startDate, endDate }) => {
-      const start = new Date(startDate);
-      const end = endDate ? new Date(endDate) : now;
-      return sum + differenceInMonths(end, start);
-    }, 0);
-    const years = totalMonths / 12;
-    return [skill.name, Number(years.toFixed(2))];
-  });
+  const totals = new Map<string, number>();
+
+  for (const item of workItems) {
+    const start = new Date(item.startDate);
+    const end = item.endDate ? new Date(item.endDate) : now;
+    const months = differenceInMonths(end, start);
+
+    for (const skill of item.skills) {
+      if (!CHART_EXCLUDE.has(skill)) {
+        totals.set(skill, (totals.get(skill) ?? 0) + months);
+      }
+    }
+  }
+
+  return [...totals.entries()]
+    .map<[string, number]>(([name, months]) => [name, Number((months / 12).toFixed(2))])
+    .sort((a, b) => b[1] - a[1]);
 }

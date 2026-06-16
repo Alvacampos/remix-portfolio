@@ -223,9 +223,17 @@ Add new copy by appending an `UPPER_SNAKE_CASE` key to `en-US.json`. There is no
 Site content is **not in the database** — it's static JSON under `public/data/`:
 
 - [public/data/education.json](public/data/education.json) — degree + certifications.
-- [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS_IMG`, `SKILL_CHART_DATA`, `EXTRA_ACTIVITIES`.
+- [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS_IMG`, `EXTRA_ACTIVITIES`.
 
 To update content, edit those JSON files. Loaders re-fetch on each request (the skills loader caches for 1h via `Cache-Control`).
+
+### Skill chart is derived from `WORK_ITEMS`
+
+The bar chart on `/skills` is **computed from `WORK_ITEMS`** by [getSkillChartData](app/utils/utils.tsx) — for every work item, every entry in its `skills` array gets credited the item's full duration (`endDate - startDate`, falling back to "now" when `endDate` is missing). Totals are summed across jobs and converted to years.
+
+This means **the way to edit the chart is to edit the `skills` arrays of `WORK_ITEMS`**. There is no longer a separate `SKILL_CHART_DATA` block to keep in sync — that source-of-truth split was the cause of long-standing chart drift.
+
+A small `CHART_EXCLUDE` set in `getSkillChartData` filters out filter-chip / generic skills (`Front End`, `Back End`, `Agile`, `Teaching`, `Mentoring`, `Programming`, `C`, `Leadership`, `Interviewing`, `Router`) so they don't show as bars. To exclude a new skill from the chart, add it to that set; to include a new technology, add it to the relevant work item's `skills` array.
 
 Per-company logos live in `public/assets/img/<company-slug>.webp`. The `skills.$uuid` route resolves the image path by lowercasing `data.title` (with two hardcoded overrides for `Professor` → `unsta2.webp` and `Teacher` → `coderhouse.webp`).
 

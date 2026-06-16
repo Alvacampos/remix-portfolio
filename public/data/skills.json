@@ -10,6 +10,7 @@
       "skills": [
         "HTML",
         "CSS",
+        "JavaScript",
         "Storybook",
         "Highcharts",
         "Vue",
@@ -47,9 +48,10 @@
         "Storybook",
         "Highcharts",
         "React",
-        "Router",
+        "Redux",
         "Front End",
         "Cypress",
+        "Jest",
         "Heroku",
         "Agile",
         "Back End",
@@ -136,14 +138,13 @@
         "React",
         "Remix",
         "NextJs",
-        "Post-css",
+        "PostCSS",
         "GraphQL",
         "Cypress",
         "Playwright",
         "Front End",
         "Agile",
         "Cloudflare",
-        "PostCSS",
         "Tailwind"
       ],
       "projects": [
@@ -188,7 +189,6 @@
     { "title": "Sass" },
     { "title": "Heroku" }
   ],
-  "TOP_SKILLS": ["Front End", "Back End"],
   "EXTRA_ACTIVITIES": [
     {
       "title": "Endava",
@@ -230,220 +230,6 @@
         {
           "title": "Dev Lead Loan Team",
           "text": "Dev Lead of the Loan Team, in charge of the coordinating effort and unblocking the team on front end topics."
-        }
-      ]
-    }
-  ],
-  "SKILL_CHART_DATA": [
-    {
-      "name": "JavaScript",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "TypeScript",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Python",
-      "dates": [
-        {
-          "startDate": "2024-04-01T00:00:00.000",
-          "endDate": "2025-04-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "Django",
-      "dates": [
-        {
-          "startDate": "2024-04-01T00:00:00.000",
-          "endDate": "2025-04-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "NextJs",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "ReactJs",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": "2020-12-01T00:00:00.000"
-        },
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Cypress",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "GraphQL",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Storybook",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": "2020-12-01T00:00:00.000"
-        },
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Remix",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Css",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "PostCss",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Tailwind",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "HTML",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Playwright",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "NodeJs",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "ExpressJs",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "Git",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Agile",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Styled Components",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
         }
       ]
     }

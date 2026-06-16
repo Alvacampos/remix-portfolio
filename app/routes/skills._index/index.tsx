@@ -37,20 +37,13 @@ type skillsDataTypes = {
     id: string;
     title: string;
     startDate: string;
-    endDate: string;
+    endDate?: string | null;
     rol: string;
     skills: string[];
   }[];
   SKILLS_IMG: {
     title: string;
     img: string;
-  }[];
-  SKILL_CHART_DATA: {
-    name: string;
-    dates: {
-      startDate: string;
-      endDate: string | null;
-    }[];
   }[];
   EXTRA_ACTIVITIES: {
     title: string;
@@ -74,14 +67,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const data = skillsData.WORK_ITEMS.map((item) => ({
     id: item.id,
     title: item.title,
-    date: formatDate(item.startDate, item.endDate),
+    date: formatDate(item.startDate, item.endDate ?? undefined),
     texts: [item.rol],
     skills: item.skills,
   }));
 
   const skills = skillsData.SKILLS_IMG.map((item) => item.title);
 
-  const chartData = getSkillChartData(skillsData.SKILL_CHART_DATA);
+  const chartData = getSkillChartData(skillsData.WORK_ITEMS);
 
   return json(
     {
