@@ -91,6 +91,24 @@ describe('getSkillChartData', () => {
     ]);
     expect(result.map(([name]) => name)).toEqual(['React']);
   });
+
+  it('merges overlapping intervals per skill so concurrent jobs do not double-count', () => {
+    const result = getSkillChartData([
+      // Two jobs overlap entirely on 2020 and both list React.
+      {
+        startDate: '2020-01-01T00:00:00.000',
+        endDate: '2021-01-01T00:00:00.000',
+        skills: ['React'],
+      },
+      {
+        startDate: '2020-06-01T00:00:00.000',
+        endDate: '2020-12-01T00:00:00.000',
+        skills: ['React'],
+      },
+    ]);
+    // Merged span: 2020-01-01 → 2021-01-01 = 1 year (NOT 1.5 years).
+    expect(result).toEqual([['React', 1]]);
+  });
 });
 
 describe('noop', () => {

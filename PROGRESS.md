@@ -103,7 +103,7 @@ These weren't introduced by Stage 1 but were red on `main` and would have made C
 
 ### What this stage did
 
-- Rewrote [`getSkillChartData`](app/utils/utils.tsx) to take `WorkItemForChart[]` (`{ startDate, endDate?, skills: string[] }`). For every work item, every entry in its `skills` array is credited with the item's full duration; totals are summed across jobs and divided by 12. Pre-sorted descending by years.
+- Rewrote [`getSkillChartData`](app/utils/utils.tsx) to take `WorkItemForChart[]` (`{ startDate, endDate?, skills: string[] }`). For every work item, every entry in its `skills` array contributes the item's full duration to that skill's interval set. Intervals are then merged per skill (so concurrent jobs that both list the same skill don't double-count) and the merged-interval months are summed and divided by 12. Result: no skill can exceed total career length. Pre-sorted descending by years.
 - Added a `CHART_EXCLUDE` set inside the util to filter out filter-chip / generic skills (`Front End`, `Back End`, `Agile`, `Teaching`, `Mentoring`, `Programming`, `C`, `Leadership`, `Interviewing`, `Router`).
 - Updated the [skills loader](app/routes/skills._index/index.tsx) to pass `WORK_ITEMS` directly to the util; dropped the `SKILL_CHART_DATA` field from `skillsDataTypes`.
 - Edited [public/data/skills.json](public/data/skills.json):

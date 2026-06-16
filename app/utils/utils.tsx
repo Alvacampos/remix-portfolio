@@ -63,23 +63,56 @@ const CHART_EXCLUDE = new Set([
   'Router',
 ]);
 
+type Interval = { start: number; end: number };
+
+// Merge overlapping intervals so that two concurrent jobs that both list the
+// same skill don't double-count toward that skill's wall-clock experience.
+function mergeIntervals(intervals: Interval[]): Interval[] {
+  if (intervals.length === 0) return [];
+  const sorted = [...intervals].sort((a, b) => a.start - b.start);
+  const merged: Interval[] = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    const last = merged[merged.length - 1];
+    const next = sorted[i];
+    if (next.start <= last.end) {
+      last.end = Math.max(last.end, next.end);
+    } else {
+      merged.push(next);
+    }
+  }
+  return merged;
+}
+
 export function getSkillChartData(workItems: WorkItemForChart[]): [string, number][] {
   const now = new Date();
-  const totals = new Map<string, number>();
+  const intervalsBySkill = new Map<string, Interval[]>();
 
   for (const item of workItems) {
-    const start = new Date(item.startDate);
-    const end = item.endDate ? new Date(item.endDate) : now;
-    const months = differenceInMonths(end, start);
+    const start = new Date(item.startDate).getTime();
+    const end = (item.endDate ? new Date(item.endDate) : now).getTime();
+    const interval: Interval = { start, end };
 
     for (const skill of item.skills) {
       if (!CHART_EXCLUDE.has(skill)) {
-        totals.set(skill, (totals.get(skill) ?? 0) + months);
+        const list = intervalsBySkill.get(skill);
+        if (list) {
+          list.push(interval);
+        } else {
+          intervalsBySkill.set(skill, [interval]);
+        }
       }
     }
   }
 
-  return [...totals.entries()]
-    .map<[string, number]>(([name, months]) => [name, Number((months / 12).toFixed(2))])
-    .sort((a, b) => b[1] - a[1]);
+  const totals: [string, number][] = [];
+  for (const [skill, intervals] of intervalsBySkill) {
+    const merged = mergeIntervals(intervals);
+    const totalMonths = merged.reduce(
+      (sum, { start, end }) => sum + differenceInMonths(end, start),
+      0
+    );
+    totals.push([skill, Number((totalMonths / 12).toFixed(2))]);
+  }
+
+  return totals.sort((a, b) => b[1] - a[1]);
 }
