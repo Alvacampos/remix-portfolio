@@ -1,5 +1,5 @@
 {
-    "WORK_ITEMS": [
+  "WORK_ITEMS": [
     {
       "id": 1,
       "title": "Globant",
@@ -8,17 +8,56 @@
       "rol": "Jr Web developer.",
       "description": "Worked as a software developer in the analytics team, developing web applications using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.",
       "skills": [
-        "HTML",
-        "CSS",
-        "Storybook",
-        "Highcharts",
-        "Vue",
-        "React",
-        ".Net",
-        "Agile",
-        "Front End",
-        "Back End",
-        "Axios"
+        {
+          "name": "HTML",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "CSS",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "JavaScript",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "Storybook",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "Highcharts",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "Vue",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "React",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": ".Net",
+          "start": "2018-08-01T00:00:00.000",
+          "end": "2019-08-01T00:00:00.000"
+        },
+        {
+          "name": "Agile",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "Front End",
+          "start": "2018-08-01T00:00:00.000"
+        },
+        {
+          "name": "Back End",
+          "start": "2018-08-01T00:00:00.000",
+          "end": "2019-08-01T00:00:00.000"
+        },
+        {
+          "name": "Axios",
+          "start": "2018-08-01T00:00:00.000"
+        }
       ],
       "projects": [
         {
@@ -39,25 +78,90 @@
       "rol": "Mid Level Full-stack developer.",
       "description": "Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku.",
       "skills": [
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "TypeScript",
-        "Sass",
-        "Storybook",
-        "Highcharts",
-        "React",
-        "Router",
-        "Front End",
-        "Cypress",
-        "Heroku",
-        "Agile",
-        "Back End",
-        "NodeJs",
-        "Express",
-        "Axios",
-        "Tailwind",
-        "Styled Components"
+        {
+          "name": "HTML",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "CSS",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "JavaScript",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "TypeScript",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Sass",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Storybook",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Highcharts",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "React",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Redux",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Front End",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Cypress",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Jest",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Heroku",
+          "start": "2020-12-01T00:00:00.000",
+          "end": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Agile",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Back End",
+          "start": "2020-12-01T00:00:00.000",
+          "end": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "NodeJs",
+          "start": "2020-12-01T00:00:00.000",
+          "end": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Express",
+          "start": "2020-12-01T00:00:00.000",
+          "end": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Axios",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Tailwind",
+          "start": "2020-12-01T00:00:00.000"
+        },
+        {
+          "name": "Styled Components",
+          "start": "2020-12-01T00:00:00.000"
+        }
       ],
       "projects": [
         {
@@ -75,7 +179,24 @@
       "title": "Professor (part-time)",
       "startDate": "2021-06-01T00:00:00.000",
       "endDate": "2022-03-01T00:00:00.000",
-      "skills": ["Teaching", "C", "Programming", "Mentoring"],
+      "skills": [
+        {
+          "name": "Teaching",
+          "start": "2021-06-01T00:00:00.000"
+        },
+        {
+          "name": "C",
+          "start": "2021-06-01T00:00:00.000"
+        },
+        {
+          "name": "Programming",
+          "start": "2021-06-01T00:00:00.000"
+        },
+        {
+          "name": "Mentoring",
+          "start": "2021-06-01T00:00:00.000"
+        }
+      ],
       "rol": "Software Engineering Professor.",
       "projects": "Teaching programming in a university to first year students."
     },
@@ -87,16 +208,46 @@
       "rol": "Senior Full-stack developer.",
       "description": "Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University’s data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program.",
       "skills": [
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "SQL",
-        "Marklogic",
-        "Teaching",
-        "Leadership",
-        "Interviewing",
-        "Back End",
-        "Agile"
+        {
+          "name": "HTML",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "CSS",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "JavaScript",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "SQL",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Marklogic",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Teaching",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Leadership",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Interviewing",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Back End",
+          "start": "2021-08-01T00:00:00.000"
+        },
+        {
+          "name": "Agile",
+          "start": "2021-08-01T00:00:00.000"
+        }
       ],
       "projects": [
         {
@@ -114,7 +265,20 @@
       "title": "Teacher (part-time)",
       "startDate": "2022-03-01T00:00:00.000",
       "endDate": "2023-03-01T00:00:00.000",
-      "skills": ["Teaching", "JavaScript", "Programming"],
+      "skills": [
+        {
+          "name": "Teaching",
+          "start": "2022-03-01T00:00:00.000"
+        },
+        {
+          "name": "JavaScript",
+          "start": "2022-03-01T00:00:00.000"
+        },
+        {
+          "name": "Programming",
+          "start": "2022-03-01T00:00:00.000"
+        }
+      ],
       "rol": "Javascript course Teacher.",
       "projects": "Teaching vanilla JavaScript fundamentals over the weekend."
     },
@@ -125,26 +289,86 @@
       "rol": "Senior Frontend developer.",
       "description": "Fully integrated as a client developer, my day to day tasks where to develop and maintain the client’s application and assist other developers with their tasks.",
       "skills": [
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "TypeScript",
-        "Python",
-        "Django",
-        "Storybook",
-        "Highcharts",
-        "React",
-        "Remix",
-        "NextJs",
-        "Post-css",
-        "GraphQL",
-        "Cypress",
-        "Playwright",
-        "Front End",
-        "Agile",
-        "Cloudflare",
-        "PostCSS",
-        "Tailwind"
+        {
+          "name": "HTML",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "CSS",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "JavaScript",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "TypeScript",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Python",
+          "start": "2022-04-01T00:00:00",
+          "end": "2023-01-01T00:00:00.000"
+        },
+        {
+          "name": "Django",
+          "start": "2022-04-01T00:00:00",
+          "end": "2023-01-01T00:00:00.000"
+        },
+        {
+          "name": "Storybook",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Highcharts",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "React",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Remix",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "NextJs",
+          "start": "2022-04-01T00:00:00",
+          "end": "2024-01-01T00:00:00.000"
+        },
+        {
+          "name": "PostCSS",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "GraphQL",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Cypress",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Playwright",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Front End",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Agile",
+          "start": "2022-04-01T00:00:00"
+        },
+        {
+          "name": "Cloudflare",
+          "start": "2022-04-01T00:00:00",
+          "end": "2024-01-01T00:00:00.000"
+        },
+        {
+          "name": "Tailwind",
+          "start": "2022-04-01T00:00:00"
+        }
       ],
       "projects": [
         {
@@ -163,32 +387,79 @@
     }
   ],
   "SKILLS_IMG": [
-    { "title": "HTML" },
-    { "title": "CSS" },
-    { "title": "Tailwind" },
-    { "title": "JavaScript" },
-    { "title": "TypeScript" },
-    { "title": "Python" },
-    { "title": "Django" },
-    { "title": "React" },
-    { "title": "Remix.run" },
-    { "title": "Redux" },
-    { "title": "Git" },
-    { "title": "GraphQL" },
-    { "title": "Cypress" },
-    { "title": "Playwright" },
-    { "title": "Storybook" },
-    { "title": "NodeJs" },
-    { "title": "Axios" },
-    { "title": "Express" },
-    { "title": "Mongodb" },
-    { "title": "Vue" },
-    { "title": "Highcharts" },
-    { "title": "Agile Development" },
-    { "title": "Sass" },
-    { "title": "Heroku" }
+    {
+      "title": "HTML"
+    },
+    {
+      "title": "CSS"
+    },
+    {
+      "title": "Tailwind"
+    },
+    {
+      "title": "JavaScript"
+    },
+    {
+      "title": "TypeScript"
+    },
+    {
+      "title": "Python"
+    },
+    {
+      "title": "Django"
+    },
+    {
+      "title": "React"
+    },
+    {
+      "title": "Remix.run"
+    },
+    {
+      "title": "Redux"
+    },
+    {
+      "title": "Git"
+    },
+    {
+      "title": "GraphQL"
+    },
+    {
+      "title": "Cypress"
+    },
+    {
+      "title": "Playwright"
+    },
+    {
+      "title": "Storybook"
+    },
+    {
+      "title": "NodeJs"
+    },
+    {
+      "title": "Axios"
+    },
+    {
+      "title": "Express"
+    },
+    {
+      "title": "Mongodb"
+    },
+    {
+      "title": "Vue"
+    },
+    {
+      "title": "Highcharts"
+    },
+    {
+      "title": "Agile Development"
+    },
+    {
+      "title": "Sass"
+    },
+    {
+      "title": "Heroku"
+    }
   ],
-  "TOP_SKILLS": ["Front End", "Back End"],
   "EXTRA_ACTIVITIES": [
     {
       "title": "Endava",
@@ -230,220 +501,6 @@
         {
           "title": "Dev Lead Loan Team",
           "text": "Dev Lead of the Loan Team, in charge of the coordinating effort and unblocking the team on front end topics."
-        }
-      ]
-    }
-  ],
-  "SKILL_CHART_DATA": [
-    {
-      "name": "JavaScript",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "TypeScript",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Python",
-      "dates": [
-        {
-          "startDate": "2024-04-01T00:00:00.000",
-          "endDate": "2025-04-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "Django",
-      "dates": [
-        {
-          "startDate": "2024-04-01T00:00:00.000",
-          "endDate": "2025-04-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "NextJs",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "ReactJs",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": "2020-12-01T00:00:00.000"
-        },
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Cypress",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "GraphQL",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Storybook",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": "2020-12-01T00:00:00.000"
-        },
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Remix",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Css",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "PostCss",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Tailwind",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "HTML",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Playwright",
-      "dates": [
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "NodeJs",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "ExpressJs",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        }
-      ]
-    },
-    {
-      "name": "Git",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Agile",
-      "dates": [
-        {
-          "startDate": "2018-08-01T00:00:00.000",
-          "endDate": null
-        }
-      ]
-    },
-    {
-      "name": "Styled Components",
-      "dates": [
-        {
-          "startDate": "2020-12-01T00:00:00.000",
-          "endDate": "2021-08-01T00:00:00.000"
-        },
-        {
-          "startDate": "2022-04-01T00:00:00",
-          "endDate": null
         }
       ]
     }

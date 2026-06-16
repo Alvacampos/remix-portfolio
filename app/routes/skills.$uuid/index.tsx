@@ -12,6 +12,12 @@ export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }]
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
 
+type SkillEntryJson = {
+  name: string;
+  start?: string;
+  end?: string | null;
+};
+
 type skillsDataTypes =
   | {
       WORK_ITEMS: {
@@ -20,7 +26,7 @@ type skillsDataTypes =
         startDate: string;
         endDate: string;
         rol: string;
-        skills: string[];
+        skills: SkillEntryJson[];
         projects?:
           | {
               title: string;
@@ -124,7 +130,7 @@ export default function UuidIndex() {
       </div>
       {skills && (
         <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills} />
+          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills.map((s) => s.name)} />
         </div>
       )}
     </div>
