@@ -20,12 +20,15 @@ ignore:
   - .git
   - .github
   - .cache
-  - .eslintrc.js
+  - .eslintrc.cjs
   - .vscode
+  - .wrangler
   - public
   - node_modules
   - build
   - functions
   - app/components/icons
   - playwright/.cache
+  - playwright-report
+  - test-results
   - .test

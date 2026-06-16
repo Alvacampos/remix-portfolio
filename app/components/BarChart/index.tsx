@@ -1,5 +1,6 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useIntl } from 'react-intl';
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -27,20 +28,25 @@ const COLOR_CODE = [
   '#f0f6fc',
 ];
 
-const CustomTooltip = ({ active, payload }: any) => {
+type TooltipPayload = {
+  active?: boolean;
+  payload?: { value: number; payload: { name: string } }[];
+};
+
+function CustomTooltip({ active = false, payload = [] }: TooltipPayload) {
   if (active && payload && payload.length) {
     const item = payload[0];
     return (
-      <div className={getClasses("custom-tooltip")}>
-        <div className={getClasses("tooltip-item")}>
-          <span className={getClasses("tooltip-label")}>{item.payload.name}</span>
-          <span className={getClasses("tooltip-value")}>{item.value.toFixed(2)} yrs</span>
+      <div className={getClasses('custom-tooltip')}>
+        <div className={getClasses('tooltip-item')}>
+          <span className={getClasses('tooltip-label')}>{item.payload.name}</span>
+          <span className={getClasses('tooltip-value')}>{item.value.toFixed(2)} yrs</span>
         </div>
       </div>
     );
   }
   return null;
-};
+}
 
 type Props = {
   data: (string | number)[][];
@@ -56,15 +62,11 @@ export default function CustomBarChart({ data }: Props) {
   return (
     <div className={getClasses()}>
       <ResponsiveContainer width="100%" height={sortedData.length * 40}>
-        <BarChart
-          data={sortedData}
-          layout="vertical"
-          barSize={20}
-        >
+        <BarChart data={sortedData} layout="vertical" barSize={20}>
           <XAxis type="number" stroke="#f0f6fc" />
           <YAxis type="category" dataKey="name" stroke="#f0f6fc" width={100} />
           <Tooltip
-            wrapperClassName={getClasses("custom-tooltip")}
+            wrapperClassName={getClasses('custom-tooltip')}
             contentStyle={{}} // reset inline styles so CSS applies
             itemStyle={{}}
             labelStyle={{}}
@@ -76,8 +78,8 @@ export default function CustomBarChart({ data }: Props) {
             content={<CustomTooltip />}
           />
           <Bar dataKey="value">
-            {sortedData.map((_, index) => (
-              <Cell key={`cell-${index}`} fill={COLOR_CODE[index % COLOR_CODE.length]} />
+            {sortedData.map((entry, index) => (
+              <Cell key={entry.name} fill={COLOR_CODE[index % COLOR_CODE.length]} />
             ))}
           </Bar>
         </BarChart>

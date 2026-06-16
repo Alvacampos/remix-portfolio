@@ -22,13 +22,7 @@ module.exports = {
 
   // Base config
   plugins: ['prettier', 'simple-import-sort'],
-  extends: [
-    'eslint:recommended',
-    'airbnb',
-    'airbnb/hooks',
-    'prettier',
-    'plugin:storybook/recommended',
-  ],
+  extends: ['eslint:recommended', 'airbnb', 'airbnb/hooks', 'prettier'],
   rules: {
     'comma-dangle': [
       'error',
@@ -44,8 +38,14 @@ module.exports = {
       {
         devDependencies: [
           '/**/*.cy.{ts,tsx,js,jsx}',
-          'tests/**/*.{ts,js}',
+          'tests/**/*.{ts,tsx,js,jsx}',
+          'test/**/*.{ts,tsx,js,jsx}',
+          '**/*.test.{ts,tsx,js,jsx}',
           'playwright.config.ts',
+          'vitest.config.ts',
+          'vite.config.ts',
+          'tailwind.config.ts',
+          'postcss.config.js',
           '/**/*.spec.ts',
         ],
       },
@@ -146,7 +146,7 @@ module.exports = {
 
     // Node
     {
-      files: ['.eslintrc.js'],
+      files: ['.eslintrc.cjs'],
       env: {
         node: true,
       },

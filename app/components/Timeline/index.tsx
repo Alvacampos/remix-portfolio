@@ -1,10 +1,12 @@
-import { getClassMaker } from '~/utils/utils';
-import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
 import { Link } from '@remix-run/react';
-import { SuccessFilled } from '~/components/icons';
+import { lazy, memo, Suspense } from 'react';
+import pkg, { VerticalTimeline } from 'react-vertical-timeline-component';
+
 import { links as cardLinks } from '~/components/Card';
+import { SuccessFilled } from '~/components/icons';
+import { getClassMaker } from '~/utils/utils';
+
 import styles from './style.css?url';
-import { Suspense, lazy, memo } from 'react';
 
 export const links = () => [
   ...cardLinks(),
@@ -30,23 +32,27 @@ type FilteredDataTypes = {
   filteredData: DataTypes[];
 };
 
-const TimelineElement = memo(({ item }: { item: DataTypes }) => (
-  <VerticalTimelineElement
-    className={getClasses('element')}
-    date={item.date}
-    icon={<SuccessFilled />}
-  >
-    <Link
-      to={`/skills/${item.id}`}
-      className={getClasses('element-link')}
-      state={{ item: item.id }}
+function TimelineElementInner({ item }: { item: DataTypes }) {
+  return (
+    <VerticalTimelineElement
+      className={getClasses('element')}
+      date={item.date}
+      icon={<SuccessFilled />}
     >
-      <Suspense fallback={<div style={{ height: 100 }} />}>
-        <LazyCard {...item} isStyleless />
-      </Suspense>
-    </Link>
-  </VerticalTimelineElement>
-));
+      <Link
+        to={`/skills/${item.id}`}
+        className={getClasses('element-link')}
+        state={{ item: item.id }}
+      >
+        <Suspense fallback={<div style={{ height: 100 }} />}>
+          <LazyCard {...item} isStyleless />
+        </Suspense>
+      </Link>
+    </VerticalTimelineElement>
+  );
+}
+
+const TimelineElement = memo(TimelineElementInner);
 
 export default function Timeline({ filteredData }: FilteredDataTypes) {
   return (

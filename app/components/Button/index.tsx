@@ -18,7 +18,7 @@ type ButtonProps = {
   leftIcon?: ComponentType<{ className: string }>;
   btnType?: 'button' | 'submit';
   handleClick?: () => void;
-  children?: ReactNode[];
+  children?: ReactNode;
 };
 
 export default function Button({
@@ -32,10 +32,16 @@ export default function Button({
   children = undefined,
 }: ButtonProps) {
   return (
-    <ConditionalLink to={url} condition={!!url} label={label} className={getClasses('link-wrapper')}>
+    <ConditionalLink
+      to={url}
+      condition={!!url}
+      label={label}
+      className={getClasses('link-wrapper')}
+    >
+      {/* eslint-disable-next-line react/button-has-type */}
       <button className={getClasses(className)} onClick={handleClick} type={btnType}>
         {LeftIcon && <LeftIcon className={getClasses('icon', 'left')} />}
-        {children && children.map((child) => child)}
+        {children}
         {label && label}
         {RightIcon && <RightIcon className={getClasses('icon', 'right')} />}
       </button>

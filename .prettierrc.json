@@ -5,9 +5,7 @@
   "trailingComma": "es5",
   "overrides": [
     {
-      "files": [
-        "app/styles/constants.js"
-      ],
+      "files": ["app/styles/constants.js"],
       "options": {
         "quoteProps": "consistent"
       }

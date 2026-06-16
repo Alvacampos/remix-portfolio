@@ -1,11 +1,11 @@
 import type { MetaFunction } from '@remix-run/node';
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  isRouteErrorResponse,
   useRouteError,
 } from '@remix-run/react';
 import { IntlProvider } from 'react-intl';
@@ -76,7 +76,8 @@ export function ErrorBoundary() {
         <p>Page under development.</p>
       </div>
     );
-  } else if (error instanceof Error) {
+  }
+  if (error instanceof Error) {
     return (
       <div>
         <h1>Error</h1>
@@ -85,7 +86,6 @@ export function ErrorBoundary() {
         <pre>{error.stack}</pre>
       </div>
     );
-  } else {
-    return <h1>Unknown Error</h1>;
   }
+  return <h1>Unknown Error</h1>;
 }

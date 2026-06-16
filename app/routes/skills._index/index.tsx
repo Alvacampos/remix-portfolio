@@ -1,18 +1,19 @@
 import 'react-vertical-timeline-component/style.min.css';
+
 import { json, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
-import { useState, Suspense, lazy } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 
-import Card, { links as cardLinks } from '~/components/Card';
-import Button, { links as buttonLinks } from '~/components/Button';
-import Input, { links as inputLinks } from '~/components/Input';
-import Carousel, { links as carouselLinks } from '~/components/Carousel';
-import { links as timelineLinks } from '~/components/Timeline';
-import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
-import { getClassMaker, formatDate, getSkillChartData } from '~/utils/utils';
 import CustomBarChart, { links as barChartLinks } from '~/components/BarChart';
+import Button, { links as buttonLinks } from '~/components/Button';
+import Card, { links as cardLinks } from '~/components/Card';
+import Carousel, { links as carouselLinks } from '~/components/Carousel';
+import Input, { links as inputLinks } from '~/components/Input';
+import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
+import { links as timelineLinks } from '~/components/Timeline';
+import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
 
 import styles from './style.css?url';
 
@@ -49,7 +50,7 @@ type skillsDataTypes = {
     dates: {
       startDate: string;
       endDate: string | null;
-    }[]
+    }[];
   }[];
   EXTRA_ACTIVITIES: {
     title: string;
@@ -144,7 +145,7 @@ export default function Skills() {
     const spans = [];
     for (let i = 1; i <= 4; i++) {
       const key = uuid();
-      spans.push(<span key={key}></span>);
+      spans.push(<span key={key} />);
     }
     return spans;
   };
@@ -166,14 +167,16 @@ export default function Skills() {
               handleClick={handleFrontEnd}
               className={`btn${isFrontEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'FRONT_END' })}
-              children={renderSpan()}
-            />
+            >
+              {renderSpan()}
+            </Button>
             <Button
               handleClick={handleBackEnd}
               className={`btn${isBackEnd ? '--active' : ''}`}
               label={formatMessage({ id: 'BACK_END' })}
-              children={renderSpan()}
-            />
+            >
+              {renderSpan()}
+            </Button>
           </div>
         </div>
         {filteredData.length === 0 ? (

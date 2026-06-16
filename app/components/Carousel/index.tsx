@@ -1,33 +1,34 @@
 import { v4 as uuid } from 'uuid';
-import { getClassMaker } from '~/utils/utils';
+
 import {
-  Html,
+  AgileSoftware,
+  Axios,
+  Cloudflare,
   Css,
-  Tailwind,
-  Js,
-  Ts,
-  Python,
+  Cypress,
   Django,
-  React,
-  Remix,
-  Nextjs,
-  Redux,
+  Express,
   GitIcon,
   Graphql,
-  Cypress,
-  Playwright,
-  Storybook,
-  Nodejs,
-  Axios,
-  Express,
-  Mongodb,
-  VueJs,
-  Highcharts,
-  AgileSoftware,
-  Sass,
   Heroku,
-  Cloudflare,
+  Highcharts,
+  Html,
+  Js,
+  Mongodb,
+  Nodejs,
+  Playwright,
+  Python,
+  React,
+  Redux,
+  Remix,
+  Sass,
+  Storybook,
+  Tailwind,
+  Ts,
+  VueJs,
 } from '~/components/icons';
+import { getClassMaker } from '~/utils/utils';
+
 import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
@@ -46,7 +47,7 @@ export default function Carousel() {
     django: <Django />,
     react: <React />,
     remix: <Remix />,
-    
+
     redux: <Redux />,
     gitIcon: <GitIcon />,
     graphql: <Graphql />,

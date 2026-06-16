@@ -16,3 +16,7 @@ public/
 
 # Changelog
 CHANGELOG.md
+
+# Playwright
+playwright-report/
+test-results/
