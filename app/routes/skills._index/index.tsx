@@ -5,11 +5,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import verticalTimelineStyles from 'react-vertical-timeline-component/style.min.css?url';
 
 import barChartStyles from '~/components/BarChart/style.css?url';
-import Button, { links as buttonLinks } from '~/components/Button';
-import Card, { links as cardLinks } from '~/components/Card';
+import Button from '~/components/Button';
+import Card from '~/components/Card';
 import carouselStyles from '~/components/Carousel/style.css?url';
-import Input, { links as inputLinks } from '~/components/Input';
-import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
+import Input from '~/components/Input';
+import LoadingSpinner from '~/components/LoadingSpinner';
 import timelineStyles from '~/components/Timeline/style.css?url';
 import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
 
@@ -32,12 +32,13 @@ import styles from './style.css?url';
 // three components: doing so would make Vite treat the module as
 // statically imported, which defeats the `lazy()` chunk split (you'd
 // see "dynamic import will not move module into another chunk").
+//
+// The small components (Card, Input, Button, LoadingSpinner) used to
+// also contribute `links()` entries, but their CSS is now inlined
+// into ./style.css via postcss-import (Stage 13) so /skills ships
+// far fewer render-blocking stylesheets.
 
 export const links = () => [
-  ...cardLinks(),
-  ...inputLinks(),
-  ...buttonLinks(),
-  ...loadingSpinnerLinks(),
   { rel: 'stylesheet', href: barChartStyles },
   { rel: 'stylesheet', href: carouselStyles },
   { rel: 'stylesheet', href: timelineStyles },

@@ -1,12 +1,12 @@
 import type { MetaFunction } from '@remix-run/cloudflare';
 import { FormattedMessage } from 'react-intl';
 
-import DownloadButton, { links as downloadButtonLinks } from '~/components/DownloadBtn';
+import DownloadButton from '~/components/DownloadBtn';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-export const links = () => [...downloadButtonLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 export const meta: MetaFunction = () => [
   { title: 'Gonzalo Alvarez Campos — Senior Software Engineer' },

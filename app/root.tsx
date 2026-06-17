@@ -11,7 +11,7 @@ import {
 } from '@remix-run/react';
 import { IntlProvider } from 'react-intl';
 
-import NavBar, { links as NavBarLinks } from '~/components/NavBar';
+import NavBar from '~/components/NavBar';
 import { type Locale, messagesFor, pickLocale } from '~/intl';
 import styles from '~/styles/style.css?url';
 import tailwind from '~/styles/tailwind.css?url';
@@ -22,7 +22,6 @@ const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2';
 
 export function links() {
   return [
-    ...NavBarLinks(),
     { rel: 'icon', href: '/assets/img/favicon.svg', type: 'image/svg+xml' },
     // Preload the variable WOFF2 — it's the only font we ship and renders
     // most of the visible text on first paint.

@@ -2,9 +2,8 @@ import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+// Stage 13: LoadingSpinner CSS is inlined into the consuming route's
+// style.css via postcss-import. No links() export.
 
 const BLOCK = 'spinner-container';
 const getClasses = getClassMaker(BLOCK);

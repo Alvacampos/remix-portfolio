@@ -4,7 +4,7 @@ import type { MetaFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
-import Card, { links as cardLinks } from '~/components/Card';
+import Card from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
 
 // Import the JSON server-side: Vite bakes it into the server bundle so
@@ -14,7 +14,7 @@ import { formatDate, getClassMaker } from '~/utils/utils';
 import educationData from '../../../public/data/education.json';
 import styles from './style.css?url';
 
-export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 export const meta: MetaFunction = () => [
   { title: 'Education — Gonzalo Alvarez Campos' },

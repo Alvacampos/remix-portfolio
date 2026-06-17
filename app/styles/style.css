@@ -1,4 +1,12 @@
 /* stylelint-disable font-family-name-quotes */
+
+/* NavBar (every page) and Button (used by NavBar + everywhere else) get
+ * their CSS inlined into this global stylesheet via postcss-import. Stage 13
+ * removed their per-component links() exports so we ship one stylesheet
+ * for first-paint chrome instead of three. */
+@import '../components/Button/style.css';
+@import '../components/NavBar/style.css';
+
 html {
   min-height: 100%;
 }

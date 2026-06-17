@@ -3,9 +3,7 @@ import type { ComponentType, ReactNode } from 'react';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { getClassMaker, noop } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+// Stage 13: Button CSS is inlined into app/styles/style.css via postcss-import.
 
 const BLOCK = 'button-component';
 const getClasses = getClassMaker(BLOCK);
