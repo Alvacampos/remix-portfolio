@@ -17,6 +17,7 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 5. ✅ **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
 6. ✅ **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
 7. ✅ **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
+8. 🟡 **Stage 8 — Dep maintenance** (patch + minor bumps inside current majors; clear the Dependabot backlog)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -445,6 +446,50 @@ Going in I assumed the static asset was already served by the Cloudflare edge, s
 
 ---
 
+## Stage 8 — Dep maintenance
+
+**Goal:** clear the Dependabot backlog (5+ open PRs) by taking the patch+minor bumps inside current majors. Hold every major bump for a separate, intentional decision.
+
+**Branch:** `stage-8-deps`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### Bumped (patch + minor inside current majors)
+
+- `react-is` 19.1.1 → 19.2.7
+- `stylelint-config-standard` 39.0.0 → 39.0.1
+- `@cloudflare/workers-types` 4.20251014.0 → 4.20260617.1
+- `happy-dom` 20.10.4 → 20.10.5
+- `@eslint/compat` 1.4.0 → 1.4.1
+
+### Held (each is its own decision)
+
+- **eslint 8 → 10** + `@eslint/js`, `eslint-plugin-react-hooks` 4 → 7. Needs flat-config migration and an airbnb shim. Standalone PR.
+- **vite 5 → 8.** Remix 2's plugin pins peer to Vite 5. Tied to a future Remix v3 / React Router v7 migration.
+- **vitest 3 → 4** + `@vitest/ui`. Stage 1 hit a rolldown native-binding bug under `npm ci`; the underlying [npm/cli#4828](https://github.com/npm/cli/issues/4828) hasn't moved.
+- **react 18 → 19** + `react-dom`, `react-intl` 7 → 10, `react-router-dom` 6 → 7. Whole React 19 / React Router 7 migration is its own future stage.
+- **typescript 5 → 6**, **stylelint 16 → 17**, **cssnano 7 → 8**, **globals 16 → 17**, **vite-tsconfig-paths 5 → 6**, **remix-utils 7 → 9**. Each needs its own evaluation.
+- **GitHub Actions majors** (`actions/checkout` 4 → 6, `setup-node` 4 → 6, `cache` 4 → 5, `upload-artifact` 4 → 7). Open as Dependabot PRs (#131-134) — close them or merge them individually; not bundling here.
+
+### Audit for short code optimizations
+
+Looked for low-hanging wins to bundle in. Found **none that fit "short and on-point"**:
+
+- The two `console.error` calls in `app/entry.server.tsx` and `app/routes/skills.$uuid/index.tsx` are intentional (Terser drops `console.log` in prod but keeps `error`/`warn`/`info`).
+- `entry.client.tsx`'s `<StrictMode>` wrapper is fine — it's a dev-only no-op in production builds.
+- `json()` from `@remix-run/cloudflare` is **deprecated** with a clear migration path (opt into `future.v3_singleFetch` and return raw objects), but that's a multi-file refactor that changes loader response shape and deserves its own PR.
+- Build still emits two CSS-minifier warnings about an `export { default } from "./style.css"` — coming from a Vite intermediate transform, not from our source. Can't fix without a Vite/Remix-side change.
+
+### Verification
+
+- `npm run lint`, `npm run typecheck` — clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15.
+- `npm run build-storybook` — succeeds.
+- `npm run build` — clean (only the same pre-existing Remix v3 future-flag warnings + the unfixable CSS-minifier warning above).
+
+---
+
 ## Decisions log
 
 Record non-obvious decisions here as they're made (so future-me / future-agent doesn't have to re-derive them):
@@ -457,12 +502,13 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 
 ## PRs
 
-| Stage | Branch                     | PR     | Status | Merged |
-| ----- | -------------------------- | ------ | ------ | ------ |
-| 1     | `stage-1-tests`            | merged | ✅     | yes    |
-| 2     | `stage-2-data-restructure` | merged | ✅     | yes    |
-| 3     | `stage-3-storybook`        | merged | ✅     | yes    |
-| 4     | `stage-4-deps`             | merged | ✅     | yes    |
-| 5     | `stage-5-optimize`         | merged | ✅     | yes    |
-| 6     | `stage-6-tier-2`           | merged | ✅     | yes    |
-| 7     | `stage-7-tier-2-followups` | merged | ✅     | yes    |
+| Stage | Branch                     | PR          | Status | Merged |
+| ----- | -------------------------- | ----------- | ------ | ------ |
+| 1     | `stage-1-tests`            | merged      | ✅     | yes    |
+| 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
+| 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
+| 4     | `stage-4-deps`             | merged      | ✅     | yes    |
+| 5     | `stage-5-optimize`         | merged      | ✅     | yes    |
+| 6     | `stage-6-tier-2`           | merged      | ✅     | yes    |
+| 7     | `stage-7-tier-2-followups` | merged      | ✅     | yes    |
+| 8     | `stage-8-deps`             | _(opening)_ | 🟡     | —      |
