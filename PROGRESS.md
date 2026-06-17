@@ -18,7 +18,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 6. ✅ **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
 7. ✅ **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
 8. ✅ **Stage 8 — Dep maintenance** (patch + minor bumps inside current majors; cleared the Dependabot backlog)
-9. 🟡 **Stage 9 — Single Fetch** (opt into Remix's `future.v3_singleFetch`; replace deprecated `json()` with raw objects + `data()` for headers)
+9. ✅ **Stage 9 — Single Fetch** (opted into `future.v3_singleFetch`; replaced deprecated `json()` with raw objects + `data()` for headers)
+10. 🟡 **Stage 10 — Lazy route discovery** (opt into `future.v3_lazyRouteDiscovery`; clears the last future-flag warning)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -496,8 +497,8 @@ Looked for low-hanging wins to bundle in. Found **none that fit "short and on-po
 **Goal:** opt into Remix's `future.v3_singleFetch`, replacing the deprecated `json()` helper with raw object returns (and `data()` only where headers are required). Clears a deprecation that will become a hard break under React Router v7.
 
 **Branch:** `stage-9-single-fetch`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### What this stage did
 
@@ -528,6 +529,37 @@ Under Single Fetch, route data requests now hit `<route>.data` and return a `tex
 
 ---
 
+## Stage 10 — Lazy route discovery
+
+**Goal:** opt into Remix's `future.v3_lazyRouteDiscovery` (a.k.a. "fog of war"). Clears the last future-flag warning on dev start and brings the route manifest closer to the React Router v7 default behaviour.
+
+**Branch:** `stage-10-lazy-routes`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### What this stage did
+
+- Flipped `future.v3_lazyRouteDiscovery: true` in [vite.config.ts](vite.config.ts).
+- That's it. No source code touches — the flag just changes how Remix populates the route manifest at runtime: instead of shipping every route's metadata in the initial HTML, the client requests it on demand via `/__manifest?p=<path>` (with `<Link>` components prefetching eagerly on hover/focus).
+
+### Why the impact is small here (but still worth doing)
+
+This app has 4 routes. The "fog of war" optimization pays back proportionally to route count, so the wire-savings are negligible. The two real reasons to flip it now:
+
+1. **Last future-flag warning gone.** Every `npm run dev` since Stage 1 has printed `[warn] Route discovery/manifest behavior is changing in React Router v7`. With this PR, no future-flag warnings remain.
+2. **Closer to React Router v7 defaults.** When/if the project migrates to RR v7, this is one less behaviour change to absorb in that PR.
+
+### Verification
+
+- `npm run lint`, `npm run typecheck` — clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15 (no flake).
+- `npm run build-storybook` — succeeds.
+- `npm run build` — clean (no future-flag warnings remaining, including the previously-persistent `v3_lazyRouteDiscovery` line).
+- Manual smoke against `npm run dev`: `/`, `/skills`, `/skills/3`, `/education` all 200 with full HTML; the new `/__manifest?p=…` endpoint responds with 204 (no new routes to discover for paths already in the initial manifest, which is the correct outcome for a 4-route app).
+
+---
+
 ## Decisions log
 
 Record non-obvious decisions here as they're made (so future-me / future-agent doesn't have to re-derive them):
@@ -550,4 +582,5 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | 6     | `stage-6-tier-2`           | merged      | ✅     | yes    |
 | 7     | `stage-7-tier-2-followups` | merged      | ✅     | yes    |
 | 8     | `stage-8-deps`             | merged      | ✅     | yes    |
-| 9     | `stage-9-single-fetch`     | _(opening)_ | 🟡     | —      |
+| 9     | `stage-9-single-fetch`     | merged      | ✅     | yes    |
+| 10    | `stage-10-lazy-routes`     | _(opening)_ | 🟡     | —      |
