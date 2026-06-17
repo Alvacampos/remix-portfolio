@@ -1,38 +1,52 @@
-import 'react-vertical-timeline-component/style.min.css';
-
 import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
-import { useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import verticalTimelineStyles from 'react-vertical-timeline-component/style.min.css?url';
 
-import BarChart, { links as barChartLinks } from '~/components/BarChart';
+import barChartStyles from '~/components/BarChart/style.css?url';
 import Button, { links as buttonLinks } from '~/components/Button';
 import Card, { links as cardLinks } from '~/components/Card';
-import Carousel, { links as carouselLinks } from '~/components/Carousel';
+import carouselStyles from '~/components/Carousel/style.css?url';
 import Input, { links as inputLinks } from '~/components/Input';
 import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/LoadingSpinner';
-import Timeline, { links as timelineLinks } from '~/components/Timeline';
+import timelineStyles from '~/components/Timeline/style.css?url';
 import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-// All component CSS ships in <head> via Remix's <Links> at SSR time
-// so the page renders styled on first paint. We tried lazy()+Suspense
-// for BarChart / Carousel / Timeline to defer their JS, but routing
-// their CSS through `links()` re-couples the modules to the route
-// chunk anyway (Vite warns "dynamic import will not move module into
-// another chunk"). Keep them as plain imports until we add a manual
-// CSS-preload strategy that decouples the two.
+// Manual CSS preload pattern for code-split components: BarChart,
+// Carousel, and Timeline are JS-lazy-loaded below, but their CSS is
+// pulled in as `?url` strings (no module evaluation, no chunk
+// coupling) and piped into Remix's <Links> via the route's `links()`
+// below. This keeps the page styled on first paint while letting
+// `lazy(() => import(...))` actually move each component's JS into
+// its own chunk.
+//
+// Why we don't `import { links as xLinks } from '...'` for those
+// three components: doing so would make Vite treat the module as
+// statically imported, which defeats the `lazy()` chunk split (you'd
+// see "dynamic import will not move module into another chunk").
+
 export const links = () => [
   ...cardLinks(),
   ...inputLinks(),
   ...buttonLinks(),
-  ...carouselLinks(),
-  ...barChartLinks(),
-  ...timelineLinks(),
   ...loadingSpinnerLinks(),
+  { rel: 'stylesheet', href: barChartStyles },
+  { rel: 'stylesheet', href: carouselStyles },
+  { rel: 'stylesheet', href: timelineStyles },
+  { rel: 'stylesheet', href: verticalTimelineStyles },
   { rel: 'stylesheet', href: styles },
 ];
+
+// Below-the-fold heavy components — JS lazy-loaded so the initial
+// /skills bundle skips recharts (~150 KB) and the 25 carousel SVGs.
+// Their CSS is preloaded above, so the page is styled before this
+// module evaluates.
+const LazyTimeline = lazy(() => import('~/components/Timeline'));
+const LazyCarousel = lazy(() => import('~/components/Carousel'));
+const LazyBarChart = lazy(() => import('~/components/BarChart'));
 
 export const meta: MetaFunction = () => [
   { title: 'Skills & Work Experience — Gonzalo Alvarez Campos' },
@@ -196,7 +210,13 @@ export default function Skills() {
             </Button>
           </div>
         </div>
-        {filteredData.length === 0 ? <LoadingSpinner /> : <Timeline filteredData={filteredData} />}
+        {filteredData.length === 0 ? (
+          <LoadingSpinner />
+        ) : (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyTimeline filteredData={filteredData} />
+          </Suspense>
+        )}
         <div className={getClasses('years-of-exp')}>
           <Card title={formatMessage({ id: 'TOTAL_YEARS_OF_EXPERIENCE' })} texts={[yearsOfExp]} />
         </div>
@@ -205,8 +225,12 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
-        <Carousel />
-        <BarChart data={chartData} />
+        <Suspense fallback={<LoadingSpinner />}>
+          <LazyCarousel />
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <LazyBarChart data={chartData} />
+        </Suspense>
       </div>
       <div className={getClasses('extra-activities')}>
         <h2>

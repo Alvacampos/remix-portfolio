@@ -1,11 +1,18 @@
+// Design tokens injected as PostCSS simple-vars (e.g. `$text-color`).
+// Keep this file as the single source of truth — unknown variable refs
+// emit warnings via postcss.config.js's `unknown` callback.
+//
+// All entries below are referenced somewhere in app/**/*.css. Tokens
+// that became unused after Stage 5 were removed:
+//   - alternative-white, alternative-black (the misleading
+//     `#ffffff00` literal — transparent white, not black)
+//   - border-5, space-100, space-50, weight-500, default-animation
 export default {
   // Colors
   'text-color': '#f0f6fc',
   'default-white': '#ffffff',
-  'alternative-white': '#ffffffb3',
   'default-grey': '#60686c99',
   'default-black': '#0d1117',
-  'alternative-black': '#ffffff00',
   'success-green': '#238636',
   'variation-green': '#216e39',
   'alternative-green': '#2ea043',
@@ -17,16 +24,13 @@ export default {
   // Border
   'border-10': '10px',
   'border-6': '6px',
-  'border-5': '5px',
   'border-4': '4px',
 
   // Spaces
   'space-200': '200px',
-  'space-100': '100px',
   'space-80': '80px',
   'space-70': '70px',
   'space-60': '60px',
-  'space-50': '50px',
   'space-40': '40px',
   'space-35': '35px',
   'space-30': '30px',
@@ -48,15 +52,11 @@ export default {
 
   // Weights
   'weight-700': '700',
-  'weight-500': '500',
-
-  // Animations
-  'default-animation': 'background-color 2s ease-out',
 
   // Shadows
   'shadow-1': 'inset 0 -1px 0 #21262d',
 
-  //Break points
+  // Break points
   'desktop-medium': '1296px',
   'desktop-small': '1076px',
   'mobile-small': '496px',
