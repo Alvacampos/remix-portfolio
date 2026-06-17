@@ -15,7 +15,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 3. ✅ **Stage 3 — Storybook** for every component in `app/components/`
 4. ✅ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
 5. ✅ **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
-6. 🟡 **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
+6. ✅ **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
+7. 🟡 **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -391,8 +392,8 @@ Still deferred:
 **Goal:** revisit Tier-2 follow-ups from Stage 5 that became viable on a second pass.
 
 **Branch:** `stage-6-tier-2`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### What this stage did
 
@@ -409,6 +410,35 @@ Still deferred:
 - `npm run build-storybook` — succeeds.
 - Build warnings: 0 (the previous "dynamic + static import" warnings are gone — the lazy chunks now actually split).
 - Headless chromium smoke test: timeline icon renders dark-bg + green ring + green check, carousel item at 100×100, 29 chart y-axis labels, date center 6.5px from icon center.
+
+---
+
+## Stage 7 — Tier-2 round 2
+
+**Goal:** chase the only "amber" Lighthouse metric (LCP 2.6 s on `/skills`) by removing a request-time HTTP hop.
+
+**Branch:** `stage-7-tier-2-followups`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### What this stage did
+
+- **Server-side `/data/*.json` import.** All three loaders (`/skills`, `/skills/:uuid`, `/education`) used to do `fetch(new URL('/data/skills.json', request.url))` from inside the Cloudflare Pages Function — a same-region HTTP round-trip on every uncached request. Replaced with direct `import` of the JSON; Vite bakes the data into the server bundle. The static asset is **still served** publicly at `/data/*.json` via the existing `_routes.json` exclude, so no behavior change for any external consumer.
+- **Cleaned up the inferred types.** The literal-inferred type from the JSON is wider than what the loader uses (each optional field becomes a discriminated union), so the loaders cast `as unknown as skillsDataTypes` and `as Certification[]` to match the older runtime expectations. Skill ids in the JSON are numeric (`1`, `2`, …) — `skills._index` was typing them as `string` and the URL builders also expected strings. Tightened: type as `number` in the loader, convert to string at the boundary that serializes to `/skills/:id`.
+- **No Cloudflare config changes.** `_routes.json` already excludes `/data/*` from the Pages Function, and `/data/*` cache-control was set in [public/\_headers](public/_headers) during Stage 5. The asset is now served twice (once embedded in the server bundle, once as a static file at the edge); both copies are <10 KB combined, fine.
+
+### Why the win is real but small
+
+The static asset is served by the Cloudflare edge, not by the Function — but a Function cold-start that needs the data still has to make an outbound HTTP call to its own edge cache. That call is cheap (sub-100 ms in good cases) but it's strictly avoidable. Estimated impact on `/skills` LCP: 50–150 ms saved on cold edge, less when warm. The bigger win is removing two runtime failure modes (`Failed to fetch skills.json` / `Failed to fetch education.json`) and a layer of indirection.
+
+### Verification
+
+- `npm run lint`, `npm run typecheck` — clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15.
+- `npm run build-storybook` — succeeds.
+- `npm run build` — clean (only the same pre-existing Remix v3 future-flag warnings).
+- Pending: re-run Lighthouse on the deployed site after merge and save `lighthouse/skills-post-stage-7.json` to compare against the pre-Stage-6 baseline.
 
 ---
 
@@ -431,4 +461,5 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
 | 4     | `stage-4-deps`             | merged      | ✅     | yes    |
 | 5     | `stage-5-optimize`         | merged      | ✅     | yes    |
-| 6     | `stage-6-tier-2`           | _(opening)_ | 🟡     | —      |
+| 6     | `stage-6-tier-2`           | merged      | ✅     | yes    |
+| 7     | `stage-7-tier-2-followups` | _(opening)_ | 🟡     | —      |
