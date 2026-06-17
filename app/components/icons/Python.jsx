@@ -4,7 +4,7 @@ const SvgPython = (props) => (
     fill="none"
     viewBox="0 0 64 64"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

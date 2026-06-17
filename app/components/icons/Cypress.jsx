@@ -5,7 +5,7 @@ const SvgCypress = (props) => (
     preserveAspectRatio="xMidYMid"
     viewBox="0 0 256 256"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <defs>

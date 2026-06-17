@@ -3,7 +3,7 @@ const SvgMongodb = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="8.738 -5.036 17.46 39.406"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

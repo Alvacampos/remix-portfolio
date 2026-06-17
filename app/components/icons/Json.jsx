@@ -4,7 +4,7 @@ const SvgJson = (props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 120 60"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <defs>

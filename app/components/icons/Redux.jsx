@@ -4,7 +4,7 @@ const SvgRedux = (props) => (
     preserveAspectRatio="xMidYMid"
     viewBox="0 0 256 244"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

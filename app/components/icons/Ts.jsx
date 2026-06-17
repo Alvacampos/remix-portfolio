@@ -4,7 +4,7 @@ const SvgTs = (props) => (
     fill="none"
     viewBox="0 0 512 512"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <rect width={512} height={512} fill="#3178c6" rx={50} />

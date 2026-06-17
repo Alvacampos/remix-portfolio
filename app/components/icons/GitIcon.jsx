@@ -4,7 +4,7 @@ const SvgGitIcon = (props) => (
     preserveAspectRatio="xMinYMin meet"
     viewBox="0 0 256 256"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

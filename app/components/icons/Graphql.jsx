@@ -4,7 +4,7 @@ const SvgGraphql = (props) => (
     fill="#e10098"
     viewBox="0 0 29.999 30"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path d="m4.08 22.864-1.1-.636L15.248.98l1.1.636z" />

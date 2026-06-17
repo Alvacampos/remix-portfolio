@@ -4,7 +4,7 @@ const SvgEducation = (props) => (
     fill="none"
     viewBox="0 0 16 16"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

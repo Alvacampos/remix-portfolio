@@ -3,7 +3,7 @@ const SvgCloseButton = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 744.09 1052.4"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

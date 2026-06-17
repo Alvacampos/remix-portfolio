@@ -5,7 +5,7 @@ const SvgNodejs = (props) => (
     preserveAspectRatio="xMidYMid"
     viewBox="0 0 512 314"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <defs>

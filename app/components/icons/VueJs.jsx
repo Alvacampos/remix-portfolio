@@ -3,7 +3,7 @@ const SvgVueJs = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 2500 2165.1"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path fill="#4dba87" d="M1538.7 0 1250 500 961.3 0H0l1250 2165.1L2500 0z" />

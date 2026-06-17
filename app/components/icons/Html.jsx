@@ -1,5 +1,11 @@
 const SvgHtml = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 520" height="100%" role="img" {...props}>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 452 520"
+    height="100%"
+    aria-hidden="true"
+    {...props}
+  >
     <path fill="#e34f26" d="M41 460 0 0h451l-41 460-185 52" />
     <path fill="#ef652a" d="m226 472 149-41 35-394H226" />
     <path

@@ -4,7 +4,7 @@ const SvgSendIcon = (props) => (
     data-name="Layer 1"
     viewBox="0 0 122.56 122.88"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

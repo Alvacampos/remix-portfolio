@@ -4,7 +4,7 @@ const SvgHome = (props) => (
     fill="none"
     viewBox="0 0 19 20"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

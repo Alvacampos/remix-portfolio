@@ -4,7 +4,7 @@ const SvgHeroku = (props) => (
     preserveAspectRatio="xMinYMin meet"
     viewBox="-72 0 400 400"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

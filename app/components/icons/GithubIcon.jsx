@@ -4,7 +4,7 @@ const SvgGithubIcon = (props) => (
     preserveAspectRatio="xMinYMin meet"
     viewBox="0 0 256 249"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <g fill="#fff">
