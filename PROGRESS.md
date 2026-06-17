@@ -19,7 +19,7 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 7. ✅ **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
 8. ✅ **Stage 8 — Dep maintenance** (patch + minor bumps inside current majors; cleared the Dependabot backlog)
 9. ✅ **Stage 9 — Single Fetch** (opted into `future.v3_singleFetch`; replaced deprecated `json()` with raw objects + `data()` for headers)
-10. 🟡 **Stage 10 — Lazy route discovery** (opt into `future.v3_lazyRouteDiscovery`; clears the last future-flag warning)
+10. ✅ **Stage 10 — Lazy route discovery** (opted into `future.v3_lazyRouteDiscovery`; cleared the last future-flag warning)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -534,8 +534,8 @@ Under Single Fetch, route data requests now hit `<route>.data` and return a `tex
 **Goal:** opt into Remix's `future.v3_lazyRouteDiscovery` (a.k.a. "fog of war"). Clears the last future-flag warning on dev start and brings the route manifest closer to the React Router v7 default behaviour.
 
 **Branch:** `stage-10-lazy-routes`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### What this stage did
 
@@ -572,15 +572,15 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 
 ## PRs
 
-| Stage | Branch                     | PR          | Status | Merged |
-| ----- | -------------------------- | ----------- | ------ | ------ |
-| 1     | `stage-1-tests`            | merged      | ✅     | yes    |
-| 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
-| 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
-| 4     | `stage-4-deps`             | merged      | ✅     | yes    |
-| 5     | `stage-5-optimize`         | merged      | ✅     | yes    |
-| 6     | `stage-6-tier-2`           | merged      | ✅     | yes    |
-| 7     | `stage-7-tier-2-followups` | merged      | ✅     | yes    |
-| 8     | `stage-8-deps`             | merged      | ✅     | yes    |
-| 9     | `stage-9-single-fetch`     | merged      | ✅     | yes    |
-| 10    | `stage-10-lazy-routes`     | _(opening)_ | 🟡     | —      |
+| Stage | Branch                     | PR     | Status | Merged |
+| ----- | -------------------------- | ------ | ------ | ------ |
+| 1     | `stage-1-tests`            | merged | ✅     | yes    |
+| 2     | `stage-2-data-restructure` | merged | ✅     | yes    |
+| 3     | `stage-3-storybook`        | merged | ✅     | yes    |
+| 4     | `stage-4-deps`             | merged | ✅     | yes    |
+| 5     | `stage-5-optimize`         | merged | ✅     | yes    |
+| 6     | `stage-6-tier-2`           | merged | ✅     | yes    |
+| 7     | `stage-7-tier-2-followups` | merged | ✅     | yes    |
+| 8     | `stage-8-deps`             | merged | ✅     | yes    |
+| 9     | `stage-9-single-fetch`     | merged | ✅     | yes    |
+| 10    | `stage-10-lazy-routes`     | merged | ✅     | yes    |
