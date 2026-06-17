@@ -1,0 +1,28 @@
+{
+  "_note": "Hand-extracted summary from a full Lighthouse JSON report. The original run hit the chat-message size limit because of the embedded filmstrip thumbnails. If you re-run later, save the full report next to this file as `skills-pre-stage-6.json`.",
+  "lighthouseVersion": "13.2.0",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "fetchTime": "2026-06-17T14:17:23.812Z",
+  "context": "Production deploy after Stage 5 merged, before Stage 6.",
+  "environment": {
+    "networkUserAgent": "Linux Android 11 moto g power (2022) — Lighthouse mobile profile",
+    "benchmarkIndex": 3175.5
+  },
+  "audits": {
+    "first-contentful-paint": {
+      "score": 0.94,
+      "numericValue": 1599.174,
+      "displayValue": "1.6 s"
+    },
+    "largest-contentful-paint": {
+      "score": 0.86,
+      "numericValue": 2649.174,
+      "displayValue": "2.6 s"
+    },
+    "speed-index": {
+      "score": 1.0,
+      "numericValue": 1892.39,
+      "displayValue": "1.9 s"
+    }
+  }
+}

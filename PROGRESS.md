@@ -16,7 +16,7 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 4. ✅ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
 5. ✅ **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
 6. ✅ **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
-7. 🟡 **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
+7. ✅ **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -418,8 +418,8 @@ Still deferred:
 **Goal:** chase the only "amber" Lighthouse metric (LCP 2.6 s on `/skills`) by removing a request-time HTTP hop.
 
 **Branch:** `stage-7-tier-2-followups`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### What this stage did
 
@@ -427,9 +427,9 @@ Still deferred:
 - **Cleaned up the inferred types.** The literal-inferred type from the JSON is wider than what the loader uses (each optional field becomes a discriminated union), so the loaders cast `as unknown as skillsDataTypes` and `as Certification[]` to match the older runtime expectations. Skill ids in the JSON are numeric (`1`, `2`, …) — `skills._index` was typing them as `string` and the URL builders also expected strings. Tightened: type as `number` in the loader, convert to string at the boundary that serializes to `/skills/:id`.
 - **No Cloudflare config changes.** `_routes.json` already excludes `/data/*` from the Pages Function, and `/data/*` cache-control was set in [public/\_headers](public/_headers) during Stage 5. The asset is now served twice (once embedded in the server bundle, once as a static file at the edge); both copies are <10 KB combined, fine.
 
-### Why the win is real but small
+### Why I expected the win to be small (and why it wasn't)
 
-The static asset is served by the Cloudflare edge, not by the Function — but a Function cold-start that needs the data still has to make an outbound HTTP call to its own edge cache. That call is cheap (sub-100 ms in good cases) but it's strictly avoidable. Estimated impact on `/skills` LCP: 50–150 ms saved on cold edge, less when warm. The bigger win is removing two runtime failure modes (`Failed to fetch skills.json` / `Failed to fetch education.json`) and a layer of indirection.
+Going in I assumed the static asset was already served by the Cloudflare edge, so the loader's outbound `fetch` would only cost a sub-100 ms intra-region hop on cold start. The Lighthouse delta below shows the real impact was substantially bigger — the loader chain was apparently more expensive than that, and skipping it cleared **−437 ms** off both FCP and LCP.
 
 ### Verification
 
@@ -438,7 +438,10 @@ The static asset is served by the Cloudflare edge, not by the Function — but a
 - `npm run test:e2e --project=chromium` — 15/15.
 - `npm run build-storybook` — succeeds.
 - `npm run build` — clean (only the same pre-existing Remix v3 future-flag warnings).
-- Pending: re-run Lighthouse on the deployed site after merge and save `lighthouse/skills-post-stage-7.json` to compare against the pre-Stage-6 baseline.
+- **Lighthouse delta on `/skills`** (full breakdown in [lighthouse/RESULTS.md](lighthouse/RESULTS.md)):
+  - **FCP** 1.6 s → **1.2 s** (−437 ms; score 0.94 → 0.99).
+  - **LCP** 2.6 s → **2.2 s** (−437 ms; score 0.86 → 0.94 — moved into Lighthouse's "good" band from the wrong side of the 2.5 s threshold).
+  - Speed Index 1.9 s → 2.4 s (+482 ms). This is the cost of Stage 6's code-split: BarChart / Carousel / Timeline arrive in a later JS chunk, so visual completeness shifts later even though first content arrives sooner. Still well inside Lighthouse's "good" band (threshold 3.4 s); score 1.00 → 0.98. Worth it for the LCP win.
 
 ---
 
@@ -454,12 +457,12 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 
 ## PRs
 
-| Stage | Branch                     | PR          | Status | Merged |
-| ----- | -------------------------- | ----------- | ------ | ------ |
-| 1     | `stage-1-tests`            | merged      | ✅     | yes    |
-| 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
-| 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
-| 4     | `stage-4-deps`             | merged      | ✅     | yes    |
-| 5     | `stage-5-optimize`         | merged      | ✅     | yes    |
-| 6     | `stage-6-tier-2`           | merged      | ✅     | yes    |
-| 7     | `stage-7-tier-2-followups` | _(opening)_ | 🟡     | —      |
+| Stage | Branch                     | PR     | Status | Merged |
+| ----- | -------------------------- | ------ | ------ | ------ |
+| 1     | `stage-1-tests`            | merged | ✅     | yes    |
+| 2     | `stage-2-data-restructure` | merged | ✅     | yes    |
+| 3     | `stage-3-storybook`        | merged | ✅     | yes    |
+| 4     | `stage-4-deps`             | merged | ✅     | yes    |
+| 5     | `stage-5-optimize`         | merged | ✅     | yes    |
+| 6     | `stage-6-tier-2`           | merged | ✅     | yes    |
+| 7     | `stage-7-tier-2-followups` | merged | ✅     | yes    |
