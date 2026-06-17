@@ -35,14 +35,14 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Icons             | Local SVGs → SVGO → SVGR-generated React components                                              |
 | Linting           | ESLint (airbnb + airbnb/hooks + prettier + jsx-a11y + storybook), Prettier, Stylelint, ls-lint   |
 | Type-check        | `tsc --noEmit` (Vite handles emit)                                                               |
-| Node              | `>=20.0.0` (`.nvmrc` pins `v20.11.1`)                                                            |
+| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                      |
 | npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                        |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
 
 **Storybook:** Storybook 10 (Vite framework) with stories colocated next to each component as `index.stories.tsx`. See "Storybook" section below.
 
-CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Dependabot ([.github/dependabot.yml](.github/dependabot.yml)) bumps deps daily, prefixed `chore(deps)`.
+CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Dependabot ([.github/dependabot.yml](.github/dependabot.yml)) bumps deps weekly in grouped ecosystems, prefixed `chore(deps)`.
 
 ---
 
@@ -238,7 +238,7 @@ Site content is **not in the database** — it's static JSON under `public/data/
 - [public/data/education.json](public/data/education.json) — degree + certifications.
 - [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS_IMG`, `EXTRA_ACTIVITIES`.
 
-To update content, edit those JSON files. Loaders re-fetch on each request (the skills loader caches for 1h via `Cache-Control`).
+To update content, edit those JSON files. Route loaders import them server-side (Vite bakes the JSON into the server bundle); the skills loader still caches for 1h via `Cache-Control` so the edge holds the rendered HTML.
 
 ### Skill chart is derived from `WORK_ITEMS`
 
@@ -399,7 +399,7 @@ When adding a new component, mirror the existing shape:
 When adding a new route:
 
 1. Create `app/routes/<flat-route-name>/index.tsx` (or `<flat-route-name>.tsx`).
-2. Export `loader` if you need data — fetch JSON from `public/data/` via `new URL('/data/...', request.url)` so it works on Pages.
+2. Export `loader` if you need data — `import` the JSON from `public/data/` directly (Vite bakes it into the server bundle, no HTTP hop). Single Fetch is on, so return a raw object; use `data(payload, { headers })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status.
 3. Export `links` (compose any child component `links`).
 4. Add a NavBar entry in [app/components/NavBar/index.tsx](app/components/NavBar/index.tsx) `MAIN_NAV` if the route should be reachable from the nav.
 5. Optionally export a route-local `ErrorBoundary` (skills.\$uuid does this).
