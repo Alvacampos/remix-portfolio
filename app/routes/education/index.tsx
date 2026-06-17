@@ -89,12 +89,12 @@ export default function Skills() {
           <FormattedMessage id="DEGREE" />
         </h2>
         <div className={getClasses('degree-container')}>
-        <div className={getClasses('card-wrapper')}>
-          <Card {...degreeCard} />
-        </div>
-        <div className={getClasses('card-wrapper')}>
-          <Card {...associateDegreeCard} />
-        </div>
+          <div className={getClasses('card-wrapper')}>
+            <Card {...degreeCard} />
+          </div>
+          <div className={getClasses('card-wrapper')}>
+            <Card {...associateDegreeCard} />
+          </div>
         </div>
       </div>
       <div className={getClasses('certification')}>

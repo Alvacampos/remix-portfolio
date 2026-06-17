@@ -54,10 +54,10 @@
 @media screen and (min-width: $desktop-small) {
   .education-route {
     &__degree-container {
-    display: flex;
-    flex-direction: row;
-    gap: $space-10;
-   }
+      display: flex;
+      flex-direction: row;
+      gap: $space-10;
+    }
 
     &__degree {
       width: 60%;

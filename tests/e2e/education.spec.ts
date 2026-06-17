@@ -6,10 +6,15 @@ test.describe('Education (/education)', () => {
   });
 
   test('shows the degree section', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /Degree/i, level: 2 })).toBeVisible();
+    // exact match: education.json has cards whose titles also contain
+    // "Degree" (e.g. the Associate Degree card), so a /Degree/i regex
+    // collides with them. We only want the section <h2> here.
+    await expect(
+      page.getByRole('heading', { name: 'Degree', exact: true, level: 2 })
+    ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: /Software Development and Quality Control Technician/i,
+        name: /Software Development and Quality Control/i,
       })
     ).toBeVisible();
   });
