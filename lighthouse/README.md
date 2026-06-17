@@ -51,14 +51,14 @@ npx lighthouse https://gonzalo-alvarez-campos-cv.com/skills \
 
 Diff the metric block between runs. The fields that matter:
 
-| Field path | What it means | Threshold |
-| --- | --- | --- |
-| `audits["first-contentful-paint"].numericValue` | FCP (ms) | <1800 = good |
-| `audits["largest-contentful-paint"].numericValue` | LCP (ms) | <2500 = good |
-| `audits["speed-index"].numericValue` | Speed Index (ms) | <3387 = good |
-| `audits["total-blocking-time"].numericValue` | TBT (ms) | <200 = good |
-| `audits["cumulative-layout-shift"].numericValue` | CLS (unitless) | <0.1 = good |
-| `categories.performance.score` | Overall perf score, 0–1 | ≥0.9 = green |
+| Field path                                        | What it means           | Threshold    |
+| ------------------------------------------------- | ----------------------- | ------------ |
+| `audits["first-contentful-paint"].numericValue`   | FCP (ms)                | <1800 = good |
+| `audits["largest-contentful-paint"].numericValue` | LCP (ms)                | <2500 = good |
+| `audits["speed-index"].numericValue`              | Speed Index (ms)        | <3387 = good |
+| `audits["total-blocking-time"].numericValue`      | TBT (ms)                | <200 = good  |
+| `audits["cumulative-layout-shift"].numericValue`  | CLS (unitless)          | <0.1 = good  |
+| `categories.performance.score`                    | Overall perf score, 0–1 | ≥0.9 = green |
 
 Quick diff with `jq`:
 
@@ -79,8 +79,8 @@ Captured manually before saving the full JSON; numbers are from the
 metrics block of the report. If a row says "—" the JSON file isn't
 saved yet.
 
-| File | Route | Stage at run time | FCP | LCP | SI | Perf score |
-| --- | --- | --- | --- | --- | --- | --- |
+| File                      | Route     | Stage at run time             | FCP   | LCP   | SI    | Perf score        |
+| ------------------------- | --------- | ----------------------------- | ----- | ----- | ----- | ----------------- |
 | `skills-pre-stage-6.json` | `/skills` | After Stage 5, before Stage 6 | 1.6 s | 2.6 s | 1.9 s | (paste from JSON) |
 
 Notes:

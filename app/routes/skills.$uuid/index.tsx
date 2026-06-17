@@ -5,6 +5,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import Card, { links as cardLinks } from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
 
+// Server-side import — see app/routes/skills._index/index.tsx for the
+// rationale (Vite bakes the JSON into the server bundle, no HTTP hop).
+import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
 export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
@@ -62,16 +65,9 @@ const LOGO_DIMS: Record<string, { width: number; height: number }> = {
 };
 const FALLBACK_DIMS = { width: 1000, height: 500 };
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const id = params && params?.uuid;
-  const url = new URL('/data/skills.json', request.url);
-
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error('Failed to fetch skills.json');
-  }
-
-  const skillsData: skillsDataTypes = await response.json();
+  const skillsData = skillsJson as skillsDataTypes;
   let data;
   let imagePath: string | undefined;
 

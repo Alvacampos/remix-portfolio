@@ -1,12 +1,17 @@
 import 'react-vertical-timeline-component/style.min.css';
 
-import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
+import { json, type MetaFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
 import Card, { links as cardLinks } from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
 
+// Import the JSON server-side: Vite bakes it into the server bundle so
+// the loader doesn't have to do an HTTP round-trip to the static asset
+// at /data/education.json on every request. The asset is still served
+// publicly via the `/data/*` exclude in public/_routes.json.
+import educationData from '../../../public/data/education.json';
 import styles from './style.css?url';
 
 export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
@@ -23,34 +28,25 @@ export const meta: MetaFunction = () => [
 const BLOCK = 'education-route';
 const getClasses = getClassMaker(BLOCK);
 
-type DataTypes = {
-  degree: {
-    title: string;
-    startDate: string;
-    endDate: string;
-    institution: string;
-    description: string;
-  };
-  certifications: {
-    title: string;
-    startDate: string;
-    endDate: string;
-    institution: string;
-    description: string;
-    url?: string;
-  }[];
+type Certification = {
+  title: string;
+  startDate: string;
+  endDate?: string;
+  institution: string;
+  description: string;
+  url?: string;
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL('/data/education.json', request.url);
-
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error('Failed to fetch skills.json');
-  }
-
-  const educationData: DataTypes = await response.json();
-  return json({ degree: educationData.degree, certifications: educationData.certifications });
+export async function loader() {
+  // Widen the inferred type: TS reads the JSON literal and produces a
+  // discriminated union based on which entries have `url`, so
+  // `cert.url` isn't accessible without narrowing. Casting up to a
+  // single shape with `url?: string` matches the old behaviour and
+  // keeps the consumer code simple.
+  return json({
+    degree: educationData.degree,
+    certifications: educationData.certifications as Certification[],
+  });
 }
 
 export default function Skills() {

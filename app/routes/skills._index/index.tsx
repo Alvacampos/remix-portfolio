@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
+import { json, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -13,6 +13,11 @@ import LoadingSpinner, { links as loadingSpinnerLinks } from '~/components/Loadi
 import timelineStyles from '~/components/Timeline/style.css?url';
 import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
 
+// Import the JSON server-side: Vite bakes it into the server bundle so
+// the loader doesn't have to do an HTTP round-trip to the static asset
+// at /data/skills.json on every request. The asset is still served
+// publicly via the `/data/*` exclude in public/_routes.json.
+import skillsData from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
 // Manual CSS preload pattern for code-split components: BarChart,
@@ -68,7 +73,7 @@ type SkillEntryJson = {
 
 type skillsDataTypes = {
   WORK_ITEMS: {
-    id: string;
+    id: number;
     title: string;
     startDate: string;
     endDate?: string | null;
@@ -77,7 +82,7 @@ type skillsDataTypes = {
   }[];
   SKILLS_IMG: {
     title: string;
-    img: string;
+    img?: string;
   }[];
   EXTRA_ACTIVITIES: {
     title: string;
@@ -88,18 +93,17 @@ type skillsDataTypes = {
   }[];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL('/data/skills.json', request.url);
+export async function loader() {
+  // The JSON's literal-inferred type is wider than we use here (e.g.
+  // optional `end` on skill entries collapses into a union); cast
+  // through `unknown` so TS accepts the narrowing without flagging
+  // a "neither type sufficiently overlaps" error.
+  const typed = skillsData as unknown as skillsDataTypes;
 
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error('Failed to fetch skills.json');
-  }
-
-  const skillsData: skillsDataTypes = await response.json();
-
-  const data = skillsData.WORK_ITEMS.map((item) => ({
-    id: item.id,
+  const data = typed.WORK_ITEMS.map((item) => ({
+    // ids in JSON are numeric, but Timeline + the /skills/:uuid URL
+    // both want strings; convert once here.
+    id: String(item.id),
     title: item.title,
     date: formatDate(item.startDate, item.endDate ?? undefined),
     texts: [item.rol],
@@ -108,17 +112,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
     skills: item.skills.map((s) => s.name),
   }));
 
-  const skills = skillsData.SKILLS_IMG.map((item) => item.title);
+  const skills = typed.SKILLS_IMG.map((item) => item.title);
 
-  const chartData = getSkillChartData(skillsData.WORK_ITEMS);
+  const chartData = getSkillChartData(typed.WORK_ITEMS);
 
   return json(
     {
       data,
-      yearsOfExp: formatDate(skillsData.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
+      yearsOfExp: formatDate(typed.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills,
       chartData,
-      extraActivities: skillsData.EXTRA_ACTIVITIES,
+      extraActivities: typed.EXTRA_ACTIVITIES,
     },
     {
       headers: {
