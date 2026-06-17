@@ -128,6 +128,19 @@
           left: 40%;
         }
       }
+
+      & .vertical-timeline-element-content {
+        padding: $space-20 0 0;
+      }
+
+      & .vertical-timeline-element-content-arrow {
+        border-right-color: $alternative-green;
+        margin-top: $space-10;
+      }
+
+      & .vertical-timeline-element-date {
+        margin: $space-5 0 0 $space-10;
+      }
     }
   }
 }
