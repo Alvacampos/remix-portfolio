@@ -4,7 +4,7 @@ const SvgStorybook = (props) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 2040 576"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <g transform="matrix(2 0 0 2 -4322 -506)">

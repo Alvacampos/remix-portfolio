@@ -4,7 +4,7 @@ const SvgDjango = (props) => (
     fill="none"
     viewBox="0 0 64 64"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <g fill="#f8f7f7" fillRule="evenodd" clipRule="evenodd">

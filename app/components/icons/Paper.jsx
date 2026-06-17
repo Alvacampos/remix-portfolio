@@ -4,7 +4,7 @@ const SvgPaper = (props) => (
     fill="none"
     viewBox="0 0 12 16"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

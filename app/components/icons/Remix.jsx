@@ -4,7 +4,7 @@ const SvgRemix = (props) => (
     fill="none"
     viewBox="100 100 600 600"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <g fill="#E8F2FF" filter="url(#remix_svg__a)">

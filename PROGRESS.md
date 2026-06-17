@@ -20,6 +20,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 8. ✅ **Stage 8 — Dep maintenance** (patch + minor bumps inside current majors; cleared the Dependabot backlog)
 9. ✅ **Stage 9 — Single Fetch** (opted into `future.v3_singleFetch`; replaced deprecated `json()` with raw objects + `data()` for headers)
 10. ✅ **Stage 10 — Lazy route discovery** (opted into `future.v3_lazyRouteDiscovery`; cleared the last future-flag warning)
+11. ✅ **Stage 11 — Doc sync** (caught AGENTS.md and PROGRESS.md up to what the code actually does after Stages 7–10 merged; no code changes)
+12. 🟡 **Stage 12 — A11y / SEO quick wins** (per-route canonical + SVGR aria-hidden default, fixing two regressions that surfaced in the post-Stage-10 Lighthouse run)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -560,6 +562,44 @@ This app has 4 routes. The "fog of war" optimization pays back proportionally to
 
 ---
 
+## Stage 12 — A11y / SEO quick wins
+
+**Goal:** fix two real regressions that the post-Stage-10 Lighthouse run on prod surfaced — `canonical` (SEO 92) and `svg-img-alt` (A11y 99 with 30 affected elements). Both are small, contained, and unblock 100/100 on those two categories.
+
+**Branch:** `stage-12-a11y-seo-quickwins`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### What this stage did
+
+- **Per-route canonical.** [app/root.tsx](app/root.tsx) used to hardcode `{ rel: 'canonical', href: SITE_URL }` in `links()`, which pinned every route's canonical to the homepage. Lighthouse ran on `/skills` and rightly flagged it as wrong-target. Fixed by computing the canonical URL inside the root loader (`SITE_URL + request.url.pathname`, trailing-slash normalized), threading it through the layout's loader data, and rendering `<link rel="canonical" href={data.canonical}>` directly in `<head>` instead of via `links()`. The Layout's error-boundary fallback path now defaults to `SITE_URL` so the meta is always well-formed.
+- **SVGR `aria-hidden` default.** [svgr.config.cjs](svgr.config.cjs) generated icons with `role="img"` but no `<title>`/`aria-label`/`aria-labelledby`, which is exactly what axe-core 4.11's `svg-img-alt` rule fails. The fix at the parent level (a `<title>` per icon, or an `aria-label`) would touch 30 SVGs and add no real semantics — every icon's parent already carries its own accessible name (NavBar links via `aria-label`, Carousel/Timeline rows via surrounding text). Treated SVGR-generated icons as decorative: dropped `role="img"`, added `aria-hidden="true"` as the default `svgProps` value. Re-ran `npm run build:icons` to regenerate every file under [app/components/icons/](app/components/icons/). The `{...props}` spread happens _after_ the defaults, so any future call site that needs a meaningful icon can opt back in by passing its own `aria-label` / `aria-hidden={false}`.
+- **Captured the pre-fix Lighthouse summary.** Saved [lighthouse/skills-post-stage-10.summary.json](lighthouse/skills-post-stage-10.summary.json) so the impact is comparable later. The full JSON wasn't committed (it's >300 KB and contains environment-specific noise like screenshot data URLs).
+
+### Verification
+
+- `npm run lint`, `npm run typecheck` — clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15.
+- `npm run build`, `npm run build-storybook` — succeed.
+- Manual smoke against `npm run dev`:
+  - canonical: `/` → `https://gonzalo-alvarez-campos-cv.com/`, `/skills` → `…/skills`, `/skills/3` → `…/skills/3`, `/education` → `…/education`.
+  - icons: NavBar GitHub SVG ships as `<svg … aria-hidden="true" …>` with no `role="img"`. Same for Carousel and Timeline icons.
+
+### Expected Lighthouse delta
+
+Need a fresh prod run after this merges to confirm, but the predictable scores:
+
+- **SEO** 0.92 → **1.00** (canonical was the only failing audit).
+- **A11y** 0.99 → **1.00** (svg-img-alt was the only failing audit, and at weight 1 it pushes the score back to 1.0).
+- **Perf, Best Practices** unchanged (no perf-affecting changes; the LCP regression from 2.2 s → 2.6 s remains and is a separate investigation — possibly Stage 13).
+
+### Followups (not in this PR)
+
+- LCP regressed 2.2 s → 2.6 s vs post-Stage-7 (FCP and Speed Index both improved, so the regression is specific to LCP element-render-delay). Plausibly the 12 separate render-blocking CSS files Stage 6's manual preload pattern introduced. Worth its own investigation; not bundling it here so the a11y/SEO wins land cleanly.
+
+---
+
 ## Decisions log
 
 Record non-obvious decisions here as they're made (so future-me / future-agent doesn't have to re-derive them):
@@ -572,15 +612,17 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 
 ## PRs
 
-| Stage | Branch                     | PR     | Status | Merged |
-| ----- | -------------------------- | ------ | ------ | ------ |
-| 1     | `stage-1-tests`            | merged | ✅     | yes    |
-| 2     | `stage-2-data-restructure` | merged | ✅     | yes    |
-| 3     | `stage-3-storybook`        | merged | ✅     | yes    |
-| 4     | `stage-4-deps`             | merged | ✅     | yes    |
-| 5     | `stage-5-optimize`         | merged | ✅     | yes    |
-| 6     | `stage-6-tier-2`           | merged | ✅     | yes    |
-| 7     | `stage-7-tier-2-followups` | merged | ✅     | yes    |
-| 8     | `stage-8-deps`             | merged | ✅     | yes    |
-| 9     | `stage-9-single-fetch`     | merged | ✅     | yes    |
-| 10    | `stage-10-lazy-routes`     | merged | ✅     | yes    |
+| Stage | Branch                        | PR          | Status | Merged |
+| ----- | ----------------------------- | ----------- | ------ | ------ |
+| 1     | `stage-1-tests`               | merged      | ✅     | yes    |
+| 2     | `stage-2-data-restructure`    | merged      | ✅     | yes    |
+| 3     | `stage-3-storybook`           | merged      | ✅     | yes    |
+| 4     | `stage-4-deps`                | merged      | ✅     | yes    |
+| 5     | `stage-5-optimize`            | merged      | ✅     | yes    |
+| 6     | `stage-6-tier-2`              | merged      | ✅     | yes    |
+| 7     | `stage-7-tier-2-followups`    | merged      | ✅     | yes    |
+| 8     | `stage-8-deps`                | merged      | ✅     | yes    |
+| 9     | `stage-9-single-fetch`        | merged      | ✅     | yes    |
+| 10    | `stage-10-lazy-routes`        | merged      | ✅     | yes    |
+| 11    | `stage-11-doc-sync`           | merged      | ✅     | yes    |
+| 12    | `stage-12-a11y-seo-quickwins` | _(opening)_ | 🟡     | —      |

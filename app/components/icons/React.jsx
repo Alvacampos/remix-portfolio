@@ -3,7 +3,7 @@ const SvgReact = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="175.7 78 490.6 436.9"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <g fill="#61dafb">

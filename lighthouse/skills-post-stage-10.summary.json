@@ -1,0 +1,38 @@
+{
+  "fetchTime": "2026-06-17T20:42:46.137Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.2.0",
+  "categories": {
+    "performance": 0.97,
+    "accessibility": 0.99,
+    "best-practices": 1.0,
+    "seo": 0.92
+  },
+  "metrics": {
+    "fcp": { "displayValue": "1.1 s", "numericValue": 1133.67, "score": 0.99 },
+    "lcp": { "displayValue": "2.6 s", "numericValue": 2633.67, "score": 0.87 },
+    "si": { "displayValue": "1.8 s", "numericValue": 1800.31, "score": 1.0 },
+    "tbt": { "displayValue": "20 ms", "numericValue": 15, "score": 1.0 },
+    "cls": { "displayValue": "0.001", "numericValue": 0.0013, "score": 1.0 },
+    "tti": { "displayValue": "3.9 s", "numericValue": 3898.67 },
+    "ttfb": 254
+  },
+  "failingAudits": [
+    {
+      "id": "canonical",
+      "category": "seo",
+      "explanation": "Points to the domain's root URL (the homepage) instead of the equivalent page of content. /skills' canonical points to /."
+    },
+    {
+      "id": "svg-img-alt",
+      "category": "accessibility",
+      "count": 30,
+      "explanation": "30 SVGs have role=\"img\" but no accessible name. SVGR generates role=\"img\" by default; parents (NavBar links, Carousel, Timeline) carry the meaning so the SVGs themselves are decorative."
+    }
+  ],
+  "notes": [
+    "LCP regressed 2.2s -> 2.6s vs post-Stage-7. FCP improved 1.2s -> 1.1s and SI improved 2.4s -> 1.8s, so first paint and visual completeness are both faster. LCP element is the <h2>Work Experience</h2>; breakdown is TTFB 254ms + element render delay 184ms (observed 439ms; simulated under 4x CPU throttling).",
+    "12 separate render-blocking CSS files load on /skills (one per lazy component's preloaded stylesheet, plus the route's own CSS chain). That's the cost of Stage 6's manual CSS-preload pattern.",
+    "TBT 20ms and CLS 0.001 remain excellent."
+  ]
+}

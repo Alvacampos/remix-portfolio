@@ -4,7 +4,7 @@ const SvgHighcharts = (props) => (
     preserveAspectRatio="xMidYMid"
     viewBox="0 0 256 243"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path

@@ -35,7 +35,8 @@ export function links() {
     },
     { rel: 'stylesheet', href: tailwind },
     { rel: 'stylesheet', href: styles },
-    { rel: 'canonical', href: SITE_URL },
+    // canonical is rendered per-route in Layout from the loader's `canonical`
+    // value — pinning it here would point every route at the homepage.
   ];
 }
 
@@ -44,9 +45,17 @@ const getClasses = getClassMaker(BLOCK);
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
+  // Build the canonical URL from the request path, anchored to SITE_URL so
+  // it always points at the production origin even on previews/local dev.
+  // Drop trailing slash (except root) and strip query/hash so duplicate
+  // URLs collapse to one canonical entry per route.
+  const url = new URL(request.url);
+  const path = url.pathname.replace(/\/+$/, '') || '/';
+  const canonical = `${SITE_URL}${path}`;
   return {
     locale,
     messages: messagesFor(locale),
+    canonical,
   };
 }
 
@@ -94,18 +103,22 @@ const PERSON_JSONLD = {
 
 type LayoutData = {
   locale: Locale;
+  canonical: string;
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
   // Layout runs both during normal rendering and the error boundary, so the
-  // loader data may be unavailable. Default to English when that happens.
+  // loader data may be unavailable. Default to English / site root when that
+  // happens.
   let locale: Locale = 'en';
+  let canonical = SITE_URL;
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const data = useLoaderData<LayoutData>();
     if (data?.locale) locale = data.locale;
+    if (data?.canonical) canonical = data.canonical;
   } catch {
-    /* error path or pre-loader render — keep default */
+    /* error path or pre-loader render — keep defaults */
   }
 
   return (
@@ -115,6 +128,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
         <Meta />
         <Links />
+        <link rel="canonical" href={canonical} />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

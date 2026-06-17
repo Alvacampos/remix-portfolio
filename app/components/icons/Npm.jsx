@@ -4,7 +4,7 @@ const SvgNpm = (props) => (
     preserveAspectRatio="xMinYMin meet"
     viewBox="0 0 256 100"
     height="100%"
-    role="img"
+    aria-hidden="true"
     {...props}
   >
     <path fill="#CB3837" d="M0 0v85.498h71.166V99.83H128V85.498h128V0z" />
