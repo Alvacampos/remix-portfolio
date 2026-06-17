@@ -14,7 +14,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 2. ✅ **Stage 2 — Data restructure** (`public/data/skills.json` → derive chart from `WORK_ITEMS`)
 3. ✅ **Stage 3 — Storybook** for every component in `app/components/`
 4. ✅ **Stage 4 — Dependency updates** (majors except React; React 18 → 19 deferred)
-5. 🟡 **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
+5. ✅ **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
+6. 🟡 **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -273,8 +274,8 @@ wrangler                           4.45.3        →  4.101.0        (minor)
 **Goal:** improve loading times, accessibility, SEO, and developer ergonomics without changing the visual output.
 
 **Branch:** `stage-5-optimize`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### Scope decisions (made on this branch)
 
@@ -366,16 +367,48 @@ The 333 KB recharts chunk no longer ships on `/` or `/education`. Combined with 
 - [x] `npm run test:e2e --project=chromium` — 15/15.
 - [x] `npm run build-storybook` — succeeds.
 
-### Tier 2 (deferred — separate future PRs)
+### Tier 2 (status as of Stage 6)
 
-- Color-contrast audit of the design tokens (might force visual changes).
-- Design-token rename: drop the misleading `alternative-black: '#ffffff00'`, normalize space scale.
-- Locale switcher UI in the NavBar.
-- Lighthouse-CI as a GitHub job with budgets (LCP < 2.5s).
-- Refactor the `/data/*.json` loaders to import the JSON server-side instead of `fetch(new URL('/data/...', request.url))`.
+Done in [Stage 6](#stage-6--tier-2-follow-ups):
+
+- ✅ Color-contrast audit (no fixes needed — every text/icon pair passes WCAG AA by 3–4×).
+- ✅ Design-token cleanup (dropped 7 unused tokens including the misleading `alternative-black: '#ffffff00'`).
+- ✅ JS code-split for BarChart / Carousel / Timeline on `/skills` via the manual CSS-preload pattern.
+- ✅ Timeline icon / date / card alignment polish.
+
+Still deferred:
+
+- Locale switcher UI in the NavBar (visual decision; current Spanish via `Accept-Language` works fine).
+- Lighthouse-CI as a GitHub job — needs Cloudflare preview URL plumbing.
+- Refactor `/data/*.json` loaders to import server-side (small win, real blast radius).
 - `og:image` once a real 1200×630 cover exists.
-- **Re-attempt JS code-split for BarChart / Carousel / Timeline on `/skills`.** Stage 5's first attempt broke SSR because removing the components' `links()` from the route stripped their CSS from `<head>`, leaving the page unstyled until hydration. The fix-path is "manual CSS preload": keep `lazy()`+`Suspense` for the JS, but pass each component's `style.css?url` directly to the route's `links()` so the CSS ships in `<head>` while the JS module stays dynamically imported. Brittle (hard-coded URLs, needs care for `react-vertical-timeline-component/style.min.css` in `node_modules`), so deferred until the savings on `/skills` are worth the carry cost.
-- **Timeline node alignment polish.** Visually the date span and the card sit at slightly different vertical positions because the card has padding/borders the bare date span doesn't. Wrap the `vertical-timeline-element-date` span in a sibling box with the same height as the card so the icon/date/card baselines align cleanly. Cosmetic only; happens after the alignment looks good in a real browser screenshot loop.
+- Space-scale token rename (`space-200` → `space-xl` etc.) — every used token has many call sites; rename costs more than it pays.
+
+---
+
+## Stage 6 — Tier-2 follow-ups
+
+**Goal:** revisit Tier-2 follow-ups from Stage 5 that became viable on a second pass.
+
+**Branch:** `stage-6-tier-2`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### What this stage did
+
+- **Color-contrast audit.** Wrote a one-off Node script that runs WCAG luminance math over every fg/bg token pair the app actually uses. Result: every text/icon/control combination passes AA — most by 3–4× the minimum (`text-color` on `background-default` = 18.87:1). The only failure was a decorative `card-border` line at 1.42 vs. an arbitrary 1.5 target I had set; WCAG doesn't require borders to meet contrast. **No fixes needed.**
+- **Token cleanup.** Removed 7 unused tokens from [app/styles/constants.js](app/styles/constants.js): `alternative-white`, `alternative-black`, `border-5`, `space-100`, `space-50`, `weight-500`, `default-animation`. The alternative-black removal kills the famously-misleading `'#ffffff00'` (transparent white literal). Did **not** rename remaining tokens — every used name has ≥1 call site, and renaming costs more than it pays.
+- **JS code-split via manual CSS preload.** Stage 5's first attempt at code-splitting BarChart / Carousel / Timeline broke SSR because removing the components' `links()` from the route stripped their CSS from `<head>`. Fix-path: import each component's `style.css?url` (a string, no module evaluation) and feed them straight to the route's `links()`. The JS stays dynamically imported via `lazy()` + `Suspense`, the CSS still ships in the SSR'd HTML, and Vite's "dynamic import will not move module into another chunk" warning is gone. Same pattern works for `react-vertical-timeline-component/style.min.css` from node_modules.
+- **Timeline alignment polish.** Library v4 renders the `vertical-timeline-element-date` at `top: 6px` with a `0.8em` vertical padding, leaving the date pinned to the top of each row regardless of card height. Pulled it down to `top: 24px` (matches the icon's 30px center), zeroed the padding, and overrode the library's `opacity: 0.7` since we control the date color via `$text-color`. Visual measurement: icon center vs date center is 6.5px apart (was ~80px).
+
+### Verification
+
+- `npm run lint`, `npm run typecheck` — clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15.
+- `npm run build-storybook` — succeeds.
+- Build warnings: 0 (the previous "dynamic + static import" warnings are gone — the lazy chunks now actually split).
+- Headless chromium smoke test: timeline icon renders dark-bg + green ring + green check, carousel item at 100×100, 29 chart y-axis labels, date center 6.5px from icon center.
 
 ---
 
@@ -397,4 +430,5 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | 2     | `stage-2-data-restructure` | merged      | ✅     | yes    |
 | 3     | `stage-3-storybook`        | merged      | ✅     | yes    |
 | 4     | `stage-4-deps`             | merged      | ✅     | yes    |
-| 5     | `stage-5-optimize`         | _(opening)_ | 🟡     | —      |
+| 5     | `stage-5-optimize`         | merged      | ✅     | yes    |
+| 6     | `stage-6-tier-2`           | _(opening)_ | 🟡     | —      |
