@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -87,11 +87,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const fileName = imagePath?.split('/').pop() ?? '';
   const imageDims = LOGO_DIMS[fileName] ?? FALLBACK_DIMS;
 
-  return json({
+  return {
     data,
     imagePath,
     imageDims,
-  });
+  };
 }
 
 export function ErrorBoundary() {
