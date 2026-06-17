@@ -132,18 +132,20 @@ From [package.json](package.json):
 
 ## 5. Routing
 
-Remix flat-routes convention. Future v3 flags are on (`v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`).
+Remix flat-routes convention. Future v3 flags are on (`v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`, `v3_singleFetch`).
 
-| URL             | File                                                                      | Loader                                                                                                                |
-| --------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `/`             | [app/routes/\_index.tsx](app/routes/_index.tsx)                           | none                                                                                                                  |
-| `/education`    | [app/routes/education/index.tsx](app/routes/education/index.tsx)          | fetches `/data/education.json`                                                                                        |
-| `/skills`       | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) | fetches `/data/skills.json`, returns work-items + chart data + extra activities (1h cache)                            |
-| `/skills/:uuid` | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)   | fetches `/data/skills.json`, finds matching `WORK_ITEMS[id == +uuid]`, throws on miss → renders local `ErrorBoundary` |
+**Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
+
+| URL             | File                                                                      | Loader                                                                                                                                  |
+| --------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`             | [app/routes/\_index.tsx](app/routes/_index.tsx)                           | none                                                                                                                                    |
+| `/education`    | [app/routes/education/index.tsx](app/routes/education/index.tsx)          | imports `public/data/education.json` server-side                                                                                        |
+| `/skills`       | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) | imports `public/data/skills.json` server-side, returns work-items + chart data + extra activities (1h cache via `data()`)               |
+| `/skills/:uuid` | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)   | imports `public/data/skills.json` server-side, finds matching `WORK_ITEMS[id == +uuid]`, throws on miss → renders local `ErrorBoundary` |
 
 A `/contact` route is stubbed (commented out) in the NavBar.
 
-Loaders fetch JSON via `new URL('/data/...', request.url)` so the same code works locally and on Pages.
+Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle (Stage 7 swapped this from a request-time `fetch()`). The static asset is still served at `/data/*` for any external consumer via the `_routes.json` exclude.
 
 ---
 

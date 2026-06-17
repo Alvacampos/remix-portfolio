@@ -1,4 +1,4 @@
-import { json, type MetaFunction } from '@remix-run/cloudflare';
+import { data as remixData, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -116,7 +116,7 @@ export async function loader() {
 
   const chartData = getSkillChartData(typed.WORK_ITEMS);
 
-  return json(
+  return remixData(
     {
       data,
       yearsOfExp: formatDate(typed.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),

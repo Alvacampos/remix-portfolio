@@ -1,6 +1,6 @@
 import 'react-vertical-timeline-component/style.min.css';
 
-import { json, type MetaFunction } from '@remix-run/cloudflare';
+import type { MetaFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
@@ -43,10 +43,10 @@ export async function loader() {
   // `cert.url` isn't accessible without narrowing. Casting up to a
   // single shape with `url?: string` matches the old behaviour and
   // keeps the consumer code simple.
-  return json({
+  return {
     degree: educationData.degree,
     certifications: educationData.certifications as Certification[],
-  });
+  };
 }
 
 export default function Skills() {

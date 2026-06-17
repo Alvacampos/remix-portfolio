@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
 import {
   isRouteErrorResponse,
   Links,
@@ -44,10 +44,10 @@ const getClasses = getClassMaker(BLOCK);
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
-  return json({
+  return {
     locale,
     messages: messagesFor(locale),
-  });
+  };
 }
 
 export const meta: MetaFunction = () => {

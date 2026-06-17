@@ -17,7 +17,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 5. ✅ **Stage 5 — Code optimization** (perf + a11y + SEO + i18n + CI hygiene)
 6. ✅ **Stage 6 — Tier-2 follow-ups** (token cleanup, JS code-split (re-attempted), timeline alignment)
 7. ✅ **Stage 7 — Tier-2 round 2** (server-side `/data/*.json` import to remove a request-time HTTP hop)
-8. 🟡 **Stage 8 — Dep maintenance** (patch + minor bumps inside current majors; clear the Dependabot backlog)
+8. ✅ **Stage 8 — Dep maintenance** (patch + minor bumps inside current majors; cleared the Dependabot backlog)
+9. 🟡 **Stage 9 — Single Fetch** (opt into Remix's `future.v3_singleFetch`; replace deprecated `json()` with raw objects + `data()` for headers)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -451,8 +452,8 @@ Going in I assumed the static asset was already served by the Cloudflare edge, s
 **Goal:** clear the Dependabot backlog (5+ open PRs) by taking the patch+minor bumps inside current majors. Hold every major bump for a separate, intentional decision.
 
 **Branch:** `stage-8-deps`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### Bumped (patch + minor inside current majors)
 
@@ -490,6 +491,43 @@ Looked for low-hanging wins to bundle in. Found **none that fit "short and on-po
 
 ---
 
+## Stage 9 — Single Fetch
+
+**Goal:** opt into Remix's `future.v3_singleFetch`, replacing the deprecated `json()` helper with raw object returns (and `data()` only where headers are required). Clears a deprecation that will become a hard break under React Router v7.
+
+**Branch:** `stage-9-single-fetch`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### What this stage did
+
+- Enabled `future.v3_singleFetch: true` in [vite.config.ts](vite.config.ts).
+- Added [app/single-fetch.d.ts](app/single-fetch.d.ts) — a one-line module augmentation (`interface Future { v3_singleFetch: true }` against `@remix-run/server-runtime`) so TS resolves `useLoaderData<typeof loader>` to the new Single Fetch types instead of the legacy `Jsonify` chain. Without this, every loader consumer fails strict type-checking even though the runtime works.
+- Migrated all four loaders:
+  - **root** ([app/root.tsx](app/root.tsx)) — dropped `json()`, return raw `{ locale, messages }`.
+  - **skills.\_index** ([app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)) — replaced `json(payload, { headers: { 'Cache-Control': … } })` with `data(payload, { headers })`. The local `data` variable name forced an `import { data as remixData }` alias.
+  - **skills.$uuid** ([app/routes/skills.$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)) — dropped `json()`, return raw object. The route still throws `new Error(...)` on missing id; verified the local `ErrorBoundary` still catches it under Single Fetch (smoke-tested `/skills/9999` end-to-end — renders the correct error UI).
+  - **education** ([app/routes/education/index.tsx](app/routes/education/index.tsx)) — dropped `json()`, return raw object.
+
+### Wire-format change (informational)
+
+Under Single Fetch, route data requests now hit `<route>.data` and return a `text/x-script` turbo-stream payload instead of the old `application/json` body. Verified `/skills.data` returns `200 text/x-script` against the dev server. Edge caching for `/data/*` (the public JSON files) is unaffected — the `_routes.json` exclude routes them around the Function the same as before.
+
+### Verification
+
+- `npm run lint`, `npm run typecheck` — clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15 (one flake on first run that passed on retry; same well-known dev-server-warmup symptom from Stage 1, not a regression).
+- `npm run build-storybook` — succeeds.
+- `npm run build` — clean (existing pre-Stage-9 warnings only).
+- Manual smoke test against `npm run dev`: `/`, `/skills`, `/skills/3`, `/education` all 200 with full HTML; `/skills/9999` correctly hits the route-local ErrorBoundary; `/skills.data` returns the new turbo-stream payload.
+
+### Followups (not in this PR)
+
+- `v3_lazyRouteDiscovery` — still emits a future-flag warning on every dev start. One more flag flip; do separately so a regression there isn't entangled with Single Fetch.
+
+---
+
 ## Decisions log
 
 Record non-obvious decisions here as they're made (so future-me / future-agent doesn't have to re-derive them):
@@ -511,4 +549,5 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | 5     | `stage-5-optimize`         | merged      | ✅     | yes    |
 | 6     | `stage-6-tier-2`           | merged      | ✅     | yes    |
 | 7     | `stage-7-tier-2-followups` | merged      | ✅     | yes    |
-| 8     | `stage-8-deps`             | _(opening)_ | 🟡     | —      |
+| 8     | `stage-8-deps`             | merged      | ✅     | yes    |
+| 9     | `stage-9-single-fetch`     | _(opening)_ | 🟡     | —      |
