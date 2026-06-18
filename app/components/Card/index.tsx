@@ -20,6 +20,13 @@ type CardProps = {
   }[];
   isStyleless?: boolean;
   skills?: string[];
+  // Controls how the `skills` chip list renders. `true` (default) caps at
+  // MAX_SKILL_CHIPS, prepends "Skills:" body text, and appends a
+  // "- Click for more" CTA — the right shape for the timeline cards on
+  // /skills, which are clickable previews. `false` renders all chips with
+  // no prefix or CTA — the right shape for /education detail where the
+  // chip list IS the content, not a teaser.
+  showSkillsCta?: boolean;
   children?: ReactNode;
 };
 
@@ -29,9 +36,11 @@ export default function Card({
   itemList = undefined,
   isStyleless = false,
   skills = undefined,
+  showSkillsCta = true,
   children = undefined,
 }: CardProps) {
   const { formatMessage } = useIntl();
+  const visibleSkills = skills && (showSkillsCta ? skills.slice(0, MAX_SKILL_CHIPS) : skills);
 
   return (
     <div className={getClasses('', { styleless: isStyleless })}>
@@ -58,17 +67,23 @@ export default function Card({
             ))}
           </ul>
         )}
-        {skills && (
+        {visibleSkills && (
           <>
-            <hr className={getClasses('divider')} />
+            {showSkillsCta && <hr className={getClasses('divider')} />}
             <div className={getClasses('skills-container')}>
-              <p>
-                Skills:
-                {skills.slice(0, MAX_SKILL_CHIPS).map((skill) => (
-                  <span key={skill}>{skill}</span>
+              {showSkillsCta && <span className={getClasses('skills-label')}>Skills:</span>}
+              <ul className={getClasses('chip-list')}>
+                {visibleSkills.map((skill) => (
+                  <li key={skill} className={getClasses('chip')}>
+                    {skill}
+                  </li>
                 ))}
-                <span key="__more">- {formatMessage({ id: 'CLICK_FOR_MORE' })}</span>
-              </p>
+                {showSkillsCta && skills && skills.length > MAX_SKILL_CHIPS && (
+                  <li key="__more" className={getClasses('chip', 'more')}>
+                    +{skills.length - MAX_SKILL_CHIPS} {formatMessage({ id: 'CLICK_FOR_MORE' })}
+                  </li>
+                )}
+              </ul>
             </div>
           </>
         )}

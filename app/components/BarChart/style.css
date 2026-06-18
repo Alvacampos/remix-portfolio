@@ -1,11 +1,32 @@
 .bar-chart-component {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   background-color: $default-black;
   border: $card-border;
   padding: $space-5;
   border-radius: $border-10;
+  gap: $space-10;
+
+  &__toggle {
+    align-self: center;
+    background: transparent;
+    color: $alternative-green;
+    border: 1px solid $alternative-green;
+    border-radius: $border-10;
+    padding: $space-5 $space-16;
+    font-size: $font-14;
+    cursor: pointer;
+    transition:
+      background 120ms ease,
+      color 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      background: $alternative-green;
+      color: $default-black;
+    }
+  }
 
   &__custom-tooltip {
     background-color: #161b22;

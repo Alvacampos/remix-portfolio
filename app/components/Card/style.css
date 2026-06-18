@@ -73,13 +73,39 @@
   &__skills-container {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     margin-top: $space-10;
     gap: $space-10;
+  }
 
-    & p {
-      display: flex;
-      gap: inherit;
-      flex-wrap: wrap;
+  &__skills-label {
+    font-weight: $weight-700;
+  }
+
+  &__chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-5;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__chip {
+    display: inline-block;
+    padding: 2px $space-10;
+    border: $card-border;
+    border-radius: $border-10;
+    background: $background-variation;
+    font-size: $font-14;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    &--more {
+      background: transparent;
+      color: $alternative-green;
+      border-color: $alternative-green;
     }
   }
 }
