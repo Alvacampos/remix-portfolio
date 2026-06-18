@@ -95,7 +95,7 @@ export default function Skills() {
     <div className={getClasses()}>
       <div className={getClasses('degree')}>
         <h2>
-          <FormattedMessage id="DEGREE" />
+          <FormattedMessage id="DEGREES" />
         </h2>
         <div className={getClasses('degree-container')}>
           <Link to="/education/degree" className={getClasses('card-link')}>
@@ -112,7 +112,7 @@ export default function Skills() {
       </div>
       <div className={getClasses('certification')}>
         <h2>
-          <FormattedMessage id="CERTIFICATION" />
+          <FormattedMessage id="CERTIFICATIONS" />
         </h2>
         <div className={getClasses('card-wrapper', 'certification-wrapper')}>
           {certificationsCards.map(({ key, ...card }) => (

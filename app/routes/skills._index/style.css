@@ -11,8 +11,15 @@
   flex-direction: column;
   gap: $space-30;
 
+  &__page-title {
+    text-align: center;
+    font-size: $font-32;
+    margin: 0;
+  }
+
   & h2 {
     text-align: center;
+    font-size: $font-24;
   }
 
   &__time-line {
@@ -25,131 +32,6 @@
       flex-direction: column;
       justify-content: center;
       gap: $space-20;
-    }
-  }
-
-  &__btn-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $space-20;
-
-    & button {
-      background: none;
-      border: none;
-      position: relative;
-      display: inline-block;
-      padding: 5px $space-10;
-      color: #03e9f4;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: 0.5s;
-      letter-spacing: 4px;
-      overflow: hidden;
-
-      &:hover,
-      &:focus {
-        cursor: pointer;
-        background: #03e9f4;
-        color: #050801;
-        box-shadow:
-          0 0 5px #03e9f4,
-          0 0 25px #03e9f4,
-          0 0 50px #03e9f4;
-        -webkit-box-reflect: below 1px linear-gradient(transparent, #00000055);
-      }
-
-      &:nth-child(1) {
-        filter: hue-rotate(270deg);
-      }
-
-      & span {
-        position: absolute;
-        display: block;
-
-        &:nth-child(1) {
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #03e9f4);
-          animation: animate1 1s linear infinite;
-        }
-
-        @keyframes animate1 {
-          0% {
-            left: -100%;
-          }
-
-          50%,
-          100% {
-            left: 100%;
-          }
-        }
-
-        &:nth-child(2) {
-          top: -100%;
-          right: 0;
-          width: 2px;
-          height: 100%;
-          background: linear-gradient(180deg, transparent, #03e9f4);
-          animation: animate2 1s linear infinite;
-          animation-delay: 0.25s;
-        }
-
-        @keyframes animate2 {
-          0% {
-            top: -100%;
-          }
-
-          50%,
-          100% {
-            top: 100%;
-          }
-        }
-
-        &:nth-child(3) {
-          bottom: 0;
-          right: 0;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(270deg, transparent, #03e9f4);
-          animation: animate3 1s linear infinite;
-          animation-delay: 0.5s;
-        }
-
-        @keyframes animate3 {
-          0% {
-            right: -100%;
-          }
-
-          50%,
-          100% {
-            right: 100%;
-          }
-        }
-
-        &:nth-child(4) {
-          bottom: -100%;
-          left: 0;
-          width: 2px;
-          height: 100%;
-          background: linear-gradient(360deg, transparent, #03e9f4);
-          animation: animate4 1s linear infinite;
-          animation-delay: 0.75s;
-        }
-
-        @keyframes animate4 {
-          0% {
-            bottom: -100%;
-          }
-
-          50%,
-          100% {
-            bottom: 100%;
-          }
-        }
-      }
     }
   }
 
@@ -203,18 +85,6 @@
   }
 }
 
-.button-component {
-  &__btn--active {
-    background: #03e9f4;
-    color: #050801;
-    box-shadow:
-      0 0 5px #03e9f4,
-      0 0 25px #03e9f4,
-      0 0 50px #03e9f4;
-    -webkit-box-reflect: below 1px linear-gradient(transparent, #00000055);
-  }
-}
-
 @media screen and (min-width: $mobile-small) {
   .skills-route {
     &__time-line {
@@ -224,12 +94,6 @@
         justify-content: space-between;
         gap: $space-20;
       }
-    }
-
-    &__btn-container {
-      display: flex;
-      justify-content: center;
-      gap: $space-20;
     }
 
     &__extra-activities {
@@ -254,12 +118,6 @@
       &-controls {
         flex-direction: row;
       }
-    }
-
-    &__btn-container {
-      display: flex;
-      justify-content: flex-end;
-      gap: $space-20;
     }
 
     &__extra-activities {

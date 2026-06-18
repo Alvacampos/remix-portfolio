@@ -1,4 +1,13 @@
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  Cell,
+  LabelList,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import { getClassMaker } from '~/utils/utils';
 
@@ -27,6 +36,19 @@ const COLOR_CODE = [
   '#f0f6fc',
 ];
 
+// Match the "Total years of experience" card format. Decimal years confuse
+// readers ("7.83" doesn't read as "7y 10m" at a glance even though it's
+// the same duration). For very short durations we fall back to months.
+function formatYears(value: number): string {
+  const totalMonths = Math.round(value * 12);
+  if (totalMonths === 0) return '<1m';
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  if (years === 0) return `${months}m`;
+  if (months === 0) return `${years}y`;
+  return `${years}y ${months}m`;
+}
+
 type TooltipPayload = {
   active?: boolean;
   payload?: { value: number; payload: { name: string } }[];
@@ -39,7 +61,7 @@ function CustomTooltip({ active = false, payload = [] }: TooltipPayload) {
       <div className={getClasses('custom-tooltip')}>
         <div className={getClasses('tooltip-item')}>
           <span className={getClasses('tooltip-label')}>{item.payload.name}</span>
-          <span className={getClasses('tooltip-value')}>{item.value.toFixed(2)} yrs</span>
+          <span className={getClasses('tooltip-value')}>{formatYears(item.value)}</span>
         </div>
       </div>
     );
@@ -60,7 +82,9 @@ export default function CustomBarChart({ data }: Props) {
     <div className={getClasses()}>
       <ResponsiveContainer width="100%" height={sortedData.length * 40}>
         <BarChart data={sortedData} layout="vertical" barSize={20}>
-          <XAxis type="number" stroke="#f0f6fc" />
+          {/* Axis ticks hidden: precise values are on the bar labels.
+              Keeping the line as a baseline reference. */}
+          <XAxis type="number" stroke="#f0f6fc" tick={false} />
           <YAxis type="category" dataKey="name" stroke="#f0f6fc" width={100} />
           <Tooltip
             wrapperClassName={getClasses('custom-tooltip')}
@@ -71,6 +95,12 @@ export default function CustomBarChart({ data }: Props) {
             {sortedData.map((entry, index) => (
               <Cell key={entry.name} fill={COLOR_CODE[index % COLOR_CODE.length]} />
             ))}
+            <LabelList
+              dataKey="value"
+              formatter={(value: unknown) => formatYears(Number(value))}
+              fill="black"
+              fontSize={14}
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>

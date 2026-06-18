@@ -6,7 +6,9 @@ test.describe('Skills (/skills)', () => {
   });
 
   test('renders work experience timeline and total years card', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /Work Experience/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Work Experience', exact: true, level: 2 })
+    ).toBeVisible();
     // Globant is the first work item in skills.json — pin to its detail link
     await expect(
       page
@@ -27,19 +29,6 @@ test.describe('Skills (/skills)', () => {
         .filter({ hasText: /Globant/i })
         .first()
     ).toBeVisible();
-  });
-
-  test('Front End / Back End filter buttons toggle', async ({ page }) => {
-    const frontEnd = page.getByRole('button', { name: /Front End/i });
-    await frontEnd.click();
-    // After filtering, the timeline should still render at least one entry
-    await expect(
-      page
-        .getByRole('link')
-        .filter({ hasText: /Globant|Cliengo|Endava|Qubika/i })
-        .first()
-    ).toBeVisible();
-    await frontEnd.click(); // toggle off
   });
 
   test('renders the Technologies section and bar chart', async ({ page }) => {
