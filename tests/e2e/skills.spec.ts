@@ -31,19 +31,6 @@ test.describe('Skills (/skills)', () => {
     ).toBeVisible();
   });
 
-  test('Front End / Back End filter buttons toggle', async ({ page }) => {
-    const frontEnd = page.getByRole('button', { name: /Front End/i });
-    await frontEnd.click();
-    // After filtering, the timeline should still render at least one entry
-    await expect(
-      page
-        .getByRole('link')
-        .filter({ hasText: /Globant|Cliengo|Endava|Qubika/i })
-        .first()
-    ).toBeVisible();
-    await frontEnd.click(); // toggle off
-  });
-
   test('renders the Technologies section and bar chart', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /Technologies/i })).toBeVisible();
     // Bar chart container

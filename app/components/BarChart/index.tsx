@@ -97,10 +97,9 @@ export default function CustomBarChart({ data }: Props) {
             ))}
             <LabelList
               dataKey="value"
-              position="right"
               formatter={(value: unknown) => formatYears(Number(value))}
-              fill="#f0f6fc"
-              fontSize={12}
+              fill="black"
+              fontSize={14}
             />
           </Bar>
         </BarChart>

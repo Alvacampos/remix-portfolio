@@ -1,11 +1,10 @@
 import { data as remixData, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import verticalTimelineStyles from 'react-vertical-timeline-component/style.min.css?url';
 
 import barChartStyles from '~/components/BarChart/style.css?url';
-import Button from '~/components/Button';
 import Card from '~/components/Card';
 import carouselStyles from '~/components/Carousel/style.css?url';
 import Input from '~/components/Input';
@@ -137,16 +136,6 @@ export default function Skills() {
   const { formatMessage } = useIntl();
   const { data, yearsOfExp, skills, chartData, extraActivities } = useLoaderData<typeof loader>();
   const [filteredData, setFilteredData] = useState(data);
-  const [isFrontEnd, setIsFrontEnd] = useState(false);
-  const [isBackEnd, setIsBackEnd] = useState(false);
-
-  const filter = useCallback(
-    (word: string) =>
-      data.filter((item) =>
-        item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
-      ),
-    [data]
-  );
 
   const filterInput = useCallback(
     (word: string) => {
@@ -154,36 +143,13 @@ export default function Skills() {
         setFilteredData(data);
         return;
       }
-      setFilteredData(filter(word));
+      setFilteredData(
+        data.filter((item) =>
+          item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
+        )
+      );
     },
-    [data, filter]
-  );
-
-  const handleFrontEnd = useCallback(() => {
-    if (isFrontEnd) {
-      setFilteredData(data);
-      setIsFrontEnd(false);
-    } else {
-      setFilteredData(filter(formatMessage({ id: 'FRONT_END' })));
-      setIsFrontEnd(true);
-    }
-  }, [isFrontEnd, data, filter, formatMessage]);
-
-  const handleBackEnd = useCallback(() => {
-    if (isBackEnd) {
-      setFilteredData(data);
-      setIsBackEnd(false);
-    } else {
-      setFilteredData(filter(formatMessage({ id: 'BACK_END' })));
-      setIsBackEnd(true);
-    }
-  }, [isBackEnd, data, filter, formatMessage]);
-
-  // Static decorative spans used inside Front End / Back End buttons —
-  // index keys are fine here, the array length never changes.
-  const buttonSpans = useMemo(
-    () => Array.from({ length: 4 }, (_, i) => <span key={`span-${i}`} />),
-    []
+    [data]
   );
 
   return (
@@ -201,22 +167,6 @@ export default function Skills() {
             handleInput={filterInput}
             placeholder={formatMessage({ id: 'FILTER_BY_SPECIFIC_TECHNOLOGY' })}
           />
-          <div className={getClasses('btn-container')}>
-            <Button
-              handleClick={handleFrontEnd}
-              className={`btn${isFrontEnd ? '--active' : ''}`}
-              label={formatMessage({ id: 'FRONT_END' })}
-            >
-              {buttonSpans}
-            </Button>
-            <Button
-              handleClick={handleBackEnd}
-              className={`btn${isBackEnd ? '--active' : ''}`}
-              label={formatMessage({ id: 'BACK_END' })}
-            >
-              {buttonSpans}
-            </Button>
-          </div>
         </div>
         {filteredData.length === 0 ? (
           <LoadingSpinner />
