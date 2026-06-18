@@ -52,13 +52,21 @@ export async function loader() {
 
 export default function Skills() {
   const { degree, associateDegree, certifications } = useLoaderData<typeof loader>();
+  const learnMore = (
+    <p className={getClasses('learn-more')} aria-hidden>
+      <FormattedMessage id="LEARN_MORE" />
+      <span className={getClasses('learn-more-arrow')}>→</span>
+    </p>
+  );
+
   const degreeCard = {
     title: degree.title,
     texts: [
       `Date: ${formatDate(degree.startDate, degree.endDate)}`,
       degree.institution,
-      degree.description,
+      degree.summary,
     ],
+    children: learnMore,
   };
 
   const associateDegreeCard = {
@@ -66,8 +74,9 @@ export default function Skills() {
     texts: [
       `Date: ${formatDate(associateDegree.startDate, associateDegree.endDate)}`,
       associateDegree.institution,
-      associateDegree.description,
+      associateDegree.summary,
     ],
+    children: learnMore,
   };
 
   const certificationsCards = certifications.map((certification) => ({

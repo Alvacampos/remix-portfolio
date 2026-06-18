@@ -34,33 +34,22 @@ type DegreeData = {
   skills: string[];
 };
 
-// slug → (data key in education.json, optional logo file).
-// Add a new entry here when a new clickable degree is added.
-const SLUG_MAP: Record<string, { key: 'degree' | 'associateDegree'; image?: string }> = {
-  degree: { key: 'degree' },
-  'associate-degree': { key: 'associateDegree', image: 'unsta2.webp' },
+// slug → key in education.json. Add a new entry here when a new clickable
+// degree is added.
+const SLUG_MAP: Record<string, 'degree' | 'associateDegree'> = {
+  degree: 'degree',
+  'associate-degree': 'associateDegree',
 };
-
-const LOGO_DIMS: Record<string, { width: number; height: number }> = {
-  'unsta2.webp': { width: 968, height: 400 },
-};
-const FALLBACK_DIMS = { width: 1000, height: 500 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const slug = params?.slug;
-  const entry = slug ? SLUG_MAP[slug] : undefined;
+  const key = slug ? SLUG_MAP[slug] : undefined;
 
-  if (!entry) throw new Error('Oh no! Something went wrong!');
+  if (!key) throw new Error('Oh no! Something went wrong!');
 
-  const data = educationData[entry.key] as DegreeData;
-  const imagePath = entry.image ? `/assets/img/${entry.image}` : undefined;
-  const imageDims = entry.image ? (LOGO_DIMS[entry.image] ?? FALLBACK_DIMS) : FALLBACK_DIMS;
+  const data = educationData[key] as DegreeData;
 
-  return {
-    data,
-    imagePath,
-    imageDims,
-  };
+  return { data };
 }
 
 export function ErrorBoundary() {
@@ -72,9 +61,9 @@ export function ErrorBoundary() {
 }
 
 export default function EducationDetail() {
-  const { data, imagePath, imageDims } = useLoaderData<typeof loader>();
+  const { data } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
-  const { title, startDate, endDate, institution, summary, description, skills } = data;
+  const { title, startDate, endDate, institution, description, skills } = data;
 
   const renderDates = () => (
     <div>
@@ -91,22 +80,11 @@ export default function EducationDetail() {
     <div className={getClasses()}>
       <h1 className={getClasses('title')}>{title}</h1>
       <div className={getClasses('main-container')}>
-        {imagePath && (
-          <div className={getClasses('img-container')}>
-            <img
-              loading="lazy"
-              src={imagePath}
-              alt={institution}
-              width={imageDims.width}
-              height={imageDims.height}
-              className={getClasses('institution-logo')}
-            />
-          </div>
-        )}
-        <div className={getClasses('info-container')}>
+        <div className={getClasses('header-container')}>
           <Card title={formatMessage({ id: 'STUDY_DATES' })}>{renderDates()}</Card>
           <Card title={formatMessage({ id: 'INSTITUTION' })} texts={[institution]} />
-          <Card title={formatMessage({ id: 'SUMMARY' })} texts={[summary]} />
+        </div>
+        <div className={getClasses('description-container')}>
           <Card title={formatMessage({ id: 'DESCRIPTION' })} texts={[description]} />
         </div>
       </div>

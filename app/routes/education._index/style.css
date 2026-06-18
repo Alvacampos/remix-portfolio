@@ -24,6 +24,20 @@
     flex-direction: column;
   }
 
+  &__learn-more {
+    display: flex;
+    align-items: center;
+    gap: $space-5;
+    margin: 0;
+    color: $variation-green;
+    font-weight: $weight-700;
+  }
+
+  &__learn-more-arrow {
+    display: inline-block;
+    transition: transform 120ms ease;
+  }
+
   &__card-link {
     text-decoration: none;
     color: inherit;
@@ -38,6 +52,10 @@
 
       .card-component {
         box-shadow: 0 4px 16px rgb(56 139 253 / 0.18);
+      }
+
+      .education-route__learn-more-arrow {
+        transform: translateX(4px);
       }
     }
   }
