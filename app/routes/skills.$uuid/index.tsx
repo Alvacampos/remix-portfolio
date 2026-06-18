@@ -56,12 +56,12 @@ type skillsDataTypes =
 // to reserve layout space (fixes CLS). Captured from the source webp files;
 // keep in sync if logos are replaced with different-sized variants.
 const LOGO_DIMS: Record<string, { width: number; height: number }> = {
-  'unsta2.webp': { width: 968, height: 519 },
+  'unsta2.webp': { width: 968, height: 400 },
   'coderhouse.webp': { width: 976, height: 272 },
-  'globant.webp': { width: 3000, height: 2000 },
-  'cliengo.webp': { width: 999, height: 300 },
+  'globant.webp': { width: 3000, height: 200 },
+  'cliengo.webp': { width: 999, height: 200 },
   'endava.webp': { width: 541, height: 184 },
-  'qubika.webp': { width: 800, height: 600 },
+  'qubika.webp': { width: 800, height: 400 },
 };
 const FALLBACK_DIMS = { width: 1000, height: 500 };
 

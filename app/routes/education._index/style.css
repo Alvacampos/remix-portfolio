@@ -24,6 +24,24 @@
     flex-direction: column;
   }
 
+  &__card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition:
+      transform 120ms ease,
+      box-shadow 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-2px);
+
+      .card-component {
+        box-shadow: 0 4px 16px rgb(56 139 253 / 0.18);
+      }
+    }
+  }
+
   &__card-wrapper {
     display: flex;
     flex-direction: column;

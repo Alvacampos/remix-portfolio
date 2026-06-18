@@ -4,14 +4,18 @@
     "startDate": "2024-03-01T00:00:00.000",
     "endDate": "2027-09-01T00:00:00.000",
     "institution": "Universidad Blas Pascal",
-    "description": "Focus on AI engineering, including Machine Learning, Computer Vision, and advanced prompt engineering, alongside ethical AI implementation. "
+    "summary": "A 1.5-year degree completion program focused on machine learning, natural language processing, and strategic AI deployment.",
+    "description": "The Bachelor's Degree in Artificial Intelligence at UBP is an intensive online program designed for students with a prior tech background, covering machine learning models, neural networks, and AI ethics.",
+    "skills": ["Machine Learning Engineering","Prompt Engineering","Natural Language Processing (NLP)","Neural Networks & Deep Learning","Data Analytics & Structures","AI Ethics & Strategy"]
   },
   "associateDegree": {
     "title": "Software Development and Quality Control Associate Degree",
     "startDate": "2019-03-01T00:00:00.000",
     "endDate": "2021-09-01T00:00:00.000",
     "institution": "Universidad del Norte Santo Tomas de Aquino",
-    "description": "Associate degree with a focus on web development and software architecture."
+    "summary": "A 3-year undergraduate degree focusing on end-to-end web development, database management, and advanced QA methodologies.",
+    "description": "The University Degree in Software Development and Quality at UNSTA equips students to design, implement, and maintain robust software solutions, covering foundational algorithms, web development, and advanced automated testing.",
+    "skills": ["Full-Stack Web Development","Automated Testing & QA","Database Administration","Algorithms & Data Structures","Agile Project Management","Front-End & Back-End Architecture"]
   },
   "certifications": [
     {
