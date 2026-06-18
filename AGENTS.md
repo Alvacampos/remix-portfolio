@@ -165,21 +165,50 @@ Each component owns its `style.css` next to its `index.tsx`, written in BEM:
 .block-name--modifier { ... }
 ```
 
-CSS is wired in via Remix's `links()` export, which is the convention every component follows:
+There are **two patterns** for getting that CSS to the browser. Pick the right one for the component you're adding.
+
+#### Pattern A — postcss-import inline (default for small / always-needed components)
+
+Stage 13 collapsed most per-component stylesheets into the consuming route's stylesheet (or the global stylesheet, for components used everywhere). The mechanism is `postcss-import`, which is already wired up in [postcss.config.js](postcss.config.js): the build expands `@import` directives at compile time, so one stylesheet ships instead of many.
+
+The component itself just owns its `style.css`. **No `links()` export, no `?url` import.** The consumer adds an `@import` at the top of its own `style.css`:
+
+```css
+/* app/routes/skills._index/style.css */
+@import '../../components/Card/style.css';
+@import '../../components/Input/style.css';
+
+.skills-route {
+  /* ... */
+}
+```
+
+Components currently inlined this way: `Button`, `Card`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`. Buttons + NavBar are inlined into [app/styles/style.css](app/styles/style.css) since they're on every page; the rest are inlined into the routes that consume them.
+
+#### Pattern B — Remix `links()` (lazy-loaded heavy components only)
+
+`BarChart`, `Carousel`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`. Their CSS still needs to land on first paint (otherwise the component flashes unstyled when its chunk arrives), so they keep the manual-CSS-preload pattern from Stage 6:
 
 ```ts
+// app/components/Timeline/index.tsx
 import styles from './style.css?url';
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+
+export const links = () => [
+  { rel: 'preload', href: styles, as: 'style' },
+  { rel: 'stylesheet', href: styles },
+];
 ```
 
-Parent components/routes compose children's `links()`:
+The consuming route then either composes the component's `links()` chain or — if statically importing the component would defeat its lazy-chunk split — pipes the CSS in as a `?url` string directly in the route's `links()`. See [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) for the latter.
 
-```ts
-import Card, { links as cardLinks } from '~/components/Card';
-export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
-```
+#### Which pattern do I use?
 
-This is critical: **if a component is added that has its own CSS, the consumer must spread its `links()` or the styles won't load**. The chain bottoms out at `app/root.tsx`'s `links()`.
+- **Pattern A (postcss-import inline)** — small CSS files (≤ a few KB), components used everywhere or on a known set of routes, no JS code-split.
+- **Pattern B (links())** — heavy components (vendor CSS like `react-vertical-timeline-component/style.min.css`, big chunks of recharts styling) that are _also_ JS-lazy-loaded. The trade you're making: an extra round-trip for a stylesheet, in exchange for keeping the component's JS off the eager bundle.
+
+Whichever pattern you pick: **don't mix them on the same component.** Both an `@import` and a `links()` entry would emit the CSS twice.
+
+The chain bottoms out at [app/root.tsx](app/root.tsx)'s `links()`, which always loads `app/styles/style.css` (containing global styles + the `@import`-inlined NavBar/Button CSS) and `app/styles/tailwind.css`.
 
 ### `getClassMaker` (BEM helper)
 
@@ -390,7 +419,7 @@ When adding a new component, mirror the existing shape:
 
 1. Folder under `app/components/<PascalCase>/` containing `index.tsx` (+ `style.css` if it has styles).
 2. `const BLOCK = 'kebab-case-block'; const getClasses = getClassMaker(BLOCK);`
-3. Default-export the component; named-export `links` if the component has CSS (or composes a child's).
+3. Default-export the component. **No `links()` export by default** — the consuming route's stylesheet inlines the CSS via `@import` (Pattern A in §6). Only export `links()` if the component is JS-lazy-loaded and needs the manual-CSS-preload pattern (Pattern B). When in doubt, default to Pattern A.
 4. Type props inline (`type FooProps = { ... }`) and give optional props defaults in the parameter destructure (so `react/require-default-props` is satisfied).
 5. Use `~/components/icons` for any iconography rather than inlining SVG.
 6. For links, prefer `<Link to=...>` from `@remix-run/react`; use [ConditionalLink](app/components/ConditionalWrapper/index.tsx#L32) when an element should only become a link under some condition.
@@ -400,7 +429,7 @@ When adding a new route:
 
 1. Create `app/routes/<flat-route-name>/index.tsx` (or `<flat-route-name>.tsx`).
 2. Export `loader` if you need data — `import` the JSON from `public/data/` directly (Vite bakes it into the server bundle, no HTTP hop). Single Fetch is on, so return a raw object; use `data(payload, { headers })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status.
-3. Export `links` (compose any child component `links`).
+3. Add a `style.css` next to the route if it has styles, and `@import` any small components it consumes at the top of that file (see §6 Pattern A). Export `links` listing the route's own stylesheet plus any Pattern B (lazy-loaded) component stylesheets.
 4. Add a NavBar entry in [app/components/NavBar/index.tsx](app/components/NavBar/index.tsx) `MAIN_NAV` if the route should be reachable from the nav.
 5. Optionally export a route-local `ErrorBoundary` (skills.\$uuid does this).
 
