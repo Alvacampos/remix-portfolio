@@ -1,5 +1,6 @@
 export { default as AgileSoftware } from './AgileSoftware';
 export { default as Axios } from './Axios';
+export { default as Briefcase } from './Briefcase';
 export { default as CheckMark } from './CheckMark';
 export { default as CloseButton } from './CloseButton';
 export { default as Cloudflare } from './Cloudflare';

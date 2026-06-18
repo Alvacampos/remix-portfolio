@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 
 import Card from '~/components/Card';
-import { SuccessFilled } from '~/components/icons';
+import { Briefcase, Education } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -33,13 +33,15 @@ type FilteredDataTypes = {
   filteredData: DataTypes[];
 };
 
+// Teaching roles get the academic-pillars icon; full-time engineering
+// roles get the briefcase. Heuristic on the work-item title — when a new
+// teaching role is added, extend the regex.
+const TEACHING_TITLE_RE = /professor|teacher|instructor|lecturer/i;
+
 function TimelineElementInner({ item }: { item: DataTypes }) {
+  const Icon = TEACHING_TITLE_RE.test(item.title) ? Education : Briefcase;
   return (
-    <VerticalTimelineElement
-      className={getClasses('element')}
-      date={item.date}
-      icon={<SuccessFilled />}
-    >
+    <VerticalTimelineElement className={getClasses('element')} date={item.date} icon={<Icon />}>
       <Link
         to={`/skills/${item.id}`}
         className={getClasses('element-link')}

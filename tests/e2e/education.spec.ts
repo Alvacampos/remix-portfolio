@@ -52,7 +52,9 @@ test.describe('Education detail (/education/:slug)', () => {
       page.getByRole('heading', { name: /Bachelor of Science.*Artificial Intelligence/i, level: 1 })
     ).toBeVisible();
     await expect(page.getByText(/Universidad Blas Pascal/i)).toBeVisible();
-    await expect(page.getByText(/Study Dates/i)).toBeVisible();
+    // metadata row replaces the previous "Study Dates" / "Institution" cards
+    // (Stage 18) — assert the year range instead.
+    await expect(page.getByText(/2024 – 2027/)).toBeVisible();
   });
 
   test('navigates from /education to the associate-degree detail', async ({ page }) => {

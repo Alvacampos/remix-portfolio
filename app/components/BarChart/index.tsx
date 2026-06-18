@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
 import {
   Bar,
   BarChart,
@@ -73,15 +75,30 @@ type Props = {
   data: (string | number)[][];
 };
 
+// Default visible bars: top N skills by years of experience. The bars
+// below this drop into "show all" — they're real but their share of
+// chart real estate makes the strongest skills look weaker by
+// comparison. Number picked to comfortably cover the core stack.
+const DEFAULT_VISIBLE = 12;
+
 export default function CustomBarChart({ data }: Props) {
+  const { formatMessage } = useIntl();
+  const [showAll, setShowAll] = useState(false);
+
   const sortedData = [...data]
     .map(([name, value]) => ({ name: String(name), value: Number(value) }))
     .sort((a, b) => b.value - a.value); // sort descending
 
+  const visibleData =
+    !showAll && sortedData.length > DEFAULT_VISIBLE
+      ? sortedData.slice(0, DEFAULT_VISIBLE)
+      : sortedData;
+  const canToggle = sortedData.length > DEFAULT_VISIBLE;
+
   return (
     <div className={getClasses()}>
-      <ResponsiveContainer width="100%" height={sortedData.length * 40}>
-        <BarChart data={sortedData} layout="vertical" barSize={20}>
+      <ResponsiveContainer width="100%" height={visibleData.length * 40}>
+        <BarChart data={visibleData} layout="vertical" barSize={20}>
           {/* Axis ticks hidden: precise values are on the bar labels.
               Keeping the line as a baseline reference. */}
           <XAxis type="number" stroke="#f0f6fc" tick={false} />
@@ -92,7 +109,7 @@ export default function CustomBarChart({ data }: Props) {
             content={<CustomTooltip />}
           />
           <Bar dataKey="value" isAnimationActive={false}>
-            {sortedData.map((entry, index) => (
+            {visibleData.map((entry, index) => (
               <Cell key={entry.name} fill={COLOR_CODE[index % COLOR_CODE.length]} />
             ))}
             <LabelList
@@ -104,6 +121,21 @@ export default function CustomBarChart({ data }: Props) {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      {canToggle && (
+        <button
+          type="button"
+          className={getClasses('toggle')}
+          onClick={() => setShowAll((prev) => !prev)}
+          aria-expanded={showAll}
+        >
+          {showAll
+            ? formatMessage({ id: 'CHART_SHOW_LESS' })
+            : formatMessage(
+                { id: 'CHART_SHOW_ALL' },
+                { count: sortedData.length - DEFAULT_VISIBLE }
+              )}
+        </button>
+      )}
     </div>
   );
 }

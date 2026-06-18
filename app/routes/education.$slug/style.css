@@ -13,32 +13,35 @@
     text-align: center;
   }
 
-  &__main-container {
+  &__meta {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
-    gap: $space-20;
+    gap: $space-10;
+    margin: 0;
+    color: $text-color;
+    font-size: $font-16;
+    opacity: 0.85;
   }
 
-  &__header-container {
-    display: flex;
-    flex-direction: column;
+  &__meta-sep {
+    color: $variation-green;
+    font-weight: $weight-700;
+  }
+
+  &__description-container {
+    /* Cap by readable line length on ultrawide so body text doesn't
+     * stretch past the comfortable reading length. */
+    max-width: 65ch;
+    margin: 0 auto;
     width: 100%;
-    gap: $space-20;
   }
 
-  .card-component {
-    height: 100%;
-    min-height: 100%;
-
-    &__main-text-wrapper {
-      display: flex;
-      gap: $space-20;
-      flex-wrap: wrap;
-      width: 100%;
-      height: 100%;
-    }
+  &__skills {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 65ch;
   }
 
   &__error {
@@ -61,33 +64,5 @@
 @media screen and (min-width: $desktop-small) {
   .education-id-route {
     padding: 0 $space-20;
-
-    &__main-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      gap: $space-20;
-    }
-
-    &__header-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: $space-20;
-      height: fit-content;
-    }
-
-    &__description-container {
-      height: stretch;
-      /* Cap at the viewport % we already had, but also cap by readable
-       * line length (~65ch) so on ultrawide the description doesn't
-       * stretch past the comfortable reading length for body text. */
-      max-width: min(75%, 65ch);
-
-      .card-component__text-container {
-        height: 100%;
-      }
-    }
   }
 }

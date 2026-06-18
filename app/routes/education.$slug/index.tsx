@@ -1,9 +1,9 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
-import { formatDate, getClassMaker } from '~/utils/utils';
+import { getClassMaker } from '~/utils/utils';
 
 import educationData from '../../../public/data/education.json';
 import styles from './style.css?url';
@@ -64,33 +64,27 @@ export default function EducationDetail() {
   const { data } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
   const { title, startDate, endDate, institution, description, skills } = data;
-
-  const renderDates = () => (
-    <div>
-      <p>
-        <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
-      </p>
-      <p>
-        <FormattedMessage id="END_DATE" />: {formatDate(endDate, '')}
-      </p>
-    </div>
-  );
+  const startYear = new Date(startDate).getFullYear();
+  const endYear = new Date(endDate).getFullYear();
 
   return (
     <div className={getClasses()}>
       <h1 className={getClasses('title')}>{title}</h1>
-      <div className={getClasses('main-container')}>
-        <div className={getClasses('header-container')}>
-          <Card title={formatMessage({ id: 'STUDY_DATES' })}>{renderDates()}</Card>
-          <Card title={formatMessage({ id: 'INSTITUTION' })} texts={[institution]} />
-        </div>
-        <div className={getClasses('description-container')}>
-          <Card title={formatMessage({ id: 'DESCRIPTION' })} texts={[description]} />
-        </div>
+      <p className={getClasses('meta')}>
+        <span>
+          {startYear} – {endYear}
+        </span>
+        <span aria-hidden className={getClasses('meta-sep')}>
+          ·
+        </span>
+        <span>{institution}</span>
+      </p>
+      <div className={getClasses('description-container')}>
+        <Card title={formatMessage({ id: 'DESCRIPTION' })} texts={[description]} />
       </div>
       {skills && skills.length > 0 && (
         <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills} />
+          <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
         </div>
       )}
     </div>
