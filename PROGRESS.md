@@ -22,7 +22,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 10. ✅ **Stage 10 — Lazy route discovery** (opted into `future.v3_lazyRouteDiscovery`; cleared the last future-flag warning)
 11. ✅ **Stage 11 — Doc sync** (caught AGENTS.md and PROGRESS.md up to what the code actually does after Stages 7–10 merged; no code changes)
 12. ✅ **Stage 12 — A11y / SEO quick wins** (per-route canonical + SVGR aria-hidden default, fixed two regressions from the post-Stage-10 Lighthouse run)
-13. 🟡 **Stage 13 — LCP recovery** (collapsed 12 render-blocking stylesheets on `/skills` to 7 by inlining small-component CSS into route stylesheets via postcss-import; dropped 5 components' `links()` exports)
+13. ✅ **Stage 13 — LCP recovery** (collapsed 12 render-blocking stylesheets on `/skills` to 7 by inlining small-component CSS into route stylesheets via postcss-import; dropped 5 components' `links()` exports)
+14. 🟡 **Stage 14 — Doc sync + post-Stage-13 Lighthouse capture** (record the actual Stage 12+13 perf delta; bring AGENTS.md §6/§14 in line with the new CSS conventions)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -606,8 +607,8 @@ Need a fresh prod run after this merges to confirm, but the predictable scores:
 **Goal:** chase the LCP regression that surfaced in the post-Stage-10 prod Lighthouse run (2.2 s → 2.6 s, score 0.94 → 0.87). Reduce the number of render-blocking stylesheets without losing the JS code-split that landed in Stage 6.
 
 **Branch:** `stage-13-lcp-recovery`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### Diagnosis
 
@@ -663,6 +664,44 @@ If Lantern still penalizes the route heavily, the Tier-2 follow-up would be inli
 
 ---
 
+## Stage 14 — Doc sync + post-Stage-13 Lighthouse capture
+
+**Goal:** close out Stages 12 and 13 by recording the actual prod Lighthouse delta and bringing AGENTS.md in line with the new CSS conventions. No code changes.
+
+**Branch:** `stage-14-doc-sync-and-lighthouse`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### What this stage did
+
+- **Captured the post-Stage-13 prod Lighthouse run** as [lighthouse/skills-post-stage-13.summary.json](lighthouse/skills-post-stage-13.summary.json) and added a row + score breakdown to [lighthouse/RESULTS.md](lighthouse/RESULTS.md). Both Stage 12 and Stage 13 predictions are confirmed:
+
+  | Metric                | Post-Stage-10 | Post-Stage-13    | Δ                      |
+  | --------------------- | ------------- | ---------------- | ---------------------- |
+  | Performance           | 0.97          | **0.98**         | +0.01                  |
+  | Accessibility         | 0.99          | **1.00**         | +0.01 (Stage 12)       |
+  | Best Practices        | 1.00          | 1.00             | —                      |
+  | SEO                   | 0.92          | **1.00**         | +0.08 (Stage 12)       |
+  | LCP                   | 2.6 s (0.87)  | **2.2 s (0.94)** | **−437 ms** (Stage 13) |
+  | `/skills` stylesheets | 12            | **7**            | **−5** (Stage 13)      |
+
+- The `svg-img-alt` audit is now `notApplicable` (no SVGs carry `role="img"` after Stage 12). The `canonical` audit passes. Network dependency tree's longest critical chain dropped from 387 ms (12 stylesheets) to 322 ms (7).
+
+- **AGENTS.md §6 (Styling system).** Documented the two CSS patterns the codebase actually uses now:
+  - **Pattern A — `postcss-import` inline.** Default for small, always-needed components. Component owns its `style.css` only; the consuming route adds an `@import` at the top of its own stylesheet. No `links()`, no `?url`. Currently used by Button, Card, DownloadBtn, Input, LoadingSpinner, NavBar.
+  - **Pattern B — Remix `links()`.** Reserved for JS-lazy-loaded heavies (BarChart, Carousel, Timeline) that still need their CSS on first paint. Manual `?url` preload + stylesheet pair. The trade is one stylesheet round-trip in exchange for keeping the JS off the eager bundle.
+
+- **AGENTS.md §14 (Component patterns).** Updated the "new component" checklist to default to no `links()` export (Pattern A) and the "new route" checklist to call out `@import`-ing consumed components in the route's stylesheet.
+
+- **Dropped the critical-CSS-inline followup.** Post-Stage-10 we'd flagged it as a Tier-2 lever if Lantern still penalized `/skills` after Stage 13. With LCP recovered to 0.94 and Performance at 0.98, it's not justified by the score. RESULTS.md notes this explicitly.
+
+### Verification
+
+- `npm run lint` clean (Prettier-checked the docs).
+- No code changes, so existing test/build pipeline is untouched.
+
+---
+
 ## Decisions log
 
 Record non-obvious decisions here as they're made (so future-me / future-agent doesn't have to re-derive them):
@@ -675,18 +714,19 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 
 ## PRs
 
-| Stage | Branch                        | PR          | Status | Merged |
-| ----- | ----------------------------- | ----------- | ------ | ------ |
-| 1     | `stage-1-tests`               | merged      | ✅     | yes    |
-| 2     | `stage-2-data-restructure`    | merged      | ✅     | yes    |
-| 3     | `stage-3-storybook`           | merged      | ✅     | yes    |
-| 4     | `stage-4-deps`                | merged      | ✅     | yes    |
-| 5     | `stage-5-optimize`            | merged      | ✅     | yes    |
-| 6     | `stage-6-tier-2`              | merged      | ✅     | yes    |
-| 7     | `stage-7-tier-2-followups`    | merged      | ✅     | yes    |
-| 8     | `stage-8-deps`                | merged      | ✅     | yes    |
-| 9     | `stage-9-single-fetch`        | merged      | ✅     | yes    |
-| 10    | `stage-10-lazy-routes`        | merged      | ✅     | yes    |
-| 11    | `stage-11-doc-sync`           | merged      | ✅     | yes    |
-| 12    | `stage-12-a11y-seo-quickwins` | merged      | ✅     | yes    |
-| 13    | `stage-13-lcp-recovery`       | _(opening)_ | 🟡     | —      |
+| Stage | Branch                             | PR          | Status | Merged |
+| ----- | ---------------------------------- | ----------- | ------ | ------ |
+| 1     | `stage-1-tests`                    | merged      | ✅     | yes    |
+| 2     | `stage-2-data-restructure`         | merged      | ✅     | yes    |
+| 3     | `stage-3-storybook`                | merged      | ✅     | yes    |
+| 4     | `stage-4-deps`                     | merged      | ✅     | yes    |
+| 5     | `stage-5-optimize`                 | merged      | ✅     | yes    |
+| 6     | `stage-6-tier-2`                   | merged      | ✅     | yes    |
+| 7     | `stage-7-tier-2-followups`         | merged      | ✅     | yes    |
+| 8     | `stage-8-deps`                     | merged      | ✅     | yes    |
+| 9     | `stage-9-single-fetch`             | merged      | ✅     | yes    |
+| 10    | `stage-10-lazy-routes`             | merged      | ✅     | yes    |
+| 11    | `stage-11-doc-sync`                | merged      | ✅     | yes    |
+| 12    | `stage-12-a11y-seo-quickwins`      | merged      | ✅     | yes    |
+| 13    | `stage-13-lcp-recovery`            | merged      | ✅     | yes    |
+| 14    | `stage-14-doc-sync-and-lighthouse` | _(opening)_ | 🟡     | —      |
