@@ -5,8 +5,8 @@
     "endDate": "2027-09-01T00:00:00.000",
     "institution": "Universidad Blas Pascal",
     "summary": "A Bachelor Degree completion program focused on machine learning, natural language processing, and strategic AI deployment.",
-    "description": "The Bachelor's Degree in Artificial Intelligence at UBP is an intensive, professional 1.5-year degree completion program designed to translate technical AI capabilities into institutional value. The curriculum focuses on identifying processes where AI drives strategic advantages, managing machine learning project lifecycles, and formulating integration strategies aligned with business models. It places a significant emphasis on AI governance, security controls, and translating complex technical risks into institutional frameworks using standards like the NIST AI Risk Management Framework, ISO/IEC 42001, and ethical data governance models.",
-    "skills": ["Machine Learning Engineering","Prompt Engineering","Natural Language Processing (NLP)","Neural Networks & Deep Learning","Data Analytics & Structures","AI Ethics & Strategy"]
+    "description": "The Bachelor's Degree in Artificial Intelligence at UBP is an intensive, professional degree completion program covering the full machine-learning stack — from foundational mathematics and neural-network architectures through training, fine-tuning, and production deployment of modern AI systems. The curriculum emphasizes hands-on work with deep-learning frameworks, NLP and large-language-model engineering, computer vision, and MLOps tooling for evaluating, monitoring, and scaling models in real systems. Coursework on AI governance and risk frameworks (NIST AI RMF, ISO/IEC 42001) rounds out the program so graduates can ship AI responsibly, not just build it.",
+    "skills": ["Python", "Machine Learning Engineering", "Prompt Engineering", "Natural Language Processing (NLP)", "Neural Networks & Deep Learning", "Data Analytics & Structures","AI Ethics & Strategy"]
   },
   "associateDegree": {
     "title": "Software Development and Quality Control Associate Degree",
@@ -15,7 +15,7 @@
     "institution": "Universidad del Norte Santo Tomas de Aquino",
     "summary": "A 3-year undergraduate degree focusing on end-to-end web development, database management, and advanced QA methodologies.",
     "description": "The University Degree in Software Development and Quality at UNSTA delivers an end-to-end technical education combining modern programming pipelines with rigorous software assurance standards. The comprehensive curriculum spans foundational algorithms, paradigms, and database administration before moving into specialized tracks for Front-End and Back-End development. Graduates are trained to lead automated testing cycles, implement strict quality control metrics, evaluate commercial software dependencies against strict business requirements, and execute cross-functional projects within agile, multi-disciplinary team environments.",
-    "skills": ["Full-Stack Web Development","Automated Testing & QA","Database Administration","Algorithms & Data Structures","Agile Project Management","Front-End & Back-End Architecture"]
+    "skills": ["Full-Stack Web Development","Automated Testing & QA","Database Administration","Algorithms & Data Structures","Agile Project Management","Front-End & Back-End Architecture", "JavaScript", "TypeScript", "React", "Cypress"]
   },
   "certifications": [
     {
