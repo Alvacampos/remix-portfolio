@@ -47,7 +47,10 @@
   &__card-link {
     text-decoration: none;
     color: inherit;
-    display: block;
+    /* Flex so the wrapper stretches to fill the row height — keeps the
+     * two degree cards equal-height when their summaries differ in
+     * line count on desktop. */
+    display: flex;
     transition:
       transform 120ms ease,
       box-shadow 120ms ease;
@@ -72,6 +75,7 @@
     gap: $space-20;
     width: 100%;
     max-width: 600px;
+    height: 100%;
   }
 
   &__card-wrapper--certification-wrapper {
