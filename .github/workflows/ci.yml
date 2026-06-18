@@ -46,38 +46,23 @@ jobs:
   e2e-tests:
     name: E2E tests (Playwright)
     runs-on: ubuntu-latest
+    # Run inside the same Playwright image used by scripts/update-visual-baselines.sh
+    # so visual-regression baselines (committed as *-chromium-linux.png) compare
+    # against pixel-identical fontconfig/freetype as the regen environment.
+    # ubuntu-latest's host filesystem (Ubuntu 24.04) ships subtly different
+    # font rendering vs the jammy (22.04) image baselines were captured in;
+    # without this container, the visual specs flake on ~0.3% pixel diffs.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-jammy
+      options: --ipc=host
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+      # setup-node is skipped here — the Playwright image already ships Node 20.
+      # actions/cache also can't be used inside a non-default container without
+      # extra plumbing; npm install is fast enough on the warmed image cache.
 
       - run: npm ci
-
-      # Cache the downloaded Chromium binary across runs. Saves ~30–60s
-      # per CI run; keyed on the @playwright/test version so a Playwright
-      # bump invalidates the cache automatically.
-      - name: Get Playwright version
-        id: playwright-version
-        run: |
-          echo "version=$(npm ls @playwright/test --depth=0 --json | node -e 'const j=JSON.parse(require("fs").readFileSync(0)); console.log(j.dependencies["@playwright/test"].version)')" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Install Playwright system deps (cache hit)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
 
       - run: npm run test:e2e -- --project=chromium
 
