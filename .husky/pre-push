@@ -1,0 +1,55 @@
+#!/usr/bin/env sh
+# Pre-push gate. Runs the cheap-but-meaningful trio (~10s on a warm cache):
+#   - lint    (ESLint + ls-lint + Prettier)
+#   - typecheck (tsc --noEmit)
+#   - unit tests (Vitest)
+#
+# E2E + visual-regression specs are NOT run here — they need the dev server
+# (~30s spin-up) and Docker (visual). They run on CI instead, which is the
+# gate of record.
+#
+# To bypass in an emergency: `git push --no-verify`. Prefer fixing the
+# underlying failure to using --no-verify.
+
+set -e
+
+echo "→ lint"
+npm run lint
+
+echo "→ typecheck"
+npm run typecheck
+
+echo "→ unit tests"
+npm test
+
+# Soft warning: did the user change UI-affecting files without regenerating
+# the visual baselines? Don't block the push — sometimes a CSS tweak is
+# below the diff threshold, sometimes you're working on a non-UI branch.
+# But nudge them so they don't push, get a CI failure, and then have to
+# regenerate + push again.
+#
+# Compare the local push range against origin/main using the merge-base
+# — covers both "first push of a new branch" and "subsequent commits on
+# an existing branch" without false-positives on every push.
+
+VISUAL_PATTERNS='\.css$|app/routes/|app/components/|app/intl/|public/data/|public/fonts/|app/styles/'
+SNAPSHOT_DIR='tests/e2e/visual.spec.ts-snapshots/'
+
+# `git merge-base origin/main HEAD` may fail on first push if origin has no
+# main yet — fall back to "all commits on this branch" via diffing against
+# an empty tree.
+BASE=$(git merge-base origin/main HEAD 2>/dev/null || git hash-object -t tree --stdin </dev/null)
+
+CHANGED_UI=$(git diff --name-only "$BASE" HEAD | grep -E "$VISUAL_PATTERNS" || true)
+CHANGED_SNAPSHOTS=$(git diff --name-only "$BASE" HEAD | grep -F "$SNAPSHOT_DIR" || true)
+
+if [ -n "$CHANGED_UI" ] && [ -z "$CHANGED_SNAPSHOTS" ]; then
+  echo ""
+  echo "⚠️  UI-affecting files changed since origin/main but no visual baselines were updated."
+  echo "    Files:"
+  echo "$CHANGED_UI" | sed 's/^/      /'
+  echo ""
+  echo "    If the change is purely below the diff threshold, ignore this."
+  echo "    Otherwise: docker info && npm run test:visual:update, then commit the new PNGs."
+  echo ""
+fi

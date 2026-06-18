@@ -11,7 +11,23 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   timeout: 60_000,
-  expect: { timeout: 10_000 },
+  expect: {
+    timeout: 10_000,
+    // Visual-regression tolerances. `threshold` allows tiny per-pixel
+    // anti-aliasing deltas; `maxDiffPixelRatio` is set per-call in
+    // visual.spec.ts. Baselines are committed for linux only — the
+    // visual spec skips itself on macOS, so platform-specific PNG
+    // sprawl never makes it into the repo.
+    toHaveScreenshot: {
+      threshold: 0.2,
+      animations: 'disabled',
+      caret: 'hide',
+    },
+  },
+  // Keep all snapshots under a single per-spec folder. The default
+  // already includes {projectName} and {platform} so a future mobile
+  // project won't collide with chromium baselines.
+  snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}',
   use: {
     baseURL: BASE_URL,
     trace: 'on-first-retry',

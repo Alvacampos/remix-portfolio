@@ -104,27 +104,29 @@ remix-portfolio/
 
 From [package.json](package.json):
 
-| Command                   | What it does                                                                     |
-| ------------------------- | -------------------------------------------------------------------------------- |
-| `npm run dev`             | `remix vite:dev` — local dev server on **port 8788**                             |
-| `npm run build`           | `NODE_ENV=production remix vite:build` — emits `build/client` and `build/server` |
-| `npm run start`           | `wrangler pages dev ./build/client` — preview the built bundle on Pages          |
-| `npm run preview`         | `npm run build && wrangler pages dev`                                            |
-| `npm run deploy`          | `npm run build && wrangler pages deploy` — deploys to Cloudflare Pages           |
-| `npm run typecheck`       | `tsc` (no emit)                                                                  |
-| `npm run typegen`         | `wrangler types` — regenerates `worker-configuration.d.ts` from bindings         |
-| `npm run cf-typegen`      | Alias of the above                                                               |
-| `npm run lint`            | `run-s lint:*` — runs all linters in sequence                                    |
-| `npm run lint:es`         | ESLint over `.js,.jsx,.ts,.tsx`                                                  |
-| `npm run lint:ls`         | `@ls-lint/ls-lint` — file/folder naming rules                                    |
-| `npm run lint:prettier`   | `prettier --check .`                                                             |
-| `npm run build:svg`       | `svgo -f ./app/assets/icons` — optimize source SVGs                              |
-| `npm run build:icons`     | `svgr` over `./app/assets/icons` → `app/components/icons/*.jsx`                  |
-| `npm test`                | `vitest run` — unit / component tests                                            |
-| `npm run test:watch`      | `vitest` watch mode                                                              |
-| `npm run test:e2e`        | `playwright test` — chromium + Pixel 7 mobile projects                           |
-| `npm run storybook`       | `storybook dev -p 6006` — local Storybook on port 6006                           |
-| `npm run build-storybook` | `storybook build` — static build to `storybook-static/`                          |
+| Command                      | What it does                                                                     |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| `npm run dev`                | `remix vite:dev` — local dev server on **port 8788**                             |
+| `npm run build`              | `NODE_ENV=production remix vite:build` — emits `build/client` and `build/server` |
+| `npm run start`              | `wrangler pages dev ./build/client` — preview the built bundle on Pages          |
+| `npm run preview`            | `npm run build && wrangler pages dev`                                            |
+| `npm run deploy`             | `npm run build && wrangler pages deploy` — deploys to Cloudflare Pages           |
+| `npm run typecheck`          | `tsc` (no emit)                                                                  |
+| `npm run typegen`            | `wrangler types` — regenerates `worker-configuration.d.ts` from bindings         |
+| `npm run cf-typegen`         | Alias of the above                                                               |
+| `npm run lint`               | `run-s lint:*` — runs all linters in sequence                                    |
+| `npm run lint:es`            | ESLint over `.js,.jsx,.ts,.tsx`                                                  |
+| `npm run lint:ls`            | `@ls-lint/ls-lint` — file/folder naming rules                                    |
+| `npm run lint:prettier`      | `prettier --check .`                                                             |
+| `npm run build:svg`          | `svgo -f ./app/assets/icons` — optimize source SVGs                              |
+| `npm run build:icons`        | `svgr` over `./app/assets/icons` → `app/components/icons/*.jsx`                  |
+| `npm test`                   | `vitest run` — unit / component tests                                            |
+| `npm run test:watch`         | `vitest` watch mode                                                              |
+| `npm run test:e2e`           | `playwright test` — chromium + Pixel 7 mobile projects                           |
+| `npm run test:visual`        | Visual-regression spec only (chromium). Self-skips on macOS — see §11.           |
+| `npm run test:visual:update` | Regenerate visual baselines via the Playwright Docker image.                     |
+| `npm run storybook`          | `storybook dev -p 6006` — local Storybook on port 6006                           |
+| `npm run build-storybook`    | `storybook build` — static build to `storybook-static/`                          |
 
 > **Always run `npm run typecheck`, `npm run lint`, `npm test`, and (for component changes) `npm run build-storybook` before reporting work as done.**
 
@@ -299,6 +301,16 @@ If/when env vars or bindings are added: edit `wrangler.toml`, then run `npm run 
 
 Two layers, both opt-in via npm scripts and run on CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
+### Pre-push hook (husky)
+
+[.husky/pre-push](.husky/pre-push) blocks `git push` if `npm run lint`, `npm run typecheck`, or `npm test` fails. It runs the cheap-but-meaningful trio (~10s on a warm cache) so type/lint/unit regressions get caught before they reach CI. E2E + visual specs are NOT run here — they need the dev server (slow) or Docker (visual). CI is the gate of record for those.
+
+The hook also emits a soft warning if you changed UI-affecting files (`*.css`, `app/routes/`, `app/components/`, `app/intl/`, `public/data/`, `public/fonts/`, `app/styles/`) since `origin/main` without committing any new visual baselines. It doesn't block the push — sometimes a CSS tweak is below the diff threshold, sometimes you're working on a non-UI branch — but it nudges you so you don't push, get a CI failure, then have to regenerate baselines and push again.
+
+Bypass in an emergency with `git push --no-verify`. Prefer fixing the underlying failure to using `--no-verify`.
+
+The hook installs automatically via `npm install` (the `prepare` script runs `husky`).
+
 ### Unit / component — Vitest + React Testing Library
 
 - Config: [vitest.config.ts](vitest.config.ts) (happy-dom env, globals, `~/*` alias via `vite-tsconfig-paths`).
@@ -315,8 +327,44 @@ Two layers, both opt-in via npm scripts and run on CI ([.github/workflows/ci.yml
 - Two projects: `chromium` (Desktop Chrome) and `mobile` (Pixel 7 device emulation).
 - `webServer`: starts `npm run dev` on `http://localhost:8788` automatically (reuses an existing server in dev).
 - `workers: 1`, `fullyParallel: false` — Vite dev's first-hit compile is slow under parallel load. Don't re-enable parallelism without switching to `npm run preview` (the built bundle).
-- Specs live in [tests/e2e/](tests/e2e/), one per route or concern: `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts`.
+- Specs live in [tests/e2e/](tests/e2e/), one per route or concern: `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts`, plus `visual.spec.ts` for screenshot-diffs (see below).
 - Run: `npm run test:e2e` (both projects), `npm run test:e2e:ui` (Playwright UI mode), `--project=chromium` to limit.
+
+### Visual regression — `visual.spec.ts`
+
+Full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. The `/skills` index route is excluded because recharts axis labels and the inline QR `<svg>` produce sub-pixel anti-aliasing diffs across environments — see [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
+
+Why linux-only: Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoji rendering differ enough between macOS and Ubuntu that committing both per-platform PNGs would double the snapshot footprint without gating anything (CI is the only place that runs the assertions). The spec's `SKIP_VISUAL` flag (in [tests/e2e/visual.spec.ts](tests/e2e/visual.spec.ts)) keys off `process.platform`.
+
+Determinism guards (set up in `prepare()` and `settle()`):
+
+1. **`page.clock.install({ time: FIXED_NOW })`** — the /skills "Total years of experience" card and any `endDate: null` work item both call `new Date()`; without freezing, rendered text drifts every day.
+2. **Animations + transitions disabled** via an injected stylesheet — recharts entrance, carousel auto-advance, the Front End / Back End neon-loop, and the vertical-timeline intersection animation would otherwise produce different pixels every run.
+3. **`document.fonts.ready`** before snapshotting — Roboto loads from `/fonts/roboto/`; without this guard the first capture can land while the system fallback is still rendering.
+4. **`networkidle` + 200 ms settle** for lazy chunks (BarChart, Carousel, Timeline) to land and lay out.
+
+The carousel is masked because its scroll-x position isn't worth gating on. The bar chart is **not** masked — that's exactly what we want to catch when a token change shifts colors or a data update changes bar order.
+
+**Updating baselines after an intentional UI change:**
+
+```sh
+npm run test:visual:update
+```
+
+This shells out to [scripts/update-visual-baselines.sh](scripts/update-visual-baselines.sh), which runs Playwright inside the official `mcr.microsoft.com/playwright:v<version>-jammy` Docker image so the resulting PNGs match the Linux runners on CI. Required setup:
+
+- **Docker Desktop** (or Colima) running on the host.
+- The image tag automatically tracks the local `@playwright/test` version, so a Playwright bump produces matching baselines on the next regen.
+- The script forces `--platform=linux/amd64` so the regen runs as x86_64 — matching GitHub Actions runners. On Apple Silicon Macs this means Docker emulates x86_64 via QEMU (3-5× slower regen, ~2-3 min total). Without this, freetype renders fonts slightly differently between arm64 and x86_64 and baselines won't match CI.
+
+Review the regenerated PNGs under `tests/e2e/visual.spec.ts-snapshots/` and commit them.
+
+**Tolerances** (`playwright.config.ts → expect.toHaveScreenshot`):
+
+- `threshold: 0.2` — per-pixel color delta (covers anti-aliasing / sub-pixel jitter).
+- `maxDiffPixelRatio: 0.002` (per-call in `visual.spec.ts`) — overall fraction of pixels allowed to differ. 0.2% is the standard "barely perceptible" tolerance.
+
+See [tests/e2e/README.md](tests/e2e/README.md) for the full reference (adding routes, troubleshooting, etc.).
 
 CI installs Chromium with `npx playwright install --with-deps chromium` and uploads `playwright-report/` on failure.
 
@@ -458,6 +506,7 @@ Before opening a PR:
 - [ ] `npm run lint` is clean (ESLint, ls-lint, Prettier).
 - [ ] `npm test` is green.
 - [ ] `npm run test:e2e` is green (or `--project=chromium` for a faster local pass).
+- [ ] If you intentionally changed visual output (CSS, layout, copy that affects layout), regenerate baselines with `npm run test:visual:update` (Docker required) and commit the new PNGs. CI will gate visual diffs in the `e2e-tests` job on Ubuntu.
 - [ ] If you added or touched a component, `npm run build-storybook` succeeds and the new story renders in `npm run storybook`.
 - [ ] If you touched any `style.css`, the parent route/component still spreads the child's `links()`.
 - [ ] If you touched copy, the new key is in [app/intl/en-US.json](app/intl/en-US.json) and used via `FormattedMessage` / `formatMessage`.

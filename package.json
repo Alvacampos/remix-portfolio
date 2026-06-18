@@ -23,8 +23,11 @@
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:visual": "playwright test visual.spec.ts --project=chromium",
+    "test:visual:update": "scripts/update-visual-baselines.sh",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@remix-run/cloudflare": "^2.17.5",
@@ -85,6 +88,7 @@
     "eslint-plugin-storybook": "^10.4.6",
     "globals": "^16.4.0",
     "happy-dom": "^20.10.5",
+    "husky": "^9.1.7",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.61.0",
     "postcss": "^8.5.6",
