@@ -355,6 +355,7 @@ This shells out to [scripts/update-visual-baselines.sh](scripts/update-visual-ba
 
 - **Docker Desktop** (or Colima) running on the host.
 - The image tag automatically tracks the local `@playwright/test` version, so a Playwright bump produces matching baselines on the next regen.
+- The script forces `--platform=linux/amd64` so the regen runs as x86_64 — matching GitHub Actions runners. On Apple Silicon Macs this means Docker emulates x86_64 via QEMU (3-5× slower regen, ~2-3 min total). Without this, freetype renders fonts slightly differently between arm64 and x86_64 and baselines won't match CI.
 
 Review the regenerated PNGs under `tests/e2e/visual.spec.ts-snapshots/` and commit them.
 

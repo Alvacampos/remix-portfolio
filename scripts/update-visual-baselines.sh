@@ -21,6 +21,7 @@ IMAGE="mcr.microsoft.com/playwright:v${PW_VERSION}-jammy"
 echo "Using image: ${IMAGE}"
 
 docker run --rm \
+  --platform=linux/amd64 \
   -v "$(pwd)":/work \
   -v "remix-portfolio-visual-node-modules:/work/node_modules" \
   -w /work \
@@ -29,6 +30,14 @@ docker run --rm \
   --ipc=host \
   "${IMAGE}" \
   bash -c "npm ci && npx playwright test visual.spec.ts --project=chromium --update-snapshots"
+# Note on --platform=linux/amd64: GitHub Actions runners are x86_64 but
+# Apple Silicon Macs default to arm64 when pulling a multi-arch image.
+# freetype's sub-pixel font rendering math diverges between the two
+# architectures, so an arm64-generated baseline can differ from the
+# x86_64-rendered CI run by ~0.4% of pixels — invisible to the eye but
+# above the 0.2% diff budget. Forcing amd64 makes Docker emulate
+# x86_64 via QEMU (3-5x slower regen on M-series, ~2-3 min total) but
+# produces pixel-identical output to CI.
 # Note on the named volume: the container needs `npm ci` to install Linux
 # binaries (rollup-linux, esbuild-linux, etc), but bind-mounting the host's
 # node_modules from a Mac would replace the macOS native binaries with

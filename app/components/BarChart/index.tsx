@@ -67,7 +67,7 @@ export default function CustomBarChart({ data }: Props) {
             cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
             content={<CustomTooltip />}
           />
-          <Bar dataKey="value">
+          <Bar dataKey="value" isAnimationActive={false}>
             {sortedData.map((entry, index) => (
               <Cell key={entry.name} fill={COLOR_CODE[index % COLOR_CODE.length]} />
             ))}
