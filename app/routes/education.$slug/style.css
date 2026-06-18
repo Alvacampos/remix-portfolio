@@ -1,0 +1,90 @@
+/* Card CSS is inlined here so /education/:slug ships one stylesheet
+ * instead of two (Stage 13 pattern). postcss-import resolves at build. */
+@import '../../components/Card/style.css';
+
+.education-id-route {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: $space-20;
+  line-height: 2rem;
+
+  &__title {
+    text-align: center;
+  }
+
+  &__main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: $space-20;
+  }
+
+  &__header-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: $space-20;
+  }
+
+  .card-component {
+    height: 100%;
+    min-height: 100%;
+
+    &__main-text-wrapper {
+      display: flex;
+      gap: $space-20;
+      flex-wrap: wrap;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__error {
+    color: $error-red;
+    background: $background-variation;
+    border: $card-border;
+    border-radius: $border-10;
+    padding: $space-20 $space-16;
+    margin: $space-40 auto;
+    max-width: 600px;
+    text-align: center;
+    font-size: $font-24;
+    font-weight: $weight-700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 16px rgba(31, 35, 40, 0.15);
+    font-family: inherit;
+  }
+}
+
+@media screen and (min-width: $desktop-small) {
+  .education-id-route {
+    padding: 0 $space-20;
+
+    &__main-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: $space-20;
+    }
+
+    &__header-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: $space-20;
+      height: fit-content;
+    }
+
+    &__description-container {
+      height: stretch;
+      max-width: 75%;
+
+      .card-component__text-container {
+        height: 100%;
+      }
+    }
+  }
+}
