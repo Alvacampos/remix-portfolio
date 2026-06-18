@@ -71,7 +71,7 @@ What this project ships that goes beyond a "static CV page":
 - **Comprehensive test suite**:
   - **Vitest + React Testing Library** for components and utils — render helper that wraps trees in a memory router and IntlProvider so route-level concerns don't leak into unit tests.
   - **Playwright behavioural specs** for each route's loader and key interactions.
-  - **Playwright visual-regression suite** — full-page screenshot diffs for `/`, `/skills`, `/skills/:uuid`, `/education`, `/education/:slug`. Baselines are committed for Linux only (macOS auto-skips); CI runs Playwright inside the same `mcr.microsoft.com/playwright:vX.Y.Z-jammy` Docker image baselines were captured in, guaranteeing pixel-perfect parity.
+  - **Playwright visual-regression suite** — full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. (The `/skills` index route is excluded — recharts SVG text drifts on sub-pixel anti-aliasing across environments; the route stays covered by behavioural specs.) Baselines are committed for Linux only (macOS auto-skips); CI runs Playwright inside the same `mcr.microsoft.com/playwright:vX.Y.Z-jammy` Docker image baselines were captured in, guaranteeing pixel-perfect parity.
   - **Storybook 10** with stories colocated next to each component, plus chromatic + a11y addons.
 - **Accessibility-first**:
   - SVGR-generated icons ship `aria-hidden="true"` by default (decorative); the Lighthouse `svg-img-alt` audit is `notApplicable` because no SVGs claim a `role="img"` they can't fulfill.

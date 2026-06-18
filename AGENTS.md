@@ -332,7 +332,7 @@ The hook installs automatically via `npm install` (the `prepare` script runs `hu
 
 ### Visual regression — `visual.spec.ts`
 
-Full-page screenshot diffs across the five primary routes (`/`, `/skills`, `/skills/:uuid`, `/education`, `/education/:slug`). Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
+Full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. The `/skills` index route is excluded because recharts axis labels and the inline QR `<svg>` produce sub-pixel anti-aliasing diffs across environments — see [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
 
 Why linux-only: Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoji rendering differ enough between macOS and Ubuntu that committing both per-platform PNGs would double the snapshot footprint without gating anything (CI is the only place that runs the assertions). The spec's `SKIP_VISUAL` flag (in [tests/e2e/visual.spec.ts](tests/e2e/visual.spec.ts)) keys off `process.platform`.
 
