@@ -8,9 +8,10 @@ test.describe('Education (/education)', () => {
   test('shows the degree section', async ({ page }) => {
     // exact match: education.json has cards whose titles also contain
     // "Degree" (e.g. the Associate Degree card), so a /Degree/i regex
-    // collides with them. We only want the section <h2> here.
+    // would collide with them. The section heading is plural ("Degrees")
+    // so it's distinct from the singular card titles.
     await expect(
-      page.getByRole('heading', { name: 'Degree', exact: true, level: 2 })
+      page.getByRole('heading', { name: 'Degrees', exact: true, level: 2 })
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
@@ -30,7 +31,7 @@ test.describe('Education (/education)', () => {
 
   test('shows certifications with their institutions', async ({ page }) => {
     await expect(
-      page.getByRole('heading', { name: /Certification/i, level: 2 }).first()
+      page.getByRole('heading', { name: 'Certifications', exact: true, level: 2 })
     ).toBeVisible();
     await expect(page.getByText(/University of Cambridge/i)).toBeVisible();
     await expect(page.getByText(/EF SET English/i)).toBeVisible();

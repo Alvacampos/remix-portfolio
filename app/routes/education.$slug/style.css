@@ -80,7 +80,10 @@
 
     &__description-container {
       height: stretch;
-      max-width: 75%;
+      /* Cap at the viewport % we already had, but also cap by readable
+       * line length (~65ch) so on ultrawide the description doesn't
+       * stretch past the comfortable reading length for body text. */
+      max-width: min(75%, 65ch);
 
       .card-component__text-container {
         height: 100%;

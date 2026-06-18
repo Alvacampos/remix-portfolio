@@ -7,6 +7,13 @@
   flex-direction: column;
   overflow: hidden;
 
+  /* Card-internal h2 sits below section h2 in the visual hierarchy.
+   * Section h2 sizes are set in the /skills, /education, and detail
+   * route stylesheets — this is the smaller card-internal default. */
+  & h2 {
+    font-size: $font-18;
+  }
+
   &--styleless {
     border: none;
 

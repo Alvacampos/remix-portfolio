@@ -6,7 +6,9 @@ test.describe('Skills (/skills)', () => {
   });
 
   test('renders work experience timeline and total years card', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /Work Experience/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Work Experience', exact: true, level: 2 })
+    ).toBeVisible();
     // Globant is the first work item in skills.json — pin to its detail link
     await expect(
       page
