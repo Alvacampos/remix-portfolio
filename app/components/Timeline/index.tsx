@@ -2,14 +2,18 @@ import { Link } from '@remix-run/react';
 import { memo } from 'react';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 
-import Card, { links as cardLinks } from '~/components/Card';
+import Card from '~/components/Card';
 import { SuccessFilled } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 
+// Card no longer exports links() — its CSS is inlined into each consumer
+// route's style.css via postcss-import (Stage 13). The preload + stylesheet
+// pair below is still emitted manually because Timeline is lazy-loaded on
+// /skills and we want the CSS to land on first paint despite the JS chunk
+// arriving in a later round-trip.
 export const links = () => [
-  ...cardLinks(),
   { rel: 'preload', href: styles, as: 'style' },
   { rel: 'stylesheet', href: styles },
 ];

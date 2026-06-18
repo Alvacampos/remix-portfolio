@@ -38,7 +38,7 @@
         },
         {
           "name": "Redux",
-          "start": "2022-04-01T00:00:00"
+          "start": "2018-08-01T00:00:00.000"
         },
         {
           "name": ".Net",
@@ -390,6 +390,10 @@
         {
           "title": "Project Adalabs",
           "text": "Contributed to building a client-facing interface for a U.S.-based AI platform using Next.js, deployed on Vercel. The AI model—designed to assist fintechs and financial service providers—serves as a centralized source of truth for organizing and managing finance-related documentation and client data."
+        },
+        {
+          "title": "Project Imprint",
+          "text": "Front end lead developer for new feature Rewards. Worked with ReactJs, Playwright, Claude Code."
         }
       ]
     }

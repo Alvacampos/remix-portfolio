@@ -15,7 +15,11 @@ test.describe('Navigation', () => {
       .first()
       .click();
     await expect(page).toHaveURL(/\/education$/);
-    await expect(page.getByRole('heading', { name: /Degree/i, level: 2 })).toBeVisible();
+    // exact match: card titles on /education also contain "Degree", so a
+    // /Degree/i regex would match more than the section heading.
+    await expect(
+      page.getByRole('heading', { name: 'Degree', exact: true, level: 2 })
+    ).toBeVisible();
   });
 
   test('exposes external links to GitHub and LinkedIn', async ({ page }) => {

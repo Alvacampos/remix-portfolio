@@ -21,7 +21,8 @@ Living document tracking the multi-stage refactor of `remix-portfolio`. Update t
 9. ✅ **Stage 9 — Single Fetch** (opted into `future.v3_singleFetch`; replaced deprecated `json()` with raw objects + `data()` for headers)
 10. ✅ **Stage 10 — Lazy route discovery** (opted into `future.v3_lazyRouteDiscovery`; cleared the last future-flag warning)
 11. ✅ **Stage 11 — Doc sync** (caught AGENTS.md and PROGRESS.md up to what the code actually does after Stages 7–10 merged; no code changes)
-12. 🟡 **Stage 12 — A11y / SEO quick wins** (per-route canonical + SVGR aria-hidden default, fixing two regressions that surfaced in the post-Stage-10 Lighthouse run)
+12. ✅ **Stage 12 — A11y / SEO quick wins** (per-route canonical + SVGR aria-hidden default, fixed two regressions from the post-Stage-10 Lighthouse run)
+13. 🟡 **Stage 13 — LCP recovery** (collapsed 12 render-blocking stylesheets on `/skills` to 7 by inlining small-component CSS into route stylesheets via postcss-import; dropped 5 components' `links()` exports)
 
 Tests come first so every later stage has a safety net. Deps come before optimization so optimization measurements aren't invalidated by a later upgrade.
 
@@ -567,8 +568,8 @@ This app has 4 routes. The "fog of war" optimization pays back proportionally to
 **Goal:** fix two real regressions that the post-Stage-10 Lighthouse run on prod surfaced — `canonical` (SEO 92) and `svg-img-alt` (A11y 99 with 30 affected elements). Both are small, contained, and unblock 100/100 on those two categories.
 
 **Branch:** `stage-12-a11y-seo-quickwins`
-**PR:** _(fill in once opened)_
-**Status:** 🟡 ready for PR
+**PR:** merged
+**Status:** ✅ done
 
 ### What this stage did
 
@@ -600,6 +601,68 @@ Need a fresh prod run after this merges to confirm, but the predictable scores:
 
 ---
 
+## Stage 13 — LCP recovery (CSS bundling)
+
+**Goal:** chase the LCP regression that surfaced in the post-Stage-10 prod Lighthouse run (2.2 s → 2.6 s, score 0.94 → 0.87). Reduce the number of render-blocking stylesheets without losing the JS code-split that landed in Stage 6.
+
+**Branch:** `stage-13-lcp-recovery`
+**PR:** _(fill in once opened)_
+**Status:** 🟡 ready for PR
+
+### Diagnosis
+
+The 2.6 s LCP is **mostly a Lantern simulation artifact**, not a real-device measurement: the post-Stage-10 run's _observed_ LCP was 439 ms, FCP improved 1.2 s → 1.1 s, and Speed Index improved 2.4 s → 1.8 s versus the post-Stage-7 baseline. Real users got faster paints across the board. What regressed was Lighthouse's per-stylesheet-cost model under 4× CPU + slow-3G simulation: `/skills` shipped **12 separate render-blocking stylesheets** because Stage 6's manual-CSS-preload pattern emitted one `<link>` per component plus the route's own chain.
+
+### What I tried first (and why it didn't work)
+
+`build.cssCodeSplit: false` in `vite.config.ts` was the first instinct — bundle every component's CSS into one `style.css`. Build broke immediately: the Remix Vite plugin walks the manifest looking for per-CSS-chunk entries and `cssCodeSplit: false` collapses those entries into one, so `getRemixServerManifest` throws `No manifest entry found for "app/routes/style.css"`. That's a real Remix–Vite compatibility constraint, not a config-knob issue. Reverted.
+
+### What this stage actually did
+
+PostCSS-import is already in the chain (Stage 1 / `postcss.config.js`), so I used it to inline small components' CSS into their consuming routes' stylesheets at build time. The pattern:
+
+1. Add `@import '../../components/<X>/style.css';` to each route's `style.css`.
+2. Drop the component's `links()` export and `?url` import — its CSS is no longer a separate asset, it's part of the route's stylesheet.
+3. Drop the consumer's `import { links as xLinks }` + `...xLinks()` composition.
+
+Surface area:
+
+- **Global stylesheet** ([app/styles/style.css](app/styles/style.css)) — inlined `Button` and `NavBar` (both used on every page). Dropped `links()` from both components and from `root.tsx`.
+- **`/`** ([app/routes/style.css](app/routes/style.css)) — inlined `DownloadBtn`. Dropped `DownloadBtn`'s `links()` and the consumer's import.
+- **`/education`** ([app/routes/education/style.css](app/routes/education/style.css)) — inlined `Card`. Dropped `cardLinks()` from the route's `links()`.
+- **`/skills/:uuid`** ([app/routes/skills.\$uuid/style.css](app/routes/skills.$uuid/style.css)) — inlined `Card`. Dropped `cardLinks()` from the route's `links()`.
+- **`/skills`** ([app/routes/skills.\_index/style.css](app/routes/skills._index/style.css)) — inlined `Card`, `Input`, `LoadingSpinner` (Button is already global). Dropped 4 `xLinks()` calls from the route's `links()` chain.
+- **Card** ([app/components/Card/index.tsx](app/components/Card/index.tsx)) — dropped `links()`. Card is consumed by `Timeline` and 3 routes; Timeline still has its own `links()` for its lazy-load preload pattern, just no longer composes Card's.
+
+The lazy-loaded heavy components (BarChart, Carousel, Timeline) keep their separate stylesheets and the manual `?url`-preload-then-stylesheet pattern from Stage 6 — that's where the real JS chunk-split win lives, and consolidating their CSS would defeat it.
+
+### Verification
+
+- `/skills` stylesheet count in dev: **12 → 7** (-5).
+- Build asset count: **18 → 11** CSS files emitted under `build/client/assets/`.
+- `style-DLdyEHl6.css` (the new global stylesheet, 3.8 KB) contains both `.button-component` and `.navbar-component` rules — confirmed via `grep`.
+- No CSS duplication between bundles: the only other stylesheet with a `button-component` substring is the skills route's own `.button-component__btn--active` modifier, which lives there because it's specific to the Front End / Back End filter buttons.
+- `npm run typecheck`, `npm run lint`, `npm run build`, `npm run build-storybook` — all clean.
+- `npm test` — 41/41.
+- `npm run test:e2e --project=chromium` — 15/15.
+- Manual smoke against `npm run dev`: every route renders styled (no FOUC), `<html lang>` correct, NavBar + buttons + cards all carry their classes, `/skills.data` Single Fetch endpoint still returns the turbo-stream payload.
+
+### Expected Lighthouse delta
+
+Need a fresh prod run to confirm. Predictable shape:
+
+- **Performance score** ~0.97 → **0.95–0.99** (5 fewer round-trips for stylesheets on `/skills`; LCP score should recover to the 0.90+ band on Lantern simulation).
+- **FCP, SI, TBT, CLS** — all already excellent, expected to stay that way or improve marginally.
+- **A11y, SEO, Best Practices** — unchanged (no functional changes).
+
+If Lantern still penalizes the route heavily, the Tier-2 follow-up would be inlining critical-CSS into `<head>` for the LCP element specifically. Not bundling that here.
+
+### Followups (not in this PR)
+
+- AGENTS.md still describes the per-component `links()` pattern as the convention. After this merges, update §6 ("Styling system") and §14 ("Component patterns to keep matching") to reflect that small components now use postcss-import inlining instead. Bundle that with the post-Stage-13 Lighthouse capture as a small doc-sync PR.
+
+---
+
 ## Decisions log
 
 Record non-obvious decisions here as they're made (so future-me / future-agent doesn't have to re-derive them):
@@ -625,4 +688,5 @@ Record non-obvious decisions here as they're made (so future-me / future-agent d
 | 9     | `stage-9-single-fetch`        | merged      | ✅     | yes    |
 | 10    | `stage-10-lazy-routes`        | merged      | ✅     | yes    |
 | 11    | `stage-11-doc-sync`           | merged      | ✅     | yes    |
-| 12    | `stage-12-a11y-seo-quickwins` | _(opening)_ | 🟡     | —      |
+| 12    | `stage-12-a11y-seo-quickwins` | merged      | ✅     | yes    |
+| 13    | `stage-13-lcp-recovery`       | _(opening)_ | 🟡     | —      |

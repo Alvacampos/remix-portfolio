@@ -1,13 +1,12 @@
 import { useIntl } from 'react-intl';
 
-import Button, { links as ButtonLinks } from '~/components/Button';
+import Button from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-export const links = () => [...ButtonLinks(), { rel: 'stylesheet', href: styles }];
+// Stage 13: NavBar and Button CSS are inlined into app/styles/style.css via
+// postcss-import, so this component no longer exports a links() chain.
 
 const BLOCK = 'navbar-component';
 const getClasses = getClassMaker(BLOCK);

@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import Card, { links as cardLinks } from '~/components/Card';
+import Card from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
 
 // Server-side import — see app/routes/skills._index/index.tsx for the
@@ -10,7 +10,7 @@ import { formatDate, getClassMaker } from '~/utils/utils';
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
-export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const title = data?.data?.title ?? 'Work item';

@@ -4,7 +4,7 @@ import type { MetaFunction } from '@remix-run/cloudflare';
 import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
-import Card, { links as cardLinks } from '~/components/Card';
+import Card from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
 
 // Import the JSON server-side: Vite bakes it into the server bundle so
@@ -14,7 +14,7 @@ import { formatDate, getClassMaker } from '~/utils/utils';
 import educationData from '../../../public/data/education.json';
 import styles from './style.css?url';
 
-export const links = () => [...cardLinks(), { rel: 'stylesheet', href: styles }];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 export const meta: MetaFunction = () => [
   { title: 'Education — Gonzalo Alvarez Campos' },
@@ -41,22 +41,32 @@ export async function loader() {
   // Widen the inferred type: TS reads the JSON literal and produces a
   // discriminated union based on which entries have `url`, so
   // `cert.url` isn't accessible without narrowing. Casting up to a
-  // single shape with `url?: string` matches the old behaviour and
+  // single shape with `url?: string` matches the old behavior and
   // keeps the consumer code simple.
   return {
     degree: educationData.degree,
+    associateDegree: educationData.associateDegree,
     certifications: educationData.certifications as Certification[],
   };
 }
 
 export default function Skills() {
-  const { degree, certifications } = useLoaderData<typeof loader>();
+  const { degree, associateDegree, certifications } = useLoaderData<typeof loader>();
   const degreeCard = {
     title: degree.title,
     texts: [
       `Date: ${formatDate(degree.startDate, degree.endDate)}`,
       degree.institution,
       degree.description,
+    ],
+  };
+
+  const associateDegreeCard = {
+    title: associateDegree.title,
+    texts: [
+      `Date: ${formatDate(associateDegree.startDate, associateDegree.endDate)}`,
+      associateDegree.institution,
+      associateDegree.description,
     ],
   };
 
@@ -78,8 +88,13 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="DEGREE" />
         </h2>
-        <div className={getClasses('card-wrapper')}>
-          <Card {...degreeCard} />
+        <div className={getClasses('degree-container')}>
+          <div className={getClasses('card-wrapper')}>
+            <Card {...degreeCard} />
+          </div>
+          <div className={getClasses('card-wrapper')}>
+            <Card {...associateDegreeCard} />
+          </div>
         </div>
       </div>
       <div className={getClasses('certification')}>

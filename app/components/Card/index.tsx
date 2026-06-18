@@ -3,9 +3,8 @@ import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+// Stage 13: Card CSS is inlined into each consuming route's style.css via
+// postcss-import. No links() export — postcss-import owns the bundling.
 
 const BLOCK = 'card-component';
 const getClasses = getClassMaker(BLOCK);
