@@ -1,0 +1,98 @@
+{
+  "fetchTime": "2026-06-19T14:46:24.603Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.4.0",
+  "commit": "77d0a7c",
+  "categories": {
+    "performance": 0.87,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "2.3 s",
+      "numericValue": 2329.58655,
+      "score": 0.73
+    },
+    "lcp": {
+      "displayValue": "3.6 s",
+      "numericValue": 3556.1153999999997,
+      "score": 0.62
+    },
+    "si": {
+      "displayValue": "2.3 s",
+      "numericValue": 2329.58655,
+      "score": 0.98
+    },
+    "tbt": {
+      "displayValue": "110 ms",
+      "numericValue": 109,
+      "score": 0.98
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "4.5 s",
+      "numericValue": 4472.115400000001,
+      "score": 0.83
+    },
+    "ttfb": 166
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.73
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.62
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.98
+    },
+    {
+      "id": "total-blocking-time",
+      "title": "Total Blocking Time",
+      "score": 0.98
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.85
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.83
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
