@@ -140,10 +140,6 @@
       margin: 0;
     }
 
-    .input-component__wrapper {
-      width: 30%;
-    }
-
     &__years-of-exp {
       display: flex;
       justify-content: center;
