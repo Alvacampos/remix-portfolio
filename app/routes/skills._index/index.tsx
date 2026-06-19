@@ -104,9 +104,16 @@ export async function loader() {
     // ids in JSON are numeric, but Timeline + the /skills/:uuid URL
     // both want strings; convert once here.
     id: String(item.id),
-    title: item.title,
+    // Title now combines company + role on one line so the timeline reads
+    // as "what" + "who" at a glance (Stage 19 audit row #2). The rol
+    // field in skills.json carries trailing periods on most entries
+    // ("Jr Web developer.") — strip them so the em-dash composition
+    // doesn't read as "Globant — Jr Web developer."
+    title: `${item.title} — ${item.rol.replace(/\.$/, '')}`,
     date: formatDate(item.startDate, item.endDate ?? undefined),
-    texts: [item.rol],
+    // Body no longer carries the role (it's now in the title); fall back
+    // to an empty array so Card doesn't render a stray paragraph block.
+    texts: [],
     // Card chips and the autocomplete filter only need names — flatten here
     // and let getSkillChartData() consume the date-aware shape directly.
     skills: item.skills.map((s) => s.name),

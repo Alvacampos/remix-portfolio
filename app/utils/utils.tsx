@@ -31,15 +31,20 @@ export const formatDate = (dateA: string, dateB?: string, formatType?: string) =
     return formatDuration(duration, { format: ['years', 'months'] });
   }
 
+  // Unified date format across the app: abbreviated month + 4-digit year,
+  // joined by an en-dash for ranges. Stage 19 (#3) collapsed the three
+  // earlier formats ('MM/yyyy - MM/yyyy', 'MM/yyyy - Present', 'MMMM yyyy')
+  // into this single shape so timeline cards, education cards, and
+  // certifications all read the same way.
   if (dateB === null || dateB === undefined) {
-    return `${format(new Date(dateA), 'MM/yyyy')} - Present`;
+    return `${format(new Date(dateA), 'MMM yyyy')} – Present`;
   }
 
   if (dateB === '') {
-    return format(new Date(dateA), 'MMMM yyyy');
+    return format(new Date(dateA), 'MMM yyyy');
   }
 
-  return `${format(new Date(dateA), 'MM/yyyy')} - ${format(new Date(dateB), 'MM/yyyy')}`;
+  return `${format(new Date(dateA), 'MMM yyyy')} – ${format(new Date(dateB), 'MMM yyyy')}`;
 };
 
 export type SkillEntry = {

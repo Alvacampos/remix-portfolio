@@ -79,10 +79,32 @@
   }
 
   &__card-wrapper--certification-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: $space-20;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $space-10;
     width: 100%;
+    max-width: none;
+
+    /* Demoted certifications (Stage 19, audit row #4): smaller text,
+     * less padding so they read as supplementary content next to the
+     * hero degrees. The Card title bar stays but at a tighter density. */
+    .card-component {
+      &__title-wrapper {
+        & h2 {
+          font-size: $font-16;
+        }
+      }
+
+      &__text-container {
+        padding: $space-10 $space-15;
+      }
+
+      &__main-text-wrapper p {
+        font-size: $font-14;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
   }
 
   .card-component {
@@ -109,14 +131,15 @@
       width: 60%;
     }
 
+    /* Demoted certifications grid: 3 columns on desktop, packs tighter
+     * than the previous 2-up flex layout. */
     &__card-wrapper--certification-wrapper {
-      display: flex;
-      gap: $space-20;
-      flex-flow: row wrap;
-      justify-content: center;
+      grid-template-columns: repeat(3, 1fr);
+      gap: $space-10;
     }
 
-    .card-component {
+    /* Degree cards stay at the original min-width (hero treatment). */
+    &__degree .card-component {
       min-width: 500px;
       min-height: stretch;
 

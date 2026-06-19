@@ -61,33 +61,29 @@ export default function Skills() {
 
   const degreeCard = {
     title: degree.title,
-    texts: [
-      `Date: ${formatDate(degree.startDate, degree.endDate)}`,
-      degree.institution,
-      degree.summary,
-    ],
+    texts: [formatDate(degree.startDate, degree.endDate), degree.institution, degree.summary],
     children: learnMore,
   };
 
   const associateDegreeCard = {
     title: associateDegree.title,
     texts: [
-      `Date: ${formatDate(associateDegree.startDate, associateDegree.endDate)}`,
+      formatDate(associateDegree.startDate, associateDegree.endDate),
       associateDegree.institution,
       associateDegree.summary,
     ],
     children: learnMore,
   };
 
+  // Certification cards: institution becomes the heading (it's the
+  // recognizable part — "University of Cambridge", "JavaScript:
+  // Understanding the Weird Parts" — vs. the previous identical
+  // "Certification" h2 on every card). The course title field is no
+  // longer rendered since it was always the literal string "Certification".
   const certificationsCards = certifications.map((certification) => ({
-    // institution is unique across certifications in education.json — stable key.
     key: certification.institution,
-    title: certification.title,
-    texts: [
-      `Date: ${formatDate(certification.startDate, '')}`,
-      certification.institution,
-      certification.description,
-    ],
+    title: certification.institution,
+    texts: [formatDate(certification.startDate, ''), certification.description],
     children: certification?.url && <Link to={certification.url}>Certification Link</Link>,
   }));
 

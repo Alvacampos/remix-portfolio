@@ -23,17 +23,17 @@ describe('getClassMaker', () => {
 });
 
 describe('formatDate', () => {
-  it('returns "MM/yyyy - Present" when end is undefined', () => {
-    expect(formatDate('2020-01-01T00:00:00.000')).toBe('01/2020 - Present');
+  it('returns "MMM yyyy – Present" when end is undefined', () => {
+    expect(formatDate('2020-01-01T00:00:00.000')).toBe('Jan 2020 – Present');
   });
 
   it('returns single-month format when end is empty string', () => {
-    expect(formatDate('2020-01-01T00:00:00.000', '')).toBe('January 2020');
+    expect(formatDate('2020-01-01T00:00:00.000', '')).toBe('Jan 2020');
   });
 
   it('returns range when both dates are provided', () => {
     expect(formatDate('2020-01-01T00:00:00.000', '2021-06-01T00:00:00.000')).toBe(
-      '01/2020 - 06/2021'
+      'Jan 2020 – Jun 2021'
     );
   });
 

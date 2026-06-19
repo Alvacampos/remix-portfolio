@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData, useRouteError } from '@remix-run/react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
 import { formatDate, getClassMaker } from '~/utils/utils';
@@ -107,23 +107,9 @@ export default function UuidIndex() {
   const { formatMessage } = useIntl();
   const { title, projects, startDate, skills } = data;
 
-  const renderDates = () => (
-    <div>
-      <p>
-        <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
-      </p>
-      {data?.endDate && (
-        <p>
-          <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
-        </p>
-      )}
-      {!data?.endDate && (
-        <p>
-          <FormattedMessage id="END_DATE" />: Present
-        </p>
-      )}
-    </div>
-  );
+  // Single-line range, matching the format used everywhere else:
+  // "Aug 2018 – Dec 2020" or "Apr 2022 – Present".
+  const renderDates = () => <p>{formatDate(startDate, data?.endDate ?? undefined)}</p>;
 
   const renderJobDescription = () => (
     <div>
@@ -162,7 +148,11 @@ export default function UuidIndex() {
       </div>
       {skills && (
         <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills.map((s) => s.name)} />
+          <Card
+            title={formatMessage({ id: 'SKILLS' })}
+            skills={skills.map((s) => s.name)}
+            showSkillsCta={false}
+          />
         </div>
       )}
     </div>
