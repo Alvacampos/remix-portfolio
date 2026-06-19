@@ -9,11 +9,15 @@ test.describe('Skills (/skills)', () => {
     await expect(
       page.getByRole('heading', { name: 'Work Experience', exact: true, level: 2 })
     ).toBeVisible();
-    // Globant is the first work item in skills.json — pin to its detail link
+    // Qubika (most recent role) is the topmost timeline entry post-Stage-24
+    // reversal — assert against it instead of Globant so the assertion
+    // doesn't depend on the IntersectionObserver having fired for off-screen
+    // entries (the react-vertical-timeline-component only mounts entries
+    // that have intersected the viewport).
     await expect(
       page
         .getByRole('link')
-        .filter({ hasText: /Globant/i })
+        .filter({ hasText: /Qubika/i })
         .first()
     ).toBeVisible();
     await expect(page.getByText(/Total years of experience/i)).toBeVisible();
@@ -57,13 +61,17 @@ test.describe('Skills (/skills)', () => {
 test.describe('Skill detail (/skills/:uuid)', () => {
   test('navigates from timeline card to detail page', async ({ page }) => {
     await page.goto('/skills');
+    // Qubika (most recent) is the topmost timeline card after Stage 24's
+    // reversal — using it instead of Globant avoids the
+    // IntersectionObserver-based lazy mount issue (see timeline-render
+    // test for the long version).
     await page
       .getByRole('link')
-      .filter({ hasText: /Globant/i })
+      .filter({ hasText: /Qubika/i })
       .first()
       .click();
     await expect(page).toHaveURL(/\/skills\/\d+/);
-    await expect(page.getByRole('heading', { name: /Globant/i, level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Qubika/i, level: 1 })).toBeVisible();
     await expect(page.getByText(/Hire Date/i)).toBeVisible();
     await expect(page.getByText(/Role \/ Job Description/i)).toBeVisible();
   });

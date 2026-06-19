@@ -98,7 +98,12 @@ export async function loader() {
   // a "neither type sufficiently overlaps" error.
   const typed = skillsData as unknown as skillsDataTypes;
 
-  const data = typed.WORK_ITEMS.map((item) => ({
+  // Reverse so the timeline reads newest-first. WORK_ITEMS in
+  // skills.json is authored chronologically (oldest first) — that
+  // ordering is preserved for getSkillChartData and yearsOfExp below
+  // (which treat WORK_ITEMS[0] as the career start). Only the
+  // displayed timeline array is reversed.
+  const data = [...typed.WORK_ITEMS].reverse().map((item) => ({
     // ids in JSON are numeric, but Timeline + the /skills/:uuid URL
     // both want strings; convert once here.
     id: String(item.id),

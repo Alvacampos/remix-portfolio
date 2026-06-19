@@ -399,78 +399,32 @@
     }
   ],
   "SKILLS_IMG": [
-    {
-      "title": "HTML"
-    },
-    {
-      "title": "CSS"
-    },
-    {
-      "title": "Tailwind"
-    },
-    {
-      "title": "JavaScript"
-    },
-    {
-      "title": "TypeScript"
-    },
-    {
-      "title": "Python"
-    },
-    {
-      "title": "Django"
-    },
-    {
-      "title": "React"
-    },
-    {
-      "title": "Remix.run"
-    },
-    {
-      "title": "Redux"
-    },
-    {
-      "title": "Git"
-    },
-    {
-      "title": "GraphQL"
-    },
-    {
-      "title": "Cypress"
-    },
-    {
-      "title": "Playwright"
-    },
-    {
-      "title": "Storybook"
-    },
-    {
-      "title": "NodeJs"
-    },
-    {
-      "title": "Axios"
-    },
-    {
-      "title": "Express"
-    },
-    {
-      "title": "Mongodb"
-    },
-    {
-      "title": "Vue"
-    },
-    {
-      "title": "Highcharts"
-    },
-    {
-      "title": "Agile Development"
-    },
-    {
-      "title": "Sass"
-    },
-    {
-      "title": "Heroku"
-    }
+    { "title": "React" },
+    { "title": "TypeScript" },
+    { "title": "Next.js" },
+    { "title": "NodeJs" },
+    { "title": "Python" },
+    { "title": "Django" },
+    { "title": "GraphQL" },
+    { "title": "Cloudflare" },
+    { "title": "Remix.run" },
+    { "title": "HTML" },
+    { "title": "CSS" },
+    { "title": "JavaScript" },
+    { "title": "Tailwind" },
+    { "title": "Sass" },
+    { "title": "Storybook" },
+    { "title": "Playwright" },
+    { "title": "Cypress" },
+    { "title": "Git" },
+    { "title": "Agile Development" },
+    { "title": "Redux" },
+    { "title": "Express" },
+    { "title": "Mongodb" },
+    { "title": "Axios" },
+    { "title": "Vue" },
+    { "title": "Highcharts" },
+    { "title": "Heroku" }
   ],
   "EXTRA_ACTIVITIES": [
     {
