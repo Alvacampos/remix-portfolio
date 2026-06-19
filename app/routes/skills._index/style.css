@@ -14,7 +14,7 @@
   &__page-title {
     text-align: center;
     font-size: $font-32;
-    margin: 0;
+    margin: $space-10 0;
   }
 
   & h2 {
@@ -28,7 +28,8 @@
     padding: 0;
 
     & .input-component {
-      padding: 0;
+      width: stretch;
+      padding: 0 $space-10;
     }
   }
 

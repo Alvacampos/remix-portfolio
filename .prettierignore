@@ -21,5 +21,10 @@ CHANGELOG.md
 playwright-report/
 test-results/
 
+# Lighthouse: transient full-report dir written by scripts/run-lighthouse.mjs.
+# Uploaded as a 14-day GitHub artifact, not committed. Excluded so the CI
+# workflow's `git push` step doesn't trip the husky pre-push hook on these.
+lighthouse-reports/
+
 # Storybook static build
 storybook-static/
