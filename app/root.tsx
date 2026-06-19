@@ -119,6 +119,19 @@ const PERSON_JSONLD = {
   sameAs: ['https://github.com/Alvacampos', 'https://www.linkedin.com/in/gonzaloalvarezcampos/'],
 };
 
+// WebSite schema gives Google enough to surface a sitelinks search box
+// in SERPs and helps disambiguate the property when crawled. Kept
+// minimal — no `potentialAction` SearchAction since this isn't a
+// searchable site.
+const WEBSITE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Gonzalo Alvarez Campos',
+  url: SITE_URL,
+  inLanguage: ['en', 'es'],
+  author: { '@type': 'Person', name: 'Gonzalo Alvarez Campos' },
+};
+
 type LayoutData = {
   locale: Locale;
   canonical: string;
@@ -151,6 +164,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
         />
       </head>
       <body className={getClasses()}>
