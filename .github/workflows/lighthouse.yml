@@ -1,0 +1,98 @@
+name: Lighthouse
+
+# Runs Lighthouse against production after a push to main lands. Cloudflare
+# Pages auto-deploys merged main commits in ~30-90s, so the workflow waits
+# 90s before measuring to make sure it scores the new code, not the prior
+# version still cached at the edge. (Cloudflare Pages doesn't expose the
+# deployed commit SHA in response headers, so polling-until-match isn't
+# straightforward — a fixed sleep is the pragmatic compromise.)
+#
+# Output: a small JSON per route at lighthouse/<route>-<sha>.json with
+# the categories + key metrics + failing audits. The workflow commits
+# those back to main using github-actions[bot]; the [skip ci] in the
+# commit message keeps the loop from triggering itself.
+#
+# Failure mode: warn-only. The workflow always exits 0 if Lighthouse runs
+# successfully, regardless of score deltas. If a regression sneaks in
+# you'll see it in the next PR's diff against the previous snapshot. Move
+# to a hard threshold once you see the signal hold steady for a few weeks.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Don't pile up runs if main gets multiple pushes in quick succession —
+# the latest one wins.
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Score prod
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Need write token for the commit-back step.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - run: npm ci
+
+      # lighthouse + chrome-launcher are runtime-only — not deps because
+      # the rest of the project doesn't need them. Install fresh in CI.
+      - name: Install Lighthouse runtime
+        run: npm install --no-save --no-audit --no-fund lighthouse@13 chrome-launcher@1
+
+      - name: Wait for Cloudflare Pages deploy
+        run: sleep 90
+
+      - name: Run Lighthouse
+        # Custom inline script instead of treosh/lighthouse-ci-action because
+        # we want full control over the per-route output shape (matching the
+        # hand-authored summaries in lighthouse/) and don't need an LHCI
+        # server or the assertion-config plumbing.
+        run: node scripts/run-lighthouse.mjs
+        env:
+          LIGHTHOUSE_SHA: ${{ github.sha }}
+
+      - name: Prune old SHA-tagged summaries
+        # Keep only the 25 most recent commits' worth of SHA-tagged
+        # summaries (5 routes × 25 commits = 125 files). Hand-authored
+        # stage summaries (`*-pre-stage-*.summary.json`,
+        # `*-post-stage-*.summary.json`) are NEVER pruned.
+        run: |
+          cd lighthouse
+          # Find SHA-tagged files: anything matching `*-<7-hex-chars>.summary.json`.
+          ls -1t -- *-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].summary.json 2>/dev/null | tail -n +126 | xargs -r rm --
+
+      - name: Commit summaries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet lighthouse/ && [ -z "$(git status --porcelain lighthouse/)" ]; then
+            echo "No lighthouse summary changes to commit."
+            exit 0
+          fi
+          git add lighthouse/
+          git commit -m "chore(lighthouse): score for ${GITHUB_SHA::7} [skip ci]"
+          git push
+
+      - name: Upload full reports as artifact
+        # The full Lighthouse JSON (~1.5MB per route) isn't committed
+        # because it bloats the repo — but it's useful for debugging when
+        # a score moves unexpectedly. Retained for 14 days.
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: lighthouse-reports/
+          retention-days: 14
