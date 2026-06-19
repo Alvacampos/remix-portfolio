@@ -23,6 +23,51 @@ export const getClassMaker =
 
 export const noop = () => {};
 
+// Merge a route's title + description with the root's full meta array,
+// preserving the root's Open Graph + Twitter tags so social previews have
+// their image/site_name/etc. on every route. Without this, Remix lets the
+// child route's meta() *replace* the parent's array completely — meaning
+// only the homepage would surface og:image, etc.
+//
+// Usage:
+//   export const meta: MetaFunction = (args) =>
+//     mergeRouteMeta(args, { title: 'Page — App', description: '…' });
+//
+// `args.matches` is provided by Remix; the root match's meta is the
+// flattened parent array. We drop the parent's `title` and `description`
+// so the route's overrides win, and append our overrides at the end so
+// per-route og:title / og:description (if added later) supersede the
+// root defaults.
+export type RouteMetaOverrides = {
+  title: string;
+  description: string;
+};
+
+type MetaArg = { matches: Array<{ meta: Array<Record<string, unknown>> }> };
+
+export function mergeRouteMeta({ matches }: MetaArg, { title, description }: RouteMetaOverrides) {
+  const parentMeta = matches.flatMap((m) => m.meta);
+  const carry = parentMeta.filter((tag) => {
+    if (typeof tag !== 'object' || tag === null) return true;
+    if ('title' in tag) return false;
+    if ('name' in tag && tag.name === 'description') return false;
+    if ('property' in tag && (tag.property === 'og:title' || tag.property === 'og:description'))
+      return false;
+    if ('name' in tag && (tag.name === 'twitter:title' || tag.name === 'twitter:description'))
+      return false;
+    return true;
+  });
+  return [
+    ...carry,
+    { title },
+    { name: 'description', content: description },
+    { property: 'og:title', content: title },
+    { property: 'og:description', content: description },
+    { name: 'twitter:title', content: title },
+    { name: 'twitter:description', content: description },
+  ];
+}
+
 export const formatDate = (dateA: string, dateB?: string, formatType?: string) => {
   if (formatType === 'fullYearMonth') {
     const start = new Date(dateA);

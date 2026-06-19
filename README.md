@@ -37,21 +37,22 @@ To run this project locally, you will need:
 
 ### Useful Scripts
 
-| Command                      | What it does                                                |
-| ---------------------------- | ----------------------------------------------------------- |
-| `npm run dev`                | Local dev server on port 8788                               |
-| `npm run build`              | Production build (`build/client` + `build/server`)          |
-| `npm run preview`            | Build, then preview the bundle on Cloudflare Pages locally  |
-| `npm run deploy`             | Build and deploy to Cloudflare Pages                        |
-| `npm run typecheck`          | `tsc --noEmit`                                              |
-| `npm run lint`               | ESLint + ls-lint + Prettier                                 |
-| `npm test`                   | Vitest unit / component tests                               |
-| `npm run test:e2e`           | Playwright (chromium + Pixel 7 mobile)                      |
-| `npm run test:visual`        | Visual-regression spec only (chromium)                      |
-| `npm run test:visual:update` | Regenerate visual baselines via the Playwright Docker image |
-| `npm run storybook`          | Storybook dev server on port 6006                           |
-| `npm run build:svg`          | Optimize SVGs in `app/assets/icons` with SVGO               |
-| `npm run build:icons`        | Generate React components from `app/assets/icons` via SVGR  |
+| Command                      | What it does                                                     |
+| ---------------------------- | ---------------------------------------------------------------- |
+| `npm run dev`                | Local dev server on port 8788                                    |
+| `npm run build`              | Production build (`build/client` + `build/server`)               |
+| `npm run preview`            | Build, then preview the bundle on Cloudflare Pages locally       |
+| `npm run deploy`             | Build and deploy to Cloudflare Pages                             |
+| `npm run typecheck`          | `tsc --noEmit`                                                   |
+| `npm run lint`               | ESLint + ls-lint + Prettier                                      |
+| `npm test`                   | Vitest unit / component tests                                    |
+| `npm run test:e2e`           | Playwright (chromium + Pixel 7 mobile)                           |
+| `npm run test:visual`        | Visual-regression spec only (chromium)                           |
+| `npm run test:visual:update` | Regenerate visual baselines via the Playwright Docker image      |
+| `npm run storybook`          | Storybook dev server on port 6006                                |
+| `npm run build:svg`          | Optimize SVGs in `app/assets/icons` with SVGO                    |
+| `npm run build:icons`        | Generate React components from `app/assets/icons` via SVGR       |
+| `npm run build:og`           | Re-render `public/assets/img/og.png` from `scripts/og-image.svg` |
 
 A pre-push git hook (husky) runs lint, typecheck, and unit tests automatically before any `git push`. E2E and visual specs are deferred to CI to keep the local push fast.
 

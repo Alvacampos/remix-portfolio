@@ -5,7 +5,7 @@ import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
 import Card from '~/components/Card';
-import { formatDate, getClassMaker } from '~/utils/utils';
+import { formatDate, getClassMaker, mergeRouteMeta } from '~/utils/utils';
 
 // Import the JSON server-side: Vite bakes it into the server bundle so
 // the loader doesn't have to do an HTTP round-trip to the static asset
@@ -16,14 +16,12 @@ import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
 
-export const meta: MetaFunction = () => [
-  { title: 'Education — Gonzalo Alvarez Campos' },
-  {
-    name: 'description',
-    content:
+export const meta: MetaFunction = (args) =>
+  mergeRouteMeta(args, {
+    title: 'Education — Gonzalo Alvarez Campos',
+    description:
       'Software Development associate degree from Universidad del Norte Santo Tomas de Aquino, plus Cambridge / EF SET English certifications and Udemy programming courses.',
-  },
-];
+  });
 
 const BLOCK = 'education-route';
 const getClasses = getClassMaker(BLOCK);

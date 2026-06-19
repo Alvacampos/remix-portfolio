@@ -19,6 +19,10 @@ import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
 const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2';
+// Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
+// non-relative image URLs. The PNG itself is rendered offline from
+// scripts/og-image.svg via scripts/render-og-image.mjs.
+const OG_IMAGE_URL = `${SITE_URL}/assets/img/og.png`;
 
 export function links() {
   return [
@@ -77,11 +81,26 @@ export const meta: MetaFunction = () => {
     { property: 'og:url', content: SITE_URL },
     { property: 'og:site_name', content: 'Gonzalo Alvarez Campos' },
     { property: 'og:locale', content: 'en_US' },
+    { property: 'og:image', content: OG_IMAGE_URL },
+    { property: 'og:image:secure_url', content: OG_IMAGE_URL },
+    { property: 'og:image:type', content: 'image/png' },
+    { property: 'og:image:width', content: '1200' },
+    { property: 'og:image:height', content: '630' },
+    {
+      property: 'og:image:alt',
+      content: 'Gonzalo Alvarez Campos — Software Engineer portfolio',
+    },
 
-    // Twitter
-    { name: 'twitter:card', content: 'summary' },
+    // Twitter — large-image card so the og:image renders at full width
+    // instead of the small thumbnail used by `summary`.
+    { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: title },
     { name: 'twitter:description', content: description },
+    { name: 'twitter:image', content: OG_IMAGE_URL },
+    {
+      name: 'twitter:image:alt',
+      content: 'Gonzalo Alvarez Campos — Software Engineer portfolio',
+    },
   ];
 };
 

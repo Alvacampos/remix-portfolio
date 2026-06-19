@@ -3,23 +3,18 @@ import { useLoaderData, useRouteError } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
-import { getClassMaker } from '~/utils/utils';
+import { getClassMaker, mergeRouteMeta } from '~/utils/utils';
 
 import educationData from '../../../public/data/education.json';
 import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  const title = data?.data?.title ?? 'Education';
-  return [
-    { title: `${title} — Gonzalo Alvarez Campos` },
-    {
-      name: 'description',
-      content: data?.data?.summary ?? 'Education detail.',
-    },
-  ];
-};
+export const meta: MetaFunction<typeof loader> = (args) =>
+  mergeRouteMeta(args, {
+    title: `${args.data?.data?.title ?? 'Education'} — Gonzalo Alvarez Campos`,
+    description: args.data?.data?.summary ?? 'Education detail.',
+  });
 
 const BLOCK = 'education-id-route';
 const getClasses = getClassMaker(BLOCK);

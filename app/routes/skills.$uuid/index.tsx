@@ -3,7 +3,7 @@ import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
-import { formatDate, getClassMaker } from '~/utils/utils';
+import { formatDate, getClassMaker, mergeRouteMeta } from '~/utils/utils';
 
 // Server-side import — see app/routes/skills._index/index.tsx for the
 // rationale (Vite bakes the JSON into the server bundle, no HTTP hop).
@@ -12,16 +12,11 @@ import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  const title = data?.data?.title ?? 'Work item';
-  return [
-    { title: `${title} — Gonzalo Alvarez Campos` },
-    {
-      name: 'description',
-      content: data?.data?.rol ?? 'Work experience detail.',
-    },
-  ];
-};
+export const meta: MetaFunction<typeof loader> = (args) =>
+  mergeRouteMeta(args, {
+    title: `${args.data?.data?.title ?? 'Work item'} — Gonzalo Alvarez Campos`,
+    description: args.data?.data?.rol ?? 'Work experience detail.',
+  });
 
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
