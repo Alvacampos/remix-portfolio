@@ -6,7 +6,20 @@ import { getClassMaker, mergeRouteMeta } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+// The CV PDF is the primary CTA on this page; prefetch it so the
+// Download click is ~instant. `as: 'fetch'` + `crossOrigin: 'anonymous'`
+// is the documented shape for non-document, non-script asset prefetch
+// — the file is on the same origin (Cloudflare Pages) so anonymous
+// fetch matches the eventual <a href> request.
+export const links = () => [
+  { rel: 'stylesheet', href: styles },
+  {
+    rel: 'prefetch',
+    href: '/assets/files/gonzalo_alvarez_campos_cv.pdf',
+    as: 'fetch',
+    crossOrigin: 'anonymous' as const,
+  },
+];
 
 export const meta: MetaFunction = (args) =>
   mergeRouteMeta(args, {
@@ -26,9 +39,6 @@ export default function Index() {
       </h1>
       <p>
         <FormattedMessage id="I_AM_A_SOFTWARE_ENGINEER" />
-      </p>
-      <p>
-        <FormattedMessage id="DISCLAIMER" />
       </p>
       <p className={getClasses('repo-url')}>
         <FormattedMessage id="CHECK_THIS_PROJECT_REPO" />

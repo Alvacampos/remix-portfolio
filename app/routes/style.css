@@ -15,8 +15,11 @@
     font-size: $font-20;
   }
 
+  /* 16px floor matches the browser default for body text and the WCAG
+   * recommendation. Desktop bumps the h1 only (see media query); body
+   * stays at 16px on every viewport. */
   p {
-    font-size: $font-12;
+    font-size: $font-16;
   }
 
   &__repo-url {
@@ -48,10 +51,6 @@
   .home-route {
     h1 {
       font-size: $font-32;
-    }
-
-    p {
-      font-size: $font-16;
     }
   }
 }
