@@ -1,0 +1,31 @@
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: $border-6;
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--fg-base);
+    border-color: var(--border-emphasis);
+    background: var(--bg-surface);
+    outline: none;
+  }
+
+  &__icon {
+    display: inline-flex;
+    width: 1rem;
+    height: 1rem;
+  }
+}

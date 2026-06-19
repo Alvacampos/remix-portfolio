@@ -1,17 +1,27 @@
+/* stylelint-disable font-family-name-quotes */
+
+/* Stage 26: NavBar migrated to the new theme-aware tokens (var(--…)).
+ * Old $default-black / $default-grey / $shadow-1 references replaced
+ * with var(--bg-base) / var(--border-emphasis) / var(--border-default)
+ * so the toggle swap actually flips the nav's color too. ThemeToggle
+ * stylesheet inlined below via postcss-import. */
+@import '../ThemeToggle/style.css';
+
 .navbar-component {
   display: flex;
   flex-direction: column;
-  background: $default-black;
+  background: var(--bg-base);
   min-height: 100%;
   min-width: $space-200;
-  font-family: Lato, sans-serif;
+  font-family: 'Geist', system-ui, sans-serif;
   z-index: 2;
   position: sticky;
   bottom: 0;
+  border-top: 1px solid var(--border-default);
 
   &__special-anchor-container {
     display: flex;
-    box-shadow: inset 0 -1px 0 #ffffff;
+    box-shadow: inset 0 -1px 0 var(--border-default);
     justify-content: space-around;
     align-items: center;
     height: $space-60;
@@ -58,8 +68,8 @@
       & li {
         &:hover {
           cursor: pointer;
-          background: $default-grey;
-          transition: background 500ms linear;
+          background: var(--bg-surface);
+          transition: background 200ms ease;
         }
 
         & a {
@@ -70,7 +80,8 @@
             gap: $space-15;
             justify-content: center;
             align-items: center;
-            font-size: $font-14;
+            font-size: $type-small;
+            color: var(--fg-base);
 
             & svg {
               display: none;
@@ -79,6 +90,17 @@
         }
       }
     }
+  }
+
+  /* Resume PDF link — quiet secondary link below the main nav buttons.
+   * Mobile: hidden (the nav row is already crowded). Desktop: shows
+   * below the buttons. */
+  &__resume-link {
+    display: none;
+  }
+
+  &__utility-row {
+    display: none;
   }
 
   &__qr {
@@ -108,9 +130,12 @@
 
 @media screen and (min-width: $desktop-small) {
   .navbar-component {
+    border-top: 0;
+    border-right: 1px solid var(--border-default);
+
     &__special-anchor-container {
       display: flex;
-      box-shadow: inset 0 -1px 0 #ffffff;
+      box-shadow: inset 0 -1px 0 var(--border-default);
       justify-content: space-around;
       align-items: center;
       height: $space-80;
@@ -125,14 +150,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: inset 0 -1px 0 #ffffff;
+      box-shadow: inset 0 -1px 0 var(--border-default);
       height: $space-80;
       width: 100%;
 
       &:hover {
         cursor: pointer;
-        background: $default-grey;
-        transition: background 500ms linear;
+        background: var(--bg-surface);
+        transition: background 200ms ease;
       }
     }
 
@@ -145,11 +170,10 @@
 
     &__main-buttons {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       width: 100%;
-      height: $space-80;
-      position: sticky;
-      top: 0;
+      height: auto;
+      position: static;
 
       & ul {
         display: flex;
@@ -163,10 +187,10 @@
         & li {
           display: flex;
           width: 100%;
-          min-height: 110px;
+          min-height: 90px;
           justify-content: center;
           align-items: center;
-          box-shadow: $shadow-1;
+          box-shadow: inset 0 -1px 0 var(--border-default);
 
           & a {
             width: 100%;
@@ -175,7 +199,8 @@
             & .button-component {
               background: inherit;
               cursor: inherit;
-              font-size: $font-15;
+              font-size: $type-small;
+              color: var(--fg-base);
 
               & svg {
                 display: block;
@@ -186,6 +211,33 @@
           }
         }
       }
+    }
+
+    &__resume-link {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $space-15 $space-20;
+      color: var(--fg-muted);
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: $type-small;
+      text-decoration: none;
+      box-shadow: inset 0 -1px 0 var(--border-default);
+      transition: color 120ms ease;
+
+      &:hover,
+      &:focus-visible {
+        color: var(--accent);
+        outline: none;
+      }
+    }
+
+    &__utility-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $space-15 0;
+      box-shadow: inset 0 -1px 0 var(--border-default);
     }
 
     &__qr {

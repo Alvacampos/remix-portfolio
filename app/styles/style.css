@@ -7,6 +7,70 @@
 @import '../components/Button/style.css';
 @import '../components/NavBar/style.css';
 
+/* Geist Sans + Geist Mono — self-hosted variable WOFF2.
+ * Stage 26 swap from Roboto. WOFF2 only (no fallback format) since
+ * every browser the app targets supports it. font-display: swap so
+ * content paints in fallback before Geist arrives. Roboto stays
+ * loaded as a fallback until Stage 30 deletes the folder. */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/GeistVF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist/GeistMonoVF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Theme-aware tokens. The default cascade applies the dark palette;
+ * `[data-theme='light']` on <html> swaps each token to its light
+ * counterpart. The theme attribute is set by an inline blocking
+ * <script> in app/root.tsx before paint to avoid FOUC. */
+:root {
+  --bg-base: $bg-base;
+  --bg-surface: $bg-surface;
+  --bg-elevated: $bg-elevated;
+  --fg-base: $fg-base;
+  --fg-muted: $fg-muted;
+  --fg-faint: $fg-faint;
+  --border-default: $border-default;
+  --border-emphasis: $border-emphasis;
+  --accent: $accent-emerald;
+  --accent-soft: $accent-emerald-soft;
+
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --bg-base: $bg-base-light;
+  --bg-surface: $bg-surface-light;
+  --bg-elevated: $bg-elevated-light;
+  --fg-base: $fg-base-light;
+  --fg-muted: $fg-muted-light;
+  --fg-faint: $fg-faint-light;
+  --border-default: $border-default-light;
+  --border-emphasis: $border-emphasis-light;
+  --accent: $accent-emerald-strong;
+  --accent-soft: $accent-emerald;
+
+  color-scheme: light;
+}
+
 html {
   min-height: 100%;
 }
@@ -17,9 +81,19 @@ body {
   margin: 0;
   padding: 0;
   grid-template-rows: 1fr min-content;
-  color: $text-color;
-  background: $background-default;
-  font-family: 'Roboto', sans-serif;
+  color: var(--fg-base);
+  background: var(--bg-base);
+  font-family:
+    'Geist',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: $type-body;
+  line-height: $leading-normal;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 
   & .navbar-component {
     grid-row: 2;
@@ -48,8 +122,8 @@ main {
   left: 0;
   z-index: 1000;
   padding: $space-10 $space-15;
-  color: $text-color;
-  background: $background-variation;
+  color: var(--fg-base);
+  background: var(--bg-surface);
   text-decoration: none;
   border-radius: 0 0 $border-4 0;
 }
@@ -58,13 +132,38 @@ main {
   top: 0;
 }
 
-@font-face {
-  font-family: 'Roboto';
-  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2') format('woff2');
-  font-weight: 100 900;
-  font-stretch: 75% 100%;
-  font-style: normal;
-  font-display: swap;
+/*
+ * Reduce-motion guard. Visitors with prefers-reduced-motion get all
+ * transitions and animations collapsed to ~instant — including the
+ * theme-toggle background fade above and any per-route entry
+ * animations. Also covers the visual-regression spec; Stage 16's
+ * spec injects its own override but this is the default.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Subtle SVG film-grain overlay. Adds tactile depth without decoration.
+ * `pointer-events: none` so it doesn't intercept clicks; `mix-blend-mode`
+ * keeps it subtle on both themes. Inline data URI so no extra request.
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
 @media screen and (min-width: $desktop-small) {

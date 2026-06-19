@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl';
 import Button from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
+import ThemeToggle from '~/components/ThemeToggle';
 import { getClassMaker } from '~/utils/utils';
 
 // Stage 13: NavBar and Button CSS are inlined into app/styles/style.css via
@@ -37,7 +38,10 @@ export default function NavBar() {
     },
     {
       url: './skills',
-      label: formatMessage({ id: 'CV' }),
+      // Renamed CV → Work in Stage 26 — the page is "Skills & Work
+      // Experience" and "CV" was a stale shorthand. Resume PDF is now
+      // a separate quiet link below.
+      label: formatMessage({ id: 'WORK' }),
       leftIcon: Paper,
       prefetch: 'intent' as const,
     },
@@ -89,6 +93,16 @@ export default function NavBar() {
               </li>
             ))}
           </ul>
+          <a
+            href="/assets/files/gonzalo_alvarez_campos_cv.pdf"
+            download="Gonzalo_Alvarez_CV.pdf"
+            className={getClasses('resume-link')}
+          >
+            {formatMessage({ id: 'RESUME_PDF' })}
+          </a>
+        </div>
+        <div className={getClasses('utility-row')}>
+          <ThemeToggle />
         </div>
         <div>
           <img

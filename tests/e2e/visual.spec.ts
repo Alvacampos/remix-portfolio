@@ -25,6 +25,22 @@ const FIXED_NOW = new Date('2026-06-18T12:00:00.000Z');
 
 async function prepare(page: Page) {
   await page.clock.install({ time: FIXED_NOW });
+  // Force dark theme regardless of OS / Playwright defaults. Stage 26
+  // added a theme toggle that persists in localStorage; without this
+  // the headless browser has no persisted value, falls back to
+  // `prefers-color-scheme: light` (Chromium's default), and screenshots
+  // capture the light theme — different from the user's default
+  // experience (dark). Setting the persisted preference before the
+  // root.tsx init script runs guarantees the baseline is dark.
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem('theme', 'dark');
+    } catch {
+      /* noop — storage might be disabled in some headless modes */
+    }
+  });
+  await page.emulateMedia({ colorScheme: 'dark' });
+
   await page.addInitScript(() => {
     // Disable animations and transitions so entrance fades, recharts
     // tweens, the carousel auto-scroll, and the Front End / Back End

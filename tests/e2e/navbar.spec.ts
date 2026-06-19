@@ -1,9 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Navigation', () => {
-  test('navigates from home to /skills via the CV button', async ({ page }) => {
+  test('navigates from home to /skills via the Work button', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: /CV/i }).first().click();
+    // Stage 26: NavBar's "CV" was renamed to "Work" (the page title is
+    // "Skills & Work Experience" so "Work" matches the visible label).
+    // The home page also has a "Download my CV" download link (Stage 27
+    // will remove it) — `name: 'Work'` exact-matches the nav button only.
+    await page.getByRole('link', { name: 'Work', exact: true }).first().click();
     await expect(page).toHaveURL(/\/skills$/);
     // exact match: the page <h1> "Skills & Work Experience" also contains
     // the substring "Work Experience" so a regex match collides; we want

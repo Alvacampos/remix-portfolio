@@ -51,16 +51,19 @@
      * two degree cards equal-height when their summaries differ in
      * line count on desktop. */
     display: flex;
-    transition:
-      transform 120ms ease,
-      box-shadow 120ms ease;
+
+    /* Stage 26: hover affordance is a border-color shift instead of
+     * translateY + box-shadow. Less Vercel-template-coded, plays nicer
+     * with `:focus-visible` on touch devices, and avoids the layout
+     * shift of the translate. */
+    .card-component {
+      transition: border-color 120ms ease;
+    }
 
     &:hover,
     &:focus-visible {
-      transform: translateY(-2px);
-
       .card-component {
-        box-shadow: 0 4px 16px rgb(56 139 253 / 0.18);
+        border-color: var(--accent);
       }
 
       .education-route__learn-more-arrow {

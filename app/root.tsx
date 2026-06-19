@@ -18,7 +18,12 @@ import tailwind from '~/styles/tailwind.css?url';
 import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
-const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2';
+// Stage 26: swap from Roboto to Geist (self-hosted variable WOFF2 under
+// public/fonts/geist/). Geist Sans is the body face; Geist Mono is
+// loaded by style.css's @font-face but NOT preloaded — it's used by
+// chips/dates after first paint, no LCP cost. Roboto stays available
+// as a fallback through Stage 29; Stage 30 removes the folder.
+const FONT_URL = '/fonts/geist/GeistVF.woff2';
 // Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
 // non-relative image URLs. The PNG itself is rendered offline from
 // scripts/og-image.svg via scripts/render-og-image.mjs.
@@ -104,6 +109,13 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+// FOUC-safe theme initializer. Runs synchronously before paint; reads the
+// user's persisted preference from localStorage (set by the NavBar toggle)
+// or falls back to the OS-level prefers-color-scheme. Sets `data-theme`
+// on <html> so app/styles/style.css can swap palette tokens on the
+// initial render. Defer-or-async would let unstyled paint flash through.
+const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';}catch(e){}`;
+
 const PERSON_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -157,6 +169,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
+        {/* eslint-disable-next-line react/no-danger */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <Meta />
         <Links />
         <link rel="canonical" href={canonical} />
