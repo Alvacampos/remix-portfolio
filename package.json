@@ -11,6 +11,7 @@
     "deploy": "npm run build && wrangler pages deploy",
     "dev": "remix vite:dev",
     "lint": "run-s lint:*",
+    "lint:css": "stylelint 'app/**/*.css'",
     "lint:es": "eslint --ext .js,.jsx,.ts,.tsx --color ./",
     "lint:ls": "npx @ls-lint/ls-lint",
     "lint:prettier": "npx prettier --check .",

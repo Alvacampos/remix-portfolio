@@ -115,6 +115,7 @@ From [package.json](package.json):
 | `npm run typegen`            | `wrangler types` — regenerates `worker-configuration.d.ts` from bindings         |
 | `npm run cf-typegen`         | Alias of the above                                                               |
 | `npm run lint`               | `run-s lint:*` — runs all linters in sequence                                    |
+| `npm run lint:css`           | `stylelint 'app/**/*.css'`                                                       |
 | `npm run lint:es`            | ESLint over `.js,.jsx,.ts,.tsx`                                                  |
 | `npm run lint:ls`            | `@ls-lint/ls-lint` — file/folder naming rules                                    |
 | `npm run lint:prettier`      | `prettier --check .`                                                             |
@@ -232,7 +233,13 @@ Tailwind v4 is installed via `@tailwindcss/postcss`, but **`corePlugins.prefligh
 
 ### Stylelint
 
-`stylelint-config-standard` with several rules relaxed (see [.stylelintrc.json](.stylelintrc.json)) so PostCSS extensions and design tokens lint cleanly.
+`stylelint-config-standard` runs as part of `npm run lint` (via `lint:css`) and gates CI. Several rules are relaxed in [.stylelintrc.json](.stylelintrc.json):
+
+- `declaration-property-value-no-unknown` and `shorthand-property-no-redundant-values` are **disabled** because stylelint's value parser doesn't understand postcss-simple-vars `$tokens`. Mixed shapes like `padding: 0 $space-5` or `border: 1px solid $alternative-green` are valid in our pipeline (postcss-simple-vars expands them at build) but stylelint reads them as unparseable. Re-enable if/when we move off `simple-vars` to native CSS custom properties.
+- `color-function-alias-notation` is **disabled** — stylistic, prefers `rgb()` 4-arg over `rgba()`. We use `rgba()` consistently; flipping isn't worth the churn.
+- The token-rejection set (`alpha-value-notation`, `at-rule-no-unknown`, `color-function-notation`, `color-hex-length`, `comment-empty-line-before`, `import-notation`, `length-zero-no-unit`, `media-query-no-invalid`, `selector-class-pattern`) is unchanged — pre-existing relaxations from before stylelint was gated.
+
+If a rule starts emitting false positives on a postcss-simple-vars expansion, prefer disabling that specific rule over wrapping the value in a `/* stylelint-disable */` comment (the comment fights ESLint's import sort order in some cases and is noisier in diffs).
 
 ---
 
