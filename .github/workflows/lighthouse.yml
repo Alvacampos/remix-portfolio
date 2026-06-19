@@ -75,6 +75,13 @@ jobs:
           ls -1t -- *-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].summary.json 2>/dev/null | tail -n +126 | xargs -r rm --
 
       - name: Commit summaries
+        # HUSKY=0 disables the pre-push hook for the workflow's `git push`.
+        # The hook would otherwise re-run lint/typecheck/unit on each
+        # auto-commit — wasted work since the merged commit already passed
+        # CI, and prettier picks up generated lighthouse-reports/ files in
+        # the working tree which trips the hook.
+        env:
+          HUSKY: '0'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
