@@ -9,6 +9,9 @@
     "import-notation": "string",
     "length-zero-no-unit": null,
     "media-query-no-invalid": null,
-    "selector-class-pattern": null
+    "selector-class-pattern": null,
+    "declaration-property-value-no-unknown": null,
+    "shorthand-property-no-redundant-values": null,
+    "color-function-alias-notation": null
   }
 }

@@ -44,7 +44,7 @@ To run this project locally, you will need:
 | `npm run preview`            | Build, then preview the bundle on Cloudflare Pages locally       |
 | `npm run deploy`             | Build and deploy to Cloudflare Pages                             |
 | `npm run typecheck`          | `tsc --noEmit`                                                   |
-| `npm run lint`               | ESLint + ls-lint + Prettier                                      |
+| `npm run lint`               | Stylelint + ESLint + ls-lint + Prettier                          |
 | `npm test`                   | Vitest unit / component tests                                    |
 | `npm run test:e2e`           | Playwright (chromium + Pixel 7 mobile)                           |
 | `npm run test:visual`        | Visual-regression spec only (chromium)                           |
