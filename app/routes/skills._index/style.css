@@ -14,7 +14,7 @@
   &__page-title {
     text-align: center;
     font-size: $font-32;
-    margin: $space-10 0;
+    margin: $space-20 0 0 0;
   }
 
   & h2 {
@@ -120,6 +120,10 @@
       }
     }
 
+    .input-component__wrapper {
+      width: 45%;
+    }
+
     &__extra-activities {
       &-wrapper {
         flex-direction: row;
@@ -134,6 +138,10 @@
       display: flex;
       gap: $space-20;
       margin: 0;
+    }
+
+    .input-component__wrapper {
+      width: 30%;
     }
 
     &__years-of-exp {
