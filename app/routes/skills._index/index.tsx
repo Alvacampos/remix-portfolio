@@ -10,7 +10,7 @@ import carouselStyles from '~/components/Carousel/style.css?url';
 import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import timelineStyles from '~/components/Timeline/style.css?url';
-import { formatDate, getClassMaker, getSkillChartData } from '~/utils/utils';
+import { formatDate, getClassMaker, getSkillChartData, mergeRouteMeta } from '~/utils/utils';
 
 // Import the JSON server-side: Vite bakes it into the server bundle so
 // the loader doesn't have to do an HTTP round-trip to the static asset
@@ -53,14 +53,12 @@ const LazyTimeline = lazy(() => import('~/components/Timeline'));
 const LazyCarousel = lazy(() => import('~/components/Carousel'));
 const LazyBarChart = lazy(() => import('~/components/BarChart'));
 
-export const meta: MetaFunction = () => [
-  { title: 'Skills & Work Experience — Gonzalo Alvarez Campos' },
-  {
-    name: 'description',
-    content:
+export const meta: MetaFunction = (args) =>
+  mergeRouteMeta(args, {
+    title: 'Skills & Work Experience — Gonzalo Alvarez Campos',
+    description:
       'Work history, technologies, and years of experience per skill. Filter by technology to see where each was used.',
-  },
-];
+  });
 
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);

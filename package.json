@@ -7,6 +7,7 @@
     "build": "NODE_ENV=production remix vite:build",
     "build:svg": "svgo -f ./app/assets/icons",
     "build:icons": "npx @svgr/cli --config-file ./svgr.config.cjs -- ./app/assets/icons",
+    "build:og": "node scripts/render-og-image.mjs",
     "deploy": "npm run build && wrangler pages deploy",
     "dev": "remix vite:dev",
     "lint": "run-s lint:*",

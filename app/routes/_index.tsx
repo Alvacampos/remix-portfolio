@@ -2,20 +2,18 @@ import type { MetaFunction } from '@remix-run/cloudflare';
 import { FormattedMessage } from 'react-intl';
 
 import DownloadButton from '~/components/DownloadBtn';
-import { getClassMaker } from '~/utils/utils';
+import { getClassMaker, mergeRouteMeta } from '~/utils/utils';
 
 import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
 
-export const meta: MetaFunction = () => [
-  { title: 'Gonzalo Alvarez Campos — Senior Software Engineer' },
-  {
-    name: 'description',
-    content:
+export const meta: MetaFunction = (args) =>
+  mergeRouteMeta(args, {
+    title: 'Gonzalo Alvarez Campos — Senior Software Engineer',
+    description:
       'Senior Software Engineer with 7+ years across React, TypeScript, Remix, Next.js, Python and Django. Download my CV.',
-  },
-];
+  });
 
 const BLOCK = 'home-route';
 const getClasses = getClassMaker(BLOCK);
