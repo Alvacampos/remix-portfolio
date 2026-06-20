@@ -106,7 +106,12 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+/*
+ * Sidebar layout activates at $bp-md (768px) — was $desktop-small
+ * (1076px). Tablet portrait now gets the left-rail nav instead of
+ * the bottom-stuck mobile pattern that overlaid mid-page content.
+ */
+@media screen and (min-width: $bp-md) {
   .navbar-component {
     &__special-anchor-container {
       display: flex;
