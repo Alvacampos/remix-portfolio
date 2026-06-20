@@ -147,22 +147,21 @@
       }
     }
 
-    /* Side-by-side: heatmap hugs its grid (no dead space inside
-     * its card), TechGrid takes the remaining row width. The
-     * heatmap card still styles at full width via the component's
-     * own `width: 100%` on its container, so the visual weight
-     * stays balanced even though the flex tracks aren't 50/50. */
+    /* Side-by-side: heatmap hugs its grid (it doesn't gain anything
+     * from extra width), TechGrid takes the rest. Centered as a
+     * group when the row has unused width on wide viewports. */
     &__skills-and-tools-grid {
       flex-direction: row;
       gap: $space-20;
       align-items: flex-start;
+      justify-content: center;
 
       & > .tenure-heatmap {
         flex: 0 0 auto;
       }
 
       & > .carousel-component {
-        flex: 1 1 0;
+        flex: 1 1 auto;
         min-width: 0;
       }
     }

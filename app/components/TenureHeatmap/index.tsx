@@ -17,7 +17,7 @@ export const links = () => [
 const BLOCK = 'tenure-heatmap';
 const getClasses = getClassMaker(BLOCK);
 
-const DEFAULT_VISIBLE = 12;
+const DEFAULT_VISIBLE = 18;
 
 // Five-step intensity scale matching GitHub's contribution graph.
 // 0 → no activity, 4 → full year. Anything in between is interpolated
