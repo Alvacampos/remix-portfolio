@@ -90,8 +90,10 @@
       color: $variation-green;
       text-decoration: none;
 
-      &:hover {
+      &:hover,
+      &:focus-visible {
         text-decoration: underline;
+        outline: none;
       }
     }
   }

@@ -30,6 +30,19 @@ main {
   padding: 0 $space-5;
 }
 
+/*
+ * Global keyboard-focus affordance. Per-component styles (buttons,
+ * cards, inputs) override this where they have a more contextual
+ * highlight; this is the catch-all so any `<a>`/`<button>` we forget
+ * about still shows focus. `:focus-visible` only fires for keyboard
+ * navigation — mouse clicks won't leave a stuck outline.
+ */
+:focus-visible {
+  outline: 2px solid $success-green;
+  outline-offset: 2px;
+  border-radius: $border-4;
+}
+
 .error-boundary {
   display: flex;
   justify-content: center;

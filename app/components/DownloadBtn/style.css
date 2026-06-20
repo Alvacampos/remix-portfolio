@@ -14,8 +14,11 @@
     box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(31, 35, 40, 0.08);
 
+  /* :focus-visible (not :focus) so the highlight only shows for
+   * keyboard users — clicking with a mouse / tapping on touch
+   * doesn't leave the button stuck in the focused state. */
   &:hover,
-  &:focus {
+  &:focus-visible {
     background: $success-green;
     color: $default-white;
     box-shadow: 0 4px 16px rgba(56, 139, 253, 0.15);

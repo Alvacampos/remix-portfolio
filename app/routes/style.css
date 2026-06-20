@@ -40,9 +40,11 @@
       text-decoration: none;
     }
 
-    a:hover {
+    a:hover,
+    a:focus-visible {
       filter: brightness(1.2);
       text-decoration: underline;
+      outline: none;
     }
   }
 }
