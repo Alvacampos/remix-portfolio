@@ -8,6 +8,15 @@
   color: var(--fg-base);
   width: 100%;
 
+  /* Placeholder color tracks theme — without this, the user-agent
+   * default (light gray) reads as washed-out in dark mode and
+   * over-loud in light mode. --fg-muted hits roughly WCAG AA on
+   * both backgrounds. */
+  &::placeholder {
+    color: var(--fg-muted);
+    opacity: 1;
+  }
+
   &__wrapper {
     position: relative;
   }

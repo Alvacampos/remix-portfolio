@@ -186,12 +186,14 @@ export default function Skills() {
         <h2>
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
-        <Suspense fallback={<LoadingSpinner />}>
-          <LazyCarousel />
-        </Suspense>
-        <Suspense fallback={<LoadingSpinner />}>
-          <LazyTenureHeatmap data={heatmapData} />
-        </Suspense>
+        <div className={getClasses('skills-and-tools-grid')}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyCarousel />
+          </Suspense>
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyTenureHeatmap data={heatmapData} />
+          </Suspense>
+        </div>
       </div>
       <div className={getClasses('extra-activities')}>
         <h2>

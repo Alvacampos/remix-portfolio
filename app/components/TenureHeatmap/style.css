@@ -1,6 +1,7 @@
 .tenure-heatmap {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: $space-15;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-default);
@@ -62,8 +63,11 @@
    * surface, levels 1-4 climb in saturation + brightness. Same hex
    * set works in both themes — the cell sits on --bg-surface, which
    * has enough contrast either way. */
+  /* Empty cell (level 0) sits a hair above --bg-elevated so the
+   * grid bounds read clearly against the card surface in dark
+   * mode — without the bump it merged into the chip surface. */
   &__cell--level-0 {
-    background: var(--bg-elevated);
+    background: #2a3530;
     border-color: var(--border-default);
   }
 
