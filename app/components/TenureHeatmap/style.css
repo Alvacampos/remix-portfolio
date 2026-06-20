@@ -16,13 +16,11 @@
 
   &__grid {
     display: grid;
-    /* First column = skill label, then one column per year. Year
-     * columns are capped at 14px so the contribution-graph squares
-     * stay small (matches github.com), with a 12px floor so they
-     * don't crush on narrow viewports. The grid doesn't stretch to
-     * fill the container — unused space sits to the right.
+    /* First column = skill label, then one column per year. Mobile
+     * uses 22px tracks (legibility on small screens); desktop drops
+     * to 14px to match GitHub's contribution-graph density. The
      * --years-count is set inline by the React component. */
-    grid-template-columns: minmax(110px, 140px) repeat(var(--years-count), 14px);
+    grid-template-columns: minmax(90px, 110px) repeat(var(--years-count), 22px);
     gap: 3px;
     align-items: center;
     justify-content: start;
@@ -137,6 +135,15 @@
       text-decoration: underline;
       outline: none;
     }
+  }
+}
+
+/* Desktop: cells back to GitHub-density 14px (mobile keeps 22px so
+ * the grid doesn't crush on small screens). Skill column also gets
+ * a wider min so the longer skill names breathe. */
+@media screen and (min-width: $bp-md) {
+  .tenure-heatmap__grid {
+    grid-template-columns: minmax(110px, 140px) repeat(var(--years-count), 14px);
   }
 }
 

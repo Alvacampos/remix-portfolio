@@ -147,16 +147,21 @@
       }
     }
 
-    /* Side-by-side: 50/50 split. Both panels grow equally so the
-     * row reads balanced. The heatmap grid keeps its fixed 14px
-     * cells and sits left-aligned inside its (now wider) card —
-     * the extra width is intentional negative space, the cost of
-     * keeping the panels symmetric. */
+    /* Side-by-side: heatmap hugs its grid (no dead space inside
+     * its card), TechGrid takes the remaining row width. The
+     * heatmap card still styles at full width via the component's
+     * own `width: 100%` on its container, so the visual weight
+     * stays balanced even though the flex tracks aren't 50/50. */
     &__skills-and-tools-grid {
       flex-direction: row;
       gap: $space-20;
+      align-items: flex-start;
 
-      & > * {
+      & > .tenure-heatmap {
+        flex: 0 0 auto;
+      }
+
+      & > .carousel-component {
         flex: 1 1 0;
         min-width: 0;
       }

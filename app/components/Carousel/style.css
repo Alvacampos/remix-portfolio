@@ -22,6 +22,16 @@
     text-transform: uppercase;
   }
 
+  /* Forward-looking groups (Learning, Future) recolor their title
+   * in accent green so the section reads as "in progress /
+   * aspirational" at a glance. Defined after the base
+   * &__group-title rule above so Stylelint's no-descending-specificity
+   * rule is satisfied (more-specific selector follows the base). */
+  &__group--learning &__group-title,
+  &__group--future &__group-title {
+    color: var(--accent);
+  }
+
   &__item-list {
     display: flex;
     flex-wrap: wrap;
@@ -48,6 +58,21 @@
 
     &:hover {
       border-color: var(--accent);
+      background: var(--accent-muted);
+    }
+  }
+
+  /* Forward-looking chips (Learning + Future): dashed accent
+   * border, transparent fill so the dashes read against the card
+   * surface, accent text. The two variants share the visual
+   * treatment — only the group-title label distinguishes them. */
+  &__item--learning,
+  &__item--future {
+    border: 1px dashed var(--accent);
+    background: transparent;
+    color: var(--accent);
+
+    &:hover {
       background: var(--accent-muted);
     }
   }
