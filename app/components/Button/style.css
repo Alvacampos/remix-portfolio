@@ -1,9 +1,12 @@
 .button-component {
-  background: $default-black;
+  /* Inherit background + color from the parent so the button fits
+   * whatever surface it's used on (NavBar sidebar, DownloadBtn link,
+   * etc) — and so theme swaps Just Work. */
+  background: transparent;
   margin: 0;
   padding: 0;
   border: none;
-  color: $text-color;
+  color: inherit;
 
   & svg {
     width: 30px;

@@ -24,7 +24,7 @@ const SvgPython = (props) => (
         y2={34.658}
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#387EB8" />
+        <stop stopColor="#387eb8" />
         <stop offset={1} stopColor="#366994" />
       </linearGradient>
       <linearGradient
@@ -35,8 +35,8 @@ const SvgPython = (props) => (
         y2={45.163}
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#FFE052" />
-        <stop offset={1} stopColor="#FFC331" />
+        <stop stopColor="#ffe052" />
+        <stop offset={1} stopColor="#ffc331" />
       </linearGradient>
     </defs>
   </svg>

@@ -20,22 +20,28 @@ export const links = () => [{ rel: 'stylesheet', href: styles }];
 const BLOCK = 'bar-chart-component';
 const getClasses = getClassMaker(BLOCK);
 
+// Green-shaded ramp inspired by GitHub's contribution graph: brighter
+// greens go to the strongest skills, fading down as years of
+// experience drop. Same hex set works in both themes — the bars sit
+// on the card surface, which has enough contrast in either mode.
+//
+// Order is darkest-to-lightest so index 0 is the most-experienced
+// skill. Falls back via modulo for >14 bars.
 const COLOR_CODE = [
-  '#d73a49',
-  '#e36209',
-  '#dbab09',
-  '#a37114',
-  '#6f42c1',
-  '#1f6feb',
-  '#388d3c',
-  '#2ea44f',
-  '#07948d',
-  '#2b2b2b',
-  '#9be9a8',
-  '#c9d1d9',
-  '#b392f0',
-  '#d1578f',
-  '#f0f6fc',
+  '#0fbf3e', // green-4 (hero)
+  '#0fa838',
+  '#0e9233',
+  '#0c7c2d',
+  '#0a6627',
+  '#085021',
+  '#08827b', // green-5 (teal-tinted deep)
+  '#0a9c93',
+  '#0db5ab',
+  '#5fed83', // green-3
+  '#7ef096',
+  '#9bf2a8',
+  '#bff5c4',
+  '#bfffd1', // green-1
 ];
 
 // Match the "Total years of experience" card format. Decimal years confuse
@@ -100,12 +106,14 @@ export default function CustomBarChart({ data }: Props) {
       <ResponsiveContainer width="100%" height={visibleData.length * 40}>
         <BarChart data={visibleData} layout="vertical" barSize={20}>
           {/* Axis ticks hidden: precise values are on the bar labels.
-              Keeping the line as a baseline reference. */}
-          <XAxis type="number" stroke="#f0f6fc" tick={false} />
-          <YAxis type="category" dataKey="name" stroke="#f0f6fc" width={100} />
+              Keeping the line as a baseline reference. `currentColor`
+              inherits from `<div className="bar-chart-component">`,
+              which CSS sets to var(--fg-base) — works in both themes. */}
+          <XAxis type="number" stroke="currentColor" tick={false} />
+          <YAxis type="category" dataKey="name" stroke="currentColor" width={100} />
           <Tooltip
             wrapperClassName={getClasses('custom-tooltip')}
-            cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+            cursor={{ fill: 'rgba(15, 191, 62, 0.08)' }}
             content={<CustomTooltip />}
           />
           <Bar dataKey="value" isAnimationActive={false}>
@@ -115,7 +123,10 @@ export default function CustomBarChart({ data }: Props) {
             <LabelList
               dataKey="value"
               formatter={(value: unknown) => formatYears(Number(value))}
-              fill="black"
+              /* Bar value labels render INSIDE the bar — pinned to a
+               * dark color so they read on every bar in our green ramp
+               * (the lightest greens are too pale for white labels). */
+              fill="#0a241b"
               fontSize={14}
             />
           </Bar>

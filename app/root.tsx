@@ -119,6 +119,14 @@ const PERSON_JSONLD = {
   sameAs: ['https://github.com/Alvacampos', 'https://www.linkedin.com/in/gonzaloalvarezcampos/'],
 };
 
+// Inline theme initializer. Runs synchronously in <head> before paint,
+// so the body never flashes the wrong theme on first render. Reads
+// localStorage.theme (set by the NavBar toggle), falls back to the
+// OS-level prefers-color-scheme, defaults to dark when undecidable.
+// Sets `<html data-theme="…">` so app/styles/style.css's
+// [data-theme='light'] selector swaps the palette tokens.
+const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';}catch(e){}`;
+
 // WebSite schema gives Google enough to surface a sitelinks search box
 // in SERPs and helps disambiguate the property when crawled. Kept
 // minimal — no `potentialAction` SearchAction since this isn't a
@@ -157,6 +165,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
+        {/* Theme init runs before paint; keep it before any <link> tags
+            that pull stylesheets. eslint-disable-next-line react/no-danger */}
+        {/* eslint-disable-next-line react/no-danger */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <Meta />
         <Links />
         <link rel="canonical" href={canonical} />

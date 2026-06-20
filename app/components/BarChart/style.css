@@ -2,17 +2,18 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background-color: $default-black;
-  border: $card-border;
+  background-color: var(--bg-surface);
+  color: var(--fg-base);
+  border: 1px solid var(--border-default);
   padding: $space-5;
-  border-radius: $border-10;
+  border-radius: $border-8;
   gap: $space-10;
 
   &__toggle {
     align-self: center;
     background: transparent;
-    color: $alternative-green;
-    border: 1px solid $alternative-green;
+    color: var(--accent);
+    border: 1px solid var(--accent);
     border-radius: $border-10;
     padding: $space-5 $space-16;
     font-size: $font-14;
@@ -23,16 +24,17 @@
 
     &:hover,
     &:focus-visible {
-      background: $alternative-green;
-      color: $default-black;
+      background: var(--accent);
+      color: var(--bg-base);
+      outline: none;
     }
   }
 
   &__custom-tooltip {
-    background-color: #161b22;
-    border: 1px solid #30363d;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-default);
     border-radius: 6px;
-    color: #c9d1d9;
+    color: var(--fg-base);
     font-size: 14px;
     padding: 8px 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -46,12 +48,12 @@
 
   &__tooltip-label {
     font-weight: 600;
-    color: #f0f6fc;
+    color: var(--fg-base);
   }
 
   &__tooltip-value {
     font-weight: 500;
-    color: #8b949e;
+    color: var(--fg-muted);
   }
 }
 

@@ -1,11 +1,11 @@
 .input-component {
   height: $space-30;
   border-radius: $border-6;
-  border: $card-border;
-  background-color: $background-variation;
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
   padding: 0;
   padding-left: $space-5;
-  color: #f0f6fc;
+  color: var(--fg-base);
   width: 100%;
 
   &__wrapper {
@@ -31,13 +31,13 @@
 
   &__suggestions-list {
     position: absolute;
-    background-color: $background-variation;
+    background-color: var(--bg-surface);
     border-radius: $border-6;
-    border: $card-border;
+    border: 1px solid var(--border-default);
     z-index: 1;
     padding: $space-10;
     margin-top: $space-10;
-    color: #f0f6fc;
+    color: var(--fg-base);
     list-style-type: none;
     width: 80vw;
 
@@ -48,14 +48,14 @@
       transition: background 0.5s linear;
 
       &:hover {
-        background: #60686c99;
+        background: var(--bg-elevated);
       }
     }
   }
 
   /* Highlight the option the user is keyboard-navigating to. */
   &__suggestion-item--active {
-    background: #60686c99;
+    background: var(--bg-elevated);
   }
 }
 

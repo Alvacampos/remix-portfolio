@@ -1,32 +1,66 @@
 .carousel-component {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: $default-black;
-  border: $card-border;
-  padding: $space-30;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: $space-20;
-  overflow: scroll;
-  min-width: stretch;
-  border-radius: $border-10;
-  max-width: 300px;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  padding: $space-20;
+  border-radius: $border-8;
 
-  &::-webkit-scrollbar {
-    display: none;
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-10;
+  }
+
+  &__group-title {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__item-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-10;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   &__item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 100px;
-  }
+    display: inline-block;
+    padding: 4px $space-10;
+    border: 1px solid var(--border-default);
+    border-radius: $border-6;
+    background: var(--bg-elevated);
+    color: var(--fg-base);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-14;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease;
 
-  & svg {
-    height: 100%;
-    width: 100px;
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-muted);
+    }
+  }
+}
+
+@media screen and (min-width: $bp-md) {
+  .carousel-component {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: $bp-lg) {
+  .carousel-component {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

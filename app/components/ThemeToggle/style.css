@@ -1,0 +1,36 @@
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: $border-6;
+  background: transparent;
+  /* --fg-base (not --fg-muted) so the icon is fully legible against
+   * the navbar surface in both themes. The button has no text, so we
+   * lean on color contrast alone for affordance. */
+  color: var(--fg-base);
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--fg-base);
+    border-color: var(--border-emphasis);
+    /* --bg-elevated gives the toggle a visible "pressable" feel
+     * against the navbar (which itself is on --bg-surface). */
+    background: var(--bg-elevated);
+    outline: none;
+  }
+
+  &__icon {
+    display: inline-flex;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}

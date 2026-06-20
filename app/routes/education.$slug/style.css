@@ -20,13 +20,13 @@
     align-items: center;
     gap: $space-10;
     margin: 0;
-    color: $text-color;
+    color: var(--fg-muted);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     font-size: $font-16;
-    opacity: 0.85;
   }
 
   &__meta-sep {
-    color: $variation-green;
+    color: var(--accent);
     font-weight: $weight-700;
   }
 
@@ -46,8 +46,8 @@
 
   &__error {
     color: $error-red;
-    background: $background-variation;
-    border: $card-border;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
     border-radius: $border-10;
     padding: $space-20 $space-16;
     margin: $space-40 auto;

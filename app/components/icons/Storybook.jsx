@@ -9,21 +9,21 @@ const SvgStorybook = (props) => (
   >
     <g transform="matrix(2 0 0 2 -4322 -506)">
       <clipPath id="storybook_svg__a" clipRule="evenodd">
-        <path fill="#FFF" d="M2161 253h1020v288H2161z" />
+        <path fill="#fff" d="M2161 253h1020v288H2161z" />
       </clipPath>
       <g clipPath="url(#storybook_svg__a)">
-        <use xlinkHref="#storybook_svg__b" fill="#B57EE5" transform="translate(2166 275)" />
-        <use xlinkHref="#storybook_svg__c" fill="#F1618C" transform="translate(2180 261)" />
-        <use xlinkHref="#storybook_svg__d" fill="#FFF" transform="translate(2326 261.5)" />
+        <use xlinkHref="#storybook_svg__b" fill="#b57ee5" transform="translate(2166 275)" />
+        <use xlinkHref="#storybook_svg__c" fill="#f1618c" transform="translate(2180 261)" />
+        <use xlinkHref="#storybook_svg__d" fill="#fff" transform="translate(2326 261.5)" />
         <g transform="translate(2393 300)">
-          <use xlinkHref="#storybook_svg__e" fill="#6DABF5" />
-          <use xlinkHref="#storybook_svg__f" fill="#F3AD38" />
-          <use xlinkHref="#storybook_svg__g" fill="#B57EE6" />
-          <use xlinkHref="#storybook_svg__h" fill="#F16161" />
-          <use xlinkHref="#storybook_svg__i" fill="#B57EE5" />
-          <use xlinkHref="#storybook_svg__j" fill="#A2E05E" />
+          <use xlinkHref="#storybook_svg__e" fill="#6dabf5" />
+          <use xlinkHref="#storybook_svg__f" fill="#f3ad38" />
+          <use xlinkHref="#storybook_svg__g" fill="#b57ee6" />
+          <use xlinkHref="#storybook_svg__h" fill="#f16161" />
+          <use xlinkHref="#storybook_svg__i" fill="#b57ee5" />
+          <use xlinkHref="#storybook_svg__j" fill="#a2e05e" />
         </g>
-        <use xlinkHref="#storybook_svg__k" fill="#FFF" transform="translate(2220 301)" />
+        <use xlinkHref="#storybook_svg__k" fill="#fff" transform="translate(2220 301)" />
       </g>
     </g>
     <defs>

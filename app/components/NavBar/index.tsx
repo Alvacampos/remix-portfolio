@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl';
 import Button from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
+import ThemeToggle from '~/components/ThemeToggle';
 import { getClassMaker } from '~/utils/utils';
 
 // Stage 13: NavBar and Button CSS are inlined into app/styles/style.css via
@@ -79,6 +80,15 @@ export default function NavBar() {
             <LinkedinIcon className={getClasses('special-anchor')} />
           </div>
         </ConditionalLink>
+      </div>
+      {/*
+       * Theme toggle sits between the social-icons divider and the main
+       * nav buttons — first interactive element after the chrome,
+       * last stop before content links. Stays inside the sidebar at
+       * every breakpoint via the same media-query stack.
+       */}
+      <div className={getClasses('utility-row')}>
+        <ThemeToggle />
       </div>
       <div className={getClasses('main-section')}>
         <div className={getClasses('main-buttons')}>

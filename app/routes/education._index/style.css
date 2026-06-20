@@ -35,7 +35,7 @@
     align-items: center;
     gap: $space-5;
     margin: 0;
-    color: $variation-green;
+    color: var(--accent);
     font-weight: $weight-700;
   }
 
@@ -60,7 +60,9 @@
       transform: translateY(-2px);
 
       .card-component {
-        box-shadow: 0 4px 16px rgb(56 139 253 / 0.18);
+        /* Soft accent halo on hover. rgba() with a fixed accent
+         * tone reads as "elevated" against either theme bg. */
+        box-shadow: 0 4px 16px rgba(15, 191, 62, 0.25);
       }
 
       .education-route__learn-more-arrow {
@@ -87,7 +89,7 @@
 
   .card-component {
     &__children a {
-      color: $variation-green;
+      color: var(--accent);
       text-decoration: none;
 
       &:hover,

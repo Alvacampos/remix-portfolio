@@ -1,17 +1,42 @@
+/* Stage 29: ThemeToggle stylesheet inlined here via postcss-import so
+ * /skills, /, /education etc. all ship its CSS as part of the
+ * NavBar's first-paint chrome (the same pattern used for Button). */
+@import '../ThemeToggle/style.css';
+
 .navbar-component {
   display: flex;
   flex-direction: column;
-  background: $default-black;
+  /* --bg-nav is its own token (not --bg-surface) so the rail can
+   * sit on a tone DISTINCT from the card surface — otherwise the
+   * sidebar and any cards in the main content merge into one
+   * visual block. Border on the inner edge keeps the divide crisp
+   * at every theme. */
+  background: var(--bg-nav);
+  color: var(--fg-base);
   min-height: 100%;
   min-width: $space-200;
   font-family: Lato, sans-serif;
   z-index: 2;
   position: sticky;
   bottom: 0;
+  /* Mobile (bottom-stuck nav): top border separates nav from content
+   * above. Desktop (sidebar): switch to right border via media query. */
+  border-top: 1px solid var(--border-default);
+
+  /* Theme-toggle utility row sits between the github/linkedin icons
+   * (above) and the main nav (below). Mobile: a tight horizontal
+   * strip; desktop sidebar: a centered slot. */
+  &__utility-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $space-10;
+    box-shadow: inset 0 -1px 0 var(--border-emphasis);
+  }
 
   &__special-anchor-container {
     display: flex;
-    box-shadow: inset 0 -1px 0 #ffffff;
+    box-shadow: inset 0 -1px 0 var(--border-emphasis);
     justify-content: space-around;
     align-items: center;
     height: $space-60;
@@ -22,6 +47,11 @@
       align-items: center;
       height: 100%;
       width: 100%;
+      /* Override the user-agent default link color (purple/blue) so
+       * `currentColor` in the SVG icons inherits the theme text
+       * color. The LinkedIn icon's brand-blue fill stays intact
+       * because it's hardcoded in the SVG. */
+      color: var(--fg-base);
     }
   }
 
@@ -61,12 +91,16 @@
         &:hover,
         &:focus-within {
           cursor: pointer;
-          background: $default-grey;
+          background: var(--bg-elevated);
           transition: background 500ms linear;
         }
 
         & a {
           text-decoration: none;
+          /* Override the user-agent default link color so the
+           * Button text + currentColor SVG icons inherit the
+           * theme-aware --fg-base from the NavBar root. */
+          color: inherit;
 
           .button-component {
             display: flex;
@@ -116,9 +150,14 @@
  */
 @media screen and (min-width: $bp-md) {
   .navbar-component {
+    /* Sidebar mode: drop the mobile top-border, add an inner right
+     * border so the sidebar visibly cuts away from the content. */
+    border-top: 0;
+    border-right: 1px solid var(--border-default);
+
     &__special-anchor-container {
       display: flex;
-      box-shadow: inset 0 -1px 0 #ffffff;
+      box-shadow: inset 0 -1px 0 var(--border-emphasis);
       justify-content: space-around;
       align-items: center;
       height: $space-80;
@@ -133,14 +172,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: inset 0 -1px 0 #ffffff;
+      box-shadow: inset 0 -1px 0 var(--border-emphasis);
       height: $space-80;
       width: 100%;
 
       &:hover,
       &:focus-within {
         cursor: pointer;
-        background: $default-grey;
+        background: var(--bg-elevated);
         transition: background 500ms linear;
       }
     }
@@ -175,11 +214,12 @@
           min-height: 110px;
           justify-content: center;
           align-items: center;
-          box-shadow: $shadow-1;
+          box-shadow: inset 0 -1px 0 var(--border-emphasis);
 
           & a {
             width: 100%;
             padding: $space-30 $space-40;
+            color: inherit;
 
             & .button-component {
               background: inherit;

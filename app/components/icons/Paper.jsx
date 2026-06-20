@@ -8,7 +8,7 @@ const SvgPaper = (props) => (
     {...props}
   >
     <path
-      fill="#f0f6fc"
+      fill="currentColor"
       fillRule="evenodd"
       d="M0 .154v16h11.635v-16zm1.76 1.97h3.238v1.007H1.76zm5.722 11.858H1.76v-1.006h5.722zm2.072-2.434H1.76v-1.006h7.794zm0-2.434H1.76V8.11h7.794zm0-2.433H1.76V5.675h7.794z"
       clipRule="evenodd"
