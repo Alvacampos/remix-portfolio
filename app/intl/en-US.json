@@ -1,8 +1,8 @@
 {
   "CERTIFICATION": "Certification",
   "CERTIFICATIONS": "Certifications",
-  "CHART_SHOW_ALL": "Show {count} more technologies",
-  "CHART_SHOW_LESS": "Show fewer",
+  "CHART_SHOW_ALL": "Show more",
+  "CHART_SHOW_LESS": "Show less",
   "CHECK_THIS_PROJECT_REPO": "Check this project",
   "CLICK_FOR_MORE": "Click for more",
   "CONTACT": "Contact",
@@ -25,6 +25,7 @@
   "PAGE_TITLE_SKILLS": "Skills & Work Experience",
   "PROJECTS": "Projects",
   "REPO_GITHUB": "repo on GitHub",
+  "ROLE": "Role",
   "ROLL_JOB_DESCRIPTION": "Role / Job Description",
   "SKILLS": "Skills",
   "START_DATE": "Start Date",

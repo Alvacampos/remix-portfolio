@@ -1,12 +1,14 @@
 .tenure-heatmap {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: $space-15;
+  align-items: flex-start;
+  gap: $space-10;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-default);
   border-radius: $border-8;
-  padding: $space-20;
+  /* Tight padding — the grid carries its own breathing room via the
+   * 3px gap between cells. */
+  padding: $space-15;
   /* Allow horizontal scroll on narrow viewports rather than squashing
    * the grid — a CV with 9+ years × 14 skills would otherwise crush
    * cells to sub-pixel widths on phones. */
@@ -114,24 +116,25 @@
     margin: 0 $space-5;
   }
 
+  /* Tiny link-like toggle — matches GitHub's "Show more" pattern.
+   * Sits on its own at the bottom-right of the heatmap card so it
+   * reads as metadata, not a primary CTA. */
   &__toggle {
-    align-self: center;
+    align-self: flex-end;
     background: transparent;
     color: var(--accent);
-    border: 1px solid var(--accent);
-    border-radius: $border-6;
-    padding: $space-5 $space-16;
+    border: none;
+    padding: 0;
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
-    font-size: $font-14;
+    font-size: $font-12;
     cursor: pointer;
-    transition:
-      background 120ms ease,
-      color 120ms ease;
+    text-decoration: none;
+    transition: color 120ms ease;
 
     &:hover,
     &:focus-visible {
-      background: var(--accent);
-      color: $default-white;
+      color: var(--accent-soft);
+      text-decoration: underline;
       outline: none;
     }
   }

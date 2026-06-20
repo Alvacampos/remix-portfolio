@@ -110,6 +110,9 @@ export async function loader() {
     title: item.title,
     date: formatDate(item.startDate, item.endDate ?? undefined),
     texts: [item.rol],
+    // intl id — Card resolves it via formatMessage so the label
+    // tracks the active locale ("Role:" en / "Rol:" es).
+    textsLabel: 'ROLE',
     // Card chips and the autocomplete filter only need names — flatten here
     // and let getSkillChartData() consume the date-aware shape directly.
     skills: item.skills.map((s) => s.name),
@@ -187,11 +190,14 @@ export default function Skills() {
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
         <div className={getClasses('skills-and-tools-grid')}>
-          <Suspense fallback={<LoadingSpinner />}>
-            <LazyCarousel />
-          </Suspense>
+          {/* Heatmap left, TechGrid right on desktop — the heatmap is
+           * the more visually distinctive surface and earns the
+           * primary read-position. Both stack on mobile. */}
           <Suspense fallback={<LoadingSpinner />}>
             <LazyTenureHeatmap data={heatmapData} />
+          </Suspense>
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyCarousel />
           </Suspense>
         </div>
       </div>

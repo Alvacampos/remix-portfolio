@@ -115,7 +115,7 @@ export default function TenureHeatmap({ data }: Props) {
         >
           {showAll
             ? formatMessage({ id: 'CHART_SHOW_LESS' })
-            : formatMessage({ id: 'CHART_SHOW_ALL' }, { count: rows.length - DEFAULT_VISIBLE })}
+            : formatMessage({ id: 'CHART_SHOW_ALL' })}
         </button>
       )}
     </div>

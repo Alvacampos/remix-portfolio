@@ -61,6 +61,13 @@
     margin-bottom: $space-10;
   }
 
+  /* Bold prefix label for texts lines (e.g. "Rol:" before the role
+   * description on timeline cards). Same weight as the
+   * skills-label so the two read as siblings. */
+  &__texts-label {
+    font-weight: $weight-700;
+  }
+
   &__list {
     padding: 0;
   }

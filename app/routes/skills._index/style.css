@@ -147,12 +147,13 @@
       }
     }
 
-    /* Side-by-side TechGrid + TenureHeatmap. align-items: flex-start
-     * so a tall TechGrid doesn't stretch the heatmap column to match
-     * its height (the heatmap should hug its content). */
+    /* Side-by-side: 50/50 split. Both panels grow equally so the
+     * row reads balanced. The heatmap grid keeps its fixed 14px
+     * cells and sits left-aligned inside its (now wider) card —
+     * the extra width is intentional negative space, the cost of
+     * keeping the panels symmetric. */
     &__skills-and-tools-grid {
       flex-direction: row;
-      align-items: flex-start;
       gap: $space-20;
 
       & > * {

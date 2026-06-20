@@ -33,16 +33,20 @@
     font-weight: bold;
 
     a {
-      color: var(--fg-base);
+      /* Accent green so the in-line link visibly stands out from
+       * the body sentence around it — matches GitHub's link
+       * vocabulary (link color = brand accent) instead of the
+       * site's foreground neutral. */
+      color: var(--accent);
       transition:
-        filter 0.2s,
+        color 0.2s,
         text-decoration 0.2s;
       text-decoration: none;
     }
 
     a:hover,
     a:focus-visible {
-      filter: brightness(1.2);
+      color: var(--accent-soft);
       text-decoration: underline;
       outline: none;
     }
