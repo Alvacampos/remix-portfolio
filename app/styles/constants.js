@@ -57,6 +57,29 @@ export default {
   'shadow-1': 'inset 0 -1px 0 #21262d',
 
   // Break points
+  //
+  // The legacy tokens ($mobile-small, $desktop-small, $desktop-medium)
+  // are mobile-first min-width queries — base styles target the
+  // smallest viewport, breakpoints add at larger sizes. Both naming
+  // (`mobile-small` is the *bigger-than-smallest-mobile* threshold)
+  // and coverage (no tablet stop between 497-1075px) are awkward.
+  //
+  // Tablet stop added below: $bp-md = 768px catches iPad portrait,
+  // every Android tablet, and narrow laptop windows. Old tokens
+  // retained — they still work — so each route can opt into the new
+  // breakpoint as it gets touched.
+  //
+  // Tailwind-aligned for source-readability:
+  //   bp-sm  640px   small phone landscape, large mobile
+  //   bp-md  768px   tablet portrait (iPad), large phones landscape
+  //   bp-lg  1024px  tablet landscape, small laptops
+  //   bp-xl  1280px  standard desktops
+  'bp-sm': '640px',
+  'bp-md': '768px',
+  'bp-lg': '1024px',
+  'bp-xl': '1280px',
+
+  // Legacy (still referenced by un-migrated CSS).
   'desktop-medium': '1296px',
   'desktop-small': '1076px',
   'mobile-small': '496px',

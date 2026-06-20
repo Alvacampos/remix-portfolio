@@ -67,7 +67,13 @@ main {
   font-display: swap;
 }
 
-@media screen and (min-width: $desktop-small) {
+/*
+ * Switch from bottom-stuck mobile nav to left-rail sidebar at the
+ * tablet breakpoint ($bp-md = 768px) instead of the legacy
+ * $desktop-small (1076px). Lifts the NavBar overlay off mid-page
+ * content on iPad portrait + every Android tablet + narrow laptops.
+ */
+@media screen and (min-width: $bp-md) {
   body {
     grid-auto-flow: column;
     grid-template-columns: min-content 3fr;

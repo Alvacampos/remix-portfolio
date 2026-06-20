@@ -97,6 +97,13 @@
   }
 }
 
+/*
+ * Tablet portrait + landscape: cert cards stay 1-col (each is
+ * min-width 500px-ish, doesn't fit 2-col below 1024px content
+ * width). Degree cards stay stacked too — 60% width of a
+ * sub-1024px viewport leaves ~341px per card, too narrow for
+ * the title + summary.
+ */
 @media screen and (min-width: $desktop-small) {
   .education-route {
     &__degree-container {
