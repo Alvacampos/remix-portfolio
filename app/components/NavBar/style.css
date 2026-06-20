@@ -56,7 +56,10 @@
       justify-content: space-around;
 
       & li {
-        &:hover {
+        /* :focus-within so keyboard focus on the inner <a> shows the
+         * same hover affordance as a mouse pointer would. */
+        &:hover,
+        &:focus-within {
           cursor: pointer;
           background: $default-grey;
           transition: background 500ms linear;
@@ -134,7 +137,8 @@
       height: $space-80;
       width: 100%;
 
-      &:hover {
+      &:hover,
+      &:focus-within {
         cursor: pointer;
         background: $default-grey;
         transition: background 500ms linear;
