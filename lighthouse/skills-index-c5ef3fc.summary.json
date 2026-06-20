@@ -1,0 +1,98 @@
+{
+  "fetchTime": "2026-06-20T11:43:32.976Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.4.0",
+  "commit": "c5ef3fc",
+  "categories": {
+    "performance": 0.78,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "3.0 s",
+      "numericValue": 2952.939375,
+      "score": 0.51
+    },
+    "lcp": {
+      "displayValue": "4.4 s",
+      "numericValue": 4399.145,
+      "score": 0.39
+    },
+    "si": {
+      "displayValue": "3.6 s",
+      "numericValue": 3628.5260972042397,
+      "score": 0.86
+    },
+    "tbt": {
+      "displayValue": "90 ms",
+      "numericValue": 88.5,
+      "score": 0.99
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "4.5 s",
+      "numericValue": 4465.645000000001,
+      "score": 0.83
+    },
+    "ttfb": 171
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.51
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.39
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.86
+    },
+    {
+      "id": "total-blocking-time",
+      "title": "Total Blocking Time",
+      "score": 0.99
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.89
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.83
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0
+    }
+  ]
+}
