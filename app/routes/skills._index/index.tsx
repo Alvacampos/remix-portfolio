@@ -4,13 +4,13 @@ import { lazy, Suspense, useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import verticalTimelineStyles from 'react-vertical-timeline-component/style.min.css?url';
 
-import barChartStyles from '~/components/BarChart/style.css?url';
 import Card from '~/components/Card';
 import carouselStyles from '~/components/Carousel/style.css?url';
 import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
+import tenureHeatmapStyles from '~/components/TenureHeatmap/style.css?url';
 import timelineStyles from '~/components/Timeline/style.css?url';
-import { formatDate, getClassMaker, getSkillChartData, mergeRouteMeta } from '~/utils/utils';
+import { formatDate, getClassMaker, getSkillHeatmapData, mergeRouteMeta } from '~/utils/utils';
 
 // Import the JSON server-side: Vite bakes it into the server bundle so
 // the loader doesn't have to do an HTTP round-trip to the static asset
@@ -38,20 +38,20 @@ import styles from './style.css?url';
 // far fewer render-blocking stylesheets.
 
 export const links = () => [
-  { rel: 'stylesheet', href: barChartStyles },
   { rel: 'stylesheet', href: carouselStyles },
+  { rel: 'stylesheet', href: tenureHeatmapStyles },
   { rel: 'stylesheet', href: timelineStyles },
   { rel: 'stylesheet', href: verticalTimelineStyles },
   { rel: 'stylesheet', href: styles },
 ];
 
 // Below-the-fold heavy components — JS lazy-loaded so the initial
-// /skills bundle skips recharts (~150 KB) and the 25 carousel SVGs.
-// Their CSS is preloaded above, so the page is styled before this
+// /skills bundle skips the timeline library + the chip grid render.
+// Their CSS is preloaded above so the page is styled before this
 // module evaluates.
 const LazyTimeline = lazy(() => import('~/components/Timeline'));
 const LazyCarousel = lazy(() => import('~/components/Carousel'));
-const LazyBarChart = lazy(() => import('~/components/BarChart'));
+const LazyTenureHeatmap = lazy(() => import('~/components/TenureHeatmap'));
 
 export const meta: MetaFunction = (args) =>
   mergeRouteMeta(args, {
@@ -117,14 +117,14 @@ export async function loader() {
 
   const skills = typed.SKILLS_IMG.map((item) => item.title);
 
-  const chartData = getSkillChartData(typed.WORK_ITEMS);
+  const heatmapData = getSkillHeatmapData(typed.WORK_ITEMS);
 
   return remixData(
     {
       data,
       yearsOfExp: formatDate(typed.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills,
-      chartData,
+      heatmapData,
       extraActivities: typed.EXTRA_ACTIVITIES,
     },
     {
@@ -137,7 +137,7 @@ export async function loader() {
 
 export default function Skills() {
   const { formatMessage } = useIntl();
-  const { data, yearsOfExp, skills, chartData, extraActivities } = useLoaderData<typeof loader>();
+  const { data, yearsOfExp, skills, heatmapData, extraActivities } = useLoaderData<typeof loader>();
   const [filteredData, setFilteredData] = useState(data);
 
   const filterInput = useCallback(
@@ -190,7 +190,7 @@ export default function Skills() {
           <LazyCarousel />
         </Suspense>
         <Suspense fallback={<LoadingSpinner />}>
-          <LazyBarChart data={chartData} />
+          <LazyTenureHeatmap data={heatmapData} />
         </Suspense>
       </div>
       <div className={getClasses('extra-activities')}>
