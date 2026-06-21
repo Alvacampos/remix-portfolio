@@ -45,6 +45,14 @@
   --accent-soft: $green-3; /* hover/highlight */
   --accent-muted: $green-6; /* accent backgrounds (dark) */
 
+  /* Height the bottom-stuck mobile nav claims from the viewport.
+   * Routes that want to fill the viewport (Home) subtract this from
+   * their min-height so the body doesn't end up taller than the
+   * screen and trigger an unnecessary scroll. Overridden to 0 at
+   * $bp-md where the nav becomes a fixed-position sidebar that
+   * doesn't claim viewport vertical space. */
+  --nav-h: 148px;
+
   color-scheme: dark;
 }
 
@@ -166,6 +174,13 @@ main {
  * content on iPad portrait + every Android tablet + narrow laptops.
  */
 @media screen and (min-width: $bp-md) {
+  :root {
+    /* On desktop the rail is `position: fixed` and doesn't claim
+     * viewport vertical space — Home/etc. should fill the full 100vh
+     * without subtracting anything. */
+    --nav-h: 0px;
+  }
+
   body {
     /* Drop the mobile grid: NavBar uses `position: fixed` on
      * desktop so it isn't part of normal flow. We just need a
