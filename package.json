@@ -25,7 +25,7 @@
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:visual": "playwright test visual.spec.ts --project=chromium",
+    "test:visual": "playwright test visual.spec.ts --project=chromium --project=mobile",
     "test:visual:update": "scripts/update-visual-baselines.sh",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
