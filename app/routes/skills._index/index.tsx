@@ -19,7 +19,7 @@ import { formatDate, getClassMaker, getSkillHeatmapData, mergeRouteMeta } from '
 import skillsData from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
-// Manual CSS preload pattern for code-split components: BarChart,
+// Manual CSS preload pattern for code-split components: TenureHeatmap,
 // Carousel, and Timeline are JS-lazy-loaded below, but their CSS is
 // pulled in as `?url` strings (no module evaluation, no chunk
 // coupling) and piped into Remix's <Links> via the route's `links()`
@@ -27,15 +27,14 @@ import styles from './style.css?url';
 // `lazy(() => import(...))` actually move each component's JS into
 // its own chunk.
 //
-// Why we don't `import { links as xLinks } from '...'` for those
-// three components: doing so would make Vite treat the module as
-// statically imported, which defeats the `lazy()` chunk split (you'd
+// We deliberately don't `import { links as xLinks } from '...'` for
+// those three components — doing so would make Vite treat the module
+// as statically imported, defeating the `lazy()` chunk split (you'd
 // see "dynamic import will not move module into another chunk").
 //
-// The small components (Card, Input, Button, LoadingSpinner) used to
-// also contribute `links()` entries, but their CSS is now inlined
-// into ./style.css via postcss-import (Stage 13) so /skills ships
-// far fewer render-blocking stylesheets.
+// Small components (Card, Input, Button, LoadingSpinner) skip this
+// pattern: their CSS is inlined into ./style.css via postcss-import,
+// so the route ships far fewer render-blocking stylesheets.
 
 export const links = () => [
   { rel: 'stylesheet', href: carouselStyles },

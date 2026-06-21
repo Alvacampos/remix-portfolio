@@ -58,9 +58,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # setup-node is skipped here — the Playwright image already ships Node 20.
-      # actions/cache also can't be used inside a non-default container without
-      # extra plumbing; npm install is fast enough on the warmed image cache.
+      # The Playwright image's bundled Node version drifts (currently 24).
+      # Pin to .nvmrc so this job uses the same Node as the other jobs and
+      # as the local dev environment. Without this, esbuild's postinstall
+      # races on parallel npm extraction (ETXTBSY) under newer Node.
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
 
       - run: npm ci
 

@@ -7,8 +7,8 @@ test.describe('Skills (/skills)', () => {
 
   test('renders work experience timeline and total years card', async ({ page }) => {
     // /skills page title — the section <h2> "Work Experience" was
-    // removed in stage-32 since the h1 + Total-years card already
-    // announce the page.
+    // removed since the h1 + Total-years card already announce the
+    // page.
     await expect(
       page.getByRole('heading', { name: 'Skills & Work Experience', level: 1 })
     ).toBeVisible();
@@ -40,7 +40,7 @@ test.describe('Skills (/skills)', () => {
 
   test('renders the Technologies section and tenure heatmap', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /Technologies/i })).toBeVisible();
-    // Heatmap container — replaced the recharts BarChart in stage-30.
+    // Heatmap container.
     await expect(page.locator('.tenure-heatmap').first()).toBeVisible();
     // The heatmap is derived from WORK_ITEMS — read its row-header
     // skill labels and assert core technologies are present and
@@ -63,10 +63,10 @@ test.describe('Skills (/skills)', () => {
 test.describe('Skill detail (/skills/:uuid)', () => {
   test('navigates from timeline card to detail page', async ({ page }) => {
     await page.goto('/skills');
-    // Qubika (most recent) is the topmost timeline card after Stage 24's
-    // reversal — using it instead of Globant avoids the
-    // IntersectionObserver-based lazy mount issue (see timeline-render
-    // test for the long version).
+    // Qubika is the topmost timeline card (most recent role) — using
+    // it instead of an older entry avoids the IntersectionObserver-
+    // based lazy mount issue (see timeline-render test for the long
+    // version).
     await page
       .getByRole('link')
       .filter({ hasText: /Qubika/i })

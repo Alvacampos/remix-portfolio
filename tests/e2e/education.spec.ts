@@ -52,8 +52,8 @@ test.describe('Education detail (/education/:slug)', () => {
       page.getByRole('heading', { name: /Bachelor of Science.*Artificial Intelligence/i, level: 1 })
     ).toBeVisible();
     await expect(page.getByText(/Universidad Blas Pascal/i)).toBeVisible();
-    // metadata row replaces the previous "Study Dates" / "Institution" cards
-    // (Stage 18) — assert the year range instead.
+    // metadata row replaces the previous "Study Dates" / "Institution"
+    // cards — assert the year range instead.
     await expect(page.getByText(/2024 – 2027/)).toBeVisible();
   });
 

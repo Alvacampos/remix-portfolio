@@ -96,7 +96,7 @@ export type SkillEntry = {
   end?: string | null;
 };
 
-export type WorkItemForChart = {
+export type WorkItemWithSkills = {
   startDate: string;
   endDate?: string | null;
   skills: SkillEntry[];
@@ -168,7 +168,7 @@ function monthsOfOverlap(intervalStart: number, intervalEnd: number, year: numbe
   return differenceInMonths(end, start);
 }
 
-export function getSkillHeatmapData(workItems: WorkItemForChart[]): SkillHeatmapData {
+export function getSkillHeatmapData(workItems: WorkItemWithSkills[]): SkillHeatmapData {
   const now = new Date();
   const currentYear = now.getFullYear();
 
@@ -233,48 +233,4 @@ export function getSkillHeatmapData(workItems: WorkItemForChart[]): SkillHeatmap
 
   rows.sort((a, b) => b.total - a.total);
   return { years, rows };
-}
-
-export function getSkillChartData(workItems: WorkItemForChart[]): [string, number][] {
-  const now = new Date();
-  const intervalsBySkill = new Map<string, Interval[]>();
-
-  for (const item of workItems) {
-    const jobStart = new Date(item.startDate).getTime();
-    const jobEnd = (item.endDate ? new Date(item.endDate) : now).getTime();
-
-    for (const entry of item.skills) {
-      if (CHART_EXCLUDE.has(entry.name)) {
-        // Skipped — filter chip / generic descriptor.
-      } else {
-        // Skill-level dates fall back to the job's range when omitted.
-        const skillStart = entry.start ? new Date(entry.start).getTime() : jobStart;
-        const skillEnd = entry.end ? new Date(entry.end).getTime() : jobEnd;
-        // Clamp to the job's range so a typo can't credit a skill more time
-        // than the job itself lasted.
-        const start = Math.max(skillStart, jobStart);
-        const end = Math.min(skillEnd, jobEnd);
-        if (end > start) {
-          const list = intervalsBySkill.get(entry.name);
-          if (list) {
-            list.push({ start, end });
-          } else {
-            intervalsBySkill.set(entry.name, [{ start, end }]);
-          }
-        }
-      }
-    }
-  }
-
-  const totals: [string, number][] = [];
-  for (const [skill, intervals] of intervalsBySkill) {
-    const merged = mergeIntervals(intervals);
-    const totalMonths = merged.reduce(
-      (sum, { start, end }) => sum + differenceInMonths(end, start),
-      0
-    );
-    totals.push([skill, Number((totalMonths / 12).toFixed(2))]);
-  }
-
-  return totals.sort((a, b) => b[1] - a[1]);
 }

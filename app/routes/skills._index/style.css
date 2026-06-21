@@ -1,6 +1,6 @@
-/* Card / Input / LoadingSpinner CSS is inlined here so /skills ships one
- * route stylesheet instead of four (Stage 13). postcss-import resolves
- * the paths at build time. Button is already inlined into the global
+/* Card / Input / LoadingSpinner CSS is inlined here so /skills ships
+ * one route stylesheet instead of four. postcss-import resolves the
+ * paths at build time. Button is already inlined into the global
  * stylesheet via app/styles/style.css. */
 @import '../../components/Card/style.css';
 @import '../../components/Input/style.css';
