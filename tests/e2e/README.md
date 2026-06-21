@@ -7,7 +7,7 @@
 
 ## Visual regression
 
-Baselines live at `tests/e2e/visual.spec.ts-snapshots/<name>-chromium-linux.png`.
+Baselines live at `tests/e2e/visual.spec.ts-snapshots/<name>-<project>-linux.png`. Both `chromium` (Desktop Chrome) and `mobile` (Pixel 7) projects are gated, so layout regressions that only show up below `$bp-md` are caught at the same line as desktop ones.
 
 They're committed for **linux only**. On macOS the visual spec auto-skips itself (`SKIP_VISUAL` in `visual.spec.ts`), so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green. On Ubuntu (CI) the spec runs and diffs against the committed baselines.
 
@@ -20,15 +20,15 @@ Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoj
 `visual.spec.ts` sets up four guards before snapshotting:
 
 1. **`page.clock.install()`** pins "now" to a fixed ISO timestamp. The /skills "Total years of experience" card and any work-item with `endDate: null` both read `new Date()`; without freezing, the rendered text drifts every day.
-2. **Animations + transitions disabled** via an `addInitScript` that injects a global stylesheet. Recharts entrance tweens, the carousel auto-advance, the Front End / Back End neon-loop, and the `react-vertical-timeline-component` intersection animation would all otherwise produce different pixels on every run.
+2. **Animations + transitions disabled** via an `addInitScript` that injects a global stylesheet. Theme-toggle slides, entrance fades, and the `react-vertical-timeline-component` intersection animation would all otherwise produce different pixels on every run.
 3. **Fonts ready** — `await document.fonts.ready` before capturing. Roboto loads from `/fonts/roboto/`; without this guard the first screenshot can land while the system fallback is still rendering.
 4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, Carousel, Timeline) to land and lay out.
 
-The QR `<svg>` in the nav is masked because its embedded font data hits the same SVG anti-aliasing pipeline as recharts and produces sub-pixel diffs across environments.
+The QR `<svg>` in the nav is masked because its embedded font data hits the SVG anti-aliasing pipeline and produces sub-pixel diffs across environments. (No-op on mobile where the QR is `display: none`.)
 
 ### Why /skills isn't gated
 
-Recharts emits SVG `<text>` for axis labels. Sub-pixel font hinting on those labels drifts ~0.4% of pixels between the local Docker regen environment (M-series Mac under amd64 emulation) and CI's GitHub Actions runner — invisible to the eye but consistently above the 0.2% diff budget. The carousel SVG icons hit the same pipeline. Masking both the chart and the icon strip would leave the gate covering very little of the page, so we don't include `/skills` in the visual suite. The route is still covered by the behavioural specs in `skills.spec.ts` (timeline rendering, autocomplete filter, FE/BE button toggle, chart container present, extra activities). If a future stage moves to a screenshot tool that handles SVG better (Percy, Chromatic), the route can be re-added.
+The tenure-heatmap renders a tight grid of small SVG cells; sub-pixel rendering on those cells drifts ~0.4% of pixels between the local Docker regen environment (M-series Mac under amd64 emulation) and CI's GitHub Actions runner — invisible to the eye but consistently above the 0.2% diff budget. Masking the chart would leave the gate covering very little of the page, so we don't include `/skills` in the visual suite. The route is still covered by the behavioural specs in `skills.spec.ts` (timeline rendering, autocomplete filter, heatmap rowheader labels present, extra activities). If a future stage moves to a screenshot tool that handles SVG better (Percy, Chromatic), the route can be re-added.
 
 ## Updating baselines
 
@@ -47,12 +47,12 @@ After it finishes, review the regenerated PNGs under `tests/e2e/visual.spec.ts-s
 
 ## Running the suite
 
-| Command                                  | What runs                                                                        |
-| ---------------------------------------- | -------------------------------------------------------------------------------- |
-| `npm run test:e2e`                       | All specs, both projects (chromium + mobile). On Mac the visual spec self-skips. |
-| `npm run test:e2e -- --project=chromium` | Behavioural + visual specs, desktop only.                                        |
-| `npm run test:visual`                    | Only `visual.spec.ts`, chromium only. Self-skips on Mac.                         |
-| `npm run test:visual:update`             | Regenerate baselines via Docker. Use after intentional UI changes.               |
+| Command                                  | What runs                                                                         |
+| ---------------------------------------- | --------------------------------------------------------------------------------- |
+| `npm run test:e2e`                       | All specs, both projects (chromium + mobile). On Mac the visual spec self-skips.  |
+| `npm run test:e2e -- --project=chromium` | Behavioural + visual specs, desktop only.                                         |
+| `npm run test:visual`                    | Only `visual.spec.ts`, both projects. Self-skips on Mac.                          |
+| `npm run test:visual:update`             | Regenerate baselines via Docker, both projects. Use after intentional UI changes. |
 
 ## Tolerances
 

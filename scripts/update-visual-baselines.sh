@@ -29,7 +29,7 @@ docker run --rm \
   -e CI=1 \
   --ipc=host \
   "${IMAGE}" \
-  bash -c "npm ci && npx playwright test visual.spec.ts --project=chromium --update-snapshots"
+  bash -c "npm ci && npx playwright test visual.spec.ts --project=chromium --project=mobile --update-snapshots"
 # Note on --platform=linux/amd64: GitHub Actions runners are x86_64 but
 # Apple Silicon Macs default to arm64 when pulling a multi-arch image.
 # freetype's sub-pixel font rendering math diverges between the two

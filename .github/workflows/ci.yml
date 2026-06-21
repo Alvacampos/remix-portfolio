@@ -68,7 +68,11 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run test:e2e -- --project=chromium
+      # Run both projects so the mobile (Pixel 7) visual baselines
+      # are also gated on CI. Behavioural specs run on both projects
+      # too — duplicates the chromium pass on mobile viewports, which
+      # catches layout regressions that only show up below $bp-md.
+      - run: npm run test:e2e -- --project=chromium --project=mobile
 
       - name: Upload Playwright report on failure
         if: failure()
