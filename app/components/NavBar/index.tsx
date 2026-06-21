@@ -1,6 +1,6 @@
+import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
-import Button from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
 import ThemeToggle from '~/components/ThemeToggle';
@@ -11,6 +11,16 @@ const getClasses = getClassMaker(BLOCK);
 
 export default function NavBar() {
   const { formatMessage } = useIntl();
+  const { pathname } = useLocation();
+
+  // Match the current pathname to a nav entry's url to mark it active.
+  // `/` is exact-match (otherwise it'd match every route); the others
+  // use prefix-match so /skills/:uuid still highlights the CV button.
+  const isActive = (url: string) => {
+    if (url === './') return pathname === '/';
+    const target = url.replace(/^\.\//, '/');
+    return pathname === target || pathname.startsWith(`${target}/`);
+  };
 
   const GIT_LINK_ICON = {
     url: 'https://github.com/Alvacampos',
@@ -96,11 +106,22 @@ export default function NavBar() {
       <div className={getClasses('main-section')}>
         <div className={getClasses('main-buttons')}>
           <ul>
-            {MAIN_NAV.map((btn) => (
-              <li key={btn.label}>
-                <Button {...btn} />
-              </li>
-            ))}
+            {MAIN_NAV.map(({ url, label, leftIcon: Icon, prefetch }) => {
+              const active = isActive(url);
+              return (
+                <li key={label}>
+                  <Link
+                    to={url}
+                    prefetch={prefetch}
+                    className={`${getClasses('nav-link')} ${active ? getClasses('nav-link', 'active') : ''}`}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    <Icon className={getClasses('nav-link-icon')} />
+                    <span>{label}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

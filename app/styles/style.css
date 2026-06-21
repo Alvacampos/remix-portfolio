@@ -1,9 +1,7 @@
 /* stylelint-disable font-family-name-quotes */
 
-/* NavBar (every page) and Button (used by NavBar + everywhere else)
- * get their CSS inlined into this global stylesheet via postcss-import,
- * so first-paint chrome ships as one stylesheet instead of three. */
-@import '../components/Button/style.css';
+/* NavBar CSS is inlined into this global stylesheet via postcss-import
+ * so its first-paint chrome ships with the rest of the global styles. */
 @import '../components/NavBar/style.css';
 
 /*

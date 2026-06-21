@@ -20,6 +20,8 @@
   /* Mobile (bottom-stuck nav): top border separates nav from content
    * above. Desktop (sidebar): switch to right border via media query. */
   border-top: 1px solid var(--border-default);
+  /* Stop hover/focus pills from overflowing the rail's right edge. */
+  overflow: hidden;
 
   /* Mobile: avatar hidden — the bottom-stuck nav doesn't have the
    * vertical real estate. Desktop sidebar shows it (see media query). */
@@ -88,57 +90,52 @@
       & li {
         display: flex;
         flex: 1;
-
-        /* Mobile bottom nav: vertical icon-over-label layout, like
-         * Instagram/TikTok. Tighter than the previous text-only row
-         * and the icon makes the section glanceable. */
-        & a {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: $space-4;
-          width: 100%;
-          padding: $space-8 0;
-          text-decoration: none;
-          color: inherit;
-          border-radius: $border-6;
-          transition: background 120ms ease;
-
-          /* Focus ring lives on the <a> (the actual focusable element)
-           * — previous CSS painted the focus indicator on the inner
-           * .button-component <button>, which made the focus look
-           * "inside" the link instead of around it. */
-          &:hover,
-          &:focus-visible {
-            background: var(--bg-elevated);
-            outline: none;
-          }
-
-          &:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: -2px;
-          }
-
-          .button-component {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: $space-4;
-            font-size: $font-12;
-            background: transparent;
-            border: none;
-            padding: 0;
-
-            & svg {
-              display: block;
-              width: $space-20;
-              height: $space-20;
-            }
-          }
-        }
       }
     }
+  }
+
+  /* Mobile bottom-nav links: vertical icon-over-label layout, like
+   * Instagram/TikTok. Tighter than the previous text-only row and
+   * the icon makes the section glanceable at a thumb. */
+  &__nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-4;
+    width: 100%;
+    padding: $space-8 0;
+    text-decoration: none;
+    color: inherit;
+    font-size: $font-12;
+    transition: background 120ms ease;
+
+    &:hover {
+      background: var(--bg-elevated);
+    }
+
+    /* Inset focus ring — can't overflow the rail (outline-based
+     * rings on the previous version bled into the content area on
+     * hover). */
+    &:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--accent);
+    }
+  }
+
+  &__nav-link-icon {
+    width: $space-20;
+    height: $space-20;
+    flex-shrink: 0;
+  }
+
+  /* Active state — current route. Soft accent background + accent
+   * text. Mobile uses just the bg + text; desktop adds a left stripe
+   * (handled in the media query). */
+  &__nav-link--active {
+    background: var(--accent-muted);
+    color: var(--accent);
+    font-weight: $weight-700;
   }
 }
 
@@ -188,46 +185,57 @@
       flex: 1;
     }
 
+    /* Inset the buttons so hover/active pills sit INSIDE the rail
+     * instead of edge-to-edge. Matches the example reference where
+     * each item is a chip with breathing room on both sides. */
     &__main-buttons {
       width: 100%;
+      padding: $space-8;
 
       & ul {
         flex-direction: column;
         align-items: stretch;
+        gap: $space-4;
 
         & li {
           display: block;
           flex: none;
-
-          /* Compact rail buttons — height ~44px (down from 110px).
-           * Icon left, label right, like the example reference.
-           * The whole <a> is the click target, with a single rounded
-           * focus ring instead of one painted on the inner button. */
-          & a {
-            flex-direction: row;
-            justify-content: flex-start;
-            gap: $space-12;
-            padding: $space-12 $space-16;
-            border-radius: 0;
-            transition: background 120ms ease;
-
-            &:focus-visible {
-              outline: 2px solid var(--accent);
-              outline-offset: -2px;
-            }
-
-            & .button-component {
-              flex-direction: row;
-              gap: $space-12;
-              font-size: $font-14;
-
-              & svg {
-                width: $space-20;
-                height: $space-20;
-              }
-            }
-          }
         }
+      }
+    }
+
+    &__nav-link {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: $space-12;
+      padding: $space-8 $space-12;
+      border-radius: $border-6;
+      font-size: $font-14;
+    }
+
+    &__nav-link-icon {
+      width: $space-20;
+      height: $space-20;
+    }
+
+    /* Desktop active state — soft accent background + accent text +
+     * a 3px left stripe. The stripe is the same idea as the example
+     * reference's filled-pill active route, dialed back so the
+     * surrounding rail still reads neutral. */
+    &__nav-link--active {
+      position: relative;
+      background: var(--accent-muted);
+      color: var(--accent);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: $space-4;
+        bottom: $space-4;
+        width: 3px;
+        border-radius: $border-4;
+        background: var(--accent);
       }
     }
   }
