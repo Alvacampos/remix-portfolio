@@ -1,18 +1,26 @@
+import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
-import Button from '~/components/Button';
 import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
+import ThemeToggle from '~/components/ThemeToggle';
 import { getClassMaker } from '~/utils/utils';
-
-// Stage 13: NavBar and Button CSS are inlined into app/styles/style.css via
-// postcss-import, so this component no longer exports a links() chain.
 
 const BLOCK = 'navbar-component';
 const getClasses = getClassMaker(BLOCK);
 
 export default function NavBar() {
   const { formatMessage } = useIntl();
+  const { pathname } = useLocation();
+
+  // Match the current pathname to a nav entry's url to mark it active.
+  // `/` is exact-match (otherwise it'd match every route); the others
+  // use prefix-match so /skills/:uuid still highlights the CV button.
+  const isActive = (url: string) => {
+    if (url === './') return pathname === '/';
+    const target = url.replace(/^\.\//, '/');
+    return pathname === target || pathname.startsWith(`${target}/`);
+  };
 
   const GIT_LINK_ICON = {
     url: 'https://github.com/Alvacampos',
@@ -57,6 +65,21 @@ export default function NavBar() {
 
   return (
     <nav className={getClasses()}>
+      {/* Avatar — desktop only. Mobile bottom nav doesn't have the
+       * vertical real estate, and the photo doesn't add functional
+       * info (the Home page already shows it). */}
+      <div className={getClasses('avatar-row')}>
+        <img
+          src="/assets/img/me.jpeg"
+          alt="Gonzalo Alvarez Campos"
+          width={64}
+          height={64}
+          className={getClasses('avatar')}
+        />
+      </div>
+      <div className={getClasses('utility-row')}>
+        <ThemeToggle />
+      </div>
       <div className={getClasses('special-anchor-container')}>
         <ConditionalLink
           to={GIT_LINK_ICON.url}
@@ -83,23 +106,23 @@ export default function NavBar() {
       <div className={getClasses('main-section')}>
         <div className={getClasses('main-buttons')}>
           <ul>
-            {MAIN_NAV.map((btn) => (
-              <li key={btn.label}>
-                <Button {...btn} />
-              </li>
-            ))}
+            {MAIN_NAV.map(({ url, label, leftIcon: Icon, prefetch }) => {
+              const active = isActive(url);
+              return (
+                <li key={label}>
+                  <Link
+                    to={url}
+                    prefetch={prefetch}
+                    className={`${getClasses('nav-link')} ${active ? getClasses('nav-link', 'active') : ''}`}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    <Icon className={getClasses('nav-link-icon')} />
+                    <span>{label}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
-        </div>
-        <div>
-          <img
-            loading="lazy"
-            src="/assets/img/linkedin_dark.webp"
-            alt=""
-            aria-hidden="true"
-            width={1500}
-            height={1500}
-            className={getClasses('qr')}
-          />
         </div>
       </div>
     </nav>

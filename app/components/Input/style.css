@@ -1,12 +1,21 @@
 .input-component {
-  height: $space-30;
+  height: $space-32;
   border-radius: $border-6;
-  border: $card-border;
-  background-color: $background-variation;
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
   padding: 0;
-  padding-left: $space-5;
-  color: #f0f6fc;
+  padding-left: $space-4;
+  color: var(--fg-base);
   width: 100%;
+
+  /* Placeholder color tracks theme — without this, the user-agent
+   * default (light gray) reads as washed-out in dark mode and
+   * over-loud in light mode. --fg-muted hits roughly WCAG AA on
+   * both backgrounds. */
+  &::placeholder {
+    color: var(--fg-muted);
+    opacity: 1;
+  }
 
   &__wrapper {
     position: relative;
@@ -31,31 +40,31 @@
 
   &__suggestions-list {
     position: absolute;
-    background-color: $background-variation;
+    background-color: var(--bg-surface);
     border-radius: $border-6;
-    border: $card-border;
+    border: 1px solid var(--border-default);
     z-index: 1;
-    padding: $space-10;
-    margin-top: $space-10;
-    color: #f0f6fc;
+    padding: $space-12;
+    margin-top: $space-12;
+    color: var(--fg-base);
     list-style-type: none;
     width: 80vw;
 
     & li {
       cursor: pointer;
-      padding: $space-5;
+      padding: $space-4;
       border-radius: $border-6;
       transition: background 0.5s linear;
 
       &:hover {
-        background: #60686c99;
+        background: var(--bg-elevated);
       }
     }
   }
 
   /* Highlight the option the user is keyboard-navigating to. */
   &__suggestion-item--active {
-    background: #60686c99;
+    background: var(--bg-elevated);
   }
 }
 

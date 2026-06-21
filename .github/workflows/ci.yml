@@ -58,13 +58,21 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # setup-node is skipped here — the Playwright image already ships Node 20.
-      # actions/cache also can't be used inside a non-default container without
-      # extra plumbing; npm install is fast enough on the warmed image cache.
+      # The Playwright image's bundled Node version drifts (currently 24).
+      # Pin to .nvmrc so this job uses the same Node as the other jobs and
+      # as the local dev environment. Without this, esbuild's postinstall
+      # races on parallel npm extraction (ETXTBSY) under newer Node.
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
 
       - run: npm ci
 
-      - run: npm run test:e2e -- --project=chromium
+      # Run both projects so the mobile (Pixel 7) visual baselines
+      # are also gated on CI. Behavioural specs run on both projects
+      # too — duplicates the chromium pass on mobile viewports, which
+      # catches layout regressions that only show up below $bp-md.
+      - run: npm run test:e2e -- --project=chromium --project=mobile
 
       - name: Upload Playwright report on failure
         if: failure()

@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-// Stage 13: Card CSS is inlined into each consuming route's style.css via
-// postcss-import. No links() export — postcss-import owns the bundling.
+// Card CSS is inlined into each consuming route's style.css via
+// postcss-import — no links() export.
 
 const BLOCK = 'card-component';
 const getClasses = getClassMaker(BLOCK);
@@ -14,6 +14,13 @@ const MAX_SKILL_CHIPS = 7;
 type CardProps = {
   title?: string;
   texts?: string[];
+  // Optional intl key whose translated value renders as a bold
+  // prefix before each `texts` line, e.g. "Role:" → "Role: Senior
+  // Frontend developer." Used on the timeline cards on /skills to
+  // label the role line declaratively. Pass the intl id (not the
+  // translated string) so the label tracks the active locale.
+  // Defaults to undefined → texts render plain.
+  textsLabel?: string;
   itemList?: {
     title: string;
     text: string;
@@ -33,6 +40,7 @@ type CardProps = {
 export default function Card({
   title = undefined,
   texts = undefined,
+  textsLabel = undefined,
   itemList = undefined,
   isStyleless = false,
   skills = undefined,
@@ -53,7 +61,14 @@ export default function Card({
         {texts && (
           <div className={getClasses('main-text-wrapper')}>
             {texts.map((text) => (
-              <p key={text}>{text}</p>
+              <p key={text}>
+                {textsLabel && (
+                  <span className={getClasses('texts-label')}>
+                    {formatMessage({ id: textsLabel })}:{' '}
+                  </span>
+                )}
+                {text}
+              </p>
             ))}
           </div>
         )}

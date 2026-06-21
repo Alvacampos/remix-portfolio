@@ -1,33 +1,5 @@
-import type { ReactElement } from 'react';
+import { FormattedMessage } from 'react-intl';
 
-import {
-  AgileSoftware,
-  Axios,
-  Cloudflare,
-  Css,
-  Cypress,
-  Django,
-  Express,
-  GitIcon,
-  Graphql,
-  Heroku,
-  Highcharts,
-  Html,
-  Js,
-  Mongodb,
-  Nextjs,
-  Nodejs,
-  Playwright,
-  Python,
-  React,
-  Redux,
-  Remix,
-  Sass,
-  Storybook,
-  Tailwind,
-  Ts,
-  VueJs,
-} from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -37,52 +9,73 @@ export const links = () => [{ rel: 'stylesheet', href: styles }];
 const BLOCK = 'carousel-component';
 const getClasses = getClassMaker(BLOCK);
 
-// Static module-level list — keys are the technology names so React can use
-// content-stable keys without paying for uuid generation on every render.
-//
-// Order: current-stack first (what I'm using day-to-day), then web
-// fundamentals, then tooling/test infra, then less-current/legacy. Tweak
-// when the daily stack shifts; the carousel auto-scrolls so first
-// items are seen most.
-const ICONS: { name: string; Icon: () => ReactElement }[] = [
-  // Current stack
-  { name: 'react', Icon: React },
-  { name: 'ts', Icon: Ts },
-  { name: 'nextjs', Icon: Nextjs },
-  { name: 'nodejs', Icon: Nodejs },
-  { name: 'python', Icon: Python },
-  { name: 'django', Icon: Django },
-  { name: 'graphql', Icon: Graphql },
-  { name: 'cloudflare', Icon: Cloudflare },
-  { name: 'remix', Icon: Remix },
-  // Web fundamentals
-  { name: 'html', Icon: Html },
-  { name: 'css', Icon: Css },
-  { name: 'js', Icon: Js },
-  { name: 'tailwind', Icon: Tailwind },
-  { name: 'sass', Icon: Sass },
-  // Tooling / testing / infra
-  { name: 'storybook', Icon: Storybook },
-  { name: 'playwright', Icon: Playwright },
-  { name: 'cypress', Icon: Cypress },
-  { name: 'git', Icon: GitIcon },
-  { name: 'agile', Icon: AgileSoftware },
-  // Less current / legacy
-  { name: 'redux', Icon: Redux },
-  { name: 'express', Icon: Express },
-  { name: 'mongodb', Icon: Mongodb },
-  { name: 'axios', Icon: Axios },
-  { name: 'vue', Icon: VueJs },
-  { name: 'highcharts', Icon: Highcharts },
-  { name: 'heroku', Icon: Heroku },
+type Group = {
+  id: string;
+  // Modifier appended to the chip class so forward-looking groups
+  // (Learning, Future) render with dashed borders and a distinct
+  // accent label. Defaults to undefined → standard chip styling.
+  variant?: 'learning' | 'future';
+  tech: string[];
+};
+
+const CATEGORIES: Group[] = [
+  {
+    id: 'TECH_GROUP_LANGUAGES',
+    tech: ['TypeScript', 'JavaScript', 'Python', 'HTML', 'CSS', 'Sass'],
+  },
+  {
+    id: 'TECH_GROUP_FRAMEWORKS',
+    tech: ['React', 'Next.js', 'Remix', 'Vue', 'Node.js', 'Django', 'Express', 'GraphQL', 'Redux'],
+  },
+  {
+    id: 'TECH_GROUP_TOOLING',
+    tech: ['Storybook', 'Playwright', 'Cypress', 'Tailwind', 'Git', 'Axios'],
+  },
+  {
+    id: 'TECH_GROUP_INFRA',
+    tech: ['Cloudflare', 'Heroku', 'MongoDB', 'Highcharts', 'Agile'],
+  },
+  {
+    id: 'TECH_GROUP_LEARNING',
+    variant: 'learning',
+    tech: ['Claude Certified Architect (CCA-F)', 'Python (deepening)'],
+  },
+  {
+    id: 'TECH_GROUP_FUTURE',
+    variant: 'future',
+    tech: ["Master's in IT Management — UNSTA"],
+  },
 ];
 
 export default function Carousel() {
   return (
     <div className={getClasses()}>
-      {ICONS.map(({ name, Icon }) => (
-        <div key={name} className={getClasses('item')}>
-          <Icon />
+      {CATEGORIES.map((group) => (
+        <div
+          key={group.id}
+          className={
+            group.variant
+              ? `${getClasses('group')} ${getClasses('group', group.variant)}`
+              : getClasses('group')
+          }
+        >
+          <h3 className={getClasses('group-title')}>
+            <FormattedMessage id={group.id} />
+          </h3>
+          <ul className={getClasses('item-list')}>
+            {group.tech.map((name) => (
+              <li
+                key={name}
+                className={
+                  group.variant
+                    ? `${getClasses('item')} ${getClasses('item', group.variant)}`
+                    : getClasses('item')
+                }
+              >
+                {name}
+              </li>
+            ))}
+          </ul>
         </div>
       ))}
     </div>

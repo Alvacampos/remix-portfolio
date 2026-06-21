@@ -19,24 +19,24 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 
 ## 2. Stack
 
-| Layer             | Tech                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------ |
-| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                            |
-| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)              |
-| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                                   |
-| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                              |
-| UI                | React 18 + TypeScript                                                                            |
-| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                      |
-| Styling           | PostCSS (extend-rule, import, nested, simple-vars, mixins) + Tailwind v4                         |
-| i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/))     |
-| Charts            | `recharts` (custom horizontal bar chart in [app/components/BarChart/](app/components/BarChart/)) |
-| Timeline          | `react-vertical-timeline-component`                                                              |
-| Dates             | `date-fns`                                                                                       |
-| Icons             | Local SVGs → SVGO → SVGR-generated React components                                              |
-| Linting           | ESLint (airbnb + airbnb/hooks + prettier + jsx-a11y + storybook), Prettier, Stylelint, ls-lint   |
-| Type-check        | `tsc --noEmit` (Vite handles emit)                                                               |
-| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                      |
-| npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                        |
+| Layer             | Tech                                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                          |
+| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)            |
+| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                                 |
+| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                            |
+| UI                | React 18 + TypeScript                                                                          |
+| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                    |
+| Styling           | PostCSS (extend-rule, import, nested, simple-vars, mixins) + BEM via `getClassMaker`           |
+| i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/))   |
+| Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))       |
+| Timeline          | `react-vertical-timeline-component`                                                            |
+| Dates             | `date-fns`                                                                                     |
+| Icons             | Local SVGs → SVGO → SVGR-generated React components                                            |
+| Linting           | ESLint (airbnb + airbnb/hooks + prettier + jsx-a11y + storybook), Prettier, Stylelint, ls-lint |
+| Type-check        | `tsc --noEmit` (Vite handles emit)                                                             |
+| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                    |
+| npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                      |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
 
@@ -57,27 +57,27 @@ remix-portfolio/
 │   ├── routes/
 │   │   ├── _index.tsx            # /          → Home
 │   │   ├── education/index.tsx   # /education → Degree + certifications
-│   │   ├── skills._index/        # /skills    → Work timeline + tech carousel + chart
+│   │   ├── skills._index/        # /skills    → Work timeline + TechGrid + tenure heatmap
 │   │   └── skills.$uuid/         # /skills/:uuid → Single work-item detail
 │   ├── components/
-│   │   ├── BarChart/             # recharts custom horizontal bar chart
 │   │   ├── Button/               # Button + ConditionalLink wrapper
 │   │   ├── Card/                 # Generic card (title / texts / itemList / skills / children)
-│   │   ├── Carousel/             # Tech-stack icon strip
+│   │   ├── Carousel/             # Categorized tech-stack chip grid (legacy name kept)
 │   │   ├── ConditionalWrapper/   # ConditionalWrapper + ConditionalLink
 │   │   ├── DownloadBtn/          # Download CV PDF
 │   │   ├── Input/                # Autocomplete combobox (a11y-compliant)
 │   │   ├── LoadingSpinner/
 │   │   ├── NavBar/               # Side / bottom nav with social icons
+│   │   ├── TenureHeatmap/        # GitHub-style skill × year contribution graph
+│   │   ├── ThemeToggle/          # Sliding sun/moon dark/light toggle
 │   │   ├── Timeline/             # Wraps react-vertical-timeline-component
 │   │   └── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
 │   ├── assets/icons/             # Source .svg files (kebab-case)
 │   ├── intl/                     # en-US.json + es-ES.json + Accept-Language picker (index.ts)
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
-│   │   ├── style.css             # Global body/html/main + @font-face Roboto
-│   │   └── tailwind.css          # @tailwind directives
-│   └── utils/utils.tsx           # getClassMaker, formatDate, getSkillChartData, noop
+│   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
+│   └── utils/utils.tsx           # getClassMaker, formatDate, getSkillHeatmapData, noop
 ├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
@@ -94,8 +94,7 @@ remix-portfolio/
 ├── vite.config.ts
 ├── tsconfig.json + jsconfig.json # `~/*` → `./app/*`
 ├── postcss.config.js + svgo.config.cjs + svgr.config.cjs
-├── .ls-lint.yml + .eslintrc.cjs + .prettierrc.json + .stylelintrc.json
-└── tailwind.config.ts
+└── .ls-lint.yml + .eslintrc.cjs + .prettierrc.json + .stylelintrc.json
 ```
 
 ---
@@ -190,7 +189,7 @@ Components currently inlined this way: `Button`, `Card`, `DownloadBtn`, `Input`,
 
 #### Pattern B — Remix `links()` (lazy-loaded heavy components only)
 
-`BarChart`, `Carousel`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`. Their CSS still needs to land on first paint (otherwise the component flashes unstyled when its chunk arrives), so they keep the manual-CSS-preload pattern from Stage 6:
+`Carousel`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`. Their CSS still needs to land on first paint (otherwise the component flashes unstyled when its chunk arrives), so they use a manual-CSS-preload pattern:
 
 ```ts
 // app/components/Timeline/index.tsx
@@ -207,11 +206,11 @@ The consuming route then either composes the component's `links()` chain or — 
 #### Which pattern do I use?
 
 - **Pattern A (postcss-import inline)** — small CSS files (≤ a few KB), components used everywhere or on a known set of routes, no JS code-split.
-- **Pattern B (links())** — heavy components (vendor CSS like `react-vertical-timeline-component/style.min.css`, big chunks of recharts styling) that are _also_ JS-lazy-loaded. The trade you're making: an extra round-trip for a stylesheet, in exchange for keeping the component's JS off the eager bundle.
+- **Pattern B (links())** — heavy components (vendor CSS like `react-vertical-timeline-component/style.min.css`, large component stylesheets) that are _also_ JS-lazy-loaded. The trade you're making: an extra round-trip for a stylesheet, in exchange for keeping the component's JS off the eager bundle.
 
 Whichever pattern you pick: **don't mix them on the same component.** Both an `@import` and a `links()` entry would emit the CSS twice.
 
-The chain bottoms out at [app/root.tsx](app/root.tsx)'s `links()`, which always loads `app/styles/style.css` (containing global styles + the `@import`-inlined NavBar/Button CSS) and `app/styles/tailwind.css`.
+The chain bottoms out at [app/root.tsx](app/root.tsx)'s `links()`, which loads `app/styles/style.css` — global styles + the `@import`-inlined NavBar/Button CSS.
 
 ### `getClassMaker` (BEM helper)
 
@@ -226,10 +225,6 @@ getClasses('title'); // 'card-component__title'
 getClasses('', 'styleless'); // 'card-component--styleless'
 getClasses('', { active: true }); // 'card-component card-component--active'
 ```
-
-### Tailwind
-
-Tailwind v4 is installed via `@tailwindcss/postcss`, but **`corePlugins.preflight` is disabled** ([tailwind.config.ts](tailwind.config.ts#L13)) — base resets are intentionally suppressed so Tailwind utilities don't fight the BEM/PostCSS layer. Tailwind is mostly available as utility classes; the existing UI is written in BEM/PostCSS.
 
 ### Stylelint
 
@@ -321,7 +316,7 @@ The hook installs automatically via `npm install` (the `prepare` script runs `hu
 ### Unit / component — Vitest + React Testing Library
 
 - Config: [vitest.config.ts](vitest.config.ts) (happy-dom env, globals, `~/*` alias via `vite-tsconfig-paths`).
-- Setup: [test/setup.ts](test/setup.ts) — adds `jest-dom` matchers, RTL `cleanup`, and stub polyfills for `ResizeObserver` and `IntersectionObserver` (recharts and `react-vertical-timeline-component` need them).
+- Setup: [test/setup.ts](test/setup.ts) — adds `jest-dom` matchers, RTL `cleanup`, and stub polyfills for `ResizeObserver` and `IntersectionObserver` (`react-vertical-timeline-component` needs them).
 - Render helper: [test/test-utils.tsx](test/test-utils.tsx) — wraps trees in a `createMemoryRouter` data-router (so `@remix-run/react`'s `Link` works) plus an `IntlProvider` populated from `app/intl/en-US.json`.
 - Tests live next to the component as `index.test.tsx`. Pattern: `app/**/*.{test,spec}.{ts,tsx}`.
 - Run: `npm test` (one shot), `npm run test:watch`, `npm run test:ui`.
@@ -339,16 +334,16 @@ The hook installs automatically via `npm install` (the `prepare` script runs `hu
 
 ### Visual regression — `visual.spec.ts`
 
-Full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. The `/skills` index route is excluded because recharts axis labels and the inline QR `<svg>` produce sub-pixel anti-aliasing diffs across environments — see [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
+Full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. The `/skills` index route is excluded because the inline QR `<svg>` and tenure-heatmap cells produce sub-pixel anti-aliasing diffs across environments — see [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
 
 Why linux-only: Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoji rendering differ enough between macOS and Ubuntu that committing both per-platform PNGs would double the snapshot footprint without gating anything (CI is the only place that runs the assertions). The spec's `SKIP_VISUAL` flag (in [tests/e2e/visual.spec.ts](tests/e2e/visual.spec.ts)) keys off `process.platform`.
 
 Determinism guards (set up in `prepare()` and `settle()`):
 
 1. **`page.clock.install({ time: FIXED_NOW })`** — the /skills "Total years of experience" card and any `endDate: null` work item both call `new Date()`; without freezing, rendered text drifts every day.
-2. **Animations + transitions disabled** via an injected stylesheet — recharts entrance, carousel auto-advance, the Front End / Back End neon-loop, and the vertical-timeline intersection animation would otherwise produce different pixels every run.
+2. **Animations + transitions disabled** via an injected stylesheet — the vertical-timeline intersection animation, theme-toggle slide, and any other CSS transitions would otherwise produce different pixels every run.
 3. **`document.fonts.ready`** before snapshotting — Roboto loads from `/fonts/roboto/`; without this guard the first capture can land while the system fallback is still rendering.
-4. **`networkidle` + 200 ms settle** for lazy chunks (BarChart, Carousel, Timeline) to land and lay out.
+4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, Carousel, Timeline) to land and lay out.
 
 The carousel is masked because its scroll-x position isn't worth gating on. The bar chart is **not** masked — that's exactly what we want to catch when a token change shifts colors or a data update changes bar order.
 
@@ -399,7 +394,7 @@ Every component in [app/components/](app/components/) has a colocated `index.sto
 ### Config
 
 - [.storybook/main.ts](.storybook/main.ts) — picks up `app/**/*.stories.@(ts|tsx|mdx)`, points the Vite builder at [.storybook/vite.config.ts](.storybook/vite.config.ts) (a clean Vite config without the `@remix-run/dev` plugin, which only works inside Remix's own pipeline). Add-ons: a11y, docs, chromatic.
-- [.storybook/preview.tsx](.storybook/preview.tsx) — one global decorator wraps stories in `IntlProvider` (so `FormattedMessage` works) and a `createMemoryRouter` data router (so `@remix-run/react`'s `<Link>` doesn't trip the `useHref` invariant). Imports `app/styles/style.css` and `app/styles/tailwind.css` so design tokens render.
+- [.storybook/preview.tsx](.storybook/preview.tsx) — one global decorator wraps stories in `IntlProvider` (so `FormattedMessage` works) and a `createMemoryRouter` data router (so `@remix-run/react`'s `<Link>` doesn't trip the `useHref` invariant). Imports `app/styles/style.css` so design tokens render.
 
 ### Adding a story
 
@@ -421,7 +416,7 @@ export const Default: StoryObj<typeof MyComponent> = {
 };
 ```
 
-Hardcoded values are fine — stories are for visual review, not type guarantees. If a component crashes only inside a story, it's almost always one of: missing `IntlProvider` message key, a route-only loader being called, or recharts/Timeline needing the existing `ResizeObserver`/`IntersectionObserver` stubs (which Storybook doesn't run, but happy-dom in tests does).
+Hardcoded values are fine — stories are for visual review, not type guarantees. If a component crashes only inside a story, it's almost always one of: missing `IntlProvider` message key, a route-only loader being called, or Timeline needing the existing `ResizeObserver`/`IntersectionObserver` stubs (which Storybook doesn't run, but happy-dom in tests does).
 
 > **Don't bump `eslint-plugin-storybook` independently** — it must match Storybook's major. The two are bumped together.
 
@@ -431,14 +426,14 @@ Hardcoded values are fine — stories are for visual review, not type guarantees
 
 ### File / folder naming ([.ls-lint.yml](.ls-lint.yml))
 
-| Extension                                | Rule                                                                 |
-| ---------------------------------------- | -------------------------------------------------------------------- |
-| Directories                              | `lowercase \| kebab-case` (default)                                  |
-| `app/components/*` dirs                  | `lowercase \| PascalCase` (allows consecutive caps, e.g. `BarChart`) |
-| `app/routes/*` dirs                      | `[a-zA-Z\$-_.]+` (Remix flat-route chars: `$`, `-`, `_`, `.`)        |
-| `.js`, `.ts`                             | `lowercase \| kebab-case`                                            |
-| `.jsx`, `.tsx`                           | `lowercase \| PascalCase`                                            |
-| `.css`, `.svg`, `.html`, `.png`, `.webp` | `lowercase \| kebab-case`                                            |
+| Extension                                | Rule                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------ |
+| Directories                              | `lowercase \| kebab-case` (default)                                |
+| `app/components/*` dirs                  | `lowercase \| PascalCase` (allows consecutive caps, e.g. `NavBar`) |
+| `app/routes/*` dirs                      | `[a-zA-Z\$-_.]+` (Remix flat-route chars: `$`, `-`, `_`, `.`)      |
+| `.js`, `.ts`                             | `lowercase \| kebab-case`                                          |
+| `.jsx`, `.tsx`                           | `lowercase \| PascalCase`                                          |
+| `.css`, `.svg`, `.html`, `.png`, `.webp` | `lowercase \| kebab-case`                                          |
 
 ### TypeScript
 
@@ -492,10 +487,8 @@ When adding a new route:
 
 ## 15. Gotchas
 
-- **Tailwind preflight is disabled** — don't expect Tailwind to reset margins / box-sizing / etc. Existing global resets live in [app/styles/style.css](app/styles/style.css).
 - **`app/components/icons/` is generated** — it's in `.eslintignore` and `.ls-lint.yml`'s ignore list, and the lint pipeline will fail if you check it in by hand with bad names. Always go through SVGR.
 - **`legacy-peer-deps=true`** is on (`.npmrc`) because of mismatched React-major peer ranges between deps (e.g. `@types/react@19` while `react@18` is installed). Don't remove it without testing `npm install` end-to-end.
-- **`react-is` is a direct dep** because `recharts` requires it at runtime but doesn't list it in its own dependencies. Don't try to drop it — tests fail with `Cannot find module 'react-is'`.
 - **Type annotations on dates**: `formatDate(start, end)` has three overloaded behaviors keyed off `formatType` and the shape of `end` (`undefined` → `"MM/yyyy - Present"`, `''` → `"MMMM yyyy"`, otherwise → `"MM/yyyy - MM/yyyy"`); see [app/utils/utils.tsx](app/utils/utils.tsx).
 - **Skills route loader 1h cache**: `/skills` sets `Cache-Control: public, max-age=3600`. After editing `skills.json`, expect up to an hour of stale data on prod.
 - **Image path lookup in `skills.$uuid`** lowercases the work-item title; new companies need a `public/assets/img/<lowercased-title>.webp` file or another override branch. Also add an entry to `LOGO_DIMS` in the loader so the `<img>` gets `width`/`height` and doesn't cause CLS.

@@ -1,32 +1,95 @@
 .carousel-component {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: $default-black;
-  border: $card-border;
-  padding: $space-30;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: $space-20;
-  overflow: scroll;
-  min-width: stretch;
-  border-radius: $border-10;
-  max-width: 300px;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  padding: $space-20;
+  border-radius: $border-8;
 
-  &::-webkit-scrollbar {
-    display: none;
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-12;
+  }
+
+  &__group-title {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Forward-looking groups (Learning, Future) recolor their title
+   * in accent green so the section reads as "in progress /
+   * aspirational" at a glance. Defined after the base
+   * &__group-title rule above so Stylelint's no-descending-specificity
+   * rule is satisfied (more-specific selector follows the base). */
+  &__group--learning &__group-title,
+  &__group--future &__group-title {
+    color: var(--accent);
+  }
+
+  &__item-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-12;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   &__item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 100px;
+    display: inline-block;
+    padding: 4px $space-12;
+    border: 1px solid var(--border-default);
+    border-radius: $border-6;
+    background: var(--bg-elevated);
+    color: var(--fg-base);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-14;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease;
+
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-muted);
+    }
   }
 
-  & svg {
-    height: 100%;
-    width: 100px;
+  /* Forward-looking chips (Learning + Future): dashed accent
+   * border, transparent fill so the dashes read against the card
+   * surface, accent text. The two variants share the visual
+   * treatment — only the group-title label distinguishes them. */
+  &__item--learning,
+  &__item--future {
+    border: 1px dashed var(--accent);
+    background: transparent;
+    color: var(--accent);
+
+    &:hover {
+      background: var(--accent-muted);
+    }
+  }
+}
+
+/* From tablet up: 2-column group layout. `auto` columns size each
+ * group to its widest chip (instead of `1fr` which would force both
+ * columns to the widest content's width). This keeps the card from
+ * ballooning when one chip — like the master's-degree label — is
+ * substantially longer than the rest.
+ *
+ * No 4-column escalation at $bp-lg: TechGrid sits in the
+ * side-by-side row with the heatmap on /skills, where 4 columns
+ * inside that already-narrow track would squeeze chips onto
+ * multiple lines. 2 columns reads cleanly across tablet → desktop. */
+@media screen and (min-width: $bp-md) {
+  .carousel-component {
+    grid-template-columns: repeat(2, auto);
   }
 }

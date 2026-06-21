@@ -3,10 +3,8 @@ import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-// Stage 13: Input CSS is inlined into the consuming route's style.css via
-// postcss-import. The previous links() export also emitted a `preload`
-// hint (Input is the first interactive widget on /skills) which is
-// redundant once the CSS lives in the route's main stylesheet.
+// Input CSS is inlined into the consuming route's style.css via
+// postcss-import.
 
 const BLOCK = 'input-component';
 const getClasses = getClassMaker(BLOCK);

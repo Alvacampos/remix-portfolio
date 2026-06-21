@@ -6,8 +6,11 @@ test.describe('Skills (/skills)', () => {
   });
 
   test('renders work experience timeline and total years card', async ({ page }) => {
+    // /skills page title — the section <h2> "Work Experience" was
+    // removed since the h1 + Total-years card already announce the
+    // page.
     await expect(
-      page.getByRole('heading', { name: 'Work Experience', exact: true, level: 2 })
+      page.getByRole('heading', { name: 'Skills & Work Experience', level: 1 })
     ).toBeVisible();
     // Qubika (most recent role) is the topmost timeline entry post-Stage-24
     // reversal — assert against it instead of Globant so the assertion
@@ -35,17 +38,16 @@ test.describe('Skills (/skills)', () => {
     ).toBeVisible();
   });
 
-  test('renders the Technologies section and bar chart', async ({ page }) => {
+  test('renders the Technologies section and tenure heatmap', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /Technologies/i })).toBeVisible();
-    // Bar chart container
-    await expect(page.locator('.bar-chart-component').first()).toBeVisible();
-    // Chart is derived from WORK_ITEMS — read y-axis labels and assert that
-    // core technologies are present and excluded filter-chips are not.
-    // recharts 3.8+ renders tick labels under `.recharts-yAxis-tick-labels`
-    // (was bare `<text>` children of `.recharts-yAxis` in older versions).
-    const chartLabels = page.locator('.bar-chart-component .recharts-yAxis-tick-labels text');
-    await expect(chartLabels.first()).toBeVisible();
-    const labelTexts = (await chartLabels.allTextContents()).map((t) => t.trim());
+    // Heatmap container.
+    await expect(page.locator('.tenure-heatmap').first()).toBeVisible();
+    // The heatmap is derived from WORK_ITEMS — read its row-header
+    // skill labels and assert core technologies are present and
+    // CHART_EXCLUDE filter-chips are not.
+    const skillLabels = page.locator('.tenure-heatmap__skill[role="rowheader"]');
+    await expect(skillLabels.first()).toBeVisible();
+    const labelTexts = (await skillLabels.allTextContents()).map((t) => t.trim());
     expect(labelTexts).toContain('React');
     expect(labelTexts).toContain('TypeScript');
     expect(labelTexts).not.toContain('Front End');
@@ -61,10 +63,10 @@ test.describe('Skills (/skills)', () => {
 test.describe('Skill detail (/skills/:uuid)', () => {
   test('navigates from timeline card to detail page', async ({ page }) => {
     await page.goto('/skills');
-    // Qubika (most recent) is the topmost timeline card after Stage 24's
-    // reversal — using it instead of Globant avoids the
-    // IntersectionObserver-based lazy mount issue (see timeline-render
-    // test for the long version).
+    // Qubika is the topmost timeline card (most recent role) — using
+    // it instead of an older entry avoids the IntersectionObserver-
+    // based lazy mount issue (see timeline-render test for the long
+    // version).
     await page
       .getByRole('link')
       .filter({ hasText: /Qubika/i })

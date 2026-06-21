@@ -26,9 +26,9 @@ const FIXED_NOW = new Date('2026-06-18T12:00:00.000Z');
 async function prepare(page: Page) {
   await page.clock.install({ time: FIXED_NOW });
   await page.addInitScript(() => {
-    // Disable animations and transitions so entrance fades, recharts
-    // tweens, the carousel auto-scroll, and the Front End / Back End
-    // button neon-loops can't make screenshots flaky.
+    // Disable animations and transitions so entrance fades, the
+    // theme-toggle slide, and the vertical-timeline intersection
+    // animation can't make screenshots flaky.
     const style = document.createElement('style');
     style.textContent = `
       *, *::before, *::after {
@@ -46,19 +46,18 @@ async function prepare(page: Page) {
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready);
-  // Recharts mounts after Suspense boundary resolves; give it a frame
-  // to lay out before capturing.
+  // Lazy-loaded chunks (TenureHeatmap, Carousel, Timeline) mount after
+  // their Suspense boundary resolves; give them a frame to lay out
+  // before capturing.
   await page.waitForTimeout(200);
 }
 
-// /skills (the index route) is intentionally not in this list. Recharts
-// emits SVG <text> for axis labels and the inline QR <svg> in the nav
-// hits the same anti-aliasing pipeline; sub-pixel font hinting drifts
-// ~0.4% of pixels between the local Docker regen environment and CI's
-// runner — invisible to the eye but consistently above the 0.2% diff
-// budget. Trying to mask both the chart and the QR leaves the route
-// gating very little, so it earns its keep less than the simpler routes.
-// The other 4 routes have no recharts and only stable DOM-rendered text.
+// /skills (the index route) is intentionally not in this list. The
+// tenure-heatmap cells and the inline QR <svg> in the nav both hit
+// the anti-aliasing pipeline and drift ~0.4% of pixels between the
+// local Docker regen environment and CI's runner — invisible to the
+// eye but consistently above the 0.2% diff budget. The other 4
+// routes only have stable DOM-rendered text.
 const ROUTES = [
   { name: 'home', path: '/' },
   { name: 'skills-detail', path: '/skills/1' }, // Globant — first WORK_ITEM
@@ -82,8 +81,9 @@ test.describe('Visual regression', () => {
       // drifts on sub-pixel anti-aliasing across environments; mask it
       // even though it's stable in content. Worth keeping in the suite
       // for now — if a future regression is the QR breaking, the
-      // behavioural specs will catch it via the LinkedIn link.
-      const masks = [page.locator('.nav-bar-component__qr')];
+      // behavioural specs will catch it via the LinkedIn link. (No-op
+      // on mobile where the QR is `display: none`.)
+      const masks = [page.locator('.navbar-component__qr')];
 
       await expect(page).toHaveScreenshot(`${name}.png`, {
         fullPage: true,

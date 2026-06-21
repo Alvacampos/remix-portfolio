@@ -5,7 +5,6 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import messages from '../app/intl/en-US.json';
 import '../app/styles/style.css';
-import '../app/styles/tailwind.css';
 
 // Stories that render @remix-run/react's <Link> need a data router in
 // scope (useHref invariant) — same trick as the unit test render helper.

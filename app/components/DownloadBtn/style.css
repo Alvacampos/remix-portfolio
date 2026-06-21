@@ -1,9 +1,9 @@
 .download-btn {
   display: inline-block;
-  padding: $space-10 $space-20;
-  background: $background-variation;
-  color: $text-color;
-  border: $card-border;
+  padding: $space-12 $space-20;
+  background: var(--bg-surface);
+  color: var(--fg-base);
+  border: 1px solid var(--border-default);
   border-radius: $border-6;
   font-size: $font-16;
   font-weight: $weight-700;
@@ -12,16 +12,21 @@
     background 0.2s,
     color 0.2s,
     box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(31, 35, 40, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
   /* :focus-visible (not :focus) so the highlight only shows for
    * keyboard users — clicking with a mouse / tapping on touch
    * doesn't leave the button stuck in the focused state. */
   &:hover,
   &:focus-visible {
-    background: $success-green;
-    color: $default-white;
-    box-shadow: 0 4px 16px rgba(56, 139, 253, 0.15);
+    background: var(--accent);
+    /* Hard white on the accent green for contrast on both themes —
+     * GitHub's hero-green is dark enough that white text reads
+     * cleanly. */
+    color: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(15, 191, 62, 0.2);
     text-decoration: none;
+    outline: none;
   }
 }

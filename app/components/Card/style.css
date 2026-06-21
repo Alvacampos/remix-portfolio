@@ -1,9 +1,16 @@
 .card-component {
   display: flex;
   justify-content: center;
-  border-radius: $border-10;
-  background-color: $default-black;
-  border: $card-border;
+  /* 8px (between $border-6 and $border-10) matches GitHub's own
+   * card radius — softer than 10px which read as toy-like next to
+   * the cleaner GitHub vocabulary. */
+  border-radius: $border-8;
+  /* Surface (subtle lift over page bg in dark; same as page in
+   * light, anchored by --border-default). Theme-aware via the
+   * [data-theme] cascade in app/styles/style.css. */
+  background-color: var(--bg-surface);
+  color: var(--fg-base);
+  border: 1px solid var(--border-default);
   flex-direction: column;
   overflow: hidden;
 
@@ -11,40 +18,39 @@
    * Section h2 sizes are set in the /skills, /education, and detail
    * route stylesheets — this is the smaller card-internal default. */
   & h2 {
-    font-size: $font-18;
+    font-size: $font-20;
   }
 
+  /* Styleless was originally "no border" — that meant timeline
+   * cards floated as raw text against the page. Now that the
+   * design language gives every panel its own surface + border
+   * (mirroring how GitHub layers its UI), styleless keeps the
+   * bg + border and only relaxes the section-h2 sizing for the
+   * tighter timeline card. */
   &--styleless {
-    border: none;
-
     & div h2 {
-      font-size: $font-18;
+      font-size: $font-20;
     }
 
     &:hover {
-      @keyframes border-highlight {
-        from {
-          border-color: transparent;
-        }
-
-        to {
-          border-color: $success-green;
-        }
-      }
-
-      animation: border-highlight 0.5s ease-in-out forwards;
-      border: 1px solid transparent;
-      background: $default-grey;
+      border-color: var(--accent);
+      background: var(--bg-elevated);
       cursor: pointer;
-      transition: background 0.5s linear;
+      transition:
+        border-color 200ms ease,
+        background 200ms ease;
     }
   }
 
   &__title-wrapper {
     text-align: center;
-    box-shadow: inset 0 -1px 0 #21262d;
-    background-color: $background-variation;
-    padding: 0 $space-5;
+    /* Header sits on --bg-elevated so it reads as a header band
+     * distinct from both the page bg and the card body. The
+     * hairline divider underneath reinforces the split for users
+     * with reduced color sensitivity. */
+    background-color: var(--bg-elevated);
+    box-shadow: inset 0 -1px 0 var(--border-default);
+    padding: $space-16 $space-4;
   }
 
   &__text-container {
@@ -52,7 +58,14 @@
   }
 
   &__main-text-wrapper {
-    margin-bottom: $space-10;
+    margin-bottom: $space-12;
+  }
+
+  /* Bold prefix label for texts lines (e.g. "Rol:" before the role
+   * description on timeline cards). Same weight as the
+   * skills-label so the two read as siblings. */
+  &__texts-label {
+    font-weight: $weight-700;
   }
 
   &__list {
@@ -64,18 +77,18 @@
   }
 
   &__divider {
-    margin: $space-10 auto;
+    margin: $space-12 auto;
     width: 80%;
     border: 0;
-    border-bottom: $card-border;
+    border-bottom: 1px solid var(--border-default);
   }
 
   &__skills-container {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    margin-top: $space-10;
-    gap: $space-10;
+    margin-top: $space-12;
+    gap: $space-12;
   }
 
   &__skills-label {
@@ -86,7 +99,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: $space-5;
+    gap: $space-4;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -94,18 +107,37 @@
 
   &__chip {
     display: inline-block;
-    padding: 2px $space-10;
-    border: $card-border;
+    padding: 2px $space-12;
+    border: 1px solid var(--border-default);
     border-radius: $border-10;
-    background: $background-variation;
+    background: var(--bg-elevated);
+    color: var(--fg-base);
+    /* Monaspace Neon for tech/skill chips — same visual language
+     * as IDE labels, distinguishes them from prose. */
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     font-size: $font-14;
     line-height: 1.4;
     white-space: nowrap;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease;
+
+    &:hover {
+      /* --accent-muted is intentionally subtle: green-tinted
+       * highlight in dark, soft mint in light. Hints at
+       * interactivity without screaming. */
+      border-color: var(--accent);
+      background: var(--accent-muted);
+    }
 
     &--more {
       background: transparent;
-      color: $alternative-green;
-      border-color: $alternative-green;
+      color: var(--accent);
+      border-color: var(--accent);
+
+      &:hover {
+        background: var(--accent-muted);
+      }
     }
   }
 }

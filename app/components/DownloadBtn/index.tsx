@@ -1,7 +1,7 @@
 import { getClassMaker } from '~/utils/utils';
 
-// Stage 13: DownloadBtn CSS is inlined into the consuming route's style.css
-// via postcss-import. No links() export.
+// DownloadBtn CSS is inlined into the consuming route's style.css
+// via postcss-import — no links() export.
 
 type DownloadButtonProps = {
   fileUrl: string;

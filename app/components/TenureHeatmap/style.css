@@ -1,0 +1,174 @@
+.tenure-heatmap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-12;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: $border-8;
+  /* Tight padding — the grid carries its own breathing room via the
+   * 3px gap between cells. */
+  padding: $space-16;
+  /* Allow horizontal scroll on narrow viewports rather than squashing
+   * the grid — a CV with 9+ years × 14 skills would otherwise crush
+   * cells to sub-pixel widths on phones. */
+  overflow-x: auto;
+
+  &__grid {
+    display: grid;
+    /* First column = skill label, then one column per year. Mobile
+     * uses 22px tracks (legibility on small screens); desktop drops
+     * to 14px to match GitHub's contribution-graph density. The
+     * --years-count is set inline by the React component. */
+    grid-template-columns: minmax(90px, 110px) repeat(var(--years-count), 22px);
+    gap: 3px;
+    align-items: center;
+    justify-content: start;
+  }
+
+  &__row {
+    display: contents;
+  }
+
+  &__skill {
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    color: var(--fg-base);
+    padding-right: $space-4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__year-label {
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    color: var(--fg-muted);
+    text-align: center;
+  }
+
+  &__cell {
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    transition: transform 120ms ease;
+
+    &:hover {
+      transform: scale(1.15);
+      border-color: var(--border-emphasis);
+    }
+  }
+
+  /* GitHub contribution-graph green ramp. Level-0 is the empty
+   * surface, levels 1-4 climb in saturation + brightness. Same hex
+   * set works in both themes — the cell sits on --bg-surface, which
+   * has enough contrast either way. */
+  /* Empty cell (level 0) sits a hair above --bg-elevated so the
+   * grid bounds read clearly against the card surface in dark
+   * mode — without the bump it merged into the chip surface. */
+  &__cell--level-0 {
+    background: #2a3530;
+    border-color: var(--border-default);
+  }
+
+  &__cell--level-1 {
+    background: #0e4429;
+  }
+
+  &__cell--level-2 {
+    background: #006d32;
+  }
+
+  &__cell--level-3 {
+    background: #26a641;
+  }
+
+  &__cell--level-4 {
+    background: #39d353;
+  }
+
+  &__legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-end;
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    color: var(--fg-muted);
+
+    & .tenure-heatmap__cell {
+      width: 12px;
+      height: 12px;
+      aspect-ratio: auto;
+      transform: none;
+      cursor: default;
+
+      &:hover {
+        transform: none;
+        border-color: transparent;
+      }
+    }
+  }
+
+  &__legend-label {
+    margin: 0 $space-4;
+  }
+
+  /* Tiny link-like toggle — matches GitHub's "Show more" pattern.
+   * Sits on its own at the bottom-right of the heatmap card so it
+   * reads as metadata, not a primary CTA. */
+  &__toggle {
+    align-self: flex-end;
+    background: transparent;
+    color: var(--accent);
+    border: none;
+    padding: 0;
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--accent-soft);
+      text-decoration: underline;
+      outline: none;
+    }
+  }
+}
+
+/* Desktop: cells back to GitHub-density 14px (mobile keeps 22px so
+ * the grid doesn't crush on small screens). Skill column also gets
+ * a wider min so the longer skill names breathe. */
+@media screen and (min-width: $bp-md) {
+  .tenure-heatmap__grid {
+    grid-template-columns: minmax(110px, 140px) repeat(var(--years-count), 14px);
+  }
+}
+
+/* Light mode tweak: the level-1 dark green is too close to the page bg
+ * in dark mode but reads cleanly in light. Bump the level-0 cell so
+ * the empty cells are clearly distinct from the lowest-activity ones. */
+[data-theme='light'] .tenure-heatmap {
+  &__cell--level-0 {
+    background: #ebedf0;
+    border-color: #d0d7de;
+  }
+
+  &__cell--level-1 {
+    background: #9be9a8;
+  }
+
+  &__cell--level-2 {
+    background: #40c463;
+  }
+
+  &__cell--level-3 {
+    background: #30a14e;
+  }
+
+  &__cell--level-4 {
+    background: #216e39;
+  }
+}

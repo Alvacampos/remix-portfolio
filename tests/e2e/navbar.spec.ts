@@ -5,11 +5,11 @@ test.describe('Navigation', () => {
     await page.goto('/');
     await page.getByRole('link', { name: /CV/i }).first().click();
     await expect(page).toHaveURL(/\/skills$/);
-    // exact match: the page <h1> "Skills & Work Experience" also contains
-    // the substring "Work Experience" so a regex match collides; we want
-    // the section <h2> here.
+    // The section h2 "Work Experience" was removed (the h1 +
+    // Total-years card already announce the page). Assert the page
+    // title h1 instead.
     await expect(
-      page.getByRole('heading', { name: 'Work Experience', exact: true, level: 2 })
+      page.getByRole('heading', { name: 'Skills & Work Experience', level: 1 })
     ).toBeVisible();
   });
 

@@ -1,5 +1,5 @@
-/* Card CSS is inlined here so /skills/:uuid ships one stylesheet instead of
- * two (Stage 13). postcss-import resolves the path at build time. */
+/* Card CSS is inlined here so /skills/:uuid ships one stylesheet
+ * instead of two. postcss-import resolves the path at build time. */
 @import '../../components/Card/style.css';
 
 .skills-id-route {
@@ -47,7 +47,7 @@
       margin-bottom: 0.75rem;
       padding-left: 1.25rem;
       list-style: none;
-      color: #c9d1d9; /* GitHub dark mode text */
+      color: var(--fg-base);
 
       &::before {
         content: '';
@@ -56,19 +56,18 @@
         top: 0.95em;
         width: 0.55em;
         height: 0.55em;
-        background: linear-gradient(135deg, #238636 40%, #58a6ff 100%);
+        background: var(--accent);
         border-radius: 50%;
         transform: translateY(-50%);
-        box-shadow: 0 1px 4px rgba(56, 139, 253, 0.12);
-        border: 2px solid #161b22; /* subtle border for contrast */
+        border: 2px solid var(--bg-base);
       }
     }
   }
 
   &__error {
     color: $error-red;
-    background: $background-variation;
-    border: $card-border;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
     border-radius: $border-10;
     padding: $space-20 $space-16;
     margin: $space-40 auto;

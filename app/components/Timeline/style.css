@@ -1,32 +1,47 @@
 .timeline-component {
   /*
-   * react-vertical-timeline-component v4 introduced a `--line-color`
-   * custom property (default #fff) for the vertical line. Override it
-   * here to keep the brand green from the previous v3 styling.
-   */
-  --line-color: #2ea043;
+   * react-vertical-timeline-component v4 ships a `--line-color`
+   * custom property (default #fff) for the vertical line. Point it
+   * at our theme accent so it works in both modes. */
+  --line-color: var(--accent);
 
-  & .vertical-timeline-element-content {
-    background: none;
+  /* Library default: padding: 2em 0 on .vertical-timeline + 4em
+   * margin between elements at desktop, which leaves a tall empty
+   * gap below the last element before the next sibling (the
+   * "Total years of experience" card on /skills). Tighten the
+   * bottom so the timeline ends close to its last card. */
+  & .vertical-timeline {
+    padding: 0 0 $space-16 0;
+  }
+
+  & .vertical-timeline-element:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Library zeros out bg + box-shadow on
+   * .vertical-timeline-element--no-children .vertical-timeline-element-content
+   * (which our wrapper-around-Card pattern triggers since the
+   * <Card /> isn't a recognized child). We want both the no-children
+   * and default cases to render transparent here so the inner Card
+   * can paint its own theme-aware surface + border. */
+  & .vertical-timeline-element .vertical-timeline-element-content {
+    background: transparent;
     box-shadow: none;
+    padding: 0;
 
     & .bounce-in {
-      border-radius: $border-10;
+      border-radius: $border-8;
       overflow: hidden;
     }
 
     & h2 {
-      color: $text-color;
-    }
-
-    & svg {
-      width: $space-40;
+      color: var(--fg-base);
     }
   }
 
   & .vertical-timeline--two-columns {
     &::before {
-      background: $alternative-green;
+      background: var(--accent);
     }
 
     & .vertical-timeline-element-content {
@@ -34,7 +49,7 @@
     }
 
     & .vertical-timeline-element-content-arrow {
-      border-right-color: $alternative-green;
+      border-right-color: var(--accent);
     }
   }
 
@@ -49,10 +64,10 @@
   & .vertical-timeline-element-icon.shadow-size-small,
   & .vertical-timeline-element-icon.shadow-size-medium,
   & .vertical-timeline-element-icon.shadow-size-large {
-    background: $background-default;
-    color: $alternative-green;
+    background: var(--bg-base);
+    color: var(--accent);
     box-shadow:
-      0 0 0 4px $alternative-green,
+      0 0 0 4px var(--accent),
       inset 0 2px 0 rgba(0, 0, 0, 0.08),
       0 3px 0 4px rgba(0, 0, 0, 0.05);
   }
@@ -60,7 +75,7 @@
   & .vertical-timeline-element-icon svg {
     top: 50%;
     left: 50%;
-    fill: $alternative-green;
+    fill: var(--accent);
   }
 
   &__element-link {
@@ -70,10 +85,9 @@
 
     /* Keyboard-focus affordance. The Card inside fires its own
      * :hover on mouse, but a tab-focused link gets no feedback
-     * unless we paint it here. Outline matches $success-green to
-     * stay on-brand. */
+     * unless we paint it here. */
     &:focus-visible {
-      outline: 2px solid $success-green;
+      outline: 2px solid var(--accent);
       outline-offset: 4px;
     }
   }
@@ -86,7 +100,7 @@
    * than the icon center.
    *
    * Also force `opacity: 1` because the library dims the date to 0.7
-   * by default, and we already control color via $text-color.
+   * by default, and we already control color via var(--fg-base).
    */
   &
     .vertical-timeline--two-columns
@@ -95,6 +109,10 @@
     top: 24px;
     padding: 0;
     opacity: 1;
+    /* Mono date label — IDE-like, sits next to the icon ring as
+     * a metadata stamp rather than prose. */
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    color: var(--fg-muted);
   }
 }
 
@@ -144,12 +162,12 @@
       }
 
       & .vertical-timeline-element-content-arrow {
-        border-right-color: $alternative-green;
-        margin-top: $space-10;
+        border-right-color: var(--accent);
+        margin-top: $space-12;
       }
 
       & .vertical-timeline-element-date {
-        margin: $space-5 0 0 $space-10;
+        margin: $space-4 0 0 $space-12;
       }
     }
   }

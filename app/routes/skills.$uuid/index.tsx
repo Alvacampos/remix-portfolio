@@ -47,9 +47,25 @@ type skillsDataTypes =
     }
   | undefined;
 
-// Intrinsic dimensions for each company logo, fed to <img width> / <img height>
-// to reserve layout space (fixes CLS). Captured from the source webp files;
-// keep in sync if logos are replaced with different-sized variants.
+// Display dimensions for each company logo, fed to <img width> /
+// <img height> to reserve layout space (fixes CLS).
+//
+// These values are NOT the intrinsic webp dimensions — most logos are
+// intentionally narrowed in height so the <img> renders as a banner
+// rather than its full square / portrait aspect (browsers infer the
+// aspect-ratio from these attributes). The width matches the source
+// file; the height is hand-picked per logo for the banner crop.
+//
+// Real intrinsics for reference (decoded from public/assets/img/*.webp):
+//   unsta2:     968×519   → narrowed to 968×400
+//   coderhouse: 976×272   → unchanged
+//   globant:    3000×2000 → narrowed to 3000×200
+//   cliengo:    999×300   → narrowed to 999×200
+//   endava:     541×184   → unchanged
+//   qubika:     800×600   → narrowed to 800×400
+//
+// If a logo is swapped, re-pick its banner height; the source file's
+// own dimensions are not the authority.
 const LOGO_DIMS: Record<string, { width: number; height: number }> = {
   'unsta2.webp': { width: 968, height: 400 },
   'coderhouse.webp': { width: 976, height: 272 },

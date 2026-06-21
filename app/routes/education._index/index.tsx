@@ -86,7 +86,11 @@ export default function Skills() {
       certification.institution,
       certification.description,
     ],
-    children: certification?.url && <Link to={certification.url}>Certification Link</Link>,
+    children: certification?.url && (
+      <Link to={certification.url} target="_blank" rel="noreferrer">
+        Certification Link
+      </Link>
+    ),
   }));
 
   return (

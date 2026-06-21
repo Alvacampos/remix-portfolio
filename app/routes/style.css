@@ -1,5 +1,5 @@
-/* DownloadBtn CSS is inlined here so / ships one stylesheet instead of two
- * (Stage 13). postcss-import resolves the path at build time. */
+/* DownloadBtn CSS is inlined here so / ships one stylesheet instead
+ * of two. postcss-import resolves the path at build time. */
 @import '../components/DownloadBtn/style.css';
 
 .home-route {
@@ -7,7 +7,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
+  /* Fill the available viewport so the welcome copy + download
+   * button center vertically. --nav-h subtracts the mobile bottom-
+   * stuck navbar's claimed height (so the body doesn't end up
+   * taller than the screen and trigger a scroll); on desktop
+   * --nav-h resolves to 0 since the nav is fixed-position and
+   * doesn't claim viewport vertical space. */
+  min-height: calc(100vh - var(--nav-h));
   text-align: center;
   white-space: pretty;
 
@@ -26,23 +32,27 @@
     margin-top: 1rem;
     text-decoration: none;
     display: flex;
-    gap: $space-5;
+    gap: $space-4;
   }
 
   &__repo-link {
     font-weight: bold;
 
     a {
-      color: $text-color;
+      /* Accent green so the in-line link visibly stands out from
+       * the body sentence around it — matches GitHub's link
+       * vocabulary (link color = brand accent) instead of the
+       * site's foreground neutral. */
+      color: var(--accent);
       transition:
-        filter 0.2s,
+        color 0.2s,
         text-decoration 0.2s;
       text-decoration: none;
     }
 
     a:hover,
     a:focus-visible {
-      filter: brightness(1.2);
+      color: var(--accent-soft);
       text-decoration: underline;
       outline: none;
     }
@@ -52,7 +62,7 @@
 @media screen and (min-width: $desktop-small) {
   .home-route {
     h1 {
-      font-size: $font-32;
+      font-size: $font-30;
     }
   }
 }
