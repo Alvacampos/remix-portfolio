@@ -30,7 +30,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: $space-10;
+    padding: $space-12;
     box-shadow: inset 0 -1px 0 var(--border-emphasis);
   }
 
@@ -56,12 +56,12 @@
   }
 
   &__special-anchor {
-    width: $space-30;
-    height: $space-30;
+    width: $space-32;
+    height: $space-32;
 
     & svg {
-      width: $space-30;
-      height: $space-30;
+      width: $space-32;
+      height: $space-32;
     }
   }
 
@@ -104,7 +104,7 @@
 
           .button-component {
             display: flex;
-            gap: $space-15;
+            gap: $space-16;
             justify-content: center;
             align-items: center;
             font-size: $font-14;
@@ -126,11 +126,11 @@
 @media screen and (min-width: $mobile-small) {
   .navbar-component {
     &__special-anchor-container {
-      height: $space-70;
+      height: $space-72;
     }
 
     &__main-buttons {
-      height: $space-70;
+      height: $space-72;
     }
 
     &__main-buttons ul li a .button-component {
@@ -163,8 +163,8 @@
       height: $space-80;
 
       & svg {
-        width: $space-35;
-        height: $space-35;
+        width: $space-32;
+        height: $space-32;
       }
     }
 
@@ -218,18 +218,18 @@
 
           & a {
             width: 100%;
-            padding: $space-30 $space-40;
+            padding: $space-32 $space-40;
             color: inherit;
 
             & .button-component {
               background: inherit;
               cursor: inherit;
-              font-size: $font-15;
+              font-size: $font-14;
 
               & svg {
                 display: block;
-                width: $space-30;
-                height: $space-30;
+                width: $space-32;
+                height: $space-32;
               }
             }
           }

@@ -92,7 +92,7 @@ body {
 }
 
 main {
-  padding: 0 $space-5;
+  padding: 0 $space-4;
 }
 
 /*
@@ -125,7 +125,7 @@ main {
   top: -100px;
   left: 0;
   z-index: 1000;
-  padding: $space-10 $space-15;
+  padding: $space-12 $space-16;
   color: var(--fg-base);
   background: var(--bg-surface);
   text-decoration: none;

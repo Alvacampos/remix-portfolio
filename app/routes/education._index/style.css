@@ -26,14 +26,14 @@
 
   &__degree-container {
     display: flex;
-    gap: $space-10;
+    gap: $space-12;
     flex-direction: column;
   }
 
   &__learn-more {
     display: flex;
     align-items: center;
-    gap: $space-5;
+    gap: $space-4;
     margin: 0;
     color: var(--accent);
     font-weight: $weight-700;
@@ -113,7 +113,7 @@
     &__degree-container {
       display: flex;
       flex-direction: row;
-      gap: $space-10;
+      gap: $space-12;
     }
 
     &__degree {

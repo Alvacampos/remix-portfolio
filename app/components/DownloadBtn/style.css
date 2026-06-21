@@ -1,6 +1,6 @@
 .download-btn {
   display: inline-block;
-  padding: $space-10 $space-20;
+  padding: $space-12 $space-20;
   background: var(--bg-surface);
   color: var(--fg-base);
   border: 1px solid var(--border-default);

@@ -11,7 +11,7 @@
    * "Total years of experience" card on /skills). Tighten the
    * bottom so the timeline ends close to its last card. */
   & .vertical-timeline {
-    padding: 0 0 $space-15 0;
+    padding: 0 0 $space-16 0;
   }
 
   & .vertical-timeline-element:last-child {
@@ -163,11 +163,11 @@
 
       & .vertical-timeline-element-content-arrow {
         border-right-color: var(--accent);
-        margin-top: $space-10;
+        margin-top: $space-12;
       }
 
       & .vertical-timeline-element-date {
-        margin: $space-5 0 0 $space-10;
+        margin: $space-4 0 0 $space-12;
       }
     }
   }
