@@ -167,13 +167,14 @@ main {
  */
 @media screen and (min-width: $bp-md) {
   body {
-    grid-auto-flow: column;
-    grid-template-columns: min-content 3fr;
-    grid-template-rows: auto;
-
-    & .navbar-component {
-      grid-row: 1;
-    }
+    /* Drop the mobile grid: NavBar uses `position: fixed` on
+     * desktop so it isn't part of normal flow. We just need a
+     * left-padding on the document content equal to the rail's
+     * width so the page text doesn't slide under it. */
+    display: block;
+    height: auto;
+    min-height: 100vh;
+    padding-left: $space-200;
   }
 
   main {

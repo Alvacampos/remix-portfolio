@@ -129,12 +129,15 @@
     flex-shrink: 0;
   }
 
-  /* Active state — current route. Soft accent background + accent
-   * text. Mobile uses just the bg + text; desktop adds a left stripe
-   * (handled in the media query). */
+  /* Active state — current route. Soft accent background carries
+   * the "this is selected" signal; text stays --fg-base so it reads
+   * neutrally instead of neon-green-on-dark-green (which the
+   * previous --accent text rendered as). The --accent itself only
+   * appears as the left stripe (desktop) so the brand color still
+   * marks the row, just less aggressively. */
   &__nav-link--active {
     background: var(--accent-muted);
-    color: var(--accent);
+    color: var(--fg-base);
     font-weight: $weight-700;
   }
 }
@@ -153,6 +156,27 @@
     border-top: 0;
     border-right: 1px solid var(--border-default);
     min-width: $space-200;
+
+    /* Pin to the viewport top while the body scrolls beneath. We
+     * use `position: fixed` instead of `position: sticky` because
+     * body's grid layout (display: grid + grid-template-columns)
+     * doesn't establish a sticky-cooperative parent in all browsers
+     * — sticky kept scrolling off-screen on long pages like /skills.
+     * Fixed lets us anchor to the viewport directly.
+     *
+     * The grid track for the nav still claims its 200px width
+     * (min-width on the rail), so content doesn't slide under it. */
+    position: fixed;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    height: 100vh;
+    max-height: 100vh;
+    width: $space-200;
+    /* X-axis still clipped to keep hover pills inside the rail; Y
+     * scrolls if the rail's content (avatar + toggle + buttons +
+     * eventual additions) ever exceeds the viewport height. */
+    overflow: hidden auto;
 
     /* Avatar visible at desktop only. Round, matches the rail's
      * accent — bordered in --accent-soft for a subtle highlight
@@ -185,17 +209,19 @@
       flex: 1;
     }
 
-    /* Inset the buttons so hover/active pills sit INSIDE the rail
-     * instead of edge-to-edge. Matches the example reference where
-     * each item is a chip with breathing room on both sides. */
+    /* Vertical padding only — letting the active pill stretch
+     * edge-to-edge horizontally reads cleaner against the rail than
+     * the previous "inset chip" look. The 12px top/bottom keeps the
+     * top/bottom buttons from butting up against the social-row
+     * divider above and the (empty) bottom of the rail. */
     &__main-buttons {
       width: 100%;
-      padding: $space-8;
+      padding: $space-12 0;
 
       & ul {
         flex-direction: column;
         align-items: stretch;
-        gap: $space-4;
+        gap: $space-8;
 
         & li {
           display: block;
@@ -218,14 +244,12 @@
       height: $space-20;
     }
 
-    /* Desktop active state — soft accent background + accent text +
-     * a 3px left stripe. The stripe is the same idea as the example
-     * reference's filled-pill active route, dialed back so the
-     * surrounding rail still reads neutral. */
+    /* Desktop active state — soft accent background + neutral text
+     * + a 3px left stripe in --accent. The base rule above sets the
+     * bg + text; this block adds the stripe and the relative
+     * positioning needed for it. */
     &__nav-link--active {
       position: relative;
-      background: var(--accent-muted);
-      color: var(--accent);
 
       &::before {
         content: '';

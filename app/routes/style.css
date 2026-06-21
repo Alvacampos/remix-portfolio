@@ -7,7 +7,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
+  /* Fill the viewport so the welcome copy + download button center
+   * vertically. Was `min-height: 100%` which worked when the body
+   * was `height: 100vh`, but the desktop layout switch dropped the
+   * body's fixed height — leaving the route to collapse to content
+   * height. 100vh anchors directly to the viewport regardless. */
+  min-height: 100vh;
   text-align: center;
   white-space: pretty;
 
