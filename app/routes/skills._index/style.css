@@ -9,11 +9,11 @@
 .skills-route {
   display: flex;
   flex-direction: column;
-  gap: $space-30;
+  gap: $space-32;
 
   &__page-title {
     text-align: center;
-    font-size: $font-32;
+    font-size: $font-30;
     margin: $space-20 0 0 0;
   }
 
@@ -30,7 +30,7 @@
 
     & .input-component {
       width: stretch;
-      padding: 0 $space-10;
+      padding: 0 $space-12;
     }
   }
 
@@ -45,7 +45,7 @@
         /* Mono numeric for the headline figure — reads as a stat
          * card rather than a sentence. */
         font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
-        font-size: $font-32;
+        font-size: $font-30;
         font-weight: $weight-700;
         color: var(--accent);
         letter-spacing: -0.02em;

@@ -91,29 +91,59 @@ export default {
   'border-6': '6px',
   'border-4': '4px',
 
-  // Spaces
-  'space-200': '200px',
-  'space-80': '80px',
-  'space-70': '70px',
-  'space-60': '60px',
-  'space-40': '40px',
-  'space-35': '35px',
-  'space-30': '30px',
-  'space-20': '20px',
+  // ─── Spacing scale ──────────────────────────────────────────────
+  // 4-based stepping with value-as-name: $space-N → N px. Stage 33
+  // collapsed the previous improvised set (5/10/15/16/20/30/35/...)
+  // into this clean ladder so designers / future-me have a single
+  // sensible step at every size.
+  //
+  // Migration mapping (committed 1:1 in the same PR — old values
+  // updated to the closest new step, accepting 1-2px shifts where
+  // the old value didn't sit on the new ladder):
+  //   $space-5  (5px)  → $space-4  (4px)
+  //   $space-10 (10px) → $space-12 (12px) — finer gaps want 8 instead
+  //   $space-15 (15px) → $space-16 (16px)
+  //   $space-16 (16px) → $space-16 (no change)
+  //   $space-20 (20px) → $space-20 (no change)
+  //   $space-30 (30px) → $space-32 (32px)
+  //   $space-35 (35px) → $space-32 (32px)
+  //   $space-40 (40px) → $space-40 (no change)
+  //   $space-60 (60px) → $space-60 (no change)
+  //   $space-70 (70px) → $space-72 (72px)
+  //   $space-80 (80px) → $space-80 (no change)
+  //   $space-200 (200px) → $space-200 (no change)
+  //
+  // Add new steps as needed but keep the 4-based discipline.
+  'space-4': '4px',
+  'space-8': '8px',
+  'space-12': '12px',
   'space-16': '16px',
-  'space-15': '15px',
-  'space-10': '10px',
-  'space-5': '5px',
+  'space-20': '20px',
+  'space-24': '24px',
+  'space-32': '32px',
+  'space-40': '40px',
+  'space-48': '48px',
+  'space-60': '60px',
+  'space-72': '72px',
+  'space-80': '80px',
+  'space-200': '200px',
 
-  // Font Sizes
-  'font-32': '32px',
-  'font-24': '24px',
-  'font-20': '20px',
-  'font-18': '18px',
-  'font-16': '16px',
-  'font-15': '15px',
-  'font-14': '14px',
+  // ─── Type scale ─────────────────────────────────────────────────
+  // 1.25 ratio with value-as-name. The old scale had an orphan 15
+  // (1 use, between 14 and 16) and 18 (2 uses, between 16 and 20)
+  // — both snapped to the closest neighbour during the Stage 33
+  // migration. 32 → 30 since the ratio lands cleaner there.
+  //
+  // Migration:
+  //   $font-15 (15px) → $font-14
+  //   $font-18 (18px) → $font-20
+  //   $font-32 (32px) → $font-30
   'font-12': '12px',
+  'font-14': '14px',
+  'font-16': '16px',
+  'font-20': '20px',
+  'font-24': '24px',
+  'font-30': '30px',
 
   // Weights
   'weight-700': '700',
