@@ -224,16 +224,16 @@
      * divider above and the (empty) bottom of the rail. */
     &__main-buttons {
       width: 100%;
-      padding: $space-12 0;
 
       & ul {
         flex-direction: column;
         align-items: stretch;
-        gap: $space-8;
+        height: 100%;
 
         & li {
           display: block;
           flex: none;
+          height: $space-72;
         }
       }
     }
@@ -242,9 +242,10 @@
       flex-direction: row;
       justify-content: flex-start;
       gap: $space-12;
-      padding: $space-8 $space-12;
+      padding: 0 $space-12;
       border-radius: $border-6;
       font-size: $font-14;
+      height: 100%;
     }
 
     &__nav-link-icon {
@@ -258,6 +259,7 @@
      * positioning needed for it. */
     &__nav-link--active {
       position: relative;
+      height: 100%;
 
       &::before {
         content: '';
