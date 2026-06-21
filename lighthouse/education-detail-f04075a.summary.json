@@ -1,0 +1,98 @@
+{
+  "fetchTime": "2026-06-21T15:39:10.003Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "lighthouseVersion": "13.4.0",
+  "commit": "f04075a",
+  "categories": {
+    "performance": 0.9,
+    "accessibility": 0.95,
+    "best-practices": 0.96,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "2.1 s",
+      "numericValue": 2125.0412,
+      "score": 0.8
+    },
+    "lcp": {
+      "displayValue": "3.3 s",
+      "numericValue": 3325.0412,
+      "score": 0.69
+    },
+    "si": {
+      "displayValue": "2.1 s",
+      "numericValue": 2125.0412,
+      "score": 0.99
+    },
+    "tbt": {
+      "displayValue": "0 ms",
+      "numericValue": 0,
+      "score": 1
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0.00006404009512693685,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "3.3 s",
+      "numericValue": 3325.0412000000006,
+      "score": 0.93
+    },
+    "ttfb": 28
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.8
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.69
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.99
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.93
+    },
+    {
+      "id": "image-aspect-ratio",
+      "title": "Displays images with incorrect aspect ratio",
+      "score": 0
+    },
+    {
+      "id": "color-contrast",
+      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+      "score": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
