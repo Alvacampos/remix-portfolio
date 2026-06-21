@@ -18,6 +18,7 @@ import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
 const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2';
+const MONO_FONT_URL = '/fonts/monaspace/MonaspaceNeon-Regular.woff2';
 // Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
 // non-relative image URLs. The PNG itself is rendered offline from
 // scripts/og-image.svg via scripts/render-og-image.mjs.
@@ -26,11 +27,22 @@ const OG_IMAGE_URL = `${SITE_URL}/assets/img/og.png`;
 export function links() {
   return [
     { rel: 'icon', href: '/assets/img/favicon.svg', type: 'image/svg+xml' },
-    // Preload the variable WOFF2 — it's the only font we ship and renders
-    // most of the visible text on first paint.
+    // Preload both font WOFF2s in parallel with the document. Without these,
+    // the browser only discovers each font after its @font-face rule is
+    // parsed inside the global stylesheet — and the stylesheet doesn't
+    // arrive until ~360ms in. Lighthouse measured a 683ms longest-chain on
+    // /skills (CSS → Monaspace) before this; preloading collapses that to
+    // a single round-trip alongside the HTML.
     {
       rel: 'preload',
       href: FONT_URL,
+      as: 'font',
+      type: 'font/woff2',
+      crossOrigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      href: MONO_FONT_URL,
       as: 'font',
       type: 'font/woff2',
       crossOrigin: 'anonymous',
