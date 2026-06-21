@@ -55,6 +55,18 @@ export default function NavBar() {
 
   return (
     <nav className={getClasses()}>
+      {/* Avatar — desktop only. Mobile bottom nav doesn't have the
+       * vertical real estate, and the photo doesn't add functional
+       * info (the Home page already shows it). */}
+      <div className={getClasses('avatar-row')}>
+        <img
+          src="/assets/img/me.jpeg"
+          alt="Gonzalo Alvarez Campos"
+          width={64}
+          height={64}
+          className={getClasses('avatar')}
+        />
+      </div>
       <div className={getClasses('utility-row')}>
         <ThemeToggle />
       </div>
@@ -90,17 +102,6 @@ export default function NavBar() {
               </li>
             ))}
           </ul>
-        </div>
-        <div>
-          <img
-            loading="lazy"
-            src="/assets/img/linkedin_dark.webp"
-            alt=""
-            aria-hidden="true"
-            width={1500}
-            height={1500}
-            className={getClasses('qr')}
-          />
         </div>
       </div>
     </nav>

@@ -13,7 +13,6 @@
   background: var(--bg-nav);
   color: var(--fg-base);
   min-height: 100%;
-  min-width: $space-200;
   font-family: Lato, sans-serif;
   z-index: 2;
   position: sticky;
@@ -22,9 +21,12 @@
    * above. Desktop (sidebar): switch to right border via media query. */
   border-top: 1px solid var(--border-default);
 
-  /* Theme-toggle utility row sits between the github/linkedin icons
-   * (above) and the main nav (below). Mobile: a tight horizontal
-   * strip; desktop sidebar: a centered slot. */
+  /* Mobile: avatar hidden — the bottom-stuck nav doesn't have the
+   * vertical real estate. Desktop sidebar shows it (see media query). */
+  &__avatar-row {
+    display: none;
+  }
+
   &__utility-row {
     display: flex;
     align-items: center;
@@ -38,14 +40,14 @@
     box-shadow: inset 0 -1px 0 var(--border-emphasis);
     justify-content: space-around;
     align-items: center;
-    height: $space-60;
+    height: $space-40;
+    padding: 0 $space-16;
 
     & a {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100%;
-      width: 100%;
       /* Override the user-agent default link color (purple/blue) so
        * `currentColor` in the SVG icons inherits the theme text
        * color. The LinkedIn icon's brand-blue fill stays intact
@@ -55,12 +57,12 @@
   }
 
   &__special-anchor {
-    width: $space-32;
-    height: $space-32;
+    width: $space-20;
+    height: $space-20;
 
     & svg {
-      width: $space-32;
-      height: $space-32;
+      width: $space-20;
+      height: $space-20;
     }
   }
 
@@ -72,12 +74,11 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: $space-60;
 
     & ul {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: stretch;
       width: 100%;
       margin: 0;
       padding: 0;
@@ -85,58 +86,57 @@
       justify-content: space-around;
 
       & li {
-        /* :focus-within so keyboard focus on the inner <a> shows the
-         * same hover affordance as a mouse pointer would. */
-        &:hover,
-        &:focus-within {
-          cursor: pointer;
-          background: var(--bg-elevated);
-          transition: background 500ms linear;
-        }
+        display: flex;
+        flex: 1;
 
+        /* Mobile bottom nav: vertical icon-over-label layout, like
+         * Instagram/TikTok. Tighter than the previous text-only row
+         * and the icon makes the section glanceable. */
         & a {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: $space-4;
+          width: 100%;
+          padding: $space-8 0;
           text-decoration: none;
-          /* Override the user-agent default link color so the
-           * Button text + currentColor SVG icons inherit the
-           * theme-aware --fg-base from the NavBar root. */
           color: inherit;
+          border-radius: $border-6;
+          transition: background 120ms ease;
+
+          /* Focus ring lives on the <a> (the actual focusable element)
+           * — previous CSS painted the focus indicator on the inner
+           * .button-component <button>, which made the focus look
+           * "inside" the link instead of around it. */
+          &:hover,
+          &:focus-visible {
+            background: var(--bg-elevated);
+            outline: none;
+          }
+
+          &:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: -2px;
+          }
 
           .button-component {
             display: flex;
-            gap: $space-16;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            font-size: $font-14;
+            gap: $space-4;
+            font-size: $font-12;
+            background: transparent;
+            border: none;
+            padding: 0;
 
             & svg {
-              display: none;
+              display: block;
+              width: $space-20;
+              height: $space-20;
             }
           }
         }
-      }
-    }
-  }
-
-  &__qr {
-    display: none;
-  }
-}
-
-@media screen and (min-width: $mobile-small) {
-  .navbar-component {
-    &__special-anchor-container {
-      height: $space-72;
-    }
-
-    &__main-buttons {
-      height: $space-72;
-    }
-
-    &__main-buttons ul li a .button-component {
-      & svg {
-        display: block;
-        width: $space-20;
-        height: $space-20;
       }
     }
   }
@@ -150,96 +150,85 @@
 @media screen and (min-width: $bp-md) {
   .navbar-component {
     /* Sidebar mode: drop the mobile top-border, add an inner right
-     * border so the sidebar visibly cuts away from the content. */
+     * border so the sidebar visibly cuts away from the content.
+     * Width is fixed via min-width so the content area's flex track
+     * has a stable left edge. */
     border-top: 0;
     border-right: 1px solid var(--border-default);
+    min-width: $space-200;
 
-    &__special-anchor-container {
-      display: flex;
-      box-shadow: inset 0 -1px 0 var(--border-emphasis);
-      justify-content: space-around;
-      align-items: center;
-      height: $space-80;
-
-      & svg {
-        width: $space-32;
-        height: $space-32;
-      }
-    }
-
-    &__special-anchor-wrapper {
+    /* Avatar visible at desktop only. Round, matches the rail's
+     * accent — bordered in --accent-soft for a subtle highlight
+     * that reads as "this is a person, not a logo". */
+    &__avatar-row {
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: $space-20 0 $space-12;
       box-shadow: inset 0 -1px 0 var(--border-emphasis);
-      height: $space-80;
-      width: 100%;
+    }
 
-      &:hover,
-      &:focus-within {
-        cursor: pointer;
-        background: var(--bg-elevated);
-        transition: background 500ms linear;
-      }
+    &__avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-soft);
+    }
+
+    &__special-anchor-container {
+      height: $space-40;
+      padding: 0 $space-20;
     }
 
     &__main-section {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      height: 100%;
+      flex: 1;
     }
 
     &__main-buttons {
-      display: flex;
-      flex-direction: row;
       width: 100%;
-      height: $space-80;
-      position: sticky;
-      top: 0;
 
       & ul {
-        display: flex;
         flex-direction: column;
-        align-items: center;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
+        align-items: stretch;
 
         & li {
-          display: flex;
-          width: 100%;
-          min-height: 110px;
-          justify-content: center;
-          align-items: center;
-          box-shadow: inset 0 -1px 0 var(--border-emphasis);
+          display: block;
+          flex: none;
 
+          /* Compact rail buttons — height ~44px (down from 110px).
+           * Icon left, label right, like the example reference.
+           * The whole <a> is the click target, with a single rounded
+           * focus ring instead of one painted on the inner button. */
           & a {
-            width: 100%;
-            padding: $space-32 $space-40;
-            color: inherit;
+            flex-direction: row;
+            justify-content: flex-start;
+            gap: $space-12;
+            padding: $space-12 $space-16;
+            border-radius: 0;
+            transition: background 120ms ease;
+
+            &:focus-visible {
+              outline: 2px solid var(--accent);
+              outline-offset: -2px;
+            }
 
             & .button-component {
-              background: inherit;
-              cursor: inherit;
+              flex-direction: row;
+              gap: $space-12;
               font-size: $font-14;
 
               & svg {
-                display: block;
-                width: $space-32;
-                height: $space-32;
+                width: $space-20;
+                height: $space-20;
               }
             }
           }
         }
       }
-    }
-
-    &__qr {
-      display: block;
-      width: $space-200;
-      height: $space-200;
     }
   }
 }

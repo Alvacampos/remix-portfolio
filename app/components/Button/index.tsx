@@ -34,16 +34,27 @@ export default function Button({
   children = undefined,
   prefetch = undefined,
 }: ButtonProps) {
+  // When the Button is wrapped in a <Link> (url is set), the link is
+  // the actual interactive element — keyboard tab should land there,
+  // not on the inner <button>. tabIndex={-1} on the button makes the
+  // <a> the sole focus stop and removes the duplicate tab landing.
+  const isLink = !!url;
+
   return (
     <ConditionalLink
       to={url}
-      condition={!!url}
+      condition={isLink}
       label={label}
       className={getClasses('link-wrapper')}
       prefetch={prefetch}
     >
-      {/* eslint-disable-next-line react/button-has-type */}
-      <button className={getClasses(className)} onClick={handleClick} type={btnType}>
+      <button
+        className={getClasses(className)}
+        onClick={handleClick}
+        // eslint-disable-next-line react/button-has-type
+        type={btnType}
+        tabIndex={isLink ? -1 : 0}
+      >
         {LeftIcon && <LeftIcon className={getClasses('icon', 'left')} />}
         {children}
         {label && label}
