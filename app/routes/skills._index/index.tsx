@@ -163,9 +163,6 @@ export default function Skills() {
       <h1 className={getClasses('page-title')}>
         <FormattedMessage id="PAGE_TITLE_SKILLS" />
       </h1>
-      <h2>
-        <FormattedMessage id="WORK_EXPERIENCE" />
-      </h2>
       <div className={getClasses('time-line')}>
         <div className={getClasses('time-line-controls')}>
           <Input
