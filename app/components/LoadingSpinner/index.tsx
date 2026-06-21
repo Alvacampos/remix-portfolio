@@ -2,8 +2,8 @@ import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-// Stage 13: LoadingSpinner CSS is inlined into the consuming route's
-// style.css via postcss-import. No links() export.
+// LoadingSpinner CSS is inlined into the consuming route's
+// style.css via postcss-import — no links() export.
 
 const BLOCK = 'spinner-container';
 const getClasses = getClassMaker(BLOCK);

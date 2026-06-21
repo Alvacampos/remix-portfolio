@@ -1,5 +1,5 @@
 /* Card CSS is inlined here so /education/:slug ships one stylesheet
- * instead of two (Stage 13 pattern). postcss-import resolves at build. */
+ * instead of two. postcss-import resolves at build. */
 @import '../../components/Card/style.css';
 
 .education-id-route {

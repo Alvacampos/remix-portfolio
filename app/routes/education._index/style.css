@@ -1,5 +1,5 @@
-/* Card CSS is inlined here so /education ships one stylesheet instead of
- * two (Stage 13). postcss-import resolves the path at build time. */
+/* Card CSS is inlined here so /education ships one stylesheet instead
+ * of two. postcss-import resolves the path at build time. */
 @import '../../components/Card/style.css';
 
 .education-route {

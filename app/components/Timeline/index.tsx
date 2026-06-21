@@ -8,11 +8,10 @@ import { getClassMaker } from '~/utils/utils';
 
 import styles from './style.css?url';
 
-// Card no longer exports links() — its CSS is inlined into each consumer
-// route's style.css via postcss-import (Stage 13). The preload + stylesheet
-// pair below is still emitted manually because Timeline is lazy-loaded on
-// /skills and we want the CSS to land on first paint despite the JS chunk
-// arriving in a later round-trip.
+// Timeline is JS-lazy-loaded on /skills, so its CSS gets a manual
+// preload + stylesheet pair to land on first paint despite the JS
+// chunk arriving in a later round-trip. (Card's CSS, by contrast, is
+// inlined into each consumer route via postcss-import.)
 export const links = () => [
   { rel: 'preload', href: styles, as: 'style' },
   { rel: 'stylesheet', href: styles },

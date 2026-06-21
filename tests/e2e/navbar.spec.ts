@@ -5,9 +5,9 @@ test.describe('Navigation', () => {
     await page.goto('/');
     await page.getByRole('link', { name: /CV/i }).first().click();
     await expect(page).toHaveURL(/\/skills$/);
-    // /skills was reduced in stage-32: the section h2 "Work Experience"
-    // was removed (the h1 + Total-years card already announce the page).
-    // Assert the page title h1 instead.
+    // The section h2 "Work Experience" was removed (the h1 +
+    // Total-years card already announce the page). Assert the page
+    // title h1 instead.
     await expect(
       page.getByRole('heading', { name: 'Skills & Work Experience', level: 1 })
     ).toBeVisible();

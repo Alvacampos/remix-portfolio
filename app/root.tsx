@@ -14,7 +14,6 @@ import { IntlProvider } from 'react-intl';
 import NavBar from '~/components/NavBar';
 import { type Locale, messagesFor, pickLocale } from '~/intl';
 import styles from '~/styles/style.css?url';
-import tailwind from '~/styles/tailwind.css?url';
 import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
@@ -36,7 +35,6 @@ export function links() {
       type: 'font/woff2',
       crossOrigin: 'anonymous',
     },
-    { rel: 'stylesheet', href: tailwind },
     { rel: 'stylesheet', href: styles },
     // canonical is rendered per-route in Layout from the loader's `canonical`
     // value — pinning it here would point every route at the homepage.
@@ -161,7 +159,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <html lang={locale}>
+    // suppressHydrationWarning: the inline theme-init script (below) sets
+    // `<html data-theme>` from localStorage / prefers-color-scheme on the
+    // client BEFORE React hydrates. SSR can't know the user's preference,
+    // so the attribute legitimately differs between server + client. This
+    // attribute IS the only thing that drifts; React still warns on
+    // children, so unintended drift elsewhere is still caught.
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />

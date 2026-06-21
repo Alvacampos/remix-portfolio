@@ -1,5 +1,5 @@
-/* DownloadBtn CSS is inlined here so / ships one stylesheet instead of two
- * (Stage 13). postcss-import resolves the path at build time. */
+/* DownloadBtn CSS is inlined here so / ships one stylesheet instead
+ * of two. postcss-import resolves the path at build time. */
 @import '../components/DownloadBtn/style.css';
 
 .home-route {

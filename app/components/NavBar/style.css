@@ -1,6 +1,5 @@
-/* Stage 29: ThemeToggle stylesheet inlined here via postcss-import so
- * /skills, /, /education etc. all ship its CSS as part of the
- * NavBar's first-paint chrome (the same pattern used for Button). */
+/* ThemeToggle CSS inlined here via postcss-import so its styles ship
+ * as part of the NavBar's first-paint chrome on every route. */
 @import '../ThemeToggle/style.css';
 
 .navbar-component {

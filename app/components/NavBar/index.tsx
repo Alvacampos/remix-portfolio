@@ -6,9 +6,6 @@ import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/i
 import ThemeToggle from '~/components/ThemeToggle';
 import { getClassMaker } from '~/utils/utils';
 
-// Stage 13: NavBar and Button CSS are inlined into app/styles/style.css via
-// postcss-import, so this component no longer exports a links() chain.
-
 const BLOCK = 'navbar-component';
 const getClasses = getClassMaker(BLOCK);
 

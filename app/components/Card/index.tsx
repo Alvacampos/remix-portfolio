@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-// Stage 13: Card CSS is inlined into each consuming route's style.css via
-// postcss-import. No links() export — postcss-import owns the bundling.
+// Card CSS is inlined into each consuming route's style.css via
+// postcss-import — no links() export.
 
 const BLOCK = 'card-component';
 const getClasses = getClassMaker(BLOCK);
