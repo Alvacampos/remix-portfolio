@@ -26,6 +26,7 @@ export type DataTypes = {
   title: string;
   date: string;
   texts: string[];
+  textsLabel?: string;
   skills: string[];
 };
 

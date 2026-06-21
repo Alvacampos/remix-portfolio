@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: column;
     padding: 0;
+    gap: $space-20;
 
     & .input-component {
       width: stretch;
@@ -53,6 +54,18 @@
   }
 
   &__skills-and-tools {
+    display: flex;
+    flex-direction: column;
+    gap: $space-20;
+    width: 100%;
+  }
+
+  /* Mobile: TechGrid on top, TenureHeatmap below (column flow).
+   * Desktop: side-by-side via the bp-lg media query at the bottom
+   * of this file. The heatmap sits in a fixed-width track (it
+   * doesn't benefit from extra width since cells are pinned at
+   * 14px), and the TechGrid takes the remaining space. */
+  &__skills-and-tools-grid {
     display: flex;
     flex-direction: column;
     gap: $space-20;
@@ -132,6 +145,25 @@
     &__extra-activities {
       &-wrapper {
         flex-direction: row;
+      }
+    }
+
+    /* Side-by-side: heatmap hugs its grid (it doesn't gain anything
+     * from extra width), TechGrid takes the rest. Centered as a
+     * group when the row has unused width on wide viewports. */
+    &__skills-and-tools-grid {
+      flex-direction: row;
+      gap: $space-20;
+      align-items: flex-start;
+      justify-content: center;
+
+      & > .tenure-heatmap {
+        flex: 0 0 auto;
+      }
+
+      & > .carousel-component {
+        flex: 1 1 auto;
+        min-width: 0;
       }
     }
   }

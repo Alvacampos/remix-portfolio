@@ -1,36 +1,113 @@
+/*
+ * Sliding sun/moon toggle. The knob (an absolutely-positioned green
+ * pill) sits behind the icons and slides between them on click.
+ * Active icon picks up a contrasting color via the --sun / --moon
+ * modifier set on the root.
+ *
+ * Layout: 2-cell flex with the icons centered in each half. The
+ * knob is 50% of the track width and translates between left and
+ * right halves via CSS transition.
+ */
 .theme-toggle {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: $border-6;
-  background: transparent;
-  /* --fg-base (not --fg-muted) so the icon is fully legible against
-   * the navbar surface in both themes. The button has no text, so we
-   * lean on color contrast alone for affordance. */
-  color: var(--fg-base);
+  justify-content: space-between;
+  /* 150px wide so the slider reads as a real toggle, not a chip.
+   * Each half is ~75px → the sun and moon sit comfortably with
+   * room to breathe inside the green knob. */
+  width: 150px;
+  height: 1.75rem;
+  padding: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: var(--bg-base);
   cursor: pointer;
   transition:
-    color 120ms ease,
     border-color 120ms ease,
     background-color 120ms ease;
 
   &:hover,
   &:focus-visible {
-    color: var(--fg-base);
     border-color: var(--border-emphasis);
-    /* --bg-elevated gives the toggle a visible "pressable" feel
-     * against the navbar (which itself is on --bg-surface). */
-    background: var(--bg-elevated);
     outline: none;
   }
 
+  /* Icons sit on top of the knob — z-index 1 so they paint over it.
+   * Each takes half the track width so the knob's translateX from
+   * 0 → 100% lands them squarely under each one. */
   &__icon {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
-    width: 1.25rem;
-    height: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    width: calc(50% - 2px);
+    height: 100%;
+    color: var(--fg-muted);
+    transition: color 200ms ease;
+
+    & svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  /* Knob — the sliding green pill underneath the icons. Uses
+   * percentage-based transform so the slide distance scales with
+   * the track width, no magic-number pixel math. */
+  &__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+
+  /* Sun position: knob anchored left, sun icon contrasts white-on-
+   * green, moon icon dims to muted. */
+  &--sun {
+    & .theme-toggle__knob {
+      transform: translateX(0);
+    }
+
+    & .theme-toggle__icon--sun {
+      color: $default-white;
+    }
+
+    & .theme-toggle__icon--moon {
+      color: var(--fg-faint);
+    }
+  }
+
+  /* Moon position: knob slides right, moon icon contrasts, sun dims.
+   * SSR default lives here since the inline theme-init script lands
+   * dark mode unless the user has already opted into light. */
+  &--moon {
+    & .theme-toggle__knob {
+      transform: translateX(100%);
+    }
+
+    & .theme-toggle__icon--moon {
+      color: $default-white;
+    }
+
+    & .theme-toggle__icon--sun {
+      color: var(--fg-faint);
+    }
+  }
+}
+
+/* Honour reduced-motion: skip the slide. Color crossfade still
+ * happens since it's a low-motion change, but the knob just snaps
+ * between positions. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle__knob {
+    transition: none;
   }
 }

@@ -44,9 +44,11 @@
 
   &__title-wrapper {
     text-align: center;
-    /* Flush with the card body — separated by a hairline divider
-     * + typography weight only. Mirrors GitHub's own card pattern
-     * where the header isn't a distinct bg pill. */
+    /* Header sits on --bg-elevated so it reads as a header band
+     * distinct from both the page bg and the card body. The
+     * hairline divider underneath reinforces the split for users
+     * with reduced color sensitivity. */
+    background-color: var(--bg-elevated);
     box-shadow: inset 0 -1px 0 var(--border-default);
     padding: $space-15 $space-5;
   }
@@ -57,6 +59,13 @@
 
   &__main-text-wrapper {
     margin-bottom: $space-10;
+  }
+
+  /* Bold prefix label for texts lines (e.g. "Rol:" before the role
+   * description on timeline cards). Same weight as the
+   * skills-label so the two read as siblings. */
+  &__texts-label {
+    font-weight: $weight-700;
   }
 
   &__list {

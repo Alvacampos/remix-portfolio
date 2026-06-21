@@ -20,11 +20,15 @@ function readTheme(): Theme {
 }
 
 /**
- * Two-state theme toggle. SSR renders the moon icon (dark default);
- * after hydration the real persisted theme takes over. Persists user
- * override in localStorage.theme so it survives reloads. Honours
- * OS-level prefers-color-scheme via the init script when no override
- * exists.
+ * Sliding sun/moon theme toggle. SSR renders in the dark position;
+ * after hydration the real persisted theme takes over. Persists in
+ * localStorage.theme; honours OS-level prefers-color-scheme via the
+ * inline init script when no override exists.
+ *
+ * Visual: a pill with a sun icon on the left, moon on the right, and
+ * a green knob that slides under the active icon. Knob position is
+ * driven entirely by the `--moon` modifier — no per-state inline
+ * styles, so the CSS transition just works.
  */
 export default function ThemeToggle() {
   const { formatMessage } = useIntl();
@@ -40,12 +44,6 @@ export default function ThemeToggle() {
     const next: Theme = theme === 'light' ? 'dark' : 'light';
     setTheme(next);
     document.documentElement.dataset.theme = next;
-    if (next === 'dark') {
-      // Keep <html> attribute-free in dark so the default :root
-      // cascade applies — keeps DevTools tidy.
-      delete document.documentElement.dataset.theme;
-      document.documentElement.dataset.theme = next;
-    }
     try {
       localStorage.setItem('theme', next);
     } catch {
@@ -53,20 +51,31 @@ export default function ThemeToggle() {
     }
   }
 
-  const isLight = mounted && theme === 'light';
+  const isDark = !mounted || theme === 'dark';
   const label = formatMessage({
-    id: isLight ? 'THEME_TOGGLE_TO_DARK' : 'THEME_TOGGLE_TO_LIGHT',
+    id: isDark ? 'THEME_TOGGLE_TO_LIGHT' : 'THEME_TOGGLE_TO_DARK',
   });
 
   return (
     <button
       type="button"
-      className={getClasses()}
+      className={`${getClasses()} ${isDark ? getClasses('', 'moon') : getClasses('', 'sun')}`}
       onClick={toggle}
       aria-label={label}
+      aria-pressed={isDark}
       title={label}
     >
-      <span className={getClasses('icon')}>{isLight ? <Moon /> : <Sun />}</span>
+      {/* Two icons painted at fixed positions; the sliding knob
+       * underneath highlights the active one. Order is sun→moon
+       * left→right so the knob's transform is `translateX(0)` for
+       * sun, `translateX(100%)` for moon — natural reading order. */}
+      <span className={`${getClasses('icon')} ${getClasses('icon', 'sun')}`} aria-hidden="true">
+        <Sun />
+      </span>
+      <span className={`${getClasses('icon')} ${getClasses('icon', 'moon')}`} aria-hidden="true">
+        <Moon />
+      </span>
+      <span className={getClasses('knob')} aria-hidden="true" />
     </button>
   );
 }

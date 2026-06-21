@@ -5,6 +5,19 @@
    * at our theme accent so it works in both modes. */
   --line-color: var(--accent);
 
+  /* Library default: padding: 2em 0 on .vertical-timeline + 4em
+   * margin between elements at desktop, which leaves a tall empty
+   * gap below the last element before the next sibling (the
+   * "Total years of experience" card on /skills). Tighten the
+   * bottom so the timeline ends close to its last card. */
+  & .vertical-timeline {
+    padding: 0 0 $space-15 0;
+  }
+
+  & .vertical-timeline-element:last-child {
+    margin-bottom: 0;
+  }
+
   /* Library zeros out bg + box-shadow on
    * .vertical-timeline-element--no-children .vertical-timeline-element-content
    * (which our wrapper-around-Card pattern triggers since the

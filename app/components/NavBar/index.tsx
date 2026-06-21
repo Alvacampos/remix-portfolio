@@ -58,6 +58,9 @@ export default function NavBar() {
 
   return (
     <nav className={getClasses()}>
+      <div className={getClasses('utility-row')}>
+        <ThemeToggle />
+      </div>
       <div className={getClasses('special-anchor-container')}>
         <ConditionalLink
           to={GIT_LINK_ICON.url}
@@ -80,15 +83,6 @@ export default function NavBar() {
             <LinkedinIcon className={getClasses('special-anchor')} />
           </div>
         </ConditionalLink>
-      </div>
-      {/*
-       * Theme toggle sits between the social-icons divider and the main
-       * nav buttons — first interactive element after the chrome,
-       * last stop before content links. Stays inside the sidebar at
-       * every breakpoint via the same media-query stack.
-       */}
-      <div className={getClasses('utility-row')}>
-        <ThemeToggle />
       </div>
       <div className={getClasses('main-section')}>
         <div className={getClasses('main-buttons')}>
