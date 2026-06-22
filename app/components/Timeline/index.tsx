@@ -6,16 +6,9 @@ import Card from '~/components/Card';
 import { Briefcase, Education } from '~/components/icons';
 import { getClassMaker } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-// Timeline is JS-lazy-loaded on /skills, so its CSS gets a manual
-// preload + stylesheet pair to land on first paint despite the JS
-// chunk arriving in a later round-trip. (Card's CSS, by contrast, is
-// inlined into each consumer route via postcss-import.)
-export const links = () => [
-  { rel: 'preload', href: styles, as: 'style' },
-  { rel: 'stylesheet', href: styles },
-];
+// Timeline CSS (and the vendor react-vertical-timeline-component
+// stylesheet) is `@import`-inlined into the consuming route's style.css
+// via postcss-import — no links() export.
 
 const BLOCK = 'timeline-component';
 const getClasses = getClassMaker(BLOCK);

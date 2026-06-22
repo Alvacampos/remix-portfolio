@@ -10,7 +10,6 @@
 | 1   | Stylelint rules masking simple-vars | open                  |
 | 2   | Mobile visual baselines             | open                  |
 | 3   | `react-router-dom` exact-pinned     | documented; no action |
-| 4   | LCP regression on `/skills`         | open                  |
 
 ---
 
@@ -62,26 +61,3 @@ adapter would resolve it but is a separate migration.
 No action needed today.
 
 ---
-
-## #4 — LCP regression on `/skills`
-
-**Severity:** medium. Lighthouse perf score 0.81 on `/skills` and
-`/skills/:uuid`.
-
-Latest Lighthouse breakdown attributes 366ms of element-render-delay
-to render-blocking stylesheets — specifically the four CSS files for
-`Carousel`, `TenureHeatmap`, `Timeline`, and `react-vertical-timeline-component`
-loaded via the route's `links()`. All four wrap content that mounts
-behind `<Suspense>` below the fold, so blocking first paint on them
-is wasted budget.
-
-**Fix options:**
-
-- Swap the three lazy-component stylesheets to
-  `<link rel="preload" as="style" onload="this.rel='stylesheet'">`.
-  Small FOUC risk on each component when its lazy chunk arrives;
-  acceptable below the fold. ~30 minutes.
-- Inline critical CSS for the H1 + nav into HTML and async the rest.
-  Bigger change, more invasive.
-
-**Effort:** S for option 1, M for option 2.

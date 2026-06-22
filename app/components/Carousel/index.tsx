@@ -2,9 +2,8 @@ import { FormattedMessage } from 'react-intl';
 
 import { getClassMaker } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+// Carousel CSS is `@import`-inlined into the consuming route's style.css
+// via postcss-import — no links() export.
 
 const BLOCK = 'carousel-component';
 const getClasses = getClassMaker(BLOCK);

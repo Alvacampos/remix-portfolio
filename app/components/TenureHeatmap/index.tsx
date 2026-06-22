@@ -4,15 +4,9 @@ import { useIntl } from 'react-intl';
 import type { SkillHeatmapData } from '~/utils/utils';
 import { getClassMaker } from '~/utils/utils';
 
-import styles from './style.css?url';
-
-// Lazy-loaded on /skills (same pattern Timeline + the old BarChart used)
-// so the route's eager bundle stays small. CSS is preloaded so the grid
-// doesn't paint unstyled when the chunk arrives in a later round-trip.
-export const links = () => [
-  { rel: 'preload', href: styles, as: 'style' },
-  { rel: 'stylesheet', href: styles },
-];
+// Lazy-loaded on /skills so the route's eager bundle stays small.
+// TenureHeatmap CSS is `@import`-inlined into the consuming route's
+// style.css via postcss-import — no links() export.
 
 const BLOCK = 'tenure-heatmap';
 const getClasses = getClassMaker(BLOCK);

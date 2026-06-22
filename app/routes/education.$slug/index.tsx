@@ -11,7 +11,7 @@ import styles from './style.css?url';
 export const links = () => [
   {
     rel: 'preload',
-    href: '/fonts/monaspace/MonaspaceNeon-Regular.woff2',
+    href: '/fonts/monaspace/MonaspaceNeon-Regular.v2.woff2',
     as: 'font',
     type: 'font/woff2',
     crossOrigin: 'anonymous',

@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
   useLoaderData,
   useRouteError,
+  useRouteLoaderData,
 } from '@remix-run/react';
 import { IntlProvider } from 'react-intl';
 
@@ -145,19 +146,13 @@ type LayoutData = {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Layout runs both during normal rendering and the error boundary, so the
-  // loader data may be unavailable. Default to English / site root when that
-  // happens.
-  let locale: Locale = 'en';
-  let canonical = SITE_URL;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const data = useLoaderData<LayoutData>();
-    if (data?.locale) locale = data.locale;
-    if (data?.canonical) canonical = data.canonical;
-  } catch {
-    /* error path or pre-loader render — keep defaults */
-  }
+  // Layout runs both during normal rendering and the error boundary.
+  // useRouteLoaderData('root') returns undefined in the error path
+  // without warning, where useLoaderData would log "you cannot useLoaderData
+  // in an errorElement" on every error render.
+  const data = useRouteLoaderData<LayoutData>('root');
+  const locale: Locale = data?.locale ?? 'en';
+  const canonical = data?.canonical ?? SITE_URL;
 
   return (
     // suppressHydrationWarning: the inline theme-init script (below) sets
