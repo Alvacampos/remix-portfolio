@@ -7,8 +7,8 @@ import TenureHeatmap from './index';
 const FIXTURE = {
   years: [2020, 2021, 2022],
   rows: [
-    { skill: 'React', monthsPerYear: [12, 12, 6], total: 30 },
-    { skill: 'TypeScript', monthsPerYear: [0, 12, 12], total: 24 },
+    { skill: 'React', monthsPerYear: [12, 12, 6], total: 30, isActive: true },
+    { skill: 'TypeScript', monthsPerYear: [0, 12, 12], total: 24, isActive: true },
   ],
 };
 

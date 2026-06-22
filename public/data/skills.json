@@ -1,68 +1,22 @@
 {
+  "_schema": {
+    "version": 2,
+    "notes": [
+      "Skill-first model. Each skill is authored once; ranges link the skill to one or more jobs.",
+      "Range `from`/`to` are optional in YYYY-MM format. Omitted = spans the whole job. Both clip to the referenced job's dates (a skill range can't extend beyond the job that owns it).",
+      "A single skill may have multiple ranges on the same jobId (e.g. used early, paused, resumed). Adjacent ranges are merged at read time so the heatmap and chart see one continuous interval where appropriate.",
+      "WORK_ITEMS no longer carries skill data. The per-card chip list is derived at loader time from SKILLS by collecting every skill with at least one range pointing at the card's jobId.",
+      "CHART_EXCLUDE behavior is unchanged: skills tagged `category: \"meta\"` are dropped from the chart, heatmap, and autocomplete suggestions but still render as chips on the timeline cards (so 'Front End', 'Mentoring' etc. still show under each role)."
+    ]
+  },
   "WORK_ITEMS": [
     {
       "id": 1,
       "title": "Globant",
-      "startDate": "2018-08-01T00:00:00.000",
-      "endDate": "2020-12-01T00:00:00.000",
+      "startDate": "2018-08",
+      "endDate": "2020-12",
       "rol": "Jr Web developer.",
       "description": "Worked as a software developer in the analytics team, developing web applications using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.",
-      "skills": [
-        {
-          "name": "HTML",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "CSS",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "JavaScript",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "Storybook",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "Highcharts",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "Vue",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "React",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "Redux",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": ".Net",
-          "start": "2018-08-01T00:00:00.000",
-          "end": "2019-08-01T00:00:00.000"
-        },
-        {
-          "name": "Agile",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "Front End",
-          "start": "2018-08-01T00:00:00.000"
-        },
-        {
-          "name": "Back End",
-          "start": "2018-08-01T00:00:00.000",
-          "end": "2019-08-01T00:00:00.000"
-        },
-        {
-          "name": "Axios",
-          "start": "2018-08-01T00:00:00.000"
-        }
-      ],
       "projects": [
         {
           "title": "Project: eVestment",
@@ -77,96 +31,10 @@
     {
       "id": 2,
       "title": "Cliengo",
-      "startDate": "2020-12-01T00:00:00.000",
-      "endDate": "2021-08-01T00:00:00.000",
+      "startDate": "2020-12",
+      "endDate": "2021-08",
       "rol": "Mid Level Full-stack developer.",
       "description": "Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku.",
-      "skills": [
-        {
-          "name": "HTML",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "CSS",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "JavaScript",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "TypeScript",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Sass",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Storybook",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Highcharts",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "React",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Redux",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Front End",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Cypress",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Jest",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Heroku",
-          "start": "2020-12-01T00:00:00.000",
-          "end": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Agile",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Back End",
-          "start": "2020-12-01T00:00:00.000",
-          "end": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "NodeJs",
-          "start": "2020-12-01T00:00:00.000",
-          "end": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Express",
-          "start": "2020-12-01T00:00:00.000",
-          "end": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Axios",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Tailwind",
-          "start": "2020-12-01T00:00:00.000"
-        },
-        {
-          "name": "Styled Components",
-          "start": "2020-12-01T00:00:00.000"
-        }
-      ],
       "projects": [
         {
           "title": "Project: Conversational",
@@ -181,254 +49,489 @@
     {
       "id": 3,
       "title": "Professor (part-time)",
-      "startDate": "2021-06-01T00:00:00.000",
-      "endDate": "2022-03-01T00:00:00.000",
-      "skills": [
-        {
-          "name": "Teaching",
-          "start": "2021-06-01T00:00:00.000"
-        },
-        {
-          "name": "C",
-          "start": "2021-06-01T00:00:00.000"
-        },
-        {
-          "name": "Programming",
-          "start": "2021-06-01T00:00:00.000"
-        },
-        {
-          "name": "Mentoring",
-          "start": "2021-06-01T00:00:00.000"
-        }
-      ],
+      "startDate": "2021-06",
+      "endDate": "2022-03",
       "rol": "Software Engineering Professor.",
       "projects": "Teaching programming in a university to first year students."
     },
     {
       "id": 4,
       "title": "Endava",
-      "startDate": "2021-08-01T00:00:00.000",
-      "endDate": "2022-04-01T00:00:00.000",
+      "startDate": "2021-08",
+      "endDate": "2022-04",
       "rol": "Senior Full-stack developer.",
-      "description": "Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University’s data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program.",
-      "skills": [
-        {
-          "name": "HTML",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "CSS",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "JavaScript",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "SQL",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Marklogic",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Teaching",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Leadership",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Interviewing",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Back End",
-          "start": "2021-08-01T00:00:00.000"
-        },
-        {
-          "name": "Agile",
-          "start": "2021-08-01T00:00:00.000"
-        }
-      ],
-      "projects": [
-        {
-          "title": "Project: Marklogic",
-          "text": "Lead developer and technical consultant for MarkLogic projects, specializing in semantics database implementation for Yale University. Utilized JavaScript and JSON-LD technologies to develop robust solutions."
-        },
-        {
-          "title": "Endava Argentina Intership",
-          "text": "Organized and mentored the Endava Argentina Internship program. Responsible for delivering lectures on JavaScript and general programming topics."
-        }
-      ]
+      "description": "Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University's data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program."
+    },
+    {
+      "id": 5,
+      "title": "Teacher",
+      "startDate": "2022-03",
+      "endDate": "2023-01",
+      "rol": "Web programming Teacher.",
+      "projects": "Teaching web development in coderhouse."
     },
     {
       "id": 6,
-      "title": "Teacher (part-time)",
-      "startDate": "2022-03-01T00:00:00.000",
-      "endDate": "2023-03-01T00:00:00.000",
-      "skills": [
+      "title": "Qubika",
+      "startDate": "2022-04",
+      "rol": "Senior Frontend developer.",
+      "description": "Senior Frontend Developer at Qubika; key contributor on multiple complex web applications across diverse technologies and clients."
+    }
+  ],
+  "SKILLS": [
+    {
+      "name": ".NET",
+      "category": "language",
+      "ranges": [
         {
-          "name": "Teaching",
-          "start": "2022-03-01T00:00:00.000"
-        },
-        {
-          "name": "JavaScript",
-          "start": "2022-03-01T00:00:00.000"
-        },
-        {
-          "name": "Programming",
-          "start": "2022-03-01T00:00:00.000"
+          "jobId": 1,
+          "to": "2019-08"
         }
-      ],
-      "rol": "Javascript course Teacher.",
-      "projects": "Teaching vanilla JavaScript fundamentals over the weekend."
+      ]
     },
     {
-      "id": 7,
-      "title": "Qubika",
-      "startDate": "2022-04-01T00:00:00",
-      "rol": "Senior Frontend developer.",
-      "description": "Fully integrated as a client developer, my day to day tasks where to develop and maintain the client’s application and assist other developers with their tasks.",
-      "skills": [
+      "name": "Agile",
+      "category": "meta",
+      "ranges": [
         {
-          "name": "HTML",
-          "start": "2022-04-01T00:00:00"
+          "jobId": 1
         },
         {
-          "name": "CSS",
-          "start": "2022-04-01T00:00:00"
+          "jobId": 2
         },
         {
-          "name": "JavaScript",
-          "start": "2022-04-01T00:00:00"
+          "jobId": 4
         },
         {
-          "name": "TypeScript",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Python",
-          "start": "2022-04-01T00:00:00",
-          "end": "2023-01-01T00:00:00.000"
-        },
-        {
-          "name": "Django",
-          "start": "2022-04-01T00:00:00",
-          "end": "2023-01-01T00:00:00.000"
-        },
-        {
-          "name": "Storybook",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Highcharts",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "React",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Remix",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "NextJs",
-          "start": "2022-04-01T00:00:00",
-          "end": "2025-10-01T00:00:00.000"
-        },
-        {
-          "name": "PostCSS",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Redux",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "GraphQL",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Cypress",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Playwright",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Front End",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Agile",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Cloudflare",
-          "start": "2022-04-01T00:00:00",
-          "end": "2024-01-01T00:00:00.000"
-        },
-        {
-          "name": "Tailwind",
-          "start": "2022-04-01T00:00:00"
-        },
-        {
-          "name": "Styled Components",
-          "start": "2024-04-01T00:00:00"
+          "jobId": 6
         }
-      ],
-      "projects": [
+      ]
+    },
+    {
+      "name": "Axios",
+      "category": "tooling",
+      "ranges": [
         {
-          "title": "Project Avant",
-          "text": "Full-stack project for Avant, a US loan company. Utilizes React with Remix.run and PostCSS for responsiveness. Implements Cypress and Playwright for testing. Currently transitioning from JavaScript to TypeScript. Exposure and worked on the backend using Python and Django."
+          "jobId": 1
         },
         {
-          "title": "Project Customer Dashboard",
-          "text": "Assisting with maintenance and updates for the legacy dashboard, utilizing TypeScript, React class components, and GraphQL technology stack."
+          "jobId": 2
+        }
+      ]
+    },
+    {
+      "name": "Back End",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 1,
+          "to": "2019-08"
         },
         {
-          "title": "Project Adalabs",
-          "text": "Contributed to building a client-facing interface for a U.S.-based AI platform using Next.js, deployed on Vercel. The AI model—designed to assist fintechs and financial service providers—serves as a centralized source of truth for organizing and managing finance-related documentation and client data."
+          "jobId": 2
         },
         {
-          "title": "Project Imprint",
-          "text": "Front end lead developer for new feature Rewards. Worked with ReactJs, Playwright, Claude Code."
+          "jobId": 4
+        }
+      ]
+    },
+    {
+      "name": "C",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 3
+        }
+      ]
+    },
+    {
+      "name": "Cloudflare",
+      "category": "infra",
+      "ranges": [
+        {
+          "jobId": 6,
+          "to": "2024-01"
+        }
+      ]
+    },
+    {
+      "name": "CSS",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Cypress",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Django",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 6,
+          "to": "2023-01"
+        }
+      ]
+    },
+    {
+      "name": "Express",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 2
+        }
+      ]
+    },
+    {
+      "name": "Front End",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Heroku",
+      "category": "infra",
+      "ranges": [
+        {
+          "jobId": 2
+        }
+      ]
+    },
+    {
+      "name": "Highcharts",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "HTML",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Interviewing",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 4
+        }
+      ]
+    },
+    {
+      "name": "JavaScript",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 5
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Jest",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 2
+        }
+      ]
+    },
+    {
+      "name": "Leadership",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 4
+        }
+      ]
+    },
+    {
+      "name": "MarkLogic",
+      "category": "infra",
+      "ranges": [
+        {
+          "jobId": 4
+        }
+      ]
+    },
+    {
+      "name": "Mentoring",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 3
+        }
+      ]
+    },
+    {
+      "name": "Next.js",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 6,
+          "to": "2025-10"
+        }
+      ]
+    },
+    {
+      "name": "Node.js",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 2
+        }
+      ]
+    },
+    {
+      "name": "Playwright",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "PostCSS",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Programming",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 3
+        },
+        {
+          "jobId": 5
+        }
+      ]
+    },
+    {
+      "name": "Python",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 6,
+          "from": "2022-04",
+          "to": "2023-01"
+        },
+        {
+          "jobId": 6,
+          "from": "2026-01"
+        }
+      ]
+    },
+    {
+      "name": "React",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Redux",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Remix",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Sass",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 2
+        }
+      ]
+    },
+    {
+      "name": "SQL",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 4
+        }
+      ]
+    },
+    {
+      "name": "Storybook",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Styled Components",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6,
+          "from": "2024-04"
+        }
+      ]
+    },
+    {
+      "name": "Tailwind",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Teaching",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 3
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 5
+        }
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "category": "language",
+      "ranges": [
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "Vue",
+      "category": "framework",
+      "ranges": [
+        {
+          "jobId": 1
         }
       ]
     }
-  ],
-  "SKILLS_IMG": [
-    { "title": "React" },
-    { "title": "TypeScript" },
-    { "title": "Next.js" },
-    { "title": "NodeJs" },
-    { "title": "Python" },
-    { "title": "Django" },
-    { "title": "GraphQL" },
-    { "title": "Cloudflare" },
-    { "title": "Remix.run" },
-    { "title": "HTML" },
-    { "title": "CSS" },
-    { "title": "JavaScript" },
-    { "title": "Tailwind" },
-    { "title": "Sass" },
-    { "title": "Storybook" },
-    { "title": "Playwright" },
-    { "title": "Cypress" },
-    { "title": "Git" },
-    { "title": "Agile Development" },
-    { "title": "Redux" },
-    { "title": "Express" },
-    { "title": "Mongodb" },
-    { "title": "Axios" },
-    { "title": "Vue" },
-    { "title": "Highcharts" },
-    { "title": "Heroku" }
   ],
   "EXTRA_ACTIVITIES": [
     {
@@ -437,23 +540,6 @@
         {
           "title": "Endava Argentina Internship",
           "text": "Organizer and mentor for Endava Argentina Internship Program 2022. In charge of lectures related to JS and general programming."
-        },
-        {
-          "title": "Mentorship",
-          "text": "Mentor for 3 Jr developers in the company. In charge of guiding them in their career path and helping them with their technical issues."
-        }
-      ]
-    },
-    {
-      "title": "University",
-      "data": [
-        {
-          "title": "Technical Leader",
-          "text": "Technical Leader of the project for the career of Software Engineering. In charge of the development of the project and the team."
-        },
-        {
-          "title": "Career coaching",
-          "text": "Help students with their career path and guide them in their technical issues."
         }
       ]
     },
@@ -461,16 +547,12 @@
       "title": "Qubika",
       "data": [
         {
-          "title": "Remix Introduction Talk",
-          "text": "Organize and gave a talk about Remix.run a react server side rendering framework that was just released and my project was working with."
+          "title": "Senior Internship",
+          "text": "Mentor in the Senior Internship at Qubika 2024. Tasks involved code reviewing, technical mentoring, follow-up of the participants progress, interviewing, etc."
         },
         {
-          "title": "Team Induction",
-          "text": "Induction of new team members to the project."
-        },
-        {
-          "title": "Dev Lead Loan Team",
-          "text": "Dev Lead of the Loan Team, in charge of the coordinating effort and unblocking the team on front end topics."
+          "title": "Frontend Mentor",
+          "text": "Mentor of new colleagues, working on the frontend area, helping them with their daily tasks, code reviewing, technical mentoring, etc."
         }
       ]
     }

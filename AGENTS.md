@@ -138,12 +138,12 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 
 **Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
 
-| URL             | File                                                                      | Loader                                                                                                                                  |
-| --------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`             | [app/routes/\_index.tsx](app/routes/_index.tsx)                           | none                                                                                                                                    |
-| `/education`    | [app/routes/education/index.tsx](app/routes/education/index.tsx)          | imports `public/data/education.json` server-side                                                                                        |
-| `/skills`       | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) | imports `public/data/skills.json` server-side, returns work-items + chart data + extra activities (1h cache via `data()`)               |
-| `/skills/:uuid` | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)   | imports `public/data/skills.json` server-side, finds matching `WORK_ITEMS[id == +uuid]`, throws on miss → renders local `ErrorBoundary` |
+| URL             | File                                                                      | Loader                                                                                                                                                               |
+| --------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`             | [app/routes/\_index.tsx](app/routes/_index.tsx)                           | none                                                                                                                                                                 |
+| `/education`    | [app/routes/education/index.tsx](app/routes/education/index.tsx)          | imports `public/data/education.json` server-side                                                                                                                     |
+| `/skills`       | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) | validates `public/data/skills.json` via Zod at module load, derives timeline cards + heatmap + autocomplete suggestions once per worker boot (1h cache via `data()`) |
+| `/skills/:uuid` | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)   | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`        |
 
 A `/contact` route is stubbed (commented out) in the NavBar.
 
@@ -269,19 +269,27 @@ Adding a third locale: extend `SUPPORTED_LOCALES` and the `MESSAGES` map in `app
 Site content is **not in the database** — it's static JSON under `public/data/`:
 
 - [public/data/education.json](public/data/education.json) — degree + certifications.
-- [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS_IMG`, `EXTRA_ACTIVITIES`.
+- [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS`, `EXTRA_ACTIVITIES`. **Skill-first model** — see below.
 
 To update content, edit those JSON files. Route loaders import them server-side (Vite bakes the JSON into the server bundle); the skills loader still caches for 1h via `Cache-Control` so the edge holds the rendered HTML.
 
-### Skill chart is derived from `WORK_ITEMS`
+### Skill-first schema (skills.json)
 
-The bar chart on `/skills` is **computed from `WORK_ITEMS`** by [getSkillChartData](app/utils/utils.tsx) — for every work item, every entry in its `skills` array gets credited the item's full duration (`endDate - startDate`, falling back to "now" when `endDate` is missing). Totals are summed across jobs and converted to years.
+`skills.json` validates at worker boot through a Zod schema at [app/data/skills-schema.ts](app/data/skills-schema.ts). The schema is the single source of truth — TS types are inferred via `z.infer`, malformed JSON throws a path-precise error before any consumer reads it.
 
-This means **the way to edit the chart is to edit the `skills` arrays of `WORK_ITEMS`**. There is no longer a separate `SKILL_CHART_DATA` block to keep in sync — that source-of-truth split was the cause of long-standing chart drift.
+**Shape:**
 
-A small `CHART_EXCLUDE` set in `getSkillChartData` filters out filter-chip / generic skills (`Front End`, `Back End`, `Agile`, `Teaching`, `Mentoring`, `Programming`, `C`, `Leadership`, `Interviewing`, `Router`) so they don't show as bars. To exclude a new skill from the chart, add it to that set; to include a new technology, add it to the relevant work item's `skills` array.
+- `WORK_ITEMS` — jobs, identified by stable numeric `id`. Authored chronologically (oldest first); the timeline route reverses for display. **No skill data on work items** — that lives in `SKILLS`.
+- `SKILLS` — every skill authored once, regardless of how many jobs used it. Each entry: `{ name, category, ranges }`. `category` is one of `language | framework | tooling | infra | meta` — the `meta` bucket (Front End, Back End, Agile, Mentoring, etc.) is filtered out of the chart, heatmap, and autocomplete suggestions but still renders as chips on per-job timeline cards. `ranges` is an array of `{ jobId, from?, to? }`; `from`/`to` are `YYYY-MM` strings, both optional (defaults to the referenced job's full span). A skill can have multiple ranges, including multiple ranges on the same `jobId` (used early, paused, resumed — all merged at read time).
+- `EXTRA_ACTIVITIES` — flat list of internship / mentoring write-ups.
 
-Per-company logos live in `public/assets/img/<company-slug>.webp`. The `skills.$uuid` route resolves the image path by lowercasing `data.title` (with two hardcoded overrides for `Professor` → `unsta2.webp` and `Teacher` → `coderhouse.webp`).
+**Adding a skill to a job:** find the skill in `SKILLS`, push `{ jobId: N }` onto its `ranges`. If it's a brand-new skill, add a new entry. The schema validates that every `jobId` exists, names don't collide, and all dates are `YYYY-MM`.
+
+**Adding a job:** push a new `WORK_ITEMS` entry with the next `id`, then go through every relevant `SKILLS[].ranges` and add `{ jobId: <new-id> }` to the ones that apply at this job.
+
+**Heatmap, chart, autocomplete:** all derive from `SKILLS` via helpers in [app/utils/utils.tsx](app/utils/utils.tsx) — `getSkillHeatmapData`, `getSkillsForJob`, `getSkillSuggestions`. Computed once per worker boot and reused across requests.
+
+Per-company logos live in `public/assets/img/<company-slug>.webp`. The `skills.$uuid` route resolves the image path by lowercasing `data.title`, with overrides for titles that don't directly map to a logo file (`Professor (part-time)` → `unsta2.webp`, `Teacher` → `coderhouse.webp`) — see `IMAGE_OVERRIDES` in the route.
 
 The CV PDF is at [public/assets/files/gonzalo_alvarez_campos_cv.pdf](public/assets/files/gonzalo_alvarez_campos_cv.pdf) and surfaced via [DownloadBtn](app/components/DownloadBtn/index.tsx).
 
