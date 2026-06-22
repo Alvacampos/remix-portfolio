@@ -544,6 +544,19 @@
       ]
     },
     {
+      "title": "University",
+      "data": [
+        {
+          "title": "Technical Leader",
+          "text": "Technical Leader of the project for the career of Software Engineering. In charge of the development of the project and the team."
+        },
+        {
+          "title": "Career coaching",
+          "text": "Help students with their career path and guide them in their technical issues."
+        }
+      ]
+    },
+    {
       "title": "Qubika",
       "data": [
         {

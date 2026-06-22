@@ -47,28 +47,36 @@ export const meta: MetaFunction = (args) =>
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
-// Validated + derived once per worker boot. A malformed skills.json
-// throws a pretty-printed error pointing at the offending field.
+// Validated + derived once per worker boot for everything that's
+// time-independent. Anything that calls `new Date()` (heatmap year span,
+// "ongoing" job clamp, total-years figure) stays in the loader: on
+// Cloudflare Workers, `Date.now()` at module init returns 0 (Spectre
+// mitigation freezes Date until the first I/O event), so module-scope
+// derivations would lock the year-since to 1970 in production.
 const SKILLS = loadSkills(skillsJson);
-const HEATMAP_DATA = getSkillHeatmapData(SKILLS);
 const SUGGESTIONS = getSkillSuggestions(SKILLS);
-const TIMELINE_CARDS = [...SKILLS.WORK_ITEMS].reverse().map((item) => ({
+const TIMELINE_CARDS_BASE = [...SKILLS.WORK_ITEMS].reverse().map((item) => ({
   id: String(item.id),
   title: item.title,
-  date: formatDate(item.startDate, item.endDate ?? undefined),
-  texts: [item.rol],
-  textsLabel: 'ROLE',
+  startDate: item.startDate,
+  endDate: item.endDate ?? undefined,
+  rol: item.rol,
   skills: getSkillsForJob(SKILLS, item.id),
 }));
-const YEARS_OF_EXP = formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth');
 
 export async function loader() {
+  const timelineCards = TIMELINE_CARDS_BASE.map(({ startDate, endDate, rol, ...rest }) => ({
+    ...rest,
+    date: formatDate(startDate, endDate),
+    texts: [rol],
+    textsLabel: 'ROLE',
+  }));
   return remixData(
     {
-      data: TIMELINE_CARDS,
-      yearsOfExp: YEARS_OF_EXP,
+      data: timelineCards,
+      yearsOfExp: formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills: SUGGESTIONS,
-      heatmapData: HEATMAP_DATA,
+      heatmapData: getSkillHeatmapData(SKILLS),
       extraActivities: SKILLS.EXTRA_ACTIVITIES,
     },
     {
