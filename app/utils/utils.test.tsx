@@ -135,18 +135,60 @@ describe('getSkillHeatmapData', () => {
     expect(getSkillHeatmapData(data).rows.map((r) => r.skill)).toEqual(['React']);
   });
 
-  it('sorts rows by total months descending', () => {
+  it('sorts active skills before lapsed, total DESC within active', () => {
+    // Year span 2018-2026 (Qubika is ongoing). React is active (used at
+    // Qubika); .NET is lapsed (only at Globant 2018-2019). React's total
+    // is bigger anyway, but the assertion is about active-first regardless
+    // of total — flip the totals and the order should still hold.
     const data = fixture(
       [
-        { id: 1, startDate: '2020-01', endDate: '2022-01' },
-        { id: 2, startDate: '2021-01', endDate: '2022-01' },
+        { id: 1, startDate: '2018-01', endDate: '2019-01' },
+        { id: 2, startDate: '2024-01' },
       ],
       [
-        { name: 'React', ranges: [{ jobId: 1 }] },
-        { name: 'TypeScript', ranges: [{ jobId: 2 }] },
+        // .NET cumulative: 12 months. Lapsed (no cells in 2026).
+        { name: '.NET', ranges: [{ jobId: 1 }] },
+        // React cumulative: ~30 months. Active (Qubika ongoing).
+        { name: 'React', ranges: [{ jobId: 2 }] },
       ]
     );
-    expect(getSkillHeatmapData(data).rows.map((r) => r.skill)).toEqual(['React', 'TypeScript']);
+    const order = getSkillHeatmapData(data).rows.map((r) => r.skill);
+    expect(order).toEqual(['React', '.NET']);
+  });
+
+  it('orders lapsed skills by last-used year DESC, total DESC tiebreak', () => {
+    // No active jobs — all skills lapse. Expect the more-recently-touched
+    // skill on top regardless of cumulative depth.
+    const data = fixture(
+      [
+        { id: 1, startDate: '2018-01', endDate: '2020-01' }, // 2y
+        { id: 2, startDate: '2021-01', endDate: '2021-06' }, // 6m
+      ],
+      [
+        // Long total (24m), last used in 2019.
+        { name: 'Old Stack', ranges: [{ jobId: 1 }] },
+        // Short total (6m) but last used in 2021.
+        { name: 'Recent Stack', ranges: [{ jobId: 2 }] },
+      ]
+    );
+    const order = getSkillHeatmapData(data).rows.map((r) => r.skill);
+    expect(order).toEqual(['Recent Stack', 'Old Stack']);
+  });
+
+  it('tags rows with isActive based on cells in the rightmost year', () => {
+    const data = fixture(
+      [
+        { id: 1, startDate: '2018-01', endDate: '2019-01' },
+        { id: 2, startDate: '2024-01' }, // ongoing → spans includes 2026
+      ],
+      [
+        { name: '.NET', ranges: [{ jobId: 1 }] },
+        { name: 'React', ranges: [{ jobId: 2 }] },
+      ]
+    );
+    const { rows } = getSkillHeatmapData(data);
+    expect(rows.find((r) => r.skill === 'React')?.isActive).toBe(true);
+    expect(rows.find((r) => r.skill === '.NET')?.isActive).toBe(false);
   });
 
   it('merges paused-and-resumed ranges within a single job', () => {

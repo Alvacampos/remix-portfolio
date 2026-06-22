@@ -128,8 +128,7 @@
           "to": "2019-08"
         },
         {
-          "jobId": 2,
-          "to": "2021-08"
+          "jobId": 2
         },
         {
           "jobId": 4
@@ -150,7 +149,8 @@
       "category": "infra",
       "ranges": [
         {
-          "jobId": 6
+          "jobId": 6,
+          "to": "2024-01"
         }
       ]
     },
@@ -189,7 +189,8 @@
       "category": "framework",
       "ranges": [
         {
-          "jobId": 6
+          "jobId": 6,
+          "to": "2023-01"
         }
       ]
     },
@@ -198,8 +199,7 @@
       "category": "framework",
       "ranges": [
         {
-          "jobId": 2,
-          "to": "2021-08"
+          "jobId": 2
         }
       ]
     },
@@ -232,8 +232,7 @@
       "category": "infra",
       "ranges": [
         {
-          "jobId": 2,
-          "to": "2021-08"
+          "jobId": 2
         }
       ]
     },
@@ -315,9 +314,6 @@
       "ranges": [
         {
           "jobId": 4
-        },
-        {
-          "jobId": 6
         }
       ]
     },
@@ -344,7 +340,8 @@
       "category": "framework",
       "ranges": [
         {
-          "jobId": 6
+          "jobId": 6,
+          "to": "2025-10"
         }
       ]
     },
@@ -353,8 +350,7 @@
       "category": "framework",
       "ranges": [
         {
-          "jobId": 2,
-          "to": "2021-08"
+          "jobId": 2
         }
       ]
     },

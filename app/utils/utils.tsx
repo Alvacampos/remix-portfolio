@@ -101,12 +101,18 @@ export const formatDate = (dateA: string, dateB?: string, formatType?: string) =
 //     experience per year; `total` is the cell sum.
 //   - Cells are clamped to [0, 12] so a January-to-December year reads
 //     as 12 months even if multiple concurrent ranges both used the skill.
-//   - Rows are sorted by `total` descending so the most-used skills
-//     anchor the top of the grid.
+//   - Row order: active skills first (any cells in the last column,
+//     sorted by total months DESC) then lapsed skills (sorted by
+//     last-used year DESC, total DESC). Splitting the two groups gives
+//     the chart a clean recency tail at the bottom instead of mixing
+//     long-cumulative-but-stale skills (".NET", "Vue") into the
+//     upper-middle. `isActive` is exposed so the consumer can render
+//     a divider between the groups if it wants.
 export type SkillHeatmapRow = {
   skill: string;
   monthsPerYear: number[];
   total: number;
+  isActive: boolean;
 };
 
 export type SkillHeatmapData = {
@@ -240,12 +246,34 @@ export function getSkillHeatmapData(skillsData: SkillsData): SkillHeatmapData {
           )
         );
         const total = monthsPerYear.reduce((sum, m) => sum + m, 0);
-        if (total > 0) rows.push({ skill: skill.name, monthsPerYear, total });
+        if (total > 0) {
+          // "Active" = has any months in the rightmost column (current year
+          // when a job is ongoing, otherwise the latest job's end year).
+          const isActive = monthsPerYear[monthsPerYear.length - 1] > 0;
+          rows.push({ skill: skill.name, monthsPerYear, total, isActive });
+        }
       }
     }
   }
 
-  rows.sort((a, b) => b.total - a.total);
+  // Active group sorts by total DESC (depth ranking among current stack).
+  // Lapsed group sorts by last-used year DESC, then total DESC — so a
+  // skill last touched in 2021 sits above one last touched in 2019, and
+  // ties break on cumulative depth. Active rows always precede lapsed.
+  const lastUsedYear = (row: SkillHeatmapRow): number => {
+    for (let i = row.monthsPerYear.length - 1; i >= 0; i--) {
+      if (row.monthsPerYear[i] > 0) return i;
+    }
+    return -1;
+  };
+  rows.sort((a, b) => {
+    if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+    if (a.isActive) return b.total - a.total;
+    const aLast = lastUsedYear(a);
+    const bLast = lastUsedYear(b);
+    if (aLast !== bLast) return bLast - aLast;
+    return b.total - a.total;
+  });
   return { years, rows };
 }
 
