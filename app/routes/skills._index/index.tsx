@@ -26,6 +26,13 @@ import styles from './style.css?url';
 // CSS for lazy components is imported as `?url` strings — a static
 // `import { links } from '...'` would defeat the lazy chunk split.
 export const links = () => [
+  {
+    rel: 'preload',
+    href: '/fonts/monaspace/MonaspaceNeon-Regular.woff2',
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous',
+  },
   { rel: 'stylesheet', href: carouselStyles },
   { rel: 'stylesheet', href: tenureHeatmapStyles },
   { rel: 'stylesheet', href: timelineStyles },

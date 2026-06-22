@@ -9,7 +9,16 @@ import { formatDate, getClassMaker, getSkillsForJob, mergeRouteMeta } from '~/ut
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
-export const links = () => [{ rel: 'stylesheet', href: styles }];
+export const links = () => [
+  {
+    rel: 'preload',
+    href: '/fonts/monaspace/MonaspaceNeon-Regular.woff2',
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous',
+  },
+  { rel: 'stylesheet', href: styles },
+];
 
 export const meta: MetaFunction<typeof loader> = (args) =>
   mergeRouteMeta(args, {

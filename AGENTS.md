@@ -27,7 +27,7 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                            |
 | UI                | React 18 + TypeScript                                                                          |
 | Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                    |
-| Styling           | PostCSS (extend-rule, import, nested, simple-vars, mixins) + BEM via `getClassMaker`           |
+| Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                   |
 | i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/))   |
 | Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))       |
 | Timeline          | `react-vertical-timeline-component`                                                            |
@@ -342,7 +342,7 @@ The hook installs automatically via `npm install` (the `prepare` script runs `hu
 
 ### Visual regression — `visual.spec.ts`
 
-Full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. The `/skills` index route is excluded because the inline QR `<svg>` and tenure-heatmap cells produce sub-pixel anti-aliasing diffs across environments — see [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
+Full-page screenshot diffs for `/`, `/education`, `/education/:slug`. Both `/skills` routes are excluded — the heatmap's tight SVG cell grid drifts on sub-pixel anti-aliasing across environments, and `/skills/:uuid` reproducibly captured a hydration-error overlay during Docker regen. Both routes stay covered by behavioural specs. See [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
 
 Why linux-only: Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoji rendering differ enough between macOS and Ubuntu that committing both per-platform PNGs would double the snapshot footprint without gating anything (CI is the only place that runs the assertions). The spec's `SKIP_VISUAL` flag (in [tests/e2e/visual.spec.ts](tests/e2e/visual.spec.ts)) keys off `process.platform`.
 
@@ -353,7 +353,7 @@ Determinism guards (set up in `prepare()` and `settle()`):
 3. **`document.fonts.ready`** before snapshotting — Roboto loads from `/fonts/roboto/`; without this guard the first capture can land while the system fallback is still rendering.
 4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, Carousel, Timeline) to land and lay out.
 
-The carousel is masked because its scroll-x position isn't worth gating on. The bar chart is **not** masked — that's exactly what we want to catch when a token change shifts colors or a data update changes bar order.
+No content is masked on the routes that are gated — token changes and data updates that shift layout are exactly what we want to catch.
 
 **Updating baselines after an intentional UI change:**
 
