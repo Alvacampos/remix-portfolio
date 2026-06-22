@@ -86,7 +86,11 @@ export default function Card({
           <>
             {showSkillsCta && <hr className={getClasses('divider')} />}
             <div className={getClasses('skills-container')}>
-              {showSkillsCta && <span className={getClasses('skills-label')}>Skills:</span>}
+              {showSkillsCta && (
+                <span className={getClasses('skills-label')}>
+                  {formatMessage({ id: 'SKILLS' })}:{' '}
+                </span>
+              )}
               <ul className={getClasses('chip-list')}>
                 {visibleSkills.map((skill) => (
                   <li key={skill} className={getClasses('chip')}>

@@ -6,7 +6,7 @@ import { getClassMaker } from '~/utils/utils';
 type DownloadButtonProps = {
   fileUrl: string;
   fileName?: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 };
 
 const BLOCK = 'download-btn';
@@ -15,7 +15,7 @@ const getClasses = getClassMaker(BLOCK);
 export default function DownloadButton({
   fileUrl,
   fileName = undefined,
-  children = undefined,
+  children,
 }: DownloadButtonProps) {
   return (
     <a
@@ -25,7 +25,7 @@ export default function DownloadButton({
       target="_blank"
       rel="noopener noreferrer"
     >
-      {children || 'Download PDF'}
+      {children}
     </a>
   );
 }

@@ -55,12 +55,12 @@ remix-portfolio/
 │   ├── entry.client.tsx          # hydrateRoot in StrictMode
 │   ├── entry.server.tsx          # renderToReadableStream + isbot
 │   ├── routes/
-│   │   ├── _index.tsx            # /          → Home
-│   │   ├── education/index.tsx   # /education → Degree + certifications
-│   │   ├── skills._index/        # /skills    → Work timeline + TechGrid + tenure heatmap
-│   │   └── skills.$uuid/         # /skills/:uuid → Single work-item detail
+│   │   ├── _index.tsx            # /                  → Home
+│   │   ├── education._index/     # /education         → Degrees + certifications grid
+│   │   ├── education.$slug/      # /education/:slug   → Single degree detail
+│   │   ├── skills._index/        # /skills            → Work timeline + tech grid + tenure heatmap
+│   │   └── skills.$uuid/         # /skills/:uuid      → Single work-item detail
 │   ├── components/
-│   │   ├── Button/               # Button + ConditionalLink wrapper
 │   │   ├── Card/                 # Generic card (title / texts / itemList / skills / children)
 │   │   ├── Carousel/             # Categorized tech-stack chip grid (legacy name kept)
 │   │   ├── ConditionalWrapper/   # ConditionalWrapper + ConditionalLink
@@ -72,12 +72,13 @@ remix-portfolio/
 │   │   ├── ThemeToggle/          # Sliding sun/moon dark/light toggle
 │   │   ├── Timeline/             # Wraps react-vertical-timeline-component
 │   │   └── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
+│   ├── data/skills-schema.ts     # Zod schema + types + loadSkills() boot validator
 │   ├── assets/icons/             # Source .svg files (kebab-case)
 │   ├── intl/                     # en-US.json + es-ES.json + Accept-Language picker (index.ts)
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
-│   └── utils/utils.tsx           # getClassMaker, formatDate, getSkillHeatmapData, noop
+│   └── utils/utils.tsx           # getClassMaker, formatDate, mergeRouteMeta, getSkillHeatmapData, getSkillsForJob, getSkillSuggestions
 ├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
@@ -138,12 +139,13 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 
 **Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
 
-| URL             | File                                                                      | Loader                                                                                                                                                               |
-| --------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`             | [app/routes/\_index.tsx](app/routes/_index.tsx)                           | none                                                                                                                                                                 |
-| `/education`    | [app/routes/education/index.tsx](app/routes/education/index.tsx)          | imports `public/data/education.json` server-side                                                                                                                     |
-| `/skills`       | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) | validates `public/data/skills.json` via Zod at module load, derives timeline cards + heatmap + autocomplete suggestions once per worker boot (1h cache via `data()`) |
-| `/skills/:uuid` | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)   | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`        |
+| URL                | File                                                                            | Loader                                                                                                                                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                              |
+| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | imports `public/data/education.json` server-side                                                                                                                                                                                  |
+| `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key in `education.json`; throws on miss → local `ErrorBoundary`                                                                                                                                       |
+| `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `public/data/skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS`, `TIMELINE_CARDS_BASE` hoisted); the heatmap + total-years figure derive in the loader so they read live `Date` (1h cache via `data()`) |
+| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                     |
 
 A `/contact` route is stubbed (commented out) in the NavBar.
 
@@ -171,7 +173,7 @@ There are **two patterns** for getting that CSS to the browser. Pick the right o
 
 #### Pattern A — postcss-import inline (default for small / always-needed components)
 
-Stage 13 collapsed most per-component stylesheets into the consuming route's stylesheet (or the global stylesheet, for components used everywhere). The mechanism is `postcss-import`, which is already wired up in [postcss.config.js](postcss.config.js): the build expands `@import` directives at compile time, so one stylesheet ships instead of many.
+Most per-component stylesheets are collapsed into the consuming route's stylesheet (or the global stylesheet, for components used everywhere) via `postcss-import`, wired up in [postcss.config.js](postcss.config.js): the build expands `@import` directives at compile time, so one stylesheet ships instead of many.
 
 The component itself just owns its `style.css`. **No `links()` export, no `?url` import.** The consumer adds an `@import` at the top of its own `style.css`:
 
@@ -185,7 +187,7 @@ The component itself just owns its `style.css`. **No `links()` export, no `?url`
 }
 ```
 
-Components currently inlined this way: `Button`, `Card`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`. Buttons + NavBar are inlined into [app/styles/style.css](app/styles/style.css) since they're on every page; the rest are inlined into the routes that consume them.
+Components currently inlined this way: `Card`, `ConditionalWrapper`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `ThemeToggle`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them.
 
 #### Pattern B — Remix `links()` (lazy-loaded heavy components only)
 
@@ -245,7 +247,7 @@ If a rule starts emitting false positives on a postcss-simple-vars expansion, pr
 3. Run `npm run build:icons` — SVGR rewrites [app/components/icons/](app/components/icons/) (a PascalCase `.jsx` per SVG, plus a barrel `index.jsx`).
 4. Import: `import { NewIcon } from '~/components/icons'`.
 
-**Do not hand-edit `app/components/icons/*.jsx`** — it's regenerated and gitignored under `.eslintignore` / `.ls-lint.yml`. SVGR config: `outDir: 'app/components/icons'`, `ext: 'jsx'`, JSX runtime automatic, `svgProps: { height: '100%', role: 'img' }`.
+**Do not hand-edit `app/components/icons/*.jsx`** — it's regenerated and gitignored under `.eslintignore` / `.ls-lint.yml`. SVGR config: `outDir: 'app/components/icons'`, `ext: 'jsx'`, JSX runtime automatic, `svgProps: { height: '100%', 'aria-hidden': 'true' }`. Icons are decorative — every parent (NavBar links, ThemeToggle, Timeline elements) carries its own accessible name, and `aria-hidden` lets axe/Lighthouse skip the "SVG with img role needs an accessible name" rule. **SVGR doesn't delete generated files for SVGs you removed from `app/assets/icons/`** — when removing a source SVG, also delete its `app/components/icons/<Name>.jsx` and re-run `npm run build:icons` so the barrel rebuilds clean.
 
 ---
 

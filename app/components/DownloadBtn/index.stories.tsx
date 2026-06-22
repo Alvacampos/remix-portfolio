@@ -18,9 +18,3 @@ export const Default: Story = {
     children: 'Download my CV (PDF)',
   },
 };
-
-export const FallbackLabel: Story = {
-  args: {
-    fileUrl: '/assets/files/something.pdf',
-  },
-};
