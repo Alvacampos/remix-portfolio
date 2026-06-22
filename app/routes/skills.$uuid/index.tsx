@@ -127,8 +127,12 @@ export default function UuidIndex() {
       <h1 className={getClasses('title')}>{title}</h1>
       <div className={getClasses('main-container')}>
         <div className={getClasses('img-container')}>
+          {/* Logo is above-the-fold on this route (the page is the company
+           * detail) — eager-load so the banner shows immediately. Lazy
+           * here also broke the visual-regression spec: the lazy image
+           * delayed layout past the screenshot capture, so the rendered
+           * page measured ~600px shorter than its final height. */}
           <img
-            loading="lazy"
             src={imagePath}
             alt={title}
             width={imageDims.width}

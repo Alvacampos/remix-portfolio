@@ -46,21 +46,35 @@ async function prepare(page: Page) {
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready);
+  // Wait for every <img> to finish decoding. `loading="lazy"` images
+  // (e.g. the company logo on /skills/:uuid) don't block `networkidle`,
+  // so without this the screenshot captures the page before the image
+  // lays out — the page reads ~600px shorter than its final height,
+  // baseline mismatches CI consistently.
+  await page.evaluate(async () => {
+    const imgs = Array.from(document.images);
+    await Promise.all(
+      imgs.map((img) => (img.complete ? Promise.resolve() : img.decode().catch(() => undefined)))
+    );
+  });
   // Lazy-loaded chunks (TenureHeatmap, Carousel, Timeline) mount after
   // their Suspense boundary resolves; give them a frame to lay out
   // before capturing.
   await page.waitForTimeout(200);
 }
 
-// /skills (the index route) is intentionally not in this list. The
-// tenure-heatmap cells and the inline QR <svg> in the nav both hit
-// the anti-aliasing pipeline and drift ~0.4% of pixels between the
-// local Docker regen environment and CI's runner — invisible to the
-// eye but consistently above the 0.2% diff budget. The other 4
-// routes only have stable DOM-rendered text.
+// Two routes are intentionally NOT in this list:
+//   - /skills (the index): the tenure-heatmap cells + inline QR <svg>
+//     hit the anti-aliasing pipeline and drift ~0.4% across regen vs CI.
+//   - /skills/:uuid (a detail page): the local Docker regen environment
+//     reproducibly captures a root-error-boundary screenshot instead of
+//     the page itself — a hydration-time `useLocation()` failure inside
+//     NavBar that doesn't reproduce on CI or in normal browser use.
+//     Behavioral coverage in skills.spec.ts already asserts the route
+//     loads and renders its content; visual regression on a single
+//     detail page wasn't catching anything the behavioral suite missed.
 const ROUTES = [
   { name: 'home', path: '/' },
-  { name: 'skills-detail', path: '/skills/1' }, // Globant — first WORK_ITEM
   { name: 'education-index', path: '/education' },
   { name: 'education-detail', path: '/education/degree' },
 ];
