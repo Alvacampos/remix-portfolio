@@ -3,10 +3,9 @@ import { useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
-import { formatDate, getClassMaker, mergeRouteMeta } from '~/utils/utils';
+import { loadSkills } from '~/data/skills-schema';
+import { formatDate, getClassMaker, getSkillsForJob, mergeRouteMeta } from '~/utils/utils';
 
-// Server-side import — see app/routes/skills._index/index.tsx for the
-// rationale (Vite bakes the JSON into the server bundle, no HTTP hop).
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
@@ -20,32 +19,6 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
-
-type SkillEntryJson = {
-  name: string;
-  start?: string;
-  end?: string | null;
-};
-
-type skillsDataTypes =
-  | {
-      WORK_ITEMS: {
-        id: string | number;
-        title: string;
-        startDate: string;
-        endDate: string;
-        rol: string;
-        skills: SkillEntryJson[];
-        projects?:
-          | {
-              title: string;
-              text: string;
-            }[]
-          | string;
-        description: string;
-      }[];
-    }
-  | undefined;
 
 // Display dimensions for each company logo, fed to <img width> /
 // <img height> to reserve layout space (fixes CLS).
@@ -76,30 +49,37 @@ const LOGO_DIMS: Record<string, { width: number; height: number }> = {
 };
 const FALLBACK_DIMS = { width: 1000, height: 500 };
 
+// Title → image filename overrides for jobs whose `.toLowerCase().webp`
+// derivation doesn't yield a real file. Add a row here when a job has
+// no matching file in public/assets/img/ — for example "Professor
+// (part-time)" → unsta2.webp because the institution's name is the
+// stem, not the role title.
+const IMAGE_OVERRIDES: Record<string, string> = {
+  'professor (part-time)': 'unsta2.webp',
+  teacher: 'coderhouse.webp',
+};
+
+// Validate + parse once per worker boot. See skills._index for the
+// rationale; this route reads from the same cached payload.
+const SKILLS = loadSkills(skillsJson);
+
 export async function loader({ params }: LoaderFunctionArgs) {
-  const id = params && params?.uuid;
-  const skillsData = skillsJson as skillsDataTypes;
-  let data;
-  let imagePath: string | undefined;
+  const id = params?.uuid;
+  if (!id) throw new Error('Missing work item id.');
 
-  if (id) {
-    data = skillsData?.WORK_ITEMS.find((item) => item.id === +id);
-    if (data?.title.includes('Professor') && id === '3') {
-      imagePath = data && '/assets/img/unsta2.webp';
-    } else if (data?.title.includes('Teacher') && id === '6') {
-      imagePath = data && '/assets/img/coderhouse.webp';
-    } else {
-      imagePath = data && `/assets/img/${data.title.toLowerCase()}.webp`;
-    }
-  }
+  const numericId = Number(id);
+  if (!Number.isInteger(numericId)) throw new Error(`Invalid work item id: ${id}`);
 
-  if (data === undefined) throw new Error('Oh no! Something went wrong!');
+  const data = SKILLS.WORK_ITEMS.find((item) => item.id === numericId);
+  if (!data) throw new Error(`Work item ${id} not found.`);
 
-  const fileName = imagePath?.split('/').pop() ?? '';
+  const lowerTitle = data.title.toLowerCase();
+  const fileName = IMAGE_OVERRIDES[lowerTitle] ?? `${lowerTitle}.webp`;
+  const imagePath = `/assets/img/${fileName}`;
   const imageDims = LOGO_DIMS[fileName] ?? FALLBACK_DIMS;
 
   return {
-    data,
+    data: { ...data, skills: getSkillsForJob(SKILLS, data.id) },
     imagePath,
     imageDims,
   };
@@ -123,12 +103,11 @@ export default function UuidIndex() {
       <p>
         <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
       </p>
-      {data?.endDate && (
+      {data.endDate ? (
         <p>
           <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
         </p>
-      )}
-      {!data?.endDate && (
+      ) : (
         <p>
           <FormattedMessage id="END_DATE" />: Present
         </p>
@@ -139,7 +118,7 @@ export default function UuidIndex() {
   const renderJobDescription = () => (
     <div>
       <p>{data.rol}</p>
-      <p>{data.description}</p>
+      {data.description && <p>{data.description}</p>}
     </div>
   );
 
@@ -171,9 +150,9 @@ export default function UuidIndex() {
           <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
         )}
       </div>
-      {skills && (
+      {skills.length > 0 && (
         <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills.map((s) => s.name)} />
+          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills} />
         </div>
       )}
     </div>

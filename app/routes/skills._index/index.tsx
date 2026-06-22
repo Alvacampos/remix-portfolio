@@ -10,31 +10,26 @@ import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import tenureHeatmapStyles from '~/components/TenureHeatmap/style.css?url';
 import timelineStyles from '~/components/Timeline/style.css?url';
-import { formatDate, getClassMaker, getSkillHeatmapData, mergeRouteMeta } from '~/utils/utils';
+import { loadSkills } from '~/data/skills-schema';
+import {
+  formatDate,
+  getClassMaker,
+  getSkillHeatmapData,
+  getSkillsForJob,
+  getSkillSuggestions,
+  mergeRouteMeta,
+} from '~/utils/utils';
 
-// Import the JSON server-side: Vite bakes it into the server bundle so
-// the loader doesn't have to do an HTTP round-trip to the static asset
-// at /data/skills.json on every request. The asset is still served
-// publicly via the `/data/*` exclude in public/_routes.json.
-import skillsData from '../../../public/data/skills.json';
+import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
 // Manual CSS preload pattern for code-split components: TenureHeatmap,
 // Carousel, and Timeline are JS-lazy-loaded below, but their CSS is
 // pulled in as `?url` strings (no module evaluation, no chunk
-// coupling) and piped into Remix's <Links> via the route's `links()`
-// below. This keeps the page styled on first paint while letting
-// `lazy(() => import(...))` actually move each component's JS into
-// its own chunk.
-//
-// We deliberately don't `import { links as xLinks } from '...'` for
-// those three components — doing so would make Vite treat the module
-// as statically imported, defeating the `lazy()` chunk split (you'd
-// see "dynamic import will not move module into another chunk").
-//
-// Small components (Card, Input, Button, LoadingSpinner) skip this
-// pattern: their CSS is inlined into ./style.css via postcss-import,
-// so the route ships far fewer render-blocking stylesheets.
+// coupling) and piped into Remix's <Links> via the route's `links()`.
+// We deliberately don't `import { links as xLinks } from '...'` — doing
+// so would make Vite treat the module as statically imported, defeating
+// the `lazy()` chunk split.
 
 export const links = () => [
   { rel: 'stylesheet', href: carouselStyles },
@@ -44,10 +39,6 @@ export const links = () => [
   { rel: 'stylesheet', href: styles },
 ];
 
-// Below-the-fold heavy components — JS lazy-loaded so the initial
-// /skills bundle skips the timeline library + the chip grid render.
-// Their CSS is preloaded above so the page is styled before this
-// module evaluates.
 const LazyTimeline = lazy(() => import('~/components/Timeline'));
 const LazyCarousel = lazy(() => import('~/components/Carousel'));
 const LazyTenureHeatmap = lazy(() => import('~/components/TenureHeatmap'));
@@ -62,76 +53,48 @@ export const meta: MetaFunction = (args) =>
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
-type SkillEntryJson = {
-  name: string;
-  start?: string;
-  end?: string | null;
-};
+// Validate + parse the JSON once at module load. On a Cloudflare Pages
+// Function the module is reused across requests, so this runs once per
+// worker boot. A malformed skills.json crashes the worker with a
+// pretty-printed error pointing at the offending field.
+const SKILLS = loadSkills(skillsJson);
 
-type skillsDataTypes = {
-  WORK_ITEMS: {
-    id: number;
-    title: string;
-    startDate: string;
-    endDate?: string | null;
-    rol: string;
-    skills: SkillEntryJson[];
-  }[];
-  SKILLS_IMG: {
-    title: string;
-    img?: string;
-  }[];
-  EXTRA_ACTIVITIES: {
-    title: string;
-    data: {
-      title: string;
-      text: string;
-    }[];
-  }[];
-};
+// Heatmap data + autocomplete suggestions are pure functions of the
+// static SKILLS payload. Compute once at module scope; the loader just
+// hands the references to Remix.
+const HEATMAP_DATA = getSkillHeatmapData(SKILLS);
+const SUGGESTIONS = getSkillSuggestions(SKILLS);
+
+// Newest-job-first card list for the timeline. WORK_ITEMS is authored
+// chronologically (oldest first); reverse for display, derive the
+// per-card chip list from SKILLS via getSkillsForJob.
+const TIMELINE_CARDS = [...SKILLS.WORK_ITEMS].reverse().map((item) => ({
+  // Timeline + the /skills/:uuid URL want strings; convert once here.
+  id: String(item.id),
+  title: item.title,
+  date: formatDate(item.startDate, item.endDate ?? undefined),
+  texts: [item.rol],
+  // intl id — Card resolves it via formatMessage so the label
+  // tracks the active locale ("Role:" en / "Rol:" es).
+  textsLabel: 'ROLE',
+  skills: getSkillsForJob(SKILLS, item.id),
+}));
+
+// Career start = first WORK_ITEM as authored (chronological order).
+const YEARS_OF_EXP = formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth');
 
 export async function loader() {
-  // The JSON's literal-inferred type is wider than we use here (e.g.
-  // optional `end` on skill entries collapses into a union); cast
-  // through `unknown` so TS accepts the narrowing without flagging
-  // a "neither type sufficiently overlaps" error.
-  const typed = skillsData as unknown as skillsDataTypes;
-
-  // Reverse so the timeline reads newest-first. WORK_ITEMS in
-  // skills.json is authored chronologically (oldest first) — that
-  // ordering is preserved for getSkillChartData and yearsOfExp below
-  // (which treat WORK_ITEMS[0] as the career start). Only the
-  // displayed timeline array is reversed.
-  const data = [...typed.WORK_ITEMS].reverse().map((item) => ({
-    // ids in JSON are numeric, but Timeline + the /skills/:uuid URL
-    // both want strings; convert once here.
-    id: String(item.id),
-    title: item.title,
-    date: formatDate(item.startDate, item.endDate ?? undefined),
-    texts: [item.rol],
-    // intl id — Card resolves it via formatMessage so the label
-    // tracks the active locale ("Role:" en / "Rol:" es).
-    textsLabel: 'ROLE',
-    // Card chips and the autocomplete filter only need names — flatten here
-    // and let getSkillChartData() consume the date-aware shape directly.
-    skills: item.skills.map((s) => s.name),
-  }));
-
-  const skills = typed.SKILLS_IMG.map((item) => item.title);
-
-  const heatmapData = getSkillHeatmapData(typed.WORK_ITEMS);
-
   return remixData(
     {
-      data,
-      yearsOfExp: formatDate(typed.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
-      skills,
-      heatmapData,
-      extraActivities: typed.EXTRA_ACTIVITIES,
+      data: TIMELINE_CARDS,
+      yearsOfExp: YEARS_OF_EXP,
+      skills: SUGGESTIONS,
+      heatmapData: HEATMAP_DATA,
+      extraActivities: SKILLS.EXTRA_ACTIVITIES,
     },
     {
       headers: {
-        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+        'Cache-Control': 'public, max-age=3600',
       },
     }
   );
@@ -148,10 +111,9 @@ export default function Skills() {
         setFilteredData(data);
         return;
       }
+      const needle = word.toLowerCase();
       setFilteredData(
-        data.filter((item) =>
-          item.skills.find((skill) => skill.toLowerCase().includes(word.toLowerCase()))
-        )
+        data.filter((item) => item.skills.some((skill) => skill.toLowerCase().includes(needle)))
       );
     },
     [data]
