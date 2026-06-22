@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
   useLoaderData,
   useRouteError,
+  useRouteLoaderData,
 } from '@remix-run/react';
 import { IntlProvider } from 'react-intl';
 
@@ -18,7 +19,6 @@ import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
 const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2';
-const MONO_FONT_URL = '/fonts/monaspace/MonaspaceNeon-Regular.woff2';
 // Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
 // non-relative image URLs. The PNG itself is rendered offline from
 // scripts/og-image.svg via scripts/render-og-image.mjs.
@@ -27,22 +27,12 @@ const OG_IMAGE_URL = `${SITE_URL}/assets/img/og.png`;
 export function links() {
   return [
     { rel: 'icon', href: '/assets/img/favicon.svg', type: 'image/svg+xml' },
-    // Preload both font WOFF2s in parallel with the document. Without these,
-    // the browser only discovers each font after its @font-face rule is
-    // parsed inside the global stylesheet — and the stylesheet doesn't
-    // arrive until ~360ms in. Lighthouse measured a 683ms longest-chain on
-    // /skills (CSS → Monaspace) before this; preloading collapses that to
-    // a single round-trip alongside the HTML.
+    // Preload Roboto in parallel with the document — used on every route.
+    // Monaspace is preloaded per-route in the routes that use it (skills,
+    // education) since home doesn't render any monospace text.
     {
       rel: 'preload',
       href: FONT_URL,
-      as: 'font',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous',
-    },
-    {
-      rel: 'preload',
-      href: MONO_FONT_URL,
       as: 'font',
       type: 'font/woff2',
       crossOrigin: 'anonymous',
@@ -156,19 +146,13 @@ type LayoutData = {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Layout runs both during normal rendering and the error boundary, so the
-  // loader data may be unavailable. Default to English / site root when that
-  // happens.
-  let locale: Locale = 'en';
-  let canonical = SITE_URL;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const data = useLoaderData<LayoutData>();
-    if (data?.locale) locale = data.locale;
-    if (data?.canonical) canonical = data.canonical;
-  } catch {
-    /* error path or pre-loader render — keep defaults */
-  }
+  // Layout runs both during normal rendering and the error boundary.
+  // useRouteLoaderData('root') returns undefined in the error path
+  // without warning, where useLoaderData would log "you cannot useLoaderData
+  // in an errorElement" on every error render.
+  const data = useRouteLoaderData<LayoutData>('root');
+  const locale: Locale = data?.locale ?? 'en';
+  const canonical = data?.canonical ?? SITE_URL;
 
   return (
     // suppressHydrationWarning: the inline theme-init script (below) sets

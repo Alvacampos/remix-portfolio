@@ -27,7 +27,7 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                            |
 | UI                | React 18 + TypeScript                                                                          |
 | Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                    |
-| Styling           | PostCSS (extend-rule, import, nested, simple-vars, mixins) + BEM via `getClassMaker`           |
+| Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                   |
 | i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/))   |
 | Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))       |
 | Timeline          | `react-vertical-timeline-component`                                                            |
@@ -55,12 +55,12 @@ remix-portfolio/
 │   ├── entry.client.tsx          # hydrateRoot in StrictMode
 │   ├── entry.server.tsx          # renderToReadableStream + isbot
 │   ├── routes/
-│   │   ├── _index.tsx            # /          → Home
-│   │   ├── education/index.tsx   # /education → Degree + certifications
-│   │   ├── skills._index/        # /skills    → Work timeline + TechGrid + tenure heatmap
-│   │   └── skills.$uuid/         # /skills/:uuid → Single work-item detail
+│   │   ├── _index.tsx            # /                  → Home
+│   │   ├── education._index/     # /education         → Degrees + certifications grid
+│   │   ├── education.$slug/      # /education/:slug   → Single degree detail
+│   │   ├── skills._index/        # /skills            → Work timeline + tech grid + tenure heatmap
+│   │   └── skills.$uuid/         # /skills/:uuid      → Single work-item detail
 │   ├── components/
-│   │   ├── Button/               # Button + ConditionalLink wrapper
 │   │   ├── Card/                 # Generic card (title / texts / itemList / skills / children)
 │   │   ├── Carousel/             # Categorized tech-stack chip grid (legacy name kept)
 │   │   ├── ConditionalWrapper/   # ConditionalWrapper + ConditionalLink
@@ -72,12 +72,13 @@ remix-portfolio/
 │   │   ├── ThemeToggle/          # Sliding sun/moon dark/light toggle
 │   │   ├── Timeline/             # Wraps react-vertical-timeline-component
 │   │   └── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
+│   ├── data/skills-schema.ts     # Zod schema + types + loadSkills() boot validator
 │   ├── assets/icons/             # Source .svg files (kebab-case)
 │   ├── intl/                     # en-US.json + es-ES.json + Accept-Language picker (index.ts)
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
-│   └── utils/utils.tsx           # getClassMaker, formatDate, getSkillHeatmapData, noop
+│   └── utils/utils.tsx           # getClassMaker, formatDate, mergeRouteMeta, getSkillHeatmapData, getSkillsForJob, getSkillSuggestions
 ├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
@@ -138,12 +139,13 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 
 **Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
 
-| URL             | File                                                                      | Loader                                                                                                                                                               |
-| --------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`             | [app/routes/\_index.tsx](app/routes/_index.tsx)                           | none                                                                                                                                                                 |
-| `/education`    | [app/routes/education/index.tsx](app/routes/education/index.tsx)          | imports `public/data/education.json` server-side                                                                                                                     |
-| `/skills`       | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) | validates `public/data/skills.json` via Zod at module load, derives timeline cards + heatmap + autocomplete suggestions once per worker boot (1h cache via `data()`) |
-| `/skills/:uuid` | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)   | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`        |
+| URL                | File                                                                            | Loader                                                                                                                                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                              |
+| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | imports `public/data/education.json` server-side                                                                                                                                                                                  |
+| `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key in `education.json`; throws on miss → local `ErrorBoundary`                                                                                                                                       |
+| `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `public/data/skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS`, `TIMELINE_CARDS_BASE` hoisted); the heatmap + total-years figure derive in the loader so they read live `Date` (1h cache via `data()`) |
+| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                     |
 
 A `/contact` route is stubbed (commented out) in the NavBar.
 
@@ -171,7 +173,7 @@ There are **two patterns** for getting that CSS to the browser. Pick the right o
 
 #### Pattern A — postcss-import inline (default for small / always-needed components)
 
-Stage 13 collapsed most per-component stylesheets into the consuming route's stylesheet (or the global stylesheet, for components used everywhere). The mechanism is `postcss-import`, which is already wired up in [postcss.config.js](postcss.config.js): the build expands `@import` directives at compile time, so one stylesheet ships instead of many.
+Most per-component stylesheets are collapsed into the consuming route's stylesheet (or the global stylesheet, for components used everywhere) via `postcss-import`, wired up in [postcss.config.js](postcss.config.js): the build expands `@import` directives at compile time, so one stylesheet ships instead of many.
 
 The component itself just owns its `style.css`. **No `links()` export, no `?url` import.** The consumer adds an `@import` at the top of its own `style.css`:
 
@@ -185,32 +187,11 @@ The component itself just owns its `style.css`. **No `links()` export, no `?url`
 }
 ```
 
-Components currently inlined this way: `Button`, `Card`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`. Buttons + NavBar are inlined into [app/styles/style.css](app/styles/style.css) since they're on every page; the rest are inlined into the routes that consume them.
+Components currently inlined this way: `Card`, `Carousel`, `ConditionalWrapper`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
 
-#### Pattern B — Remix `links()` (lazy-loaded heavy components only)
+> **Lazy-loaded components inline their CSS too.** `Carousel`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`, but their CSS rides eagerly with the route stylesheet — it's tiny (~19 KB raw / ~3.5 KB gzipped including the vendor sheet) and Lighthouse's Lantern simulator was charging ~360 ms of element-render-delay across the four separate render-blocking sheets. One inlined route stylesheet beats four small ones. The JS chunk-split is preserved — only the CSS coalesces.
 
-`Carousel`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`. Their CSS still needs to land on first paint (otherwise the component flashes unstyled when its chunk arrives), so they use a manual-CSS-preload pattern:
-
-```ts
-// app/components/Timeline/index.tsx
-import styles from './style.css?url';
-
-export const links = () => [
-  { rel: 'preload', href: styles, as: 'style' },
-  { rel: 'stylesheet', href: styles },
-];
-```
-
-The consuming route then either composes the component's `links()` chain or — if statically importing the component would defeat its lazy-chunk split — pipes the CSS in as a `?url` string directly in the route's `links()`. See [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx) for the latter.
-
-#### Which pattern do I use?
-
-- **Pattern A (postcss-import inline)** — small CSS files (≤ a few KB), components used everywhere or on a known set of routes, no JS code-split.
-- **Pattern B (links())** — heavy components (vendor CSS like `react-vertical-timeline-component/style.min.css`, large component stylesheets) that are _also_ JS-lazy-loaded. The trade you're making: an extra round-trip for a stylesheet, in exchange for keeping the component's JS off the eager bundle.
-
-Whichever pattern you pick: **don't mix them on the same component.** Both an `@import` and a `links()` entry would emit the CSS twice.
-
-The chain bottoms out at [app/root.tsx](app/root.tsx)'s `links()`, which loads `app/styles/style.css` — global styles + the `@import`-inlined NavBar/Button CSS.
+The chain bottoms out at [app/root.tsx](app/root.tsx)'s `links()`, which loads `app/styles/style.css` — global styles + the `@import`-inlined NavBar / ThemeToggle CSS.
 
 ### `getClassMaker` (BEM helper)
 
@@ -245,7 +226,7 @@ If a rule starts emitting false positives on a postcss-simple-vars expansion, pr
 3. Run `npm run build:icons` — SVGR rewrites [app/components/icons/](app/components/icons/) (a PascalCase `.jsx` per SVG, plus a barrel `index.jsx`).
 4. Import: `import { NewIcon } from '~/components/icons'`.
 
-**Do not hand-edit `app/components/icons/*.jsx`** — it's regenerated and gitignored under `.eslintignore` / `.ls-lint.yml`. SVGR config: `outDir: 'app/components/icons'`, `ext: 'jsx'`, JSX runtime automatic, `svgProps: { height: '100%', role: 'img' }`.
+**Do not hand-edit `app/components/icons/*.jsx`** — it's regenerated and gitignored under `.eslintignore` / `.ls-lint.yml`. SVGR config: `outDir: 'app/components/icons'`, `ext: 'jsx'`, JSX runtime automatic, `svgProps: { height: '100%', 'aria-hidden': 'true' }`. Icons are decorative — every parent (NavBar links, ThemeToggle, Timeline elements) carries its own accessible name, and `aria-hidden` lets axe/Lighthouse skip the "SVG with img role needs an accessible name" rule. **SVGR doesn't delete generated files for SVGs you removed from `app/assets/icons/`** — when removing a source SVG, also delete its `app/components/icons/<Name>.jsx` and re-run `npm run build:icons` so the barrel rebuilds clean.
 
 ---
 
@@ -342,7 +323,7 @@ The hook installs automatically via `npm install` (the `prepare` script runs `hu
 
 ### Visual regression — `visual.spec.ts`
 
-Full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. The `/skills` index route is excluded because the inline QR `<svg>` and tenure-heatmap cells produce sub-pixel anti-aliasing diffs across environments — see [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
+Full-page screenshot diffs for `/`, `/education`, `/education/:slug`. Both `/skills` routes are excluded — the heatmap's tight SVG cell grid drifts on sub-pixel anti-aliasing across environments, and `/skills/:uuid` reproducibly captured a hydration-error overlay during Docker regen. Both routes stay covered by behavioural specs. See [tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated) for the full reasoning. Baselines live at [tests/e2e/visual.spec.ts-snapshots/](tests/e2e/visual.spec.ts-snapshots/) and are committed for **linux only** — the spec self-skips on macOS, so `npm run test:e2e` on a Mac runs the behavioural specs only and stays green; on Ubuntu (CI) the spec runs and diffs against the committed baselines.
 
 Why linux-only: Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoji rendering differ enough between macOS and Ubuntu that committing both per-platform PNGs would double the snapshot footprint without gating anything (CI is the only place that runs the assertions). The spec's `SKIP_VISUAL` flag (in [tests/e2e/visual.spec.ts](tests/e2e/visual.spec.ts)) keys off `process.platform`.
 
@@ -353,7 +334,7 @@ Determinism guards (set up in `prepare()` and `settle()`):
 3. **`document.fonts.ready`** before snapshotting — Roboto loads from `/fonts/roboto/`; without this guard the first capture can land while the system fallback is still rendering.
 4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, Carousel, Timeline) to land and lay out.
 
-The carousel is masked because its scroll-x position isn't worth gating on. The bar chart is **not** masked — that's exactly what we want to catch when a token change shifts colors or a data update changes bar order.
+No content is masked on the routes that are gated — token changes and data updates that shift layout are exactly what we want to catch.
 
 **Updating baselines after an intentional UI change:**
 
@@ -477,7 +458,7 @@ When adding a new component, mirror the existing shape:
 
 1. Folder under `app/components/<PascalCase>/` containing `index.tsx` (+ `style.css` if it has styles).
 2. `const BLOCK = 'kebab-case-block'; const getClasses = getClassMaker(BLOCK);`
-3. Default-export the component. **No `links()` export by default** — the consuming route's stylesheet inlines the CSS via `@import` (Pattern A in §6). Only export `links()` if the component is JS-lazy-loaded and needs the manual-CSS-preload pattern (Pattern B). When in doubt, default to Pattern A.
+3. Default-export the component. **No `links()` export.** The consuming route's stylesheet `@import`s the CSS via postcss-import (see §6). This applies even to JS-lazy-loaded components — their CSS rides eagerly with the route stylesheet so Lantern doesn't penalise extra render-blocking round-trips.
 4. Type props inline (`type FooProps = { ... }`) and give optional props defaults in the parameter destructure (so `react/require-default-props` is satisfied).
 5. Use `~/components/icons` for any iconography rather than inlining SVG.
 6. For links, prefer `<Link to=...>` from `@remix-run/react`; use [ConditionalLink](app/components/ConditionalWrapper/index.tsx#L32) when an element should only become a link under some condition.
@@ -487,7 +468,7 @@ When adding a new route:
 
 1. Create `app/routes/<flat-route-name>/index.tsx` (or `<flat-route-name>.tsx`).
 2. Export `loader` if you need data — `import` the JSON from `public/data/` directly (Vite bakes it into the server bundle, no HTTP hop). Single Fetch is on, so return a raw object; use `data(payload, { headers })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status.
-3. Add a `style.css` next to the route if it has styles, and `@import` any small components it consumes at the top of that file (see §6 Pattern A). Export `links` listing the route's own stylesheet plus any Pattern B (lazy-loaded) component stylesheets.
+3. Add a `style.css` next to the route if it has styles, and `@import` any components it consumes at the top of that file (see §6). Export `links` listing the route's own stylesheet, plus any per-route `<link rel="preload">` entries (e.g. fonts that are only needed on this route — Monaspace lives on `/skills`, `/skills/:uuid`, and `/education/:slug`).
 4. Add a NavBar entry in [app/components/NavBar/index.tsx](app/components/NavBar/index.tsx) `MAIN_NAV` if the route should be reachable from the nav.
 5. Optionally export a route-local `ErrorBoundary` (skills.\$uuid does this).
 

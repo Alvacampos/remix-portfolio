@@ -2,6 +2,18 @@
 @import '../../components/Input/style.css';
 @import '../../components/LoadingSpinner/style.css';
 
+/* Lazy-component sheets are inlined here too. They were on Pattern B
+ * (manual CSS-preload + stylesheet) so the components didn't FOUC when
+ * their JS chunks arrived in a later round-trip — but Lighthouse's
+ * Lantern simulator charges per-stylesheet round-trip cost, and four
+ * small render-blocking sheets dominated /skills's element-render-delay
+ * (~366 ms). Inlining them here collapses 5 round-trips to 1 at the
+ * cost of ~19 KB raw / ~5 KB gzipped on the eager bundle. */
+@import 'react-vertical-timeline-component/style.min.css';
+@import '../../components/Timeline/style.css';
+@import '../../components/TenureHeatmap/style.css';
+@import '../../components/Carousel/style.css';
+
 .skills-route {
   display: flex;
   flex-direction: column;

@@ -50,7 +50,6 @@ module.exports = {
           'playwright.config.ts',
           'vitest.config.ts',
           'vite.config.ts',
-          'tailwind.config.ts',
           'postcss.config.js',
           '.storybook/**/*.{ts,tsx,js,jsx}',
           '**/*.stories.{ts,tsx,js,jsx}',

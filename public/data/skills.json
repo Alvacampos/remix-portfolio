@@ -540,6 +540,10 @@
         {
           "title": "Endava Argentina Internship",
           "text": "Organizer and mentor for Endava Argentina Internship Program 2022. In charge of lectures related to JS and general programming."
+        },
+        {
+          "title": "Technical Interviewer",
+          "text": "Gatekeeper for Endava's hiring process — regularly assessed candidates' technical depth and culture fit during the interview loop."
         }
       ]
     },
@@ -566,6 +570,10 @@
         {
           "title": "Frontend Mentor",
           "text": "Mentor of new colleagues, working on the frontend area, helping them with their daily tasks, code reviewing, technical mentoring, etc."
+        },
+        {
+          "title": "Technical Interviewer",
+          "text": "Gatekeeper for Qubika's hiring process — regularly assessed candidates' technical depth and culture fit during the interview loop."
         }
       ]
     }

@@ -1,7 +1,6 @@
 import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
-import { ConditionalLink } from '~/components/ConditionalWrapper';
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
 import ThemeToggle from '~/components/ThemeToggle';
 import { getClassMaker } from '~/utils/utils';
@@ -9,11 +8,19 @@ import { getClassMaker } from '~/utils/utils';
 const BLOCK = 'navbar-component';
 const getClasses = getClassMaker(BLOCK);
 
+const GITHUB_URL = 'https://github.com/Alvacampos';
+const LINKEDIN_URL = 'https://www.linkedin.com/in/gonzaloalvarezcampos/';
+
+const MAIN_NAV = [
+  { url: './', labelId: 'HOME', leftIcon: Home },
+  { url: './skills', labelId: 'CV', leftIcon: Paper },
+  { url: './education', labelId: 'EDUCATION', leftIcon: Education },
+] as const;
+
 export default function NavBar() {
   const { formatMessage } = useIntl();
   const { pathname } = useLocation();
 
-  // Match the current pathname to a nav entry's url to mark it active.
   // `/` is exact-match (otherwise it'd match every route); the others
   // use prefix-match so /skills/:uuid still highlights the CV button.
   const isActive = (url: string) => {
@@ -22,61 +29,18 @@ export default function NavBar() {
     return pathname === target || pathname.startsWith(`${target}/`);
   };
 
-  const GIT_LINK_ICON = {
-    url: 'https://github.com/Alvacampos',
-    label: 'Github',
-    className: 'special-anchor',
-    target: '_blank',
-  };
-
-  const LINKEDIN_LINK_ICON = {
-    url: 'https://www.linkedin.com/in/gonzaloalvarezcampos/',
-    label: 'Linkedin',
-    className: 'special-anchor',
-    target: '_blank',
-  };
-
-  const MAIN_NAV = [
-    {
-      url: './',
-      label: formatMessage({ id: 'HOME' }),
-      leftIcon: Home,
-      prefetch: 'intent' as const,
-    },
-    {
-      url: './skills',
-      label: formatMessage({ id: 'CV' }),
-      leftIcon: Paper,
-      prefetch: 'intent' as const,
-    },
-    {
-      url: './education',
-      label: formatMessage({ id: 'EDUCATION' }),
-      leftIcon: Education,
-      prefetch: 'intent' as const,
-    },
-    // TODO: Uncomment when the contact page is ready
-    // {
-    //   url: './contact',
-    //   label: formatMessage({ id: 'CONTACT' }),
-    //   leftIcon: Inbox,
-    // },
-  ];
-
   return (
     <nav className={getClasses()}>
       {/* Avatar — desktop only. Mobile bottom nav doesn't have the
        * vertical real estate, and the photo doesn't add functional
        * info (the Home page already shows it). */}
       <div className={getClasses('avatar-row')}>
-        {/* Filename is intentionally `me.v2.jpeg`, not `me.jpeg`. The /assets/*
-         * cache header is `max-age=31536000, immutable`, so when stage-37 fixed
-         * the avatar's aspect ratio (192×256 → 256×256) it couldn't reach
-         * existing visitors — Cloudflare and browsers held the old 192×256 file
-         * for the year-long TTL. Renaming the URL forces a fresh fetch. Bump
-         * the suffix again on any future re-crop. */}
+        {/* Filename is suffix-versioned so re-crops / re-encodes can reach
+         * existing visitors despite the year-long /assets/* immutable cache.
+         * v3 is the WebP re-encode (was v2.jpeg, ~19 KB → ~9 KB). Bump the
+         * suffix again on any future re-crop or re-encode. */}
         <img
-          src="/assets/img/me.v2.jpeg"
+          src="/assets/img/me.v3.webp"
           alt="Gonzalo Alvarez Campos"
           width={64}
           height={64}
@@ -87,38 +51,39 @@ export default function NavBar() {
         <ThemeToggle />
       </div>
       <div className={getClasses('special-anchor-container')}>
-        <ConditionalLink
-          to={GIT_LINK_ICON.url}
-          condition={!!GIT_LINK_ICON.url}
-          label={GIT_LINK_ICON.label}
-          target={GIT_LINK_ICON.target}
+        <a
+          href={GITHUB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={formatMessage({ id: 'GITHUB_PROFILE' })}
         >
           <div className={getClasses('special-anchor-wrapper')}>
             <GithubIcon className={getClasses('special-anchor')} />
           </div>
-        </ConditionalLink>
-        <ConditionalLink
-          to={LINKEDIN_LINK_ICON.url}
-          condition={!!LINKEDIN_LINK_ICON.url}
+        </a>
+        <a
+          href={LINKEDIN_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className={getClasses('linkedin-anchor')}
-          label={LINKEDIN_LINK_ICON.label}
-          target={LINKEDIN_LINK_ICON.target}
+          aria-label={formatMessage({ id: 'LINKEDIN_PROFILE' })}
         >
           <div className={getClasses('special-anchor-wrapper')}>
             <LinkedinIcon className={getClasses('special-anchor')} />
           </div>
-        </ConditionalLink>
+        </a>
       </div>
       <div className={getClasses('main-section')}>
         <div className={getClasses('main-buttons')}>
           <ul>
-            {MAIN_NAV.map(({ url, label, leftIcon: Icon, prefetch }) => {
+            {MAIN_NAV.map(({ url, labelId, leftIcon: Icon }) => {
               const active = isActive(url);
+              const label = formatMessage({ id: labelId });
               return (
-                <li key={label}>
+                <li key={labelId}>
                   <Link
                     to={url}
-                    prefetch={prefetch}
+                    prefetch="intent"
                     className={`${getClasses('nav-link')} ${active ? getClasses('nav-link', 'active') : ''}`}
                     aria-current={active ? 'page' : undefined}
                   >

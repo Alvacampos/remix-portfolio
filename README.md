@@ -66,21 +66,21 @@ What this project ships that goes beyond a "static CV page":
 
 - **Multi-route Remix app** with file-based flat routing — Home, Skills (with detail pages per work item), Education (with detail pages per degree), and a downloadable CV.
 - **Internationalization** via `react-intl` — English and Spanish, picked from the request's `Accept-Language` header at the root loader.
-- **Single Fetch + lazy route discovery** — Remix v3 future flags enabled. Loaders return raw objects; the skills bar chart, carousel, and timeline are JS-lazy-loaded so the initial `/skills` bundle stays small.
-- **Skill bar chart derived from work history** — the chart on `/skills` is computed from the `WORK_ITEMS` array in `public/data/skills.json` (overlap-merged so concurrent jobs don't double-count). Edit the work item, the chart updates — no parallel data source to keep in sync.
+- **Single Fetch + lazy route discovery** — Remix v3 future flags enabled. Loaders return raw objects; the tenure heatmap, tech-grid, and timeline are JS-lazy-loaded so the initial `/skills` bundle stays small.
+- **Skill-first JSON schema with Zod validation** — `public/data/skills.json` follows a skill-first model: every skill is authored once with a list of date-bounded ranges that point at jobs by id. Validated at worker boot (a malformed file throws a path-precise error before any consumer reads it). The tenure heatmap, autocomplete suggestions, and per-job chip lists all derive from the same payload — no parallel data sources.
 - **Cloudflare Pages deployment** — Pages Functions handle SSR via Wrangler, with edge-cached static assets (`Cache-Control: public, max-age=31536000, immutable`) and a per-route 1h cache on the skills page.
 - **Comprehensive test suite**:
   - **Vitest + React Testing Library** for components and utils — render helper that wraps trees in a memory router and IntlProvider so route-level concerns don't leak into unit tests.
   - **Playwright behavioural specs** for each route's loader and key interactions.
-  - **Playwright visual-regression suite** — full-page screenshot diffs for `/`, `/skills/:uuid`, `/education`, `/education/:slug`. (The `/skills` index route is excluded — recharts SVG text drifts on sub-pixel anti-aliasing across environments; the route stays covered by behavioural specs.) Baselines are committed for Linux only (macOS auto-skips); CI runs Playwright inside the same `mcr.microsoft.com/playwright:vX.Y.Z-jammy` Docker image baselines were captured in, guaranteeing pixel-perfect parity.
+  - **Playwright visual-regression suite** — full-page screenshot diffs for `/`, `/education`, `/education/:slug`. (The `/skills` routes are excluded — the heatmap's tight SVG cell grid and the dev-server hydration timing on `/skills/:uuid` both drift across environments; both stay covered by behavioural specs.) Baselines are committed for Linux only (macOS auto-skips); CI runs Playwright inside the same `mcr.microsoft.com/playwright:vX.Y.Z-jammy` Docker image baselines were captured in, guaranteeing pixel-perfect parity.
   - **Storybook 10** with stories colocated next to each component, plus chromatic + a11y addons.
 - **Accessibility-first**:
   - SVGR-generated icons ship `aria-hidden="true"` by default (decorative); the Lighthouse `svg-img-alt` audit is `notApplicable` because no SVGs claim a `role="img"` they can't fulfill.
   - Custom autocomplete combobox follows ARIA combobox patterns end-to-end.
   - Per-route canonical URLs from the root loader.
 - **Performance-tuned**:
-  - Lighthouse mobile scores: Performance 0.98, Accessibility 1.00, Best Practices 1.00, SEO 1.00.
-  - JS code-split for below-the-fold heavy components (recharts, vertical timeline, carousel).
+  - Lighthouse mobile (Lantern simulation): Accessibility 1.00, Best Practices 1.00, SEO 1.00; Performance 0.81–0.87 across routes (see `lighthouse/` for per-commit summaries).
+  - JS code-split for below-the-fold heavy components (TenureHeatmap, vertical timeline, tech grid).
   - Stylesheet count on `/skills` collapsed from 12 → 7 via `postcss-import` inlining of small components into route stylesheets, while keeping JS-lazy components on a manual CSS-preload pattern.
 - **Design tokens as a single source of truth** — `app/styles/constants.js` exports tokens injected into PostCSS as `simple-vars`. Unknown variable references emit warnings at build, so token drift is caught before it ships.
 - **CI gates on every PR** — lint, typecheck, unit tests, E2E (behavioural + visual), Storybook build. Visual-diff PNGs auto-upload as artifacts when a screenshot test fails.
@@ -96,7 +96,7 @@ The model didn't write the project for me; it helped me push it past where I'd n
 - **Performance recovery**: when Lighthouse showed `/skills` LCP regressing under Lantern simulation after I introduced JS code-splitting, Claude helped me understand it was a per-stylesheet round-trip cost (12 render-blocking stylesheets) and proposed `postcss-import` inlining as the recovery — keeping the JS chunk-split intact while collapsing CSS to 7 sheets. LCP recovered from 0.87 → 0.94. The diagnosis took two prompts.
 - **Visual-regression infrastructure**: I described what I wanted ("screenshot tests, locally free") and Claude walked me through the trade-offs (cross-platform pixel diffs, fontconfig drift between Ubuntu versions, why baselines need to live in the same Docker image CI uses). The first CI run failed on exactly the issue it had warned me about (Ubuntu 22.04 baselines vs ubuntu-latest = 24.04 runner) — so the fix was already understood when it happened. We landed pixel-parity by running CI inside the Playwright image itself.
 - **Accessibility + SEO sweep**: identified canonical URL pinning to homepage (Stage 12 fix) and the `svg-img-alt` audit failures from SVGR's default `role="img"` — both were 0.92 SEO / 0.99 a11y bumps to perfect scores, neither would have been on my radar without the audit pass.
-- **Code review at PR time**: I asked Claude to "audit the look as a UI designer" with screenshots, and it produced a 17-row priority table that's now driving the next two PRs (lows + meds). Honest about its own earlier wrong calls (one row was a browser overlay, not a real CSS issue — it flagged the correction itself).
+- **Code review at PR time**: I asked Claude to "audit the look as a UI designer" with screenshots and it produced a prioritised punch-list that drove a chunk of follow-up work. Honest about its own earlier wrong calls (one row was a browser overlay, not a real CSS issue — it flagged the correction itself).
 - **Documentation as code grew**: AGENTS.md (architecture + conventions for AI agents working on the repo) was largely written by Claude, refined by me, then kept in sync stage-by-stage as the project evolved. It made onboarding a hypothetical second contributor — or future-me — into a 5-minute read.
 
 Things I learned about working with an AI collaborator on a real project:
@@ -114,9 +114,7 @@ This project is a work in progress, and here are some planned features and impro
 
 - **Backend development**: Python and Django for handling dynamic content + data persistence.
 - **Contact form**: easier outreach for visitors.
-- **UI design refinements**: a 17-item audit was completed in 2026; the medium and high-priority improvements (visual hierarchy, certification card titles, unified date format, skill chip styling) are queued as follow-up PRs.
 - **Locale switcher UI**: today the locale is browser-driven (`Accept-Language`); a visible en/es toggle is on the backlog.
-- **Lighthouse-CI workflow**: automate Lighthouse score tracking on every PR.
 - **Possible framework migration**: React Router v7 or Next.js are on the table but not actively planned.
 
 Stay tuned for updates as the project evolves!

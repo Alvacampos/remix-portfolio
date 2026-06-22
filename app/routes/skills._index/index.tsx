@@ -2,14 +2,10 @@ import { data as remixData, type MetaFunction } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import verticalTimelineStyles from 'react-vertical-timeline-component/style.min.css?url';
 
 import Card from '~/components/Card';
-import carouselStyles from '~/components/Carousel/style.css?url';
 import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
-import tenureHeatmapStyles from '~/components/TenureHeatmap/style.css?url';
-import timelineStyles from '~/components/Timeline/style.css?url';
 import { loadSkills } from '~/data/skills-schema';
 import {
   formatDate,
@@ -23,13 +19,18 @@ import {
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
-// CSS for lazy components is imported as `?url` strings — a static
-// `import { links } from '...'` would defeat the lazy chunk split.
+// Lazy-component CSS (Carousel, TenureHeatmap, Timeline, vendor
+// vertical-timeline) is now `@import`-inlined into ./style.css via
+// postcss-import — see that file for the rationale. The lazy chunks
+// themselves still split off the eager bundle through `lazy()` below.
 export const links = () => [
-  { rel: 'stylesheet', href: carouselStyles },
-  { rel: 'stylesheet', href: tenureHeatmapStyles },
-  { rel: 'stylesheet', href: timelineStyles },
-  { rel: 'stylesheet', href: verticalTimelineStyles },
+  {
+    rel: 'preload',
+    href: '/fonts/monaspace/MonaspaceNeon-Regular.v2.woff2',
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous',
+  },
   { rel: 'stylesheet', href: styles },
 ];
 

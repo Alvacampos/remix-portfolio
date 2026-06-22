@@ -8,7 +8,6 @@ import {
   getSkillHeatmapData,
   getSkillsForJob,
   getSkillSuggestions,
-  noop,
 } from './utils';
 
 // Test fixture builder for the v2 SkillsData shape.
@@ -265,11 +264,5 @@ describe('getSkillSuggestions', () => {
       ]
     );
     expect(getSkillSuggestions(data)).toEqual(['React', 'TypeScript']);
-  });
-});
-
-describe('noop', () => {
-  it('returns undefined', () => {
-    expect(noop()).toBeUndefined();
   });
 });

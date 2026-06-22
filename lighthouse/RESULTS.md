@@ -98,16 +98,27 @@ Lighthouse score breakdown:
 - **TBT −7 ms** and **TTFB −85 ms** are run-to-run variance from the
   Cloudflare edge / Lantern, not stage work.
 
-## Critical-CSS-inline followup: not pursued
+## Post-revamp regression (2026)
 
-Post-Stage-10 we noted critical-CSS inline as a Tier-2 lever if
-Lantern still penalized `/skills` after Stage 13. With LCP back at
-0.94 and Performance at 0.98, that work isn't justified by the
-score. If a future stage moves the LCP element to something heavier
-than the `<h2>Work Experience</h2>` text, revisit.
+After the visual revamp landed (Stages 27-29: GitHub palette + theme
+toggle, drop carousel, tenure heatmap, JSON skill-first migration),
+the auto-generated CI summaries show LCP back above the 2.5 s "good"
+threshold across routes — Performance settled around 0.81-0.87
+(Lantern simulation, mobile profile). The hand-authored timeline
+above is now historical context, not current state. Per-commit
+summaries committed by `.github/workflows/lighthouse.yml` are the
+source of truth for current scores.
+
+Lighthouse's LCP breakdown attributes ~366 ms of element-render-delay
+on `/skills` to render-blocking stylesheets — specifically the four
+CSS files for `Carousel`, `TenureHeatmap`, `Timeline`, and
+`react-vertical-timeline-component` loaded via the route's `links()`.
+All four wrap content that mounts behind `<Suspense>` below the fold,
+so blocking first paint on them is wasted budget. Tracked as item #4
+in [TECH-DEBT.md](../TECH-DEBT.md).
 
 ## Next thing to measure
 
-After future stages that visibly change `/skills`, re-run Lighthouse
-and add a new row to the table above. If the change is route-specific
-(`/`, `/education`), capture and compare per-route runs separately.
+After a `/skills` perf fix lands, re-run Lighthouse and append a row
+to the table above (or start a new "post-revamp" table to keep the
+historical timeline readable).

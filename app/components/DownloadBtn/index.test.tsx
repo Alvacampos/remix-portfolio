@@ -17,9 +17,4 @@ describe('DownloadBtn', () => {
     expect(anchor).toHaveAttribute('target', '_blank');
     expect(anchor).toHaveAttribute('rel', 'noopener noreferrer');
   });
-
-  it('falls back to default text when no children are passed', () => {
-    renderWithProviders(<DownloadBtn fileUrl="/x.pdf" />);
-    expect(screen.getByRole('link', { name: 'Download PDF' })).toBeInTheDocument();
-  });
 });

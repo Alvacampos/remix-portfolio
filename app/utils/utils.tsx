@@ -23,8 +23,6 @@ export const getClassMaker =
     return className;
   };
 
-export const noop = () => {};
-
 // Merge a route's title + description with the root's full meta array,
 // preserving the root's Open Graph + Twitter tags so social previews have
 // their image/site_name/etc. on every route. Without this, Remix lets the
