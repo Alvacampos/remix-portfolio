@@ -103,8 +103,9 @@ export type WorkItemWithSkills = {
 };
 
 // Skills that appear in WORK_ITEMS as filter chips or generic descriptors,
-// not technologies — excluded from the chart.
-const CHART_EXCLUDE = new Set([
+// not technologies — excluded from the chart, the heatmap, and the
+// /skills autocomplete suggestions.
+export const CHART_EXCLUDE = new Set([
   'Front End',
   'Back End',
   'Agile',

@@ -41,7 +41,7 @@
           "start": "2018-08-01T00:00:00.000"
         },
         {
-          "name": ".Net",
+          "name": ".NET",
           "start": "2018-08-01T00:00:00.000",
           "end": "2019-08-01T00:00:00.000"
         },
@@ -145,7 +145,7 @@
           "end": "2021-08-01T00:00:00.000"
         },
         {
-          "name": "NodeJs",
+          "name": "Node.js",
           "start": "2020-12-01T00:00:00.000",
           "end": "2021-08-01T00:00:00.000"
         },
@@ -229,7 +229,7 @@
           "start": "2021-08-01T00:00:00.000"
         },
         {
-          "name": "Marklogic",
+          "name": "MarkLogic",
           "start": "2021-08-01T00:00:00.000"
         },
         {
@@ -336,7 +336,7 @@
           "start": "2022-04-01T00:00:00"
         },
         {
-          "name": "NextJs",
+          "name": "Next.js",
           "start": "2022-04-01T00:00:00",
           "end": "2025-10-01T00:00:00.000"
         },
@@ -401,34 +401,6 @@
         }
       ]
     }
-  ],
-  "SKILLS_IMG": [
-    { "title": "React" },
-    { "title": "TypeScript" },
-    { "title": "Next.js" },
-    { "title": "NodeJs" },
-    { "title": "Python" },
-    { "title": "Django" },
-    { "title": "GraphQL" },
-    { "title": "Cloudflare" },
-    { "title": "Remix.run" },
-    { "title": "HTML" },
-    { "title": "CSS" },
-    { "title": "JavaScript" },
-    { "title": "Tailwind" },
-    { "title": "Sass" },
-    { "title": "Storybook" },
-    { "title": "Playwright" },
-    { "title": "Cypress" },
-    { "title": "Git" },
-    { "title": "Agile Development" },
-    { "title": "Redux" },
-    { "title": "Express" },
-    { "title": "Mongodb" },
-    { "title": "Axios" },
-    { "title": "Vue" },
-    { "title": "Highcharts" },
-    { "title": "Heroku" }
   ],
   "EXTRA_ACTIVITIES": [
     {

@@ -10,7 +10,13 @@ import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import tenureHeatmapStyles from '~/components/TenureHeatmap/style.css?url';
 import timelineStyles from '~/components/Timeline/style.css?url';
-import { formatDate, getClassMaker, getSkillHeatmapData, mergeRouteMeta } from '~/utils/utils';
+import {
+  CHART_EXCLUDE,
+  formatDate,
+  getClassMaker,
+  getSkillHeatmapData,
+  mergeRouteMeta,
+} from '~/utils/utils';
 
 // Import the JSON server-side: Vite bakes it into the server bundle so
 // the loader doesn't have to do an HTTP round-trip to the static asset
@@ -77,10 +83,6 @@ type skillsDataTypes = {
     rol: string;
     skills: SkillEntryJson[];
   }[];
-  SKILLS_IMG: {
-    title: string;
-    img?: string;
-  }[];
   EXTRA_ACTIVITIES: {
     title: string;
     data: {
@@ -117,7 +119,20 @@ export async function loader() {
     skills: item.skills.map((s) => s.name),
   }));
 
-  const skills = typed.SKILLS_IMG.map((item) => item.title);
+  // Autocomplete suggestions derive from the actual skills attached to
+  // WORK_ITEMS, filtered through CHART_EXCLUDE (same set used by the
+  // chart + heatmap so generic descriptors like "Front End" / "Agile"
+  // don't appear as filter options). Previously a hand-maintained
+  // SKILLS_IMG list ran in parallel — names drifted ("NextJs" in
+  // WORK_ITEMS vs "Next.js" in suggestions) and ~5 of 26 suggestions
+  // matched nothing because the filter does a substring compare.
+  const skills = Array.from(
+    new Set(
+      typed.WORK_ITEMS.flatMap((w) => w.skills.map((s) => s.name)).filter(
+        (name) => !CHART_EXCLUDE.has(name)
+      )
+    )
+  ).sort();
 
   const heatmapData = getSkillHeatmapData(typed.WORK_ITEMS);
 
