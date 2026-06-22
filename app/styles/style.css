@@ -1,66 +1,37 @@
 /* stylelint-disable font-family-name-quotes */
 
-/* NavBar CSS is inlined into this global stylesheet via postcss-import
- * so its first-paint chrome ships with the rest of the global styles. */
 @import '../components/NavBar/style.css';
 
-/*
- * Theme-aware tokens. Default cascade applies the dark palette;
- * [data-theme='light'] swaps each variable to its light counterpart.
- * The data-theme attribute is set by an inline blocking <script> in
- * app/root.tsx before paint to avoid FOUC.
- *
- * GitHub brand palette source values live in app/styles/constants.js
- * as $gray-1..6 and $green-1..6.
- */
-/*
- * GitHub-style two-layer surface model:
- *   --bg-base      page background
- *   --bg-surface   card / nav rail (subtle lift in dark, same as page in light)
- *   --bg-elevated  chip / hover state (one tier above the card body)
- *
- * Cards are defined by their VISIBLE BORDER, not by a heavy
- * background fill. Card headers sit flush with the card body —
- * they're distinguished by typography + a hairline divider, not by
- * a separate bg. Mirrors github.com's own UI so the visual
- * vocabulary the user expects from "GitHub palette" actually shows.
- *
- * Light mode: page is pure white, card is also pure white,
- * everything is anchored by `--border-default`. This is GitHub's
- * actual approach — relying on shading to separate cards in light
- * mode would either look muddy (gray-on-gray) or harsh (gray-on-
- * white). Border-defined surfaces solve both.
- */
+/* Theme-aware tokens. The data-theme attribute is set by an inline
+ * blocking <script> in app/root.tsx before paint to avoid FOUC. */
 :root {
-  --bg-base: $gray-6; /* page background — process black */
-  --bg-surface: $surface-card-dark; /* card body */
-  --bg-nav: $surface-nav-dark; /* nav rail — own tone, distinct from cards */
-  --bg-elevated: $surface-elevated-dark; /* chips / hover */
-  --fg-base: $gray-1; /* primary text */
-  --fg-muted: $gray-3; /* body muted, dates */
-  --fg-faint: $gray-4; /* disabled, decorative */
-  --border-default: $border-card-dark; /* visible on --bg-surface */
-  --border-emphasis: $gray-4; /* hover border */
-  --accent: $green-4; /* primary accent (GitHub Green) */
-  --accent-soft: $green-3; /* hover/highlight */
-  --accent-muted: $green-6; /* accent backgrounds (dark) */
+  --bg-base: $gray-6;
+  --bg-surface: $surface-card-dark;
+  --bg-nav: $surface-nav-dark;
+  --bg-elevated: $surface-elevated-dark;
+  --fg-base: $gray-1;
+  --fg-muted: $gray-3;
+  --fg-faint: $gray-4;
+  --border-default: $border-card-dark;
+  --border-emphasis: $gray-4;
+  --accent: $green-4;
+  --accent-soft: $green-3;
+  --accent-muted: $green-6;
 
   /* Height the bottom-stuck mobile nav claims from the viewport.
-   * Routes that want to fill the viewport (Home) subtract this from
-   * their min-height so the body doesn't end up taller than the
-   * screen and trigger an unnecessary scroll. Overridden to 0 at
-   * $bp-md where the nav becomes a fixed-position sidebar that
-   * doesn't claim viewport vertical space. */
+   * Home subtracts this from its min-height so the body doesn't end
+   * up taller than the screen. Overridden to 0 at $bp-md where the
+   * nav becomes a fixed-position sidebar. */
   --nav-h: 148px;
 
   color-scheme: dark;
 }
 
 [data-theme='light'] {
-  --bg-base: $surface-page-light; /* canvas-subtle #f6f8fa */
-  --bg-surface: $surface-card-light; /* card — soft off-white */
-  --bg-nav: $surface-nav-light; /* nav rail */
-  --bg-elevated: $surface-elevated-light; /* chip/hover lift */
+  --bg-base: $surface-page-light;
+  --bg-surface: $surface-card-light;
+  --bg-nav: $surface-nav-light;
+  --bg-elevated: $surface-elevated-light;
   --fg-base: $gray-6;
   --fg-muted: $gray-4;
   --fg-faint: $gray-3;
@@ -86,7 +57,6 @@ body {
   color: var(--fg-base);
   background: var(--bg-base);
   font-family: 'Roboto', sans-serif;
-  /* Smooth the palette swap when the user toggles theme. */
   transition:
     background-color 200ms ease,
     color 200ms ease;
@@ -100,13 +70,8 @@ main {
   padding: 0 $space-4;
 }
 
-/*
- * Global keyboard-focus affordance. Per-component styles (buttons,
- * cards, inputs) override this where they have a more contextual
- * highlight; this is the catch-all so any `<a>`/`<button>` we forget
- * about still shows focus. `:focus-visible` only fires for keyboard
- * navigation — mouse clicks won't leave a stuck outline.
- */
+/* Catch-all keyboard focus. :focus-visible only fires for keyboard
+ * navigation; per-component styles override where contextual. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -120,11 +85,8 @@ main {
   width: 100vw;
 }
 
-/*
- * Visually hidden until focused — keyboard users hitting Tab as the first
- * action get a "Skip to content" link they can activate to bypass the nav.
- * WCAG 2.4.1.
- */
+/* WCAG 2.4.1 skip-link — visually hidden off-canvas, slides into view
+ * on focus so keyboard users can bypass the nav. */
 .root__skip-link {
   position: absolute;
   top: -100px;
@@ -150,15 +112,8 @@ main {
   font-display: swap;
 }
 
-/*
- * Monaspace Neon — GitHub's experimental superfamily, mono variant.
- * Used as accent only: dates, tech chips, code-adjacent labels, the
- * "+N more" pill. Body text stays Roboto. Single weight (Regular,
- * ~200 KB WOFF2) is enough for these surfaces; if we ever need
- * weighted mono emphasis, swap to the variable file (~510 KB).
- *
- * License: SIL OFL. github.com/githubnext/monaspace
- */
+/* Monaspace Neon — accent face for dates, tech chips, code-adjacent
+ * labels. License: SIL OFL. github.com/githubnext/monaspace */
 @font-face {
   font-family: 'Monaspace Neon';
   src: url('/fonts/monaspace/MonaspaceNeon-Regular.woff2') format('woff2');
@@ -167,25 +122,16 @@ main {
   font-display: swap;
 }
 
-/*
- * Switch from bottom-stuck mobile nav to left-rail sidebar at the
- * tablet breakpoint ($bp-md = 768px) instead of the legacy
- * $desktop-small (1076px). Lifts the NavBar overlay off mid-page
- * content on iPad portrait + every Android tablet + narrow laptops.
- */
 @media screen and (min-width: $bp-md) {
   :root {
-    /* On desktop the rail is `position: fixed` and doesn't claim
-     * viewport vertical space — Home/etc. should fill the full 100vh
-     * without subtracting anything. */
+    /* Desktop rail is `position: fixed` — claims no vertical space. */
     --nav-h: 0px;
   }
 
   body {
-    /* Drop the mobile grid: NavBar uses `position: fixed` on
-     * desktop so it isn't part of normal flow. We just need a
-     * left-padding on the document content equal to the rail's
-     * width so the page text doesn't slide under it. */
+    /* Desktop: nav is fixed-positioned, out of flow. Body just needs a
+     * left-padding equal to the rail width so content doesn't slide
+     * under it. */
     display: block;
     height: auto;
     min-height: 100vh;

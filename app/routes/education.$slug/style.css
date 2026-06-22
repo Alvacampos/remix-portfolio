@@ -1,5 +1,3 @@
-/* Card CSS is inlined here so /education/:slug ships one stylesheet
- * instead of two. postcss-import resolves at build. */
 @import '../../components/Card/style.css';
 
 .education-id-route {
@@ -31,8 +29,6 @@
   }
 
   &__description-container {
-    /* Cap by readable line length on ultrawide so body text doesn't
-     * stretch past the comfortable reading length. */
     max-width: 65ch;
     margin: 0 auto;
     width: 100%;

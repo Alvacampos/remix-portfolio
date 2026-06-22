@@ -1,7 +1,3 @@
-/* Card / Input / LoadingSpinner CSS is inlined here so /skills ships
- * one route stylesheet instead of four. postcss-import resolves the
- * paths at build time. Button is already inlined into the global
- * stylesheet via app/styles/style.css. */
 @import '../../components/Card/style.css';
 @import '../../components/Input/style.css';
 @import '../../components/LoadingSpinner/style.css';
@@ -42,8 +38,6 @@
       text-align: center;
 
       &__main-text-wrapper {
-        /* Mono numeric for the headline figure — reads as a stat
-         * card rather than a sentence. */
         font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
         font-size: $font-30;
         font-weight: $weight-700;
@@ -60,11 +54,6 @@
     width: 100%;
   }
 
-  /* Mobile: TechGrid on top, TenureHeatmap below (column flow).
-   * Desktop: side-by-side via the bp-lg media query at the bottom
-   * of this file. The heatmap sits in a fixed-width track (it
-   * doesn't benefit from extra width since cells are pinned at
-   * 14px), and the TechGrid takes the remaining space. */
   &__skills-and-tools-grid {
     display: flex;
     flex-direction: column;
@@ -148,9 +137,6 @@
       }
     }
 
-    /* Side-by-side: heatmap hugs its grid (it doesn't gain anything
-     * from extra width), TechGrid takes the rest. Centered as a
-     * group when the row has unused width on wide viewports. */
     &__skills-and-tools-grid {
       flex-direction: row;
       gap: $space-20;

@@ -92,16 +92,9 @@
     }
   }
 
-  /*
-   * Center the date label on the same horizontal line as the green
-   * check icon (which sits at `top: 30px` for the 60×60 icon in
-   * two-columns mode). Library default is `top: 6px` plus a `.8em`
-   * vertical padding, which leaves the date sitting noticeably higher
-   * than the icon center.
-   *
-   * Also force `opacity: 1` because the library dims the date to 0.7
-   * by default, and we already control color via var(--fg-base).
-   */
+  /* Re-center the date on the icon's horizontal line — library
+   * default sits .8em higher and dims to opacity 0.7 (we already own
+   * color via the token). */
   &
     .vertical-timeline--two-columns
     .vertical-timeline-element-content
@@ -109,8 +102,6 @@
     top: 24px;
     padding: 0;
     opacity: 1;
-    /* Mono date label — IDE-like, sits next to the icon ring as
-     * a metadata stamp rather than prose. */
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     color: var(--fg-muted);
   }

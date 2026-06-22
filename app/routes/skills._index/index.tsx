@@ -23,14 +23,8 @@ import {
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
-// Manual CSS preload pattern for code-split components: TenureHeatmap,
-// Carousel, and Timeline are JS-lazy-loaded below, but their CSS is
-// pulled in as `?url` strings (no module evaluation, no chunk
-// coupling) and piped into Remix's <Links> via the route's `links()`.
-// We deliberately don't `import { links as xLinks } from '...'` — doing
-// so would make Vite treat the module as statically imported, defeating
-// the `lazy()` chunk split.
-
+// CSS for lazy components is imported as `?url` strings — a static
+// `import { links } from '...'` would defeat the lazy chunk split.
 export const links = () => [
   { rel: 'stylesheet', href: carouselStyles },
   { rel: 'stylesheet', href: tenureHeatmapStyles },
@@ -53,34 +47,19 @@ export const meta: MetaFunction = (args) =>
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
-// Validate + parse the JSON once at module load. On a Cloudflare Pages
-// Function the module is reused across requests, so this runs once per
-// worker boot. A malformed skills.json crashes the worker with a
-// pretty-printed error pointing at the offending field.
+// Validated + derived once per worker boot. A malformed skills.json
+// throws a pretty-printed error pointing at the offending field.
 const SKILLS = loadSkills(skillsJson);
-
-// Heatmap data + autocomplete suggestions are pure functions of the
-// static SKILLS payload. Compute once at module scope; the loader just
-// hands the references to Remix.
 const HEATMAP_DATA = getSkillHeatmapData(SKILLS);
 const SUGGESTIONS = getSkillSuggestions(SKILLS);
-
-// Newest-job-first card list for the timeline. WORK_ITEMS is authored
-// chronologically (oldest first); reverse for display, derive the
-// per-card chip list from SKILLS via getSkillsForJob.
 const TIMELINE_CARDS = [...SKILLS.WORK_ITEMS].reverse().map((item) => ({
-  // Timeline + the /skills/:uuid URL want strings; convert once here.
   id: String(item.id),
   title: item.title,
   date: formatDate(item.startDate, item.endDate ?? undefined),
   texts: [item.rol],
-  // intl id — Card resolves it via formatMessage so the label
-  // tracks the active locale ("Role:" en / "Rol:" es).
   textsLabel: 'ROLE',
   skills: getSkillsForJob(SKILLS, item.id),
 }));
-
-// Career start = first WORK_ITEM as authored (chronological order).
 const YEARS_OF_EXP = formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth');
 
 export async function loader() {
@@ -148,9 +127,6 @@ export default function Skills() {
           <FormattedMessage id="TECHNOLOGIES" />
         </h2>
         <div className={getClasses('skills-and-tools-grid')}>
-          {/* Heatmap left, TechGrid right on desktop — the heatmap is
-           * the more visually distinctive surface and earns the
-           * primary read-position. Both stack on mobile. */}
           <Suspense fallback={<LoadingSpinner />}>
             <LazyTenureHeatmap data={heatmapData} />
           </Suspense>

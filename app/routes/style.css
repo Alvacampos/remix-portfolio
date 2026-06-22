@@ -1,5 +1,3 @@
-/* DownloadBtn CSS is inlined here so / ships one stylesheet instead
- * of two. postcss-import resolves the path at build time. */
 @import '../components/DownloadBtn/style.css';
 
 .home-route {
@@ -7,12 +5,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Fill the available viewport so the welcome copy + download
-   * button center vertically. --nav-h subtracts the mobile bottom-
-   * stuck navbar's claimed height (so the body doesn't end up
-   * taller than the screen and trigger a scroll); on desktop
-   * --nav-h resolves to 0 since the nav is fixed-position and
-   * doesn't claim viewport vertical space. */
+  /* Fill the visible viewport, minus the bottom-nav height on mobile.
+   * --nav-h is 0 at $bp-md (nav is fixed-position there, claims no
+   * vertical space). */
   min-height: calc(100vh - var(--nav-h));
   text-align: center;
   white-space: pretty;
@@ -21,9 +16,6 @@
     font-size: $font-20;
   }
 
-  /* 16px floor matches the browser default for body text and the WCAG
-   * recommendation. Desktop bumps the h1 only (see media query); body
-   * stays at 16px on every viewport. */
   p {
     font-size: $font-16;
   }
@@ -39,10 +31,6 @@
     font-weight: bold;
 
     a {
-      /* Accent green so the in-line link visibly stands out from
-       * the body sentence around it — matches GitHub's link
-       * vocabulary (link color = brand accent) instead of the
-       * site's foreground neutral. */
       color: var(--accent);
       transition:
         color 0.2s,

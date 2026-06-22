@@ -20,25 +20,9 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-// Display dimensions for each company logo, fed to <img width> /
-// <img height> to reserve layout space (fixes CLS).
-//
-// These values are NOT the intrinsic webp dimensions — most logos are
-// intentionally narrowed in height so the <img> renders as a banner
-// rather than its full square / portrait aspect (browsers infer the
-// aspect-ratio from these attributes). The width matches the source
-// file; the height is hand-picked per logo for the banner crop.
-//
-// Real intrinsics for reference (decoded from public/assets/img/*.webp):
-//   unsta2:     968×519   → narrowed to 968×400
-//   coderhouse: 976×272   → unchanged
-//   globant:    3000×2000 → narrowed to 3000×200
-//   cliengo:    999×300   → narrowed to 999×200
-//   endava:     541×184   → unchanged
-//   qubika:     800×600   → narrowed to 800×400
-//
-// If a logo is swapped, re-pick its banner height; the source file's
-// own dimensions are not the authority.
+// Hand-picked banner dimensions per logo (height is narrowed from the
+// source webp to render the image as a banner rather than its full
+// aspect). Re-pick if a logo is swapped.
 const LOGO_DIMS: Record<string, { width: number; height: number }> = {
   'unsta2.webp': { width: 968, height: 400 },
   'coderhouse.webp': { width: 976, height: 272 },
@@ -49,18 +33,14 @@ const LOGO_DIMS: Record<string, { width: number; height: number }> = {
 };
 const FALLBACK_DIMS = { width: 1000, height: 500 };
 
-// Title → image filename overrides for jobs whose `.toLowerCase().webp`
-// derivation doesn't yield a real file. Add a row here when a job has
-// no matching file in public/assets/img/ — for example "Professor
-// (part-time)" → unsta2.webp because the institution's name is the
-// stem, not the role title.
+// Title → filename overrides for jobs whose `${title.toLowerCase()}.webp`
+// derivation doesn't yield a real file (institution name as stem
+// instead of role title).
 const IMAGE_OVERRIDES: Record<string, string> = {
   'professor (part-time)': 'unsta2.webp',
   teacher: 'coderhouse.webp',
 };
 
-// Validate + parse once per worker boot. See skills._index for the
-// rationale; this route reads from the same cached payload.
 const SKILLS = loadSkills(skillsJson);
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -127,11 +107,6 @@ export default function UuidIndex() {
       <h1 className={getClasses('title')}>{title}</h1>
       <div className={getClasses('main-container')}>
         <div className={getClasses('img-container')}>
-          {/* Logo is above-the-fold on this route (the page is the company
-           * detail) — eager-load so the banner shows immediately. Lazy
-           * here also broke the visual-regression spec: the lazy image
-           * delayed layout past the screenshot capture, so the rendered
-           * page measured ~600px shorter than its final height. */}
           <img
             src={imagePath}
             alt={title}

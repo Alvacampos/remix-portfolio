@@ -29,8 +29,6 @@ type DegreeData = {
   skills: string[];
 };
 
-// slug → key in education.json. Add a new entry here when a new clickable
-// degree is added.
 const SLUG_MAP: Record<string, 'degree' | 'associateDegree'> = {
   degree: 'degree',
   'associate-degree': 'associateDegree',
