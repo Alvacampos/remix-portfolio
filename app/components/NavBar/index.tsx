@@ -69,8 +69,14 @@ export default function NavBar() {
        * vertical real estate, and the photo doesn't add functional
        * info (the Home page already shows it). */}
       <div className={getClasses('avatar-row')}>
+        {/* Filename is intentionally `me.v2.jpeg`, not `me.jpeg`. The /assets/*
+         * cache header is `max-age=31536000, immutable`, so when stage-37 fixed
+         * the avatar's aspect ratio (192×256 → 256×256) it couldn't reach
+         * existing visitors — Cloudflare and browsers held the old 192×256 file
+         * for the year-long TTL. Renaming the URL forces a fresh fetch. Bump
+         * the suffix again on any future re-crop. */}
         <img
-          src="/assets/img/me.jpeg"
+          src="/assets/img/me.v2.jpeg"
           alt="Gonzalo Alvarez Campos"
           width={64}
           height={64}
