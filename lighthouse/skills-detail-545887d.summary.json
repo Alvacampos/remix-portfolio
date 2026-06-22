@@ -1,0 +1,88 @@
+{
+  "fetchTime": "2026-06-22T23:52:02.736Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "lighthouseVersion": "13.4.0",
+  "commit": "545887d",
+  "categories": {
+    "performance": 0.94,
+    "accessibility": 1,
+    "best-practices": 0.96,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "1.4 s",
+      "numericValue": 1410.6195,
+      "score": 0.97
+    },
+    "lcp": {
+      "displayValue": "3.0 s",
+      "numericValue": 3018.6195,
+      "score": 0.77
+    },
+    "si": {
+      "displayValue": "1.4 s",
+      "numericValue": 1410.6195,
+      "score": 1
+    },
+    "tbt": {
+      "displayValue": "0 ms",
+      "numericValue": 0,
+      "score": 1
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "3.0 s",
+      "numericValue": 3018.6195,
+      "score": 0.96
+    },
+    "ttfb": 38
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.97
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.77
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.96
+    },
+    {
+      "id": "image-aspect-ratio",
+      "title": "Displays images with incorrect aspect ratio",
+      "score": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
