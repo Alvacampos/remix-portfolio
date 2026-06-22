@@ -22,11 +22,8 @@
     text-transform: uppercase;
   }
 
-  /* Forward-looking groups (Learning, Future) recolor their title
-   * in accent green so the section reads as "in progress /
-   * aspirational" at a glance. Defined after the base
-   * &__group-title rule above so Stylelint's no-descending-specificity
-   * rule is satisfied (more-specific selector follows the base). */
+  /* Defined after the base &__group-title above so stylelint's
+   * no-descending-specificity rule is satisfied. */
   &__group--learning &__group-title,
   &__group--future &__group-title {
     color: var(--accent);
@@ -62,10 +59,6 @@
     }
   }
 
-  /* Forward-looking chips (Learning + Future): dashed accent
-   * border, transparent fill so the dashes read against the card
-   * surface, accent text. The two variants share the visual
-   * treatment — only the group-title label distinguishes them. */
   &__item--learning,
   &__item--future {
     border: 1px dashed var(--accent);
@@ -78,16 +71,9 @@
   }
 }
 
-/* From tablet up: 2-column group layout. `auto` columns size each
- * group to its widest chip (instead of `1fr` which would force both
- * columns to the widest content's width). This keeps the card from
- * ballooning when one chip — like the master's-degree label — is
- * substantially longer than the rest.
- *
- * No 4-column escalation at $bp-lg: TechGrid sits in the
- * side-by-side row with the heatmap on /skills, where 4 columns
- * inside that already-narrow track would squeeze chips onto
- * multiple lines. 2 columns reads cleanly across tablet → desktop. */
+/* `auto` columns (not `1fr`) so each group sizes to its widest chip
+ * instead of stretching to the longest entry's width — keeps the card
+ * from ballooning when one chip is substantially longer. */
 @media screen and (min-width: $bp-md) {
   .carousel-component {
     grid-template-columns: repeat(2, auto);

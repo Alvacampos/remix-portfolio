@@ -1,15 +1,10 @@
-/* ThemeToggle CSS inlined here via postcss-import so its styles ship
- * as part of the NavBar's first-paint chrome on every route. */
 @import '../ThemeToggle/style.css';
 
 .navbar-component {
   display: flex;
   flex-direction: column;
-  /* --bg-nav is its own token (not --bg-surface) so the rail can
-   * sit on a tone DISTINCT from the card surface — otherwise the
-   * sidebar and any cards in the main content merge into one
-   * visual block. Border on the inner edge keeps the divide crisp
-   * at every theme. */
+  /* --bg-nav (not --bg-surface) so the rail sits on a tone distinct
+   * from any cards in the main content. */
   background: var(--bg-nav);
   color: var(--fg-base);
   min-height: 100%;
@@ -17,19 +12,13 @@
   z-index: 2;
   position: sticky;
   bottom: 0;
-  /* Mobile (bottom-stuck nav): top hairline separates nav from
-   * content above. Use inset box-shadow rather than `border-top` so
-   * the 1px doesn't add to the navbar's box height — the body grid
-   * is sized to exactly viewport height + nav height; an extra 1px
-   * border would overflow and trigger a vertical scroll. Desktop
-   * switches to a right border via media query (it's fixed-position
-   * there, so the extra px doesn't affect layout). */
+  /* `box-shadow: inset` instead of `border-top`: the body grid is
+   * sized to viewport-height + nav-height; an extra 1px border would
+   * overflow and trigger a vertical scroll. Desktop uses border-right. */
   box-shadow: inset 0 1px 0 var(--border-default);
   /* Stop hover/focus pills from overflowing the rail's right edge. */
   overflow: hidden;
 
-  /* Mobile: avatar hidden — the bottom-stuck nav doesn't have the
-   * vertical real estate. Desktop sidebar shows it (see media query). */
   &__avatar-row {
     display: none;
   }
@@ -55,10 +44,9 @@
       justify-content: center;
       align-items: center;
       height: 100%;
-      /* Override the user-agent default link color (purple/blue) so
-       * `currentColor` in the SVG icons inherits the theme text
-       * color. The LinkedIn icon's brand-blue fill stays intact
-       * because it's hardcoded in the SVG. */
+      /* Override the default link color so currentColor in the SVG
+       * icons inherits the theme text color. LinkedIn's brand-blue
+       * fill is hardcoded in its SVG and stays intact. */
       color: var(--fg-base);
     }
   }
@@ -99,9 +87,6 @@
     }
   }
 
-  /* Mobile bottom-nav links: vertical icon-over-label layout, like
-   * Instagram/TikTok. Tighter than the previous text-only row and
-   * the icon makes the section glanceable at a thumb. */
   &__nav-link {
     display: flex;
     flex-direction: column;
@@ -119,9 +104,8 @@
       background: var(--bg-elevated);
     }
 
-    /* Inset focus ring — can't overflow the rail (outline-based
-     * rings on the previous version bled into the content area on
-     * hover). */
+    /* Inset focus ring stays inside the rail — outline-based rings
+     * bled into the content area on hover. */
     &:focus-visible {
       outline: none;
       box-shadow: inset 0 0 0 2px var(--accent);
@@ -134,12 +118,9 @@
     flex-shrink: 0;
   }
 
-  /* Active state — current route. Soft accent background carries
-   * the "this is selected" signal; text stays --fg-base so it reads
-   * neutrally instead of neon-green-on-dark-green (which the
-   * previous --accent text rendered as). The --accent itself only
-   * appears as the left stripe (desktop) so the brand color still
-   * marks the row, just less aggressively. */
+  /* Active route — soft accent bg + neutral text. --accent itself is
+   * reserved for the desktop left stripe so the brand color marks the
+   * row without overpowering it. */
   &__nav-link--active {
     background: var(--accent-muted);
     color: var(--fg-base);
@@ -147,33 +128,18 @@
   }
 }
 
-/*
- * Sidebar layout activates at $bp-md (768px) — was $desktop-small
- * (1076px). Tablet portrait now gets the left-rail nav instead of
- * the bottom-stuck mobile pattern that overlaid mid-page content.
- */
 @media screen and (min-width: $bp-md) {
   .navbar-component {
-    /* Sidebar mode: drop the mobile top-hairline (cleared via the
-     * box-shadow override below) and add a real right border so the
-     * sidebar visibly cuts away from the content. Width is fixed
-     * via min-width so the content area has a stable left edge.
-     * The mobile box-shadow gets overridden by the inner-element
-     * shadows below — this top-level shadow is redundant on
-     * desktop. */
+    /* Sidebar mode: clear the mobile top hairline, add a real right
+     * border for the content gutter. */
     box-shadow: none;
     border-right: 1px solid var(--border-default);
     min-width: $space-200;
 
-    /* Pin to the viewport top while the body scrolls beneath. We
-     * use `position: fixed` instead of `position: sticky` because
-     * body's grid layout (display: grid + grid-template-columns)
-     * doesn't establish a sticky-cooperative parent in all browsers
-     * — sticky kept scrolling off-screen on long pages like /skills.
-     * Fixed lets us anchor to the viewport directly.
-     *
-     * The grid track for the nav still claims its 200px width
-     * (min-width on the rail), so content doesn't slide under it. */
+    /* `position: fixed` not `sticky` — body's grid layout doesn't
+     * establish a sticky-cooperative parent in all browsers, so
+     * sticky scrolled off on long pages like /skills. The grid track
+     * still claims 200px so content doesn't slide under. */
     position: fixed;
     top: 0;
     bottom: auto;
@@ -181,14 +147,10 @@
     height: 100vh;
     max-height: 100vh;
     width: $space-200;
-    /* X-axis still clipped to keep hover pills inside the rail; Y
-     * scrolls if the rail's content (avatar + toggle + buttons +
-     * eventual additions) ever exceeds the viewport height. */
+    /* X clipped to contain hover pills; Y scrolls if rail content
+     * ever exceeds viewport height. */
     overflow: hidden auto;
 
-    /* Avatar visible at desktop only. Round, matches the rail's
-     * accent — bordered in --accent-soft for a subtle highlight
-     * that reads as "this is a person, not a logo". */
     &__avatar-row {
       display: flex;
       justify-content: center;
@@ -217,11 +179,6 @@
       flex: 1;
     }
 
-    /* Vertical padding only — letting the active pill stretch
-     * edge-to-edge horizontally reads cleaner against the rail than
-     * the previous "inset chip" look. The 12px top/bottom keeps the
-     * top/bottom buttons from butting up against the social-row
-     * divider above and the (empty) bottom of the rail. */
     &__main-buttons {
       width: 100%;
 
@@ -253,10 +210,7 @@
       height: $space-20;
     }
 
-    /* Desktop active state — soft accent background + neutral text
-     * + a 3px left stripe in --accent. The base rule above sets the
-     * bg + text; this block adds the stripe and the relative
-     * positioning needed for it. */
+    /* Desktop active state adds a 3px left stripe to the base bg/text. */
     &__nav-link--active {
       position: relative;
       height: 100%;

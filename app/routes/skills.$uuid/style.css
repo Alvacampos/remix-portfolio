@@ -1,5 +1,3 @@
-/* Card CSS is inlined here so /skills/:uuid ships one stylesheet
- * instead of two. postcss-import resolves the path at build time. */
 @import '../../components/Card/style.css';
 
 .skills-id-route {

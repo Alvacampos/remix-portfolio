@@ -7,10 +7,6 @@ import { FormattedMessage } from 'react-intl';
 import Card from '~/components/Card';
 import { formatDate, getClassMaker, mergeRouteMeta } from '~/utils/utils';
 
-// Import the JSON server-side: Vite bakes it into the server bundle so
-// the loader doesn't have to do an HTTP round-trip to the static asset
-// at /data/education.json on every request. The asset is still served
-// publicly via the `/data/*` exclude in public/_routes.json.
 import educationData from '../../../public/data/education.json';
 import styles from './style.css?url';
 
@@ -36,11 +32,6 @@ type Certification = {
 };
 
 export async function loader() {
-  // Widen the inferred type: TS reads the JSON literal and produces a
-  // discriminated union based on which entries have `url`, so
-  // `cert.url` isn't accessible without narrowing. Casting up to a
-  // single shape with `url?: string` matches the old behavior and
-  // keeps the consumer code simple.
   return {
     degree: educationData.degree,
     associateDegree: educationData.associateDegree,
@@ -78,7 +69,6 @@ export default function Skills() {
   };
 
   const certificationsCards = certifications.map((certification) => ({
-    // institution is unique across certifications in education.json — stable key.
     key: certification.institution,
     title: certification.title,
     texts: [

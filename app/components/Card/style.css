@@ -1,32 +1,17 @@
 .card-component {
   display: flex;
   justify-content: center;
-  /* 8px (between $border-6 and $border-10) matches GitHub's own
-   * card radius — softer than 10px which read as toy-like next to
-   * the cleaner GitHub vocabulary. */
   border-radius: $border-8;
-  /* Surface (subtle lift over page bg in dark; same as page in
-   * light, anchored by --border-default). Theme-aware via the
-   * [data-theme] cascade in app/styles/style.css. */
   background-color: var(--bg-surface);
   color: var(--fg-base);
   border: 1px solid var(--border-default);
   flex-direction: column;
   overflow: hidden;
 
-  /* Card-internal h2 sits below section h2 in the visual hierarchy.
-   * Section h2 sizes are set in the /skills, /education, and detail
-   * route stylesheets — this is the smaller card-internal default. */
   & h2 {
     font-size: $font-20;
   }
 
-  /* Styleless was originally "no border" — that meant timeline
-   * cards floated as raw text against the page. Now that the
-   * design language gives every panel its own surface + border
-   * (mirroring how GitHub layers its UI), styleless keeps the
-   * bg + border and only relaxes the section-h2 sizing for the
-   * tighter timeline card. */
   &--styleless {
     & div h2 {
       font-size: $font-20;
@@ -44,10 +29,6 @@
 
   &__title-wrapper {
     text-align: center;
-    /* Header sits on --bg-elevated so it reads as a header band
-     * distinct from both the page bg and the card body. The
-     * hairline divider underneath reinforces the split for users
-     * with reduced color sensitivity. */
     background-color: var(--bg-elevated);
     box-shadow: inset 0 -1px 0 var(--border-default);
     padding: $space-16 $space-4;
@@ -61,9 +42,6 @@
     margin-bottom: $space-12;
   }
 
-  /* Bold prefix label for texts lines (e.g. "Rol:" before the role
-   * description on timeline cards). Same weight as the
-   * skills-label so the two read as siblings. */
   &__texts-label {
     font-weight: $weight-700;
   }
@@ -112,8 +90,6 @@
     border-radius: $border-10;
     background: var(--bg-elevated);
     color: var(--fg-base);
-    /* Monaspace Neon for tech/skill chips — same visual language
-     * as IDE labels, distinguishes them from prose. */
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     font-size: $font-14;
     line-height: 1.4;
@@ -123,9 +99,6 @@
       background 120ms ease;
 
     &:hover {
-      /* --accent-muted is intentionally subtle: green-tinted
-       * highlight in dark, soft mint in light. Hints at
-       * interactivity without screaming. */
       border-color: var(--accent);
       background: var(--accent-muted);
     }
