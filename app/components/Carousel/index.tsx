@@ -14,6 +14,11 @@ type Group = {
   // (Learning, Future) render with dashed borders and a distinct
   // accent label. Defaults to undefined → standard chip styling.
   variant?: 'learning' | 'future';
+  // When true, `tech` holds intl message ids (translated per locale)
+  // instead of literal proper-noun strings. Tech-stack names like
+  // "TypeScript" stay literal in every language; soft skills like
+  // "Mentoring" / "Mentoría" want translation.
+  translate?: boolean;
   tech: string[];
 };
 
@@ -33,6 +38,28 @@ const CATEGORIES: Group[] = [
   {
     id: 'TECH_GROUP_INFRA',
     tech: ['Cloudflare', 'Heroku', 'MongoDB', 'Highcharts', 'Agile'],
+  },
+  {
+    /* Soft skills extrapolated from the work history in skills.json:
+     * Mentoring (Endava intern program, Qubika senior internship,
+     * onboarding new colleagues), Leadership (Endava lead developer
+     * + technical consultant), Teaching (UNSTA Professor, Coderhouse
+     * web-programming Teacher), Code Review (named in two role write-
+     * ups), Team Coordination (MarkLogic project + internship orgs),
+     * Technical Interviewing (Qubika internship participant interviews),
+     * Public Speaking (lectures + classroom teaching). Translated per
+     * locale via the SOFT_SKILL_* intl keys. */
+    id: 'TECH_GROUP_SOFT',
+    translate: true,
+    tech: [
+      'SOFT_SKILL_MENTORING',
+      'SOFT_SKILL_LEADERSHIP',
+      'SOFT_SKILL_TEACHING',
+      'SOFT_SKILL_CODE_REVIEW',
+      'SOFT_SKILL_TEAM_COORDINATION',
+      'SOFT_SKILL_TECHNICAL_INTERVIEWING',
+      'SOFT_SKILL_PUBLIC_SPEAKING',
+    ],
   },
   {
     id: 'TECH_GROUP_LEARNING',
@@ -71,7 +98,7 @@ export default function Carousel() {
                     : getClasses('item')
                 }
               >
-                {name}
+                {group.translate ? <FormattedMessage id={name} /> : name}
               </li>
             ))}
           </ul>

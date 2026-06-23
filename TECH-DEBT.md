@@ -8,8 +8,7 @@
 | #   | Item                                | Status                |
 | --- | ----------------------------------- | --------------------- |
 | 1   | Stylelint rules masking simple-vars | open                  |
-| 2   | Mobile visual baselines             | open                  |
-| 3   | `react-router-dom` exact-pinned     | documented; no action |
+| 2   | `react-router-dom` exact-pinned     | documented; no action |
 
 ---
 
@@ -34,21 +33,7 @@ loss of safety).
 
 ---
 
-## #2 — No mobile visual baselines
-
-**Severity:** low. Coverage gap.
-
-The visual regression suite gates 3 desktop baselines only (`/`,
-`/education`, `/education/:slug`). Mobile layout regressions slip
-through CI even though both projects (chromium + mobile) run.
-
-**Fix:** add mobile baselines via the existing Docker regen script.
-
-**Effort:** ~2 hours.
-
----
-
-## #3 — `react-router-dom` exact-pinned
+## #2 — `react-router-dom` exact-pinned
 
 **Severity:** low. Documented; just fragile.
 

@@ -126,11 +126,108 @@
   }
 }
 
-/* Desktop: 18px cells. Tighter than mobile (22px) but big enough to read
- * the year header labels without squinting. */
-@media screen and (min-width: $bp-md) {
+/* Desktop ($desktop-small and up): transpose the grid. Skills become
+ * columns (labels tilted along the top), years become rows (labels
+ * down the left, newest at top). Rows are `display: contents`, so
+ * cells are direct grid children, and inline `--skill-idx` /
+ * `--year-idx` let each item place itself via grid-column / grid-row
+ * — keeping mobile DOM order untouched. We gate at 1076px (not the
+ * 768 tablet stop) because below that, 30 skill columns + the 200px
+ * nav rail can't fit without horizontal overflow; tablets keep the
+ * mobile orientation. */
+@media screen and (min-width: $desktop-small) {
+  .tenure-heatmap {
+    /* The card sized to the data instead of stretching to fill the
+     * route's flex column — short skill catalogs no longer leave a
+     * vast empty surface to the right of the grid. */
+    width: fit-content;
+    max-width: 100%;
+  }
+
   .tenure-heatmap__grid {
-    grid-template-columns: minmax(110px, 140px) repeat(var(--years-count), 18px);
+    /* No grid-auto-flow override: every label and cell on desktop
+     * places itself explicitly via grid-row / grid-column from inline
+     * --skill-idx and --year-idx, so there's nothing for auto-flow to
+     * do. (Auto-flow:column + explicit grid-row was scattering cells
+     * into implicit tracks — keeping the default row flow plus
+     * explicit placement is bulletproof.)
+     * Header row is fixed at 100px so the rotated 45° labels have a
+     * deterministic height to overflow into — the rotated boxes are
+     * `width: 0` and don't contribute to track sizing themselves.
+     * 100px fits the longest label ("Styled Components" ≈ 17 chars at
+     * ~7px Monaspace, projected onto sin(45°) ≈ 85px) with margin.
+     *
+     * Cell tracks are fluid: clamp between 18px (mobile-density floor)
+     * and 36px (size where labels read clearly), with a fluid middle
+     * that fills the available width. The fluid middle is
+     * `(100vw - chrome) / skill-count` where chrome accounts for:
+     *   nav rail (200) + year-label col (80) + card padding (32)
+     *   + card border (2) + per-column gaps (skills × ~3px)
+     *   + safety margin (~20). At 30 skills that totals ≈ 424px.
+     * Cells stay square because grid-template-rows uses the same
+     * --cell-size, so they grow vertically with column width. */
+    --cell-size: clamp(18px, calc((100vw - 424px) / var(--skills-count)), 36px);
+
+    grid-template-rows: 100px repeat(var(--years-count), var(--cell-size));
+    grid-template-columns: minmax(60px, 80px) repeat(var(--skills-count), var(--cell-size));
+  }
+
+  /* Skill labels sit tilted at 45° in row 1 across each 18px column.
+   * Critical: the label MUST NOT contribute width to its grid track —
+   * otherwise the column inflates to fit the un-rotated text and
+   * cells widen with it. `width: 0` zeroes the box's contribution to
+   * track sizing; `overflow: visible` lets the rotated text render
+   * outside that zero-width box. transform-origin at the bottom-left
+   * pins the rotation against the cell column so all labels share a
+   * baseline. Column 1 holds year labels, so skills start at column 2
+   * (--skill-idx + 2). */
+  .tenure-heatmap__skill {
+    grid-row: 1;
+    grid-column: calc(var(--skill-idx) + 2);
+    /* Center the rotated label over its cell column: place-self
+     * centers the zero-width box horizontally in the track (so the
+     * box centerline = column centerline including grid gaps), then
+     * transform-origin: center bottom rotates around that centerline
+     * at the row's baseline. No translateX math needed — the rotation
+     * pivot lands exactly on the column's middle by construction. */
+    transform: rotate(-45deg);
+    transform-origin: center bottom;
+    padding: 0;
+    text-align: left;
+    place-self: end center;
+    white-space: nowrap;
+    overflow: visible;
+    width: 0;
+  }
+
+  /* Header corner cell stays anchored at (1, 1) without rotation so
+   * the row's 100px height resolves correctly above the year column. */
+  .tenure-heatmap__skill--head {
+    grid-row: 1;
+    grid-column: 1;
+    transform: none;
+    width: auto;
+    place-self: end stretch;
+  }
+
+  /* Year labels live in column 1, with row reversed so '26 sits at
+   * the top and '18 at the bottom. Row 1 is the header, so years
+   * occupy rows 2..N+1, addressed via --years-count - --year-idx + 1. */
+  .tenure-heatmap__year-label {
+    grid-column: 1;
+    grid-row: calc(var(--years-count) - var(--year-idx) + 1);
+    text-align: right;
+    padding-right: $space-4;
+  }
+
+  /* Cells: explicit (column, row) placement, both axes pinned.
+   * --skill-idx is set on the parent row wrapper (display: contents
+   * means it's inherited via CSS variable cascade) and --year-idx on
+   * the cell itself. Skills occupy columns 2..N+1, years rows 2..N+1
+   * with reversed mapping. */
+  .tenure-heatmap__cell {
+    grid-column: calc(var(--skill-idx) + 2);
+    grid-row: calc(var(--years-count) - var(--year-idx) + 1);
   }
 }
 
