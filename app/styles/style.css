@@ -103,9 +103,11 @@ main {
   top: 0;
 }
 
+/* Roboto — body face. Subset to ASCII + Spanish accents (see
+ * scripts/subset-fonts.mjs). License: SIL OFL. fonts.google.com/specimen/Roboto */
 @font-face {
   font-family: 'Roboto';
-  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2') format('woff2');
+  src: url('/fonts/roboto/Roboto-VariableFont_wdth,wght.v2.woff2') format('woff2');
   font-weight: 100 900;
   font-stretch: 75% 100%;
   font-style: normal;

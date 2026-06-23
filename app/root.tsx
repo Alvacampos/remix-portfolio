@@ -18,7 +18,7 @@ import styles from '~/styles/style.css?url';
 import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
-const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.woff2';
+const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.v2.woff2';
 // Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
 // non-relative image URLs. The PNG itself is rendered offline from
 // scripts/og-image.svg via scripts/render-og-image.mjs.
