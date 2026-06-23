@@ -98,19 +98,19 @@
       border-color 120ms ease,
       background 120ms ease;
 
+    &--more {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
     &:hover {
       border-color: var(--accent);
       background: var(--accent-muted);
     }
 
-    &--more {
-      background: transparent;
-      color: var(--accent);
-      border-color: var(--accent);
-
-      &:hover {
-        background: var(--accent-muted);
-      }
+    &--more:hover {
+      background: var(--accent-muted);
     }
   }
 }
