@@ -126,10 +126,11 @@
   }
 }
 
-/* Desktop: 14px cells (GitHub density). Mobile keeps 22px for legibility. */
+/* Desktop: 18px cells. Tighter than mobile (22px) but big enough to read
+ * the year header labels without squinting. */
 @media screen and (min-width: $bp-md) {
   .tenure-heatmap__grid {
-    grid-template-columns: minmax(110px, 140px) repeat(var(--years-count), 14px);
+    grid-template-columns: minmax(110px, 140px) repeat(var(--years-count), 18px);
   }
 }
 

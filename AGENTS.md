@@ -63,7 +63,6 @@ remix-portfolio/
 │   ├── components/
 │   │   ├── Card/                 # Generic card (title / texts / itemList / skills / children)
 │   │   ├── Carousel/             # Categorized tech-stack chip grid (legacy name kept)
-│   │   ├── ConditionalWrapper/   # ConditionalWrapper + ConditionalLink
 │   │   ├── DownloadBtn/          # Download CV PDF
 │   │   ├── Input/                # Autocomplete combobox (a11y-compliant)
 │   │   ├── LoadingSpinner/
@@ -187,7 +186,7 @@ The component itself just owns its `style.css`. **No `links()` export, no `?url`
 }
 ```
 
-Components currently inlined this way: `Card`, `Carousel`, `ConditionalWrapper`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
+Components currently inlined this way: `Card`, `Carousel`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
 
 > **Lazy-loaded components inline their CSS too.** `Carousel`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`, but their CSS rides eagerly with the route stylesheet — it's tiny (~19 KB raw / ~3.5 KB gzipped including the vendor sheet) and Lighthouse's Lantern simulator was charging ~360 ms of element-render-delay across the four separate render-blocking sheets. One inlined route stylesheet beats four small ones. The JS chunk-split is preserved — only the CSS coalesces.
 
@@ -461,7 +460,7 @@ When adding a new component, mirror the existing shape:
 3. Default-export the component. **No `links()` export.** The consuming route's stylesheet `@import`s the CSS via postcss-import (see §6). This applies even to JS-lazy-loaded components — their CSS rides eagerly with the route stylesheet so Lantern doesn't penalise extra render-blocking round-trips.
 4. Type props inline (`type FooProps = { ... }`) and give optional props defaults in the parameter destructure (so `react/require-default-props` is satisfied).
 5. Use `~/components/icons` for any iconography rather than inlining SVG.
-6. For links, prefer `<Link to=...>` from `@remix-run/react`; use [ConditionalLink](app/components/ConditionalWrapper/index.tsx#L32) when an element should only become a link under some condition.
+6. For links, use `<Link to=...>` from `@remix-run/react`. If an element should only render as a link under some condition, do the conditional inline rather than reaching for a wrapper component.
 7. For copy, use `react-intl` — never hardcode user-facing strings.
 
 When adding a new route:
