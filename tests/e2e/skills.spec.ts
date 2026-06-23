@@ -38,8 +38,8 @@ test.describe('Skills (/skills)', () => {
     ).toBeVisible();
   });
 
-  test('renders the Technologies section and tenure heatmap', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /Technologies/i })).toBeVisible();
+  test('renders the Skills section and tenure heatmap', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: /^Skills$/ })).toBeVisible();
     // Heatmap container.
     await expect(page.locator('.tenure-heatmap').first()).toBeVisible();
     // The heatmap is derived from WORK_ITEMS — read its row-header
