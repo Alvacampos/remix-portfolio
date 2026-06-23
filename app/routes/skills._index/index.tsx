@@ -133,7 +133,7 @@ export default function Skills() {
       </div>
       <div className={getClasses('skills-and-tools')}>
         <h2>
-          <FormattedMessage id="TECHNOLOGIES" />
+          <FormattedMessage id="SKILLS_SECTION_TITLE" />
         </h2>
         <div className={getClasses('skills-and-tools-grid')}>
           <Suspense fallback={<LoadingSpinner />}>

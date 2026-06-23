@@ -148,22 +148,6 @@
         flex-direction: row;
       }
     }
-
-    &__skills-and-tools-grid {
-      flex-direction: row;
-      gap: $space-20;
-      align-items: flex-start;
-      justify-content: center;
-
-      & > .tenure-heatmap {
-        flex: 0 0 auto;
-      }
-
-      & > .carousel-component {
-        flex: 1 1 auto;
-        min-width: 0;
-      }
-    }
   }
 }
 

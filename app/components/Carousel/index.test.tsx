@@ -10,8 +10,8 @@ describe('Carousel', () => {
     const items = container.querySelectorAll('.carousel-component__item');
     const groups = container.querySelectorAll('.carousel-component__group-title');
     expect(items.length).toBeGreaterThan(20);
-    // Languages, Frameworks, Tooling, Infrastructure, Learning, Future
-    expect(groups.length).toBe(6);
+    // Languages, Frameworks, Tooling, Infrastructure, Soft skills, Learning, Future
+    expect(groups.length).toBe(7);
   });
 
   it('marks forward-looking groups (learning, future) with dashed-chip variant', () => {
