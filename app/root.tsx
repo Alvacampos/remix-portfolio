@@ -165,21 +165,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
-        {/* Theme init runs before paint; keep it before any <link> tags
-            that pull stylesheets. eslint-disable-next-line react/no-danger */}
-        {/* eslint-disable-next-line react/no-danger */}
+        {/* Theme init runs before paint; keep it before any <link>
+            tags that pull stylesheets. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <Meta />
         <Links />
         <link rel="canonical" href={canonical} />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
         />
       </head>

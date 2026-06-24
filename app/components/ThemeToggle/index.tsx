@@ -35,10 +35,18 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
+  // setState-in-effect is intentional: SSR can't see localStorage or
+  // the inline theme-init script's <html data-theme>, so first render
+  // returns the 'dark' default and the effect hydrates to the actual
+  // saved theme on mount. The `mounted` flag also gates the CSS
+  // modifier — without it, the knob would render at the SSR position
+  // and animate to the hydrated one on first paint (visible flash).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setTheme(readTheme());
     setMounted(true);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function toggle() {
     const next: Theme = theme === 'light' ? 'dark' : 'light';

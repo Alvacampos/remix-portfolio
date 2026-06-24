@@ -28,6 +28,9 @@ await page.setContent(
   { waitUntil: 'networkidle' }
 );
 
+// `document` here is the browser context inside page.waitForFunction —
+// not the Node script's globals. ESLint's no-undef can't know that.
+// eslint-disable-next-line no-undef
 await page.waitForFunction(() => document.fonts.ready);
 await page.screenshot({ path: outPath, type: 'png', omitBackground: false });
 await browser.close();

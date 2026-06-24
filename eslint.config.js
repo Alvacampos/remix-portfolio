@@ -1,0 +1,210 @@
+// ESLint flat-config (ESLint 9+).
+//
+// Replaces the legacy `.eslintrc.cjs` + `eslint-config-airbnb` stack:
+// Airbnb's config has no maintained flat-config support, and most of
+// what it added beyond the upstream plugin recommendations was style
+// (which Prettier already handles). The result is a smaller config we
+// own outright, built from each plugin's own recommended preset plus
+// the project-specific overrides we'd already pinned in eslintrc.
+
+import js from '@eslint/js';
+import prettier from 'eslint-config-prettier/flat';
+import importPlugin from 'eslint-plugin-import';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import storybook from 'eslint-plugin-storybook';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+
+export default [
+  // 1. Replaces .eslintignore. Flat-config doesn't read it; ignored
+  // paths must be declared inline. Keep identical to the previous
+  // .eslintignore so coverage doesn't drift.
+  {
+    ignores: [
+      'app/components/icons/**', // SVGR-generated, do not lint
+      '.cache/**',
+      'build/**',
+      'bin/**',
+      'public/**',
+      'node_modules/**',
+      'playwright-report/**',
+      'test-results/**',
+      'storybook-static/**',
+    ],
+  },
+
+  // 2. Plugin settings shared by every recommended preset below.
+  // Hoisted up so eslint-plugin-react finds the version setting
+  // before its rules run.
+  {
+    settings: {
+      react: { version: 'detect' },
+    },
+  },
+
+  // 3. Base recommended rule sets, applied to every linted file.
+  // tseslint.configs.recommended is an array; the others are single
+  // configs. The flat-config form replaces the old `extends` chain.
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  importPlugin.flatConfigs.recommended,
+  importPlugin.flatConfigs.typescript,
+  react.configs.flat.recommended,
+  react.configs.flat['jsx-runtime'],
+  jsxA11y.flatConfigs.recommended,
+
+  // 4. React hooks rules. v7 exposes `configs.flat.recommended` as
+  // the flat-config preset; the top-level `recommended-latest` still
+  // ships the legacy plugin-array shape and breaks under flat-config.
+  reactHooks.configs.flat.recommended,
+
+  // 5. Storybook rules — only apply to story files. Their flat preset
+  // already restricts itself with `files: ['**/*.stories.*']`.
+  ...storybook.configs['flat/recommended'],
+
+  // 6. Project-wide language options, plugins, settings, and the
+  // overrides we carried over from the eslintrc.
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      'simple-import-sort': simpleImportSort,
+    },
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.commonjs,
+        ...globals.es2021,
+        // Cypress globals — left in case anything legacy still uses
+        // them; harmless if no file references them.
+        context: 'readonly',
+        cy: 'readonly',
+        Cypress: 'readonly',
+      },
+    },
+    settings: {
+      'import/internal-regex': '^~/',
+      'import/resolver': {
+        node: { extensions: ['.ts', '.tsx', '.js', '.jsx'] },
+        typescript: { alwaysTryTypes: true },
+      },
+      react: { version: 'detect' },
+      formComponents: ['Form'],
+      linkComponents: [
+        { name: 'Link', linkAttribute: 'to' },
+        { name: 'NavLink', linkAttribute: 'to' },
+      ],
+    },
+    rules: {
+      // Same allowlist we ran under Airbnb — these were our deltas
+      // from the ecosystem defaults, kept verbatim.
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+      'no-underscore-dangle': ['error', { allow: ['__typename'] }],
+      'no-unused-vars': 'off', // use @typescript-eslint/no-unused-vars instead
+      'no-use-before-define': ['error', 'nofunc'],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+
+      // React-recommended rule we needed off because we use the
+      // automatic JSX runtime + spread props freely + don't track
+      // defaultProps.
+      'react/jsx-filename-extension': ['warn', { extensions: ['.tsx', '.jsx'] }],
+      'react/jsx-props-no-spreading': 'off',
+      'react/react-in-jsx-scope': 'off',
+      'react/require-default-props': ['error', { functions: 'defaultArguments' }],
+
+      // import-plugin overrides — we tolerate missing extensions
+      // (Vite resolves them) and don't enforce default-export
+      // preference (most utility modules export named bindings).
+      'import/extensions': 'off',
+      'import/prefer-default-export': 'off',
+      'import/no-extraneous-dependencies': [
+        'error',
+        {
+          devDependencies: [
+            '/**/*.cy.{ts,tsx,js,jsx}',
+            'tests/**/*.{ts,tsx,js,jsx}',
+            'test/**/*.{ts,tsx,js,jsx}',
+            '**/*.test.{ts,tsx,js,jsx}',
+            'playwright.config.ts',
+            'vitest.config.ts',
+            'vite.config.ts',
+            'postcss.config.js',
+            'eslint.config.js',
+            '.storybook/**/*.{ts,tsx,js,jsx}',
+            '**/*.stories.{ts,tsx,js,jsx}',
+            '/**/*.spec.ts',
+            'scripts/**/*.{js,mjs,ts}',
+          ],
+        },
+      ],
+    },
+  },
+
+  // 7. TS-specific tweak — react/prop-types is redundant under
+  // TypeScript (the type system already enforces props).
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      'react/prop-types': 'off',
+    },
+  },
+
+  // 8. Node-context files that aren't part of the browser bundle.
+  // CJS configs, build scripts, postcss/eslint configs, etc.
+  {
+    files: ['**/*.{cjs,mjs}', 'scripts/**/*.{js,mjs}', 'postcss.config.js', 'eslint.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
+  // 9. One-shot scripts that import packages installed via `npx`
+  // at runtime (lighthouse, chrome-launcher, subset-font) — they
+  // intentionally aren't pinned in package.json.
+  {
+    files: ['scripts/**/*.{js,mjs}'],
+    rules: {
+      'import/no-unresolved': 'off',
+    },
+  },
+
+  // 10. eslint.config.js itself — the `tseslint.configs` and
+  // `storybook.configs` namespace accesses look like
+  // named-as-default-member to import-plugin, but the packages
+  // legitimately attach `configs` to their default export. False
+  // positives, suppressed in this single file.
+  {
+    files: ['eslint.config.js'],
+    rules: {
+      'import/no-named-as-default-member': 'off',
+    },
+  },
+
+  // 11. Prettier compat — disables ESLint rules that conflict with
+  // Prettier formatting. Must come last so it overrides everything
+  // above. (We DON'T use eslint-plugin-prettier — running Prettier
+  // separately via lint:prettier is faster and the diagnostics are
+  // cleaner. eslint-config-prettier is just the rule-disabling half.)
+  prettier,
+];
