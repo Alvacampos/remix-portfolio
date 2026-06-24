@@ -153,6 +153,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<LayoutData>('root');
   const locale: Locale = data?.locale ?? 'en';
   const canonical = data?.canonical ?? SITE_URL;
+  // The skip-link sits OUTSIDE the IntlProvider (which is mounted in
+  // App() around <Outlet />), so we resolve its string by direct lookup
+  // against messagesFor(locale) — keeps a11y copy translated without
+  // restructuring provider scope.
+  const skipLinkLabel = messagesFor(locale).SKIP_TO_CONTENT;
 
   return (
     // suppressHydrationWarning: the inline theme-init script (below) sets
@@ -182,7 +187,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className={getClasses()}>
         <a href="#main-content" className={getClasses('skip-link')}>
-          Skip to content
+          {skipLinkLabel}
         </a>
         {children}
         <ScrollRestoration />
