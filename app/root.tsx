@@ -127,16 +127,21 @@ const PERSON_JSONLD = {
 // [data-theme='light'] selector swaps the palette tokens.
 const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';}catch(e){}`;
 
-// Inline locale-replay script. Runs synchronously in <head>; if the
-// user has previously chosen a locale via LocaleToggle (persisted in
-// localStorage.locale) AND the current URL doesn't already pin that
-// locale via `?lang=`, redirect to the same URL with `?lang=<saved>`.
-// The redirect happens before paint so visitors never see a flash of
-// the Accept-Language-derived default before their saved choice
-// kicks in. The current `<html lang>` value identifies what the
-// loader resolved, used as the comparison anchor.
+// Inline locale-replay script. Runs synchronously in <head>; covers
+// the pre-cookie migration case where a user previously chose a locale
+// (persisted in localStorage.locale by older builds) but the cookie
+// channel hasn't been seeded yet. If localStorage holds a locale that
+// differs from what the loader resolved, write the cookie and redirect
+// to ?lang=<saved> so the next render picks it up. Once the cookie
+// lands, every subsequent request — including internal <Link> nav —
+// resolves the right locale server-side and this branch becomes a
+// no-op (the loader already matches localStorage).
+//
+// The current `<html lang>` value identifies what the loader resolved,
+// used as the comparison anchor. `?lang=` is the highest-priority
+// signal in pickLocale so the redirect always wins on first paint.
 function buildLocaleReplayScript(currentLocale: Locale) {
-  return `try{var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!=='${currentLocale}'){var u=new URL(location.href);if(u.searchParams.get('lang')!==s){u.searchParams.set('lang',s);location.replace(u.toString());}}}catch(e){}`;
+  return `try{var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!=='${currentLocale}'){document.cookie='locale='+s+';Path=/;Max-Age=31536000;SameSite=Lax';var u=new URL(location.href);if(u.searchParams.get('lang')!==s){u.searchParams.set('lang',s);location.replace(u.toString());}}}catch(e){}`;
 }
 
 // WebSite schema gives Google enough to surface a sitelinks search box

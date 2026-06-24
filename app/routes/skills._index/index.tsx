@@ -95,12 +95,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     {
       headers: {
         'Cache-Control': 'public, max-age=3600',
-        // Loader output now varies by locale (work-item rol/description,
+        // Loader output varies by locale (work-item rol/description,
         // extra-activity copy). Tell the edge to segment its cache key
-        // by `Accept-Language` so a Spanish-browser visitor doesn't get
-        // a cached English response and vice-versa. The `?lang=` URL
-        // param is already a different cache key on its own.
-        Vary: 'Accept-Language',
+        // by both `Accept-Language` (browser default for new visitors)
+        // AND `Cookie` — `pickLocale` reads the `locale` cookie set by
+        // LocaleToggle, so two visitors with the same Accept-Language
+        // but different cookie values must get different responses.
+        // The `?lang=` URL param is already a different cache key on
+        // its own.
+        Vary: 'Accept-Language, Cookie',
       },
     }
   );
