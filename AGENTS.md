@@ -146,9 +146,9 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 | `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `public/data/skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS`, `TIMELINE_CARDS_BASE` hoisted); the heatmap + total-years figure derive in the loader so they read live `Date` (1h cache via `data()`) |
 | `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                     |
 
-A `/contact` route is stubbed (commented out) in the NavBar.
+There is no `/contact` route today — README mentions one as a future feature but the NavBar doesn't render any entry for it.
 
-Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle (Stage 7 swapped this from a request-time `fetch()`). The static asset is still served at `/data/*` for any external consumer via the `_routes.json` exclude.
+Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle. The static asset is still served at `/data/*` for any external consumer via the `_routes.json` exclude.
 
 ---
 
@@ -303,7 +303,7 @@ The hook installs automatically via `npm install` (the `prepare` script runs `hu
 
 ### Unit / component — Vitest + React Testing Library
 
-- Config: [vitest.config.ts](vitest.config.ts) (happy-dom env, globals, `~/*` alias via `vite-tsconfig-paths`).
+- Config: [vitest.config.ts](vitest.config.ts) (happy-dom env, globals, `~/*` alias via Vitest 4's native `resolve.tsconfigPaths: true`).
 - Setup: [test/setup.ts](test/setup.ts) — adds `jest-dom` matchers, RTL `cleanup`, and stub polyfills for `ResizeObserver` and `IntersectionObserver` (`react-vertical-timeline-component` needs them).
 - Render helper: [test/test-utils.tsx](test/test-utils.tsx) — wraps trees in a `createMemoryRouter` data-router (so `@remix-run/react`'s `Link` works) plus an `IntlProvider` populated from `app/intl/en-US.json`.
 - Tests live next to the component as `index.test.tsx`. Pattern: `app/**/*.{test,spec}.{ts,tsx}`.
@@ -432,7 +432,7 @@ Hardcoded values are fine — stories are for visual review, not type guarantees
 ### ESLint highlights ([eslint.config.js](eslint.config.js))
 
 - ESLint 9 flat-config. Composes `@eslint/js` recommended + `typescript-eslint` recommended + `eslint-plugin-react` (recommended + jsx-runtime) + `eslint-plugin-react-hooks` (flat recommended) + `eslint-plugin-jsx-a11y` recommended + `eslint-plugin-import` (recommended + typescript) + `eslint-plugin-storybook` (story files only) + `eslint-config-prettier` (last, to disable formatting rules Prettier handles).
-- We **don't** extend `eslint-config-airbnb` — Airbnb's config has no maintained flat-config support and most of what it added beyond the upstream plugin recommendations was style (which Prettier handles). Migrated away in `chore/eslint-flat-config`.
+- We **don't** extend `eslint-config-airbnb` — Airbnb's config has no maintained flat-config support and most of what it added beyond the upstream plugin recommendations was style (which Prettier handles). Migrated away from airbnb when adopting flat-config.
 - `simple-import-sort/imports` and `simple-import-sort/exports` are **errors** — let the editor's organize-imports do this.
 - `no-console` allows `warn`, `error`, `info` only.
 - `react/jsx-props-no-spreading` is **off** — spread props freely.
