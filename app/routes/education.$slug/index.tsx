@@ -3,9 +3,11 @@ import { useLoaderData, useRouteError } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
-import { getClassMaker, mergeRouteMeta } from '~/utils/utils';
+import { loadEducation } from '~/data/education-schema';
+import { type Locale, pickLocale } from '~/intl';
+import { getClassMaker, localized, mergeRouteMeta } from '~/utils/utils';
 
-import educationData from '../../../public/data/education.json';
+import educationJson from '../../../public/data/education.json';
 import styles from './style.css?url';
 
 export const links = () => [
@@ -28,28 +30,34 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 const BLOCK = 'education-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-type DegreeData = {
-  title: string;
-  startDate: string;
-  endDate: string;
-  institution: string;
-  summary: string;
-  description: string;
-  skills: string[];
-};
+// Validate at worker boot — same pattern as the index route.
+const EDUCATION = loadEducation(educationJson);
 
 const SLUG_MAP: Record<string, 'degree' | 'associateDegree'> = {
   degree: 'degree',
   'associate-degree': 'associateDegree',
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const slug = params?.slug;
   const key = slug ? SLUG_MAP[slug] : undefined;
 
   if (!key) throw new Error('Oh no! Something went wrong!');
 
-  const data = educationData[key] as DegreeData;
+  // Resolve the locale-specific copy in the loader so both the
+  // <meta> function (which reads loader output) and the rendered
+  // component see the same translated text.
+  const locale: Locale = pickLocale(request);
+  const raw = EDUCATION[key];
+  const data = {
+    title: localized(raw, 'title', locale),
+    startDate: raw.startDate,
+    endDate: raw.endDate,
+    institution: raw.institution,
+    summary: localized(raw, 'summary', locale),
+    description: localized(raw, 'description', locale),
+    skills: raw.skills,
+  };
 
   return { data };
 }

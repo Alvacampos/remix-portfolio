@@ -138,13 +138,13 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 
 **Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
 
-| URL                | File                                                                            | Loader                                                                                                                                                                                                                            |
-| ------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                              |
-| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | imports `public/data/education.json` server-side                                                                                                                                                                                  |
-| `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key in `education.json`; throws on miss → local `ErrorBoundary`                                                                                                                                       |
-| `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `public/data/skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS`, `TIMELINE_CARDS_BASE` hoisted); the heatmap + total-years figure derive in the loader so they read live `Date` (1h cache via `data()`) |
-| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                     |
+| URL                | File                                                                            | Loader                                                                                                                                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                                  |
+| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | validates `education.json` via Zod once per worker boot (`loadEducation`); resolves `_es` siblings per request via `localized()`                                                                                                      |
+| `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key, localizes title/summary/description in the loader (so `<meta>` and render share copy); throws on miss → local `ErrorBoundary`                                                                        |
+| `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS` hoisted); the heatmap + total-years figure derive in the loader. Per-request: timeline cards + extras resolve `_es`. 1h cache + `Vary: Accept-Language` |
+| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                         |
 
 There is no `/contact` route today — README mentions one as a future feature but the NavBar doesn't render any entry for it.
 
@@ -248,14 +248,26 @@ Adding a third locale: extend `SUPPORTED_LOCALES` and the `MESSAGES` map in `app
 
 Site content is **not in the database** — it's static JSON under `public/data/`:
 
-- [public/data/education.json](public/data/education.json) — degree + certifications.
-- [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS`, `EXTRA_ACTIVITIES`. **Skill-first model** — see below.
+- [public/data/education.json](public/data/education.json) — degree + associate degree + certifications. Validated at boot via [app/data/education-schema.ts](app/data/education-schema.ts).
+- [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS`, `EXTRA_ACTIVITIES`. **Skill-first model** — see below. Validated at boot via [app/data/skills-schema.ts](app/data/skills-schema.ts).
 
 To update content, edit those JSON files. Route loaders import them server-side (Vite bakes the JSON into the server bundle); the skills loader still caches for 1h via `Cache-Control` so the edge holds the rendered HTML.
 
+### Localization (`_es` siblings)
+
+Both data files use **inline `_es` siblings** for localizable string fields. A field like `description` carries an optional `description_es` next to it; consumers resolve via [`localized(item, key, locale)`](app/utils/utils.tsx) in `app/utils/utils.tsx`. The helper falls back to the English field when the `_es` sibling is missing or empty, so partial translation is fine and never breaks a render. **Not** localized: company names, institution names, dates, ids, tech-stack chip text (proper nouns).
+
+Locale is resolved by [`pickLocale(request)`](app/intl/index.ts) in priority order: `?lang=` URL param → `Accept-Language` header → `'en'` default. Loaders that emit localized copy resolve it server-side and set `Vary: Accept-Language` on the response so the edge cache segments correctly.
+
+Adding a new field:
+
+1. Add the base field + optional `_es` sibling to the relevant Zod schema.
+2. Use `localized(item, 'fieldName', locale)` at the read site.
+3. Add the English copy now and the Spanish copy when ready — don't block on a full sync.
+
 ### Skill-first schema (skills.json)
 
-`skills.json` validates at worker boot through a Zod schema at [app/data/skills-schema.ts](app/data/skills-schema.ts). The schema is the single source of truth — TS types are inferred via `z.infer`, malformed JSON throws a path-precise error before any consumer reads it.
+`skills.json` validates at worker boot through the Zod schema. The schema is the single source of truth — TS types are inferred via `z.infer`, malformed JSON throws a path-precise error before any consumer reads it.
 
 **Shape:**
 
