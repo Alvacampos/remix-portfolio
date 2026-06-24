@@ -67,18 +67,22 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      className={getClasses()}
+      className={`${getClasses()} ${isDark ? getClasses('', 'dark') : getClasses('', 'light')}`}
       onClick={toggle}
       aria-label={label}
       aria-pressed={isDark}
       title={label}
     >
-      {/* Show the icon for the action — sun = "switch to light" while
-       * the user is in dark, moon = "switch to dark" while in light.
-       * Hide both pre-mount so SSR doesn't paint the wrong icon and
-       * then swap after hydration. */}
-      <span className={getClasses('icon')} aria-hidden="true">
-        {mounted ? isDark ? <Sun /> : <Moon /> : null}
+      {/* Both icons are stacked at the same spot; CSS rotates the
+       * outgoing icon out and the incoming one in via the parent's
+       * `--dark` / `--light` modifiers. Pre-mount the button has no
+       * modifier and both icons sit invisible — avoids painting the
+       * wrong icon SSR and then snapping after hydration. */}
+      <span className={`${getClasses('icon')} ${getClasses('icon', 'sun')}`} aria-hidden="true">
+        {mounted ? <Sun /> : null}
+      </span>
+      <span className={`${getClasses('icon')} ${getClasses('icon', 'moon')}`} aria-hidden="true">
+        {mounted ? <Moon /> : null}
       </span>
     </button>
   );
