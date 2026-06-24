@@ -5,6 +5,7 @@ import type { SkillsData } from '~/data/skills-schema';
 import {
   formatDate,
   getClassMaker,
+  getCvUrl,
   getSkillHeatmapData,
   getSkillsForJob,
   getSkillSuggestions,
@@ -261,6 +262,19 @@ describe('getSkillSuggestions', () => {
       ]
     );
     expect(getSkillSuggestions(data)).toEqual(['React', 'TypeScript']);
+  });
+});
+
+describe('getCvUrl', () => {
+  it('returns the English PDF for the en locale', () => {
+    expect(getCvUrl('en')).toBe('/assets/files/gonzalo_alvarez_campos_cv.pdf');
+  });
+
+  it('falls back to the English PDF for es while HAS_ES_CV is false', () => {
+    // When the Spanish PDF lands and HAS_ES_CV flips to true, this test
+    // should be flipped to assert the _es path. Until then the fallback
+    // is what keeps Spanish-locale visitors from hitting a 404.
+    expect(getCvUrl('es')).toBe('/assets/files/gonzalo_alvarez_campos_cv.pdf');
   });
 });
 

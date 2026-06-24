@@ -3,6 +3,22 @@ import { differenceInMonths, format, formatDuration, intervalToDuration } from '
 import type { Skill, SkillsData, WorkItem } from '~/data/skills-schema';
 import type { Locale } from '~/intl';
 
+// Toggle this to `true` once a Spanish CV PDF lands at
+// public/assets/files/gonzalo_alvarez_campos_cv_es.pdf. Until then,
+// `getCvUrl('es')` falls back to the English file so a Spanish-locale
+// visitor still gets a working download instead of a 404.
+const HAS_ES_CV = false;
+
+const CV_URLS: Record<Locale, string> = {
+  en: '/assets/files/gonzalo_alvarez_campos_cv.pdf',
+  es: '/assets/files/gonzalo_alvarez_campos_cv_es.pdf',
+};
+
+export function getCvUrl(locale: Locale): string {
+  if (locale === 'es' && !HAS_ES_CV) return CV_URLS.en;
+  return CV_URLS[locale];
+}
+
 // Resolve a locale-specific string from a data-layer record.
 //
 // Convention: localizable fields (title, rol, description, project

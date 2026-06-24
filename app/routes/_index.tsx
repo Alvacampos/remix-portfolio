@@ -1,8 +1,10 @@
-import type { MetaFunction } from '@remix-run/cloudflare';
+import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
+import { useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
 import DownloadButton from '~/components/DownloadBtn';
-import { getClassMaker, mergeRouteMeta } from '~/utils/utils';
+import { pickLocale } from '~/intl';
+import { getClassMaker, getCvUrl, mergeRouteMeta } from '~/utils/utils';
 
 import styles from './style.css?url';
 
@@ -11,6 +13,12 @@ import styles from './style.css?url';
 // is the documented shape for non-document, non-script asset prefetch
 // — the file is on the same origin (Cloudflare Pages) so anonymous
 // fetch matches the eventual <a href> request.
+//
+// `links()` runs without the request in scope, so we can't pick the
+// locale here. The English PDF is always available (it's the fallback
+// when a translation is missing) so prefetching it is the safe bet —
+// a Spanish visitor still gets the file warmed in cache; only the
+// hash differs.
 export const links = () => [
   { rel: 'stylesheet', href: styles },
   {
@@ -20,6 +28,10 @@ export const links = () => [
     crossOrigin: 'anonymous' as const,
   },
 ];
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  return { cvUrl: getCvUrl(pickLocale(request)) };
+}
 
 export const meta: MetaFunction = (args) =>
   mergeRouteMeta(args, {
@@ -32,6 +44,7 @@ const BLOCK = 'home-route';
 const getClasses = getClassMaker(BLOCK);
 
 export default function Index() {
+  const { cvUrl } = useLoaderData<typeof loader>();
   return (
     <div className={getClasses()}>
       <h1>
@@ -52,10 +65,7 @@ export default function Index() {
           </a>
         </span>
       </p>
-      <DownloadButton
-        fileUrl="/assets/files/gonzalo_alvarez_campos_cv.pdf"
-        fileName="Gonzalo_Alvarez_CV.pdf"
-      >
+      <DownloadButton fileUrl={cvUrl} fileName="Gonzalo_Alvarez_CV.pdf">
         <FormattedMessage id="DOWNLOAD_CV" />
       </DownloadButton>
     </div>
