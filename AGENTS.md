@@ -19,24 +19,24 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 
 ## 2. Stack
 
-| Layer             | Tech                                                                                           |
-| ----------------- | ---------------------------------------------------------------------------------------------- |
-| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                          |
-| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)            |
-| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                                 |
-| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                            |
-| UI                | React 18 + TypeScript                                                                          |
-| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                    |
-| Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                   |
-| i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/))   |
-| Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))       |
-| Timeline          | `react-vertical-timeline-component`                                                            |
-| Dates             | `date-fns`                                                                                     |
-| Icons             | Local SVGs → SVGO → SVGR-generated React components                                            |
-| Linting           | ESLint (airbnb + airbnb/hooks + prettier + jsx-a11y + storybook), Prettier, Stylelint, ls-lint |
-| Type-check        | `tsc --noEmit` (Vite handles emit)                                                             |
-| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                    |
-| npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                      |
+| Layer             | Tech                                                                                         |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                        |
+| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)          |
+| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                               |
+| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                          |
+| UI                | React 18 + TypeScript                                                                        |
+| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                  |
+| Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                 |
+| i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/)) |
+| Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))     |
+| Timeline          | `react-vertical-timeline-component`                                                          |
+| Dates             | `date-fns`                                                                                   |
+| Icons             | Local SVGs → SVGO → SVGR-generated React components                                          |
+| Linting           | ESLint 9 flat-config + Prettier, Stylelint, ls-lint                                          |
+| Type-check        | `tsc --noEmit` (Vite handles emit)                                                           |
+| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                  |
+| npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                    |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
 
@@ -94,7 +94,7 @@ remix-portfolio/
 ├── vite.config.ts
 ├── tsconfig.json + jsconfig.json # `~/*` → `./app/*`
 ├── postcss.config.js + svgo.config.cjs + svgr.config.cjs
-└── .ls-lint.yml + .eslintrc.cjs + .prettierrc.json + .stylelintrc.json
+└── .ls-lint.yml + eslint.config.js + .prettierrc.json + .stylelintrc.json
 ```
 
 ---
@@ -225,7 +225,7 @@ If a rule starts emitting false positives on a postcss-simple-vars expansion, pr
 3. Run `npm run build:icons` — SVGR rewrites [app/components/icons/](app/components/icons/) (a PascalCase `.jsx` per SVG, plus a barrel `index.jsx`).
 4. Import: `import { NewIcon } from '~/components/icons'`.
 
-**Do not hand-edit `app/components/icons/*.jsx`** — it's regenerated and gitignored under `.eslintignore` / `.ls-lint.yml`. SVGR config: `outDir: 'app/components/icons'`, `ext: 'jsx'`, JSX runtime automatic, `svgProps: { height: '100%', 'aria-hidden': 'true' }`. Icons are decorative — every parent (NavBar links, ThemeToggle, Timeline elements) carries its own accessible name, and `aria-hidden` lets axe/Lighthouse skip the "SVG with img role needs an accessible name" rule. **SVGR doesn't delete generated files for SVGs you removed from `app/assets/icons/`** — when removing a source SVG, also delete its `app/components/icons/<Name>.jsx` and re-run `npm run build:icons` so the barrel rebuilds clean.
+**Do not hand-edit `app/components/icons/*.jsx`** — it's regenerated and ignored by the linter (via the `ignores` block in `eslint.config.js`) and `.ls-lint.yml`. SVGR config: `outDir: 'app/components/icons'`, `ext: 'jsx'`, JSX runtime automatic, `svgProps: { height: '100%', 'aria-hidden': 'true' }`. Icons are decorative — every parent (NavBar links, ThemeToggle, Timeline elements) carries its own accessible name, and `aria-hidden` lets axe/Lighthouse skip the "SVG with img role needs an accessible name" rule. **SVGR doesn't delete generated files for SVGs you removed from `app/assets/icons/`** — when removing a source SVG, also delete its `app/components/icons/<Name>.jsx` and re-run `npm run build:icons` so the barrel rebuilds clean.
 
 ---
 
@@ -429,15 +429,16 @@ Hardcoded values are fine — stories are for visual review, not type guarantees
 - `strict: true`, `isolatedModules: true`, `noEmit: true` — Vite owns the build.
 - Types: `@remix-run/cloudflare`, `vite/client`, `@cloudflare/workers-types/2023-07-01`.
 
-### ESLint highlights ([.eslintrc.cjs](.eslintrc.cjs))
+### ESLint highlights ([eslint.config.js](eslint.config.js))
 
-- Extends `airbnb` + `airbnb/hooks` + `plugin:react/recommended` + `plugin:jsx-a11y/recommended` + `prettier`.
+- ESLint 9 flat-config. Composes `@eslint/js` recommended + `typescript-eslint` recommended + `eslint-plugin-react` (recommended + jsx-runtime) + `eslint-plugin-react-hooks` (flat recommended) + `eslint-plugin-jsx-a11y` recommended + `eslint-plugin-import` (recommended + typescript) + `eslint-plugin-storybook` (story files only) + `eslint-config-prettier` (last, to disable formatting rules Prettier handles).
+- We **don't** extend `eslint-config-airbnb` — Airbnb's config has no maintained flat-config support and most of what it added beyond the upstream plugin recommendations was style (which Prettier handles). Migrated away in `chore/eslint-flat-config`.
 - `simple-import-sort/imports` and `simple-import-sort/exports` are **errors** — let the editor's organize-imports do this.
 - `no-console` allows `warn`, `error`, `info` only.
 - `react/jsx-props-no-spreading` is **off** — spread props freely.
 - `react/require-default-props` is on with `functions: 'defaultArguments'` — give optional props a default in the function signature, not via `defaultProps`.
-- `comma-dangle: always-multiline` for arrays/objects/imports.
-- `_`-prefixed identifiers are ignored by `no-unused-vars`.
+- `_`-prefixed identifiers are ignored by `no-unused-vars` (via `@typescript-eslint/no-unused-vars`; the base `no-unused-vars` is off).
+- Ignored paths (replaces the old `.eslintignore`) are declared inline at the top of `eslint.config.js`. Same coverage as before — generated SVGR icons, build outputs, public assets, node_modules, Playwright artifacts, Storybook static.
 
 ### Prettier ([.prettierrc.json](.prettierrc.json))
 
@@ -475,7 +476,7 @@ When adding a new route:
 
 ## 15. Gotchas
 
-- **`app/components/icons/` is generated** — it's in `.eslintignore` and `.ls-lint.yml`'s ignore list, and the lint pipeline will fail if you check it in by hand with bad names. Always go through SVGR.
+- **`app/components/icons/` is generated** — it's in `eslint.config.js`'s `ignores` block and `.ls-lint.yml`'s ignore list, and the lint pipeline will fail if you check it in by hand with bad names. Always go through SVGR.
 - **`legacy-peer-deps=true`** is on (`.npmrc`) because of mismatched React-major peer ranges between deps (e.g. `@types/react@19` while `react@18` is installed). Don't remove it without testing `npm install` end-to-end.
 - **Type annotations on dates**: `formatDate(start, end)` has three overloaded behaviors keyed off `formatType` and the shape of `end` (`undefined` → `"MM/yyyy - Present"`, `''` → `"MMMM yyyy"`, otherwise → `"MM/yyyy - MM/yyyy"`); see [app/utils/utils.tsx](app/utils/utils.tsx).
 - **Skills route loader 1h cache**: `/skills` sets `Cache-Control: public, max-age=3600`. After editing `skills.json`, expect up to an hour of stale data on prod.
