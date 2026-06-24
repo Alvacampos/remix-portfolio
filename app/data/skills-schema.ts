@@ -26,9 +26,24 @@ const skill = z.object({
   ranges: z.array(skillRange).min(1),
 });
 
+// Localizable string fields carry an optional `_es` sibling — the
+// Spanish variant. Consumers read via `localized(item, key, locale)`
+// in app/utils/utils.tsx, which falls back to the English field
+// when `_es` is missing or empty. Title/role/description/project
+// copy is biographical and translatable; date fields, ids, and
+// proper-noun company names are NOT localized and stay as plain
+// strings. Tech-stack chip text (the SKILLS array) is also not
+// localized — language/framework names are proper nouns.
 const projectsField = z.union([
   z.string(),
-  z.array(z.object({ title: z.string(), text: z.string() })),
+  z.array(
+    z.object({
+      title: z.string(),
+      title_es: z.string().optional(),
+      text: z.string(),
+      text_es: z.string().optional(),
+    })
+  ),
 ]);
 
 const workItem = z.object({
@@ -37,14 +52,32 @@ const workItem = z.object({
   startDate: yearMonth,
   endDate: yearMonth.optional(),
   rol: z.string(),
+  rol_es: z.string().optional(),
   description: z.string().optional(),
+  description_es: z.string().optional(),
   projects: projectsField.optional(),
+  // When `projects` is a plain string (some teaching roles render a
+  // single sentence rather than a structured project list), the
+  // Spanish translation lives here as a sibling. Schema-level only —
+  // the array variant carries its localization inside each project's
+  // own `_es` siblings. Resolved at the loader via
+  // `localized(item, 'projects', locale)` for the string case.
+  projects_es: z.string().optional(),
 });
 
 const extraActivities = z.array(
   z.object({
+    // Outer title is the company name (Endava, Qubika, etc.) — proper
+    // noun, NOT localized. The nested data items below are.
     title: z.string(),
-    data: z.array(z.object({ title: z.string(), text: z.string() })),
+    data: z.array(
+      z.object({
+        title: z.string(),
+        title_es: z.string().optional(),
+        text: z.string(),
+        text_es: z.string().optional(),
+      })
+    ),
   })
 );
 

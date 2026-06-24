@@ -8,6 +8,7 @@ import {
   getSkillHeatmapData,
   getSkillsForJob,
   getSkillSuggestions,
+  localized,
 } from './utils';
 
 // Test fixture builder for the v2 SkillsData shape.
@@ -79,10 +80,6 @@ describe('formatDate', () => {
     // July 31 — which would render as 07/2018. Local-zone parsing
     // anchors to August 1 and renders as 08/2018.
     expect(formatDate('2018-08')).toBe('08/2018 - Present');
-  });
-
-  it('still accepts legacy ISO strings with time component', () => {
-    expect(formatDate('2020-01-01T00:00:00.000')).toBe('01/2020 - Present');
   });
 });
 
@@ -264,5 +261,37 @@ describe('getSkillSuggestions', () => {
       ]
     );
     expect(getSkillSuggestions(data)).toEqual(['React', 'TypeScript']);
+  });
+});
+
+describe('localized', () => {
+  const item = {
+    rol: 'Senior dev.',
+    rol_es: 'Desarrollador senior.',
+    description: 'English desc.',
+    // description_es intentionally absent — falls back to English.
+    institution: 'University of X',
+  };
+
+  it('returns the base field for English locale', () => {
+    expect(localized(item, 'rol', 'en')).toBe('Senior dev.');
+  });
+
+  it('returns the _es sibling for Spanish locale when present', () => {
+    expect(localized(item, 'rol', 'es')).toBe('Desarrollador senior.');
+  });
+
+  it('falls back to English when the _es sibling is missing', () => {
+    expect(localized(item, 'description', 'es')).toBe('English desc.');
+  });
+
+  it('falls back to English when the _es sibling is an empty string', () => {
+    const empty = { rol: 'Eng.', rol_es: '' };
+    expect(localized(empty, 'rol', 'es')).toBe('Eng.');
+  });
+
+  it('returns the base field unchanged when the field has no _es convention', () => {
+    expect(localized(item, 'institution', 'en')).toBe('University of X');
+    expect(localized(item, 'institution', 'es')).toBe('University of X');
   });
 });

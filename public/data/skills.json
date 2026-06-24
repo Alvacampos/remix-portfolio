@@ -16,15 +16,21 @@
       "startDate": "2018-08",
       "endDate": "2020-12",
       "rol": "Jr Web developer.",
+      "rol_es": "Desarrollador Web Jr.",
       "description": "Worked as a software developer in the analytics team, developing web applications using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.",
+      "description_es": "Trabajé como desarrollador de software en el equipo de analytics, construyendo aplicaciones web con Vue.js, Vuex, Vue Router y Highcharts. También tuve mis primeras experiencias con .NET Core y Node.js para tareas de backend.",
       "projects": [
         {
           "title": "Project: eVestment",
-          "text": "Worked on analytics web development using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks."
+          "title_es": "Proyecto: eVestment",
+          "text": "Worked on analytics web development using Vue.js, Vuex, Vue Router, and Highcharts. Also gained exposure to .NET Core and Node.js for backend tasks.",
+          "text_es": "Desarrollo web de analytics con Vue.js, Vuex, Vue Router y Highcharts. Primer contacto con .NET Core y Node.js en tareas de backend."
         },
         {
           "title": "Project: Smile Direct Club",
-          "text": "Developed web applications for Smile Direct Club using Vue.js, ReactJs, and JavaScript, prioritizing performance optimization through Nuxt server-side rendering. Utilized Vue-axios, Bootstrap-Vue, and ECMA 6+."
+          "title_es": "Proyecto: Smile Direct Club",
+          "text": "Developed web applications for Smile Direct Club using Vue.js, ReactJs, and JavaScript, prioritizing performance optimization through Nuxt server-side rendering. Utilized Vue-axios, Bootstrap-Vue, and ECMA 6+.",
+          "text_es": "Desarrollé aplicaciones web para Smile Direct Club con Vue.js, React y JavaScript, priorizando la optimización de performance mediante server-side rendering con Nuxt. Uso de Vue-axios, Bootstrap-Vue y ECMA 6+."
         }
       ]
     },
@@ -34,15 +40,21 @@
       "startDate": "2020-12",
       "endDate": "2021-08",
       "rol": "Mid Level Full-stack developer.",
+      "rol_es": "Desarrollador Full-stack semi-senior.",
       "description": "Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku.",
+      "description_es": "Desarrollé una aplicación CRM y un manejador de conversaciones con JavaScript, React, CSS, Router, Redux y Axios. Implementé testing unitario con Jest.js y desplegué la aplicación con AWS/Heroku.",
       "projects": [
         {
           "title": "Project: Conversational",
-          "text": "Conversational App. Web development using ReactJs, also working with mobile apps using React Native. Tech migrations from angular to react. Use of Axios, Bootstrap, ECMA 6+."
+          "title_es": "Proyecto: Conversational",
+          "text": "Conversational App. Web development using ReactJs, also working with mobile apps using React Native. Tech migrations from angular to react. Use of Axios, Bootstrap, ECMA 6+.",
+          "text_es": "App Conversational. Desarrollo web con React y mobile con React Native. Migraciones tecnológicas de Angular a React. Uso de Axios, Bootstrap y ECMA 6+."
         },
         {
           "title": "Project: Live/Lit",
-          "text": "Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku."
+          "title_es": "Proyecto: Live/Lit",
+          "text": "Developed a CRM application and conversation handler using JavaScript, React, CSS, Router, Redux, and Axios. Implemented unit testing with Jest.js and deployed the application using AWS/Heroku.",
+          "text_es": "Desarrollé una aplicación CRM y un manejador de conversaciones con JavaScript, React, CSS, Router, Redux y Axios. Implementé testing unitario con Jest.js y desplegué la aplicación con AWS/Heroku."
         }
       ]
     },
@@ -52,7 +64,9 @@
       "startDate": "2021-06",
       "endDate": "2022-03",
       "rol": "Software Engineering Professor.",
-      "projects": "Teaching programming in a university to first year students."
+      "rol_es": "Profesor de Ingeniería de Software.",
+      "projects": "Teaching programming in a university to first year students.",
+      "projects_es": "Enseñanza de programación en la universidad a estudiantes de primer año."
     },
     {
       "id": 4,
@@ -60,7 +74,9 @@
       "startDate": "2021-08",
       "endDate": "2022-04",
       "rol": "Senior Full-stack developer.",
-      "description": "Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University's data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program."
+      "rol_es": "Desarrollador Full-stack Senior.",
+      "description": "Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University's data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program.",
+      "description_es": "Lead developer y consultor técnico en proyectos de MarkLogic. Mis tareas principales fueron integrar los datos de la Universidad de Yale a una base MarkLogic, sumadas a coordinación y liderazgo del equipo. También organicé y mentoreé el programa de pasantías de Endava Argentina."
     },
     {
       "id": 5,
@@ -68,14 +84,18 @@
       "startDate": "2022-03",
       "endDate": "2023-01",
       "rol": "Web programming Teacher.",
-      "projects": "Teaching web development in coderhouse."
+      "rol_es": "Profesor de programación web.",
+      "projects": "Teaching web development in coderhouse.",
+      "projects_es": "Enseñanza de desarrollo web en Coderhouse."
     },
     {
       "id": 6,
       "title": "Qubika",
       "startDate": "2022-04",
       "rol": "Senior Frontend developer.",
-      "description": "Senior Frontend Developer at Qubika; key contributor on multiple complex web applications across diverse technologies and clients."
+      "rol_es": "Desarrollador Frontend Senior.",
+      "description": "Senior Frontend Developer at Qubika; key contributor on multiple complex web applications across diverse technologies and clients.",
+      "description_es": "Desarrollador Frontend Senior en Qubika; aporte clave en múltiples aplicaciones web complejas, atravesando distintas tecnologías y clientes."
     }
   ],
   "SKILLS": [
@@ -539,11 +559,15 @@
       "data": [
         {
           "title": "Endava Argentina Internship",
-          "text": "Organizer and mentor for Endava Argentina Internship Program 2022. In charge of lectures related to JS and general programming."
+          "title_es": "Pasantía Endava Argentina",
+          "text": "Organizer and mentor for Endava Argentina Internship Program 2022. In charge of lectures related to JS and general programming.",
+          "text_es": "Organizador y mentor del programa de pasantías de Endava Argentina 2022. A cargo de las clases de JavaScript y programación general."
         },
         {
           "title": "Technical Interviewer",
-          "text": "Gatekeeper for Endava's hiring process — regularly assessed candidates' technical depth and culture fit during the interview loop."
+          "title_es": "Entrevistador técnico",
+          "text": "Gatekeeper for Endava's hiring process — regularly assessed candidates' technical depth and culture fit during the interview loop.",
+          "text_es": "Filtro técnico del proceso de contratación de Endava — evalué regularmente el nivel técnico de los candidatos y su afinidad cultural durante el ciclo de entrevistas."
         }
       ]
     },
@@ -552,11 +576,15 @@
       "data": [
         {
           "title": "Technical Leader",
-          "text": "Technical Leader of the project for the career of Software Engineering. In charge of the development of the project and the team."
+          "title_es": "Líder técnico",
+          "text": "Technical Leader of the project for the career of Software Engineering. In charge of the development of the project and the team.",
+          "text_es": "Líder técnico del proyecto institucional de la carrera de Ingeniería de Software. A cargo del desarrollo del proyecto y la coordinación del equipo."
         },
         {
           "title": "Career coaching",
-          "text": "Help students with their career path and guide them in their technical issues."
+          "title_es": "Orientación profesional",
+          "text": "Help students with their career path and guide them in their technical issues.",
+          "text_es": "Acompaño a los estudiantes en su camino profesional y los guío en sus dudas técnicas."
         }
       ]
     },
@@ -565,15 +593,21 @@
       "data": [
         {
           "title": "Senior Internship",
-          "text": "Mentor in the Senior Internship at Qubika 2024. Tasks involved code reviewing, technical mentoring, follow-up of the participants progress, interviewing, etc."
+          "title_es": "Pasantía Senior",
+          "text": "Mentor in the Senior Internship at Qubika 2024. Tasks involved code reviewing, technical mentoring, follow-up of the participants progress, interviewing, etc.",
+          "text_es": "Mentor de la Pasantía Senior de Qubika 2024. Tareas: code review, mentoría técnica, seguimiento del progreso de los participantes, entrevistas, etc."
         },
         {
           "title": "Frontend Mentor",
-          "text": "Mentor of new colleagues, working on the frontend area, helping them with their daily tasks, code reviewing, technical mentoring, etc."
+          "title_es": "Mentor de Frontend",
+          "text": "Mentor of new colleagues, working on the frontend area, helping them with their daily tasks, code reviewing, technical mentoring, etc.",
+          "text_es": "Mentor de nuevos colegas en el área de frontend, ayudándolos con sus tareas diarias, code review, mentoría técnica, etc."
         },
         {
           "title": "Technical Interviewer",
-          "text": "Gatekeeper for Qubika's hiring process — regularly assessed candidates' technical depth and culture fit during the interview loop."
+          "title_es": "Entrevistador técnico",
+          "text": "Gatekeeper for Qubika's hiring process — regularly assessed candidates' technical depth and culture fit during the interview loop.",
+          "text_es": "Filtro técnico del proceso de contratación de Qubika — evalué regularmente el nivel técnico de los candidatos y su afinidad cultural durante el ciclo de entrevistas."
         }
       ]
     }

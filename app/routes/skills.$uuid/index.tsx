@@ -4,7 +4,14 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
 import { loadSkills } from '~/data/skills-schema';
-import { formatDate, getClassMaker, getSkillsForJob, mergeRouteMeta } from '~/utils/utils';
+import { type Locale, pickLocale } from '~/intl';
+import {
+  formatDate,
+  getClassMaker,
+  getSkillsForJob,
+  localized,
+  mergeRouteMeta,
+} from '~/utils/utils';
 
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
@@ -52,23 +59,50 @@ const IMAGE_OVERRIDES: Record<string, string> = {
 
 const SKILLS = loadSkills(skillsJson);
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const id = params?.uuid;
   if (!id) throw new Error('Missing work item id.');
 
   const numericId = Number(id);
   if (!Number.isInteger(numericId)) throw new Error(`Invalid work item id: ${id}`);
 
-  const data = SKILLS.WORK_ITEMS.find((item) => item.id === numericId);
-  if (!data) throw new Error(`Work item ${id} not found.`);
+  const item = SKILLS.WORK_ITEMS.find((w) => w.id === numericId);
+  if (!item) throw new Error(`Work item ${id} not found.`);
 
-  const lowerTitle = data.title.toLowerCase();
+  const lowerTitle = item.title.toLowerCase();
   const fileName = IMAGE_OVERRIDES[lowerTitle] ?? `${lowerTitle}.webp`;
   const imagePath = `/assets/img/${fileName}`;
   const imageDims = LOGO_DIMS[fileName] ?? FALLBACK_DIMS;
 
+  // Resolve localized copy in the loader so meta + render share one
+  // source of truth and the loader output is fully serializable.
+  const locale: Locale = pickLocale(request);
+  // `projects` is either a structured array (each entry has its own
+  // `_es` siblings) or a plain string sentence (Spanish lives in the
+  // workItem-level `projects_es`). Resolve both cases here.
+  let projects: typeof item.projects;
+  if (Array.isArray(item.projects)) {
+    projects = item.projects.map((p) => ({
+      title: localized(p, 'title', locale),
+      text: localized(p, 'text', locale),
+    }));
+  } else if (typeof item.projects === 'string') {
+    projects = localized(item, 'projects', locale);
+  } else {
+    projects = item.projects;
+  }
+
   return {
-    data: { ...data, skills: getSkillsForJob(SKILLS, data.id) },
+    data: {
+      id: item.id,
+      title: item.title,
+      startDate: item.startDate,
+      endDate: item.endDate,
+      rol: localized(item, 'rol', locale),
+      description: localized(item, 'description', locale),
+      projects,
+      skills: getSkillsForJob(SKILLS, item.id),
+    },
     imagePath,
     imageDims,
   };
@@ -98,7 +132,7 @@ export default function UuidIndex() {
         </p>
       ) : (
         <p>
-          <FormattedMessage id="END_DATE" />: Present
+          <FormattedMessage id="END_DATE" />: <FormattedMessage id="PRESENT" />
         </p>
       )}
     </div>

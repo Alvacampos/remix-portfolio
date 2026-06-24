@@ -1,4 +1,8 @@
-import { data as remixData, type MetaFunction } from '@remix-run/cloudflare';
+import {
+  data as remixData,
+  type LoaderFunctionArgs,
+  type MetaFunction,
+} from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -7,12 +11,14 @@ import Card from '~/components/Card';
 import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import { loadSkills } from '~/data/skills-schema';
+import { pickLocale } from '~/intl';
 import {
   formatDate,
   getClassMaker,
   getSkillHeatmapData,
   getSkillsForJob,
   getSkillSuggestions,
+  localized,
   mergeRouteMeta,
 } from '~/utils/utils';
 
@@ -49,28 +55,34 @@ const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
 // Validated + derived once per worker boot for everything that's
-// time-independent. Anything that calls `new Date()` (heatmap year span,
-// "ongoing" job clamp, total-years figure) stays in the loader: on
-// Cloudflare Workers, `Date.now()` at module init returns 0 (Spectre
-// mitigation freezes Date until the first I/O event), so module-scope
-// derivations would lock the year-since to 1970 in production.
+// time-independent AND locale-independent. Anything that calls
+// `new Date()` (heatmap year span, "ongoing" job clamp, total-years
+// figure) stays in the loader: on Cloudflare Workers, `Date.now()`
+// at module init returns 0 (Spectre mitigation freezes Date until
+// the first I/O event), so module-scope derivations would lock the
+// year-since to 1970 in production. Anything that needs the locale
+// (work-item rol/description, EXTRA_ACTIVITIES item copy) is also
+// resolved inside the loader where the request is in scope.
 const SKILLS = loadSkills(skillsJson);
 const SUGGESTIONS = getSkillSuggestions(SKILLS);
-const TIMELINE_CARDS_BASE = [...SKILLS.WORK_ITEMS].reverse().map((item) => ({
-  id: String(item.id),
-  title: item.title,
-  startDate: item.startDate,
-  endDate: item.endDate ?? undefined,
-  rol: item.rol,
-  skills: getSkillsForJob(SKILLS, item.id),
-}));
+const WORK_ITEMS_REVERSED = [...SKILLS.WORK_ITEMS].reverse();
 
-export async function loader() {
-  const timelineCards = TIMELINE_CARDS_BASE.map(({ startDate, endDate, rol, ...rest }) => ({
-    ...rest,
-    date: formatDate(startDate, endDate),
-    texts: [rol],
+export async function loader({ request }: LoaderFunctionArgs) {
+  const locale = pickLocale(request);
+  const timelineCards = WORK_ITEMS_REVERSED.map((item) => ({
+    id: String(item.id),
+    title: item.title,
+    date: formatDate(item.startDate, item.endDate ?? undefined),
+    texts: [localized(item, 'rol', locale)],
     textsLabel: 'ROLE',
+    skills: getSkillsForJob(SKILLS, item.id),
+  }));
+  const extraActivities = SKILLS.EXTRA_ACTIVITIES.map((activity) => ({
+    title: activity.title,
+    data: activity.data.map((d) => ({
+      title: localized(d, 'title', locale),
+      text: localized(d, 'text', locale),
+    })),
   }));
   return remixData(
     {
@@ -78,11 +90,17 @@ export async function loader() {
       yearsOfExp: formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills: SUGGESTIONS,
       heatmapData: getSkillHeatmapData(SKILLS),
-      extraActivities: SKILLS.EXTRA_ACTIVITIES,
+      extraActivities,
     },
     {
       headers: {
         'Cache-Control': 'public, max-age=3600',
+        // Loader output now varies by locale (work-item rol/description,
+        // extra-activity copy). Tell the edge to segment its cache key
+        // by `Accept-Language` so a Spanish-browser visitor doesn't get
+        // a cached English response and vice-versa. The `?lang=` URL
+        // param is already a different cache key on its own.
+        Vary: 'Accept-Language',
       },
     }
   );

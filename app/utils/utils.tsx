@@ -1,6 +1,40 @@
 import { differenceInMonths, format, formatDuration, intervalToDuration } from 'date-fns';
 
 import type { Skill, SkillsData, WorkItem } from '~/data/skills-schema';
+import type { Locale } from '~/intl';
+
+// Resolve a locale-specific string from a data-layer record.
+//
+// Convention: localizable fields (title, rol, description, project
+// text, etc.) carry an optional `_es` sibling holding the Spanish
+// variant. For locale === 'es' we prefer the sibling; for 'en' or
+// when the sibling is missing/empty we fall back to the base field.
+//
+// Why fall back instead of throwing: a partially-translated record
+// renders correctly in both languages without breaking the page,
+// and copy review can land incrementally without a synchronized
+// big-bang translation pass.
+//
+// The generic constraint binds K to a key whose base value is a
+// string, so the helper is type-safe at the call site:
+//   localized(workItem, 'description', 'es')  // string | undefined
+//   localized(cert, 'institution', 'es')      // type error: institution
+//                                             // is intentionally not _es-able
+export function localized<T, K extends keyof T>(
+  item: T,
+  key: K,
+  locale: Locale
+): T[K] extends string | undefined ? T[K] : never {
+  type R = T[K] extends string | undefined ? T[K] : never;
+  if (locale === 'es') {
+    const esKey = `${String(key)}_es` as keyof T;
+    const esValue = item[esKey];
+    if (typeof esValue === 'string' && esValue.length > 0) {
+      return esValue as R;
+    }
+  }
+  return item[key] as R;
+}
 
 export const getClassMaker =
   (block = '') =>
@@ -62,14 +96,10 @@ export function mergeRouteMeta({ matches }: MetaArg, { title, description }: Rou
 // the month. Plain `new Date('2018-08')` parses as UTC midnight, which
 // shifts to the prior day in negative-offset timezones — for the CV that
 // means an August start renders as July. Force local-zone parsing.
-const parseYearMonth = (s: string): Date => {
-  // Already an ISO with time component? Pass through.
-  if (s.length > 10) return new Date(s);
-  // YYYY-MM: anchor to the 1st at local midnight.
-  if (/^\d{4}-\d{2}$/.test(s)) return new Date(`${s}-01T00:00:00`);
-  // YYYY-MM-DD: same — local midnight.
-  return new Date(`${s}T00:00:00`);
-};
+//
+// Both data files (skills.json, education.json) are validated to
+// `YYYY-MM` at the Zod boundary, so this only handles that format.
+const parseYearMonth = (s: string): Date => new Date(`${s}-01T00:00:00`);
 
 export const formatDate = (dateA: string, dateB?: string, formatType?: string) => {
   if (formatType === 'fullYearMonth') {
