@@ -283,7 +283,7 @@ Adding a new field:
 
 Per-company logos live in `public/assets/img/<company-slug>.webp`. The `skills.$uuid` route resolves the image path by lowercasing `data.title`, with overrides for titles that don't directly map to a logo file (`Professor (part-time)` → `unsta2.webp`, `Teacher` → `coderhouse.webp`) — see `IMAGE_OVERRIDES` in the route.
 
-The CV PDF is at [public/assets/files/gonzalo_alvarez_campos_cv.pdf](public/assets/files/gonzalo_alvarez_campos_cv.pdf) and surfaced via [DownloadBtn](app/components/DownloadBtn/index.tsx).
+The English CV PDF is at [public/assets/files/gonzalo_alvarez_campos_cv.pdf](public/assets/files/gonzalo_alvarez_campos_cv.pdf) and surfaced via [DownloadBtn](app/components/DownloadBtn/index.tsx). The home route loader resolves a locale-specific URL via `getCvUrl(locale)` in [app/utils/utils.tsx](app/utils/utils.tsx) — when the Spanish PDF lands at `gonzalo_alvarez_campos_cv_es.pdf`, flip `HAS_ES_CV` to `true` in that helper and update [app/utils/utils.test.tsx](app/utils/utils.test.tsx) to assert the `_es` path. Until then, Spanish-locale visitors get the English PDF as a fallback rather than a 404.
 
 ---
 
