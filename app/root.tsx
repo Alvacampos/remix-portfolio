@@ -127,6 +127,18 @@ const PERSON_JSONLD = {
 // [data-theme='light'] selector swaps the palette tokens.
 const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';}catch(e){}`;
 
+// Inline locale-replay script. Runs synchronously in <head>; if the
+// user has previously chosen a locale via LocaleToggle (persisted in
+// localStorage.locale) AND the current URL doesn't already pin that
+// locale via `?lang=`, redirect to the same URL with `?lang=<saved>`.
+// The redirect happens before paint so visitors never see a flash of
+// the Accept-Language-derived default before their saved choice
+// kicks in. The current `<html lang>` value identifies what the
+// loader resolved, used as the comparison anchor.
+function buildLocaleReplayScript(currentLocale: Locale) {
+  return `try{var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!=='${currentLocale}'){var u=new URL(location.href);if(u.searchParams.get('lang')!==s){u.searchParams.set('lang',s);location.replace(u.toString());}}}catch(e){}`;
+}
+
 // WebSite schema gives Google enough to surface a sitelinks search box
 // in SERPs and helps disambiguate the property when crawled. Kept
 // minimal — no `potentialAction` SearchAction since this isn't a
@@ -173,6 +185,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Theme init runs before paint; keep it before any <link>
             tags that pull stylesheets. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* Locale replay also runs before paint — kicks the document
+            back to ?lang=<saved> if the user picked a locale on a
+            previous visit but the current URL doesn't pin it. */}
+        <script dangerouslySetInnerHTML={{ __html: buildLocaleReplayScript(locale) }} />
         <Meta />
         <Links />
         <link rel="canonical" href={canonical} />

@@ -20,15 +20,14 @@ function readTheme(): Theme {
 }
 
 /**
- * Sliding sun/moon theme toggle. SSR renders in the dark position;
- * after hydration the real persisted theme takes over. Persists in
- * localStorage.theme; honours OS-level prefers-color-scheme via the
- * inline init script when no override exists.
+ * Compact theme toggle — single icon button that shows the icon for
+ * the OPPOSITE state (sun visible while dark, moon visible while
+ * light). Click flips the theme and the icon. Sized to sit beside
+ * the LocaleToggle pill in the NavBar's utility row.
  *
- * Visual: a pill with a sun icon on the left, moon on the right, and
- * a green knob that slides under the active icon. Knob position is
- * driven entirely by the `--moon` modifier — no per-state inline
- * styles, so the CSS transition just works.
+ * SSR renders in the dark default; after hydration the persisted
+ * theme takes over. Persists in localStorage.theme; honours OS-level
+ * prefers-color-scheme via the inline init script in app/root.tsx.
  */
 export default function ThemeToggle() {
   const { formatMessage } = useIntl();
@@ -38,9 +37,10 @@ export default function ThemeToggle() {
   // setState-in-effect is intentional: SSR can't see localStorage or
   // the inline theme-init script's <html data-theme>, so first render
   // returns the 'dark' default and the effect hydrates to the actual
-  // saved theme on mount. The `mounted` flag also gates the CSS
-  // modifier — without it, the knob would render at the SSR position
-  // and animate to the hydrated one on first paint (visible flash).
+  // saved theme on mount. The `mounted` flag suppresses the icon
+  // until we know the real value — without it the button would render
+  // the dark-default icon SSR then hop to the hydrated icon on first
+  // paint, which reads as a flicker.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setTheme(readTheme());
@@ -59,7 +59,7 @@ export default function ThemeToggle() {
     }
   }
 
-  const isDark = !mounted || theme === 'dark';
+  const isDark = theme === 'dark';
   const label = formatMessage({
     id: isDark ? 'THEME_TOGGLE_TO_LIGHT' : 'THEME_TOGGLE_TO_DARK',
   });
@@ -67,23 +67,23 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      className={`${getClasses()} ${isDark ? getClasses('', 'moon') : getClasses('', 'sun')}`}
+      className={`${getClasses()} ${isDark ? getClasses('', 'dark') : getClasses('', 'light')}`}
       onClick={toggle}
       aria-label={label}
       aria-pressed={isDark}
       title={label}
     >
-      {/* Two icons painted at fixed positions; the sliding knob
-       * underneath highlights the active one. Order is sun→moon
-       * left→right so the knob's transform is `translateX(0)` for
-       * sun, `translateX(100%)` for moon — natural reading order. */}
+      {/* Both icons are stacked at the same spot; CSS rotates the
+       * outgoing icon out and the incoming one in via the parent's
+       * `--dark` / `--light` modifiers. Pre-mount the button has no
+       * modifier and both icons sit invisible — avoids painting the
+       * wrong icon SSR and then snapping after hydration. */}
       <span className={`${getClasses('icon')} ${getClasses('icon', 'sun')}`} aria-hidden="true">
-        <Sun />
+        {mounted ? <Sun /> : null}
       </span>
       <span className={`${getClasses('icon')} ${getClasses('icon', 'moon')}`} aria-hidden="true">
-        <Moon />
+        {mounted ? <Moon /> : null}
       </span>
-      <span className={getClasses('knob')} aria-hidden="true" />
     </button>
   );
 }

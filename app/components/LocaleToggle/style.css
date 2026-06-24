@@ -1,0 +1,106 @@
+.locale-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: var(--bg-base);
+  /* Same pill chrome as the theme toggle so the two utility controls
+   * read as siblings in the NavBar utility row. */
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--border-emphasis);
+  }
+
+  /* Sliding knob — sits underneath the active button. The parent
+   * sets `--knob-index` to 0 (EN) or 1 (ES); the knob's transform
+   * picks up that variable so position is purely declarative.
+   * Adding a third locale later just means extending SUPPORTED_LOCALES
+   * — the knob math keeps working. */
+  &__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transform: translateX(calc(var(--knob-index, 0) * 100%));
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+
+  &__button {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 100%;
+    padding: 0 $space-8;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--fg-muted);
+    font-family: Roboto, sans-serif;
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: color 200ms ease;
+
+    &--active {
+      color: $default-white;
+    }
+
+    /* Tactile feedback on the freshly-clicked active button. The
+     * pop is brief (240ms total: 0 → 1.08 → 1.0) and only fires on
+     * the button that just became active, not on every render. */
+    &--popping {
+      animation: locale-toggle-pop 240ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--fg-base);
+      outline: none;
+    }
+
+    &--active:hover,
+    &--active:focus-visible {
+      color: $default-white;
+    }
+  }
+}
+
+@keyframes locale-toggle-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .locale-toggle__knob {
+    transition: none;
+  }
+
+  .locale-toggle__button--popping {
+    animation: none;
+  }
+}
