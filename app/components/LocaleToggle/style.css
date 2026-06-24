@@ -1,0 +1,56 @@
+.locale-toggle {
+  display: inline-flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: var(--bg-base);
+  /* Same pill chrome as the theme toggle so the two read as a row of
+   * sibling controls in the NavBar. */
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--border-emphasis);
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 100%;
+    padding: 0 $space-8;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--fg-muted);
+    font-family: Roboto, sans-serif;
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+
+    &--active {
+      color: $default-white;
+      background: var(--accent);
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--fg-base);
+      outline: none;
+    }
+
+    &--active:hover,
+    &--active:focus-visible {
+      color: $default-white;
+    }
+  }
+}

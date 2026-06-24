@@ -23,6 +23,8 @@
   "LEARN_MORE": "Learn more",
   "LINKEDIN_PROFILE": "LinkedIn profile",
   "LOADING": "Loading",
+  "LOCALE_TOGGLE_LABEL": "Language",
+  "LOCALE_TOGGLE_SWITCH_TO": "Switch to {locale}",
   "NO_MATCHES_FOUND": "No matches found",
   "PAGE_TITLE_SKILLS": "Skills & Work Experience",
   "PROJECTS": "Projects",

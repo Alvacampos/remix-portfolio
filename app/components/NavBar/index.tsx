@@ -2,7 +2,9 @@ import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
 import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
+import LocaleToggle from '~/components/LocaleToggle';
 import ThemeToggle from '~/components/ThemeToggle';
+import type { Locale } from '~/intl';
 import { getClassMaker } from '~/utils/utils';
 
 const BLOCK = 'navbar-component';
@@ -18,7 +20,7 @@ const MAIN_NAV = [
 ] as const;
 
 export default function NavBar() {
-  const { formatMessage } = useIntl();
+  const { formatMessage, locale } = useIntl();
   const { pathname } = useLocation();
 
   // `/` is exact-match (otherwise it'd match every route); the others
@@ -49,6 +51,7 @@ export default function NavBar() {
       </div>
       <div className={getClasses('utility-row')}>
         <ThemeToggle />
+        <LocaleToggle current={locale as Locale} />
       </div>
       <div className={getClasses('special-anchor-container')}>
         <a
