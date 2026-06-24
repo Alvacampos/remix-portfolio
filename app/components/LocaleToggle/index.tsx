@@ -22,21 +22,23 @@ type Props = {
  * EN | ES pill that swaps the active site locale.
  *
  * Click flow:
- *   1. Persist the chosen locale to localStorage so it survives page
- *      reloads even when the user lands on a URL without `?lang=`.
- *   2. Push a navigation to the same path with `?lang=<next>`. The
- *      Remix root loader honours the search-param first via
- *      pickLocale, so the next render uses the new locale and
- *      `<html lang>` flips immediately. URL is shareable + crawlable.
- *   3. Mark the new active button with a transient `--popping`
+ *   1. Persist the chosen locale to a `locale` cookie (1-year expiry,
+ *      SameSite=Lax) so it survives page reloads AND ships on every
+ *      `<Link>` navigation — including Remix Single-Fetch `.data`
+ *      calls. That's what makes the choice cross-page: pickLocale
+ *      reads the cookie and resolves the same locale on every route.
+ *   2. Mirror the value into localStorage as a fallback channel for
+ *      the inline replay script (covers users who set the cookie on
+ *      a previous visit but cleared cookies, or pre-fix sessions
+ *      that only have the localStorage entry).
+ *   3. Push a navigation to the same path with `?lang=<next>`. The
+ *      URL search param is the highest-priority signal in pickLocale,
+ *      so the next render uses the new locale immediately. Keeps the
+ *      URL shareable + crawlable too — Google indexes each locale at
+ *      a distinct URL.
+ *   4. Mark the new active button with a transient `--popping`
  *      modifier so CSS plays a brief 1.0 → 1.08 → 1.0 scale on it —
  *      gives the click a tactile feedback beat without being noisy.
- *
- * No localStorage read here — the loader stays SSR-pure and only
- * looks at the URL and the request header. The user's saved choice
- * is replayed by the small `<script>` in app/root.tsx that, on first
- * paint, redirects to `?lang=<saved>` if localStorage holds a locale
- * different from the rendered one.
  */
 export default function LocaleToggle({ current }: Props) {
   const { formatMessage } = useIntl();
@@ -55,10 +57,18 @@ export default function LocaleToggle({ current }: Props) {
 
   function selectLocale(next: Locale) {
     if (next === current) return;
+    // 1-year expiry; Path=/ so it ships on every route. SameSite=Lax is
+    // the default but pinning it keeps the directive obvious to anyone
+    // auditing why the cookie shows up cross-origin (it doesn't).
+    // `document.cookie =` is the cookie-writing API even though it
+    // looks like a property mutation; the react-hooks immutability
+    // rule can't tell them apart, so opt out explicitly.
+    // eslint-disable-next-line react-hooks/immutability
+    document.cookie = `${STORAGE_KEY}=${next};Path=/;Max-Age=31536000;SameSite=Lax`;
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
-      /* private mode / disabled storage — URL param still applies */
+      /* private mode / disabled storage — cookie + URL param still apply */
     }
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set('lang', next);

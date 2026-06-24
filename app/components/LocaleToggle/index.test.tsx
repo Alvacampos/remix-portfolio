@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { fireEvent } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { renderWithProviders, screen } from '~/../test/test-utils';
 
@@ -23,5 +24,36 @@ describe('LocaleToggle', () => {
       'aria-pressed',
       'false'
     );
+  });
+
+  describe('on click', () => {
+    beforeEach(() => {
+      // Reset cookie + storage between cases so assertions don't see leftovers.
+      document.cookie = 'locale=;Path=/;Max-Age=0';
+      localStorage.removeItem('locale');
+    });
+    afterEach(() => {
+      document.cookie = 'locale=;Path=/;Max-Age=0';
+      localStorage.removeItem('locale');
+    });
+
+    it('writes the locale cookie so the choice persists cross-page', () => {
+      renderWithProviders(<LocaleToggle current="en" />);
+      fireEvent.click(screen.getByRole('button', { name: /switch to es/i }));
+      expect(document.cookie).toMatch(/(?:^|; )locale=es(?:;|$)/);
+    });
+
+    it('also mirrors the choice into localStorage as a fallback channel', () => {
+      renderWithProviders(<LocaleToggle current="en" />);
+      fireEvent.click(screen.getByRole('button', { name: /switch to es/i }));
+      expect(localStorage.getItem('locale')).toBe('es');
+    });
+
+    it('is a no-op when clicking the already-active locale', () => {
+      renderWithProviders(<LocaleToggle current="es" />);
+      fireEvent.click(screen.getByRole('button', { name: /switch to es/i }));
+      expect(document.cookie).not.toMatch(/locale=/);
+      expect(localStorage.getItem('locale')).toBeNull();
+    });
   });
 });

@@ -11,17 +11,35 @@ const MESSAGES: Record<Locale, Record<string, string>> = {
 const SUPPORTED_LOCALES: Locale[] = ['en', 'es'];
 const DEFAULT_LOCALE: Locale = 'en';
 
+export const LOCALE_COOKIE = 'locale';
+
+function readCookie(request: Request, name: string): string | null {
+  const header = request.headers.get('cookie');
+  if (!header) return null;
+  for (const part of header.split(';')) {
+    const eq = part.indexOf('=');
+    if (eq === -1) continue;
+    if (part.slice(0, eq).trim() === name) {
+      return decodeURIComponent(part.slice(eq + 1).trim());
+    }
+  }
+  return null;
+}
+
 /**
  * Pick the best supported locale for a request, in priority order:
  *   1. `?lang=` URL search param — explicit user override, also crawlable
  *      by search engines so each locale has a distinct indexable URL.
- *   2. `Accept-Language` request header — browser default for new visitors.
+ *   2. `locale` cookie — set by LocaleToggle on click. The cookie ships
+ *      on every request (full-page nav AND Single-Fetch `.data` calls),
+ *      so internal `<Link>` navigations preserve the chosen locale
+ *      without needing `?lang=` propagated through every URL.
+ *   3. `Accept-Language` request header — browser default for new visitors.
  *
- * The toggle component layers a localStorage-backed default on top of (1):
- * on click it sets `?lang=` AND localStorage; on subsequent renders the
- * client redirects to `?lang=` if localStorage holds a different locale.
- * That client-side redirect lives in the toggle, not here, so this stays
- * SSR-pure.
+ * The toggle also writes localStorage so a tiny <head> script can replay
+ * the saved choice into a cookie on the very first request from a
+ * pre-cookie session (visitors who picked Spanish before this fix
+ * shipped). Once the cookie lands, step (2) handles every subsequent nav.
  *
  * Spec note: we only honour the language part (`es-AR` → `es`), which is
  * fine for a 2-locale site. If we add regional variants later (`es-MX`
@@ -32,6 +50,11 @@ export function pickLocale(request: Request): Locale {
   const param = url.searchParams.get('lang')?.toLowerCase();
   if (param && SUPPORTED_LOCALES.includes(param as Locale)) {
     return param as Locale;
+  }
+
+  const cookie = readCookie(request, LOCALE_COOKIE)?.toLowerCase();
+  if (cookie && SUPPORTED_LOCALES.includes(cookie as Locale)) {
+    return cookie as Locale;
   }
 
   const header = request.headers.get('accept-language');
