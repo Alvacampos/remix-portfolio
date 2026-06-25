@@ -76,7 +76,21 @@
       "rol": "Senior Full-stack developer.",
       "rol_es": "Desarrollador Full-stack Senior.",
       "description": "Lead developer and technical consultant for MarkLogic projects, my main tasks focused on integrating Yale University's data into a MarkLogic database as well as team coordination and leadership. I also organized and mentored the Endava Argentina Internship program.",
-      "description_es": "Lead developer y consultor técnico en proyectos de MarkLogic. Mis tareas principales fueron integrar los datos de la Universidad de Yale a una base MarkLogic, sumadas a coordinación y liderazgo del equipo. También organicé y mentoreé el programa de pasantías de Endava Argentina."
+      "description_es": "Lead developer y consultor técnico en proyectos de MarkLogic. Mis tareas principales fueron integrar los datos de la Universidad de Yale a una base MarkLogic, sumadas a coordinación y liderazgo del equipo. También organicé y mentoreé el programa de pasantías de Endava Argentina.",
+      "projects": [
+        {
+          "title": "Endava Argentina Internship",
+          "title_es": "Pasantía Endava Argentina",
+          "text": "Organizer and mentor for the Endava Argentina internship program 2022. In charge of practice interviews and JavaScript lectures.",
+          "text_es": "Organizador y mentor del programa de pasantías Endava Argentina 2022. A cargo de entrevistas de práctica y clases de JavaScript."
+        },
+        {
+          "title": "Project: MarkLogic",
+          "title_es": "Proyecto: MarkLogic",
+          "text": "Technical Leader in a team working as consultants for MarkLogic projects. Worked in a semantics database project for Yale University.",
+          "text_es": "Líder Técnico en un equipo que trabajaba como consultor en proyectos de MarkLogic. Trabajé en un proyecto de base de datos semántica para la Universidad de Yale."
+        }
+      ]
     },
     {
       "id": 5,
@@ -95,7 +109,27 @@
       "rol": "Senior Frontend developer.",
       "rol_es": "Desarrollador Frontend Senior.",
       "description": "Senior Frontend Developer at Qubika; key contributor on multiple complex web applications across diverse technologies and clients.",
-      "description_es": "Desarrollador Frontend Senior en Qubika; aporte clave en múltiples aplicaciones web complejas, atravesando distintas tecnologías y clientes."
+      "description_es": "Desarrollador Frontend Senior en Qubika; aporte clave en múltiples aplicaciones web complejas, atravesando distintas tecnologías y clientes.",
+      "projects": [
+        {
+          "title": "Project: Avant",
+          "title_es": "Proyecto: Avant",
+          "text": "Full-stack project for Avant, a US loan company. Utilizes React with Remix.run and PostCSS for responsiveness. Implements Cypress and Playwright for testing. Currently transitioning from JavaScript to TypeScript. Exposure and worked on the backend using Python and Django.",
+          "text_es": "Proyecto full-stack para Avant, una compañía de préstamos de EE. UU. Utiliza React con Remix.run y PostCSS para la responsividad. Implementa Cypress y Playwright para testing. Actualmente en transición de JavaScript a TypeScript. Exposición y trabajo en el backend con Python y Django."
+        },
+        {
+          "title": "Project: Adalabs AI Model",
+          "title_es": "Proyecto: Adalabs AI Model",
+          "text": "Contributed to building a client-facing interface for a U.S.-based AI platform using Next.js, deployed on Vercel. The AI model—designed to assist fintechs and financial service providers—serves as a centralized source of truth for organizing and managing finance-related documentation and client data.",
+          "text_es": "Contribuí al desarrollo de una interfaz cliente para una plataforma de IA radicada en EE. UU., construida con Next.js y desplegada en Vercel. El modelo de IA —pensado para asistir a fintechs y proveedores de servicios financieros— funciona como fuente única de verdad para organizar y gestionar documentación financiera y datos de clientes."
+        },
+        {
+          "title": "Project: Imprint",
+          "title_es": "Proyecto: Imprint",
+          "text": "USA loan and credit handler for banks, worked on the Front end with TypeScript, React, GraphQL, CSS, StyledComponents, Playwright, Statsig, Storybook, Design System, and Claude Code.",
+          "text_es": "Gestor de préstamos y crédito para bancos en EE. UU. Trabajé en el Front end con TypeScript, React, GraphQL, CSS, StyledComponents, Playwright, Statsig, Storybook, Design System y Claude Code."
+        }
+      ]
     }
   ],
   "SKILLS": [
