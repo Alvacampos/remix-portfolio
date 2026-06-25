@@ -1,4 +1,5 @@
 {
+  "BACK_TO_EDUCATION": "Volver a Educación",
   "BACK_TO_SKILLS": "Volver a Skills",
   "CERTIFICATION": "Certificación",
   "CERTIFICATIONS": "Certificaciones",
@@ -14,6 +15,8 @@
   "DESCRIPTION": "Descripción",
   "DOWNLOAD_CV": "Descargar mi CV (PDF)",
   "EDUCATION": "Educación",
+  "ERROR_EDUCATION_BODY": "No pudimos cargar esta entrada educativa. Es posible que haya sido removida o que el enlace sea inválido.",
+  "ERROR_EDUCATION_TITLE": "Esta entrada educativa no está disponible",
   "ERROR_WORK_ITEM_BODY": "No pudimos cargar esta experiencia laboral. Es posible que haya sido removida o que el enlace sea inválido.",
   "ERROR_WORK_ITEM_TITLE": "Esta experiencia laboral no está disponible",
   "EXTRA_ACTIVITIES": "Actividades extra",

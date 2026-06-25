@@ -1,11 +1,11 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
-import { useLoaderData, useRouteError } from '@remix-run/react';
-import { useIntl } from 'react-intl';
+import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from '@remix-run/react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
 import { loadEducation } from '~/data/education-schema';
 import { type Locale, pickLocale } from '~/intl';
-import { getClassMaker, localized, mergeRouteMeta } from '~/utils/utils';
+import { formatDate, getClassMaker, localized, mergeRouteMeta } from '~/utils/utils';
 
 import educationJson from '../../../public/data/education.json';
 import styles from './style.css?url';
@@ -30,7 +30,6 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 const BLOCK = 'education-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-// Validate at worker boot — same pattern as the index route.
 const EDUCATION = loadEducation(educationJson);
 
 const SLUG_MAP: Record<string, 'degree' | 'associateDegree'> = {
@@ -41,18 +40,14 @@ const SLUG_MAP: Record<string, 'degree' | 'associateDegree'> = {
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const slug = params?.slug;
   const key = slug ? SLUG_MAP[slug] : undefined;
+  if (!key) throw new Response(`Education entry not found: ${slug}`, { status: 404 });
 
-  if (!key) throw new Error('Oh no! Something went wrong!');
-
-  // Resolve the locale-specific copy in the loader so both the
-  // <meta> function (which reads loader output) and the rendered
-  // component see the same translated text.
   const locale: Locale = pickLocale(request);
   const raw = EDUCATION[key];
   const data = {
     title: localized(raw, 'title', locale),
-    startDate: raw.startDate,
-    endDate: raw.endDate,
+    startLabel: formatDate(raw.startDate, '', undefined, locale),
+    endLabel: formatDate(raw.endDate, '', undefined, locale),
     institution: raw.institution,
     summary: localized(raw, 'summary', locale),
     description: localized(raw, 'description', locale),
@@ -65,38 +60,53 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export function ErrorBoundary() {
   const error = useRouteError();
   console.error(error);
+  const status = isRouteErrorResponse(error) ? error.status : 'Error';
   return (
-    <h1 className={getClasses('error')}>There was a problem while loading this education entry</h1>
+    <div className={getClasses('error')}>
+      <p className={getClasses('error-code')}>{status}</p>
+      <h1 className={getClasses('error-title')}>
+        <FormattedMessage id="ERROR_EDUCATION_TITLE" />
+      </h1>
+      <p className={getClasses('error-body')}>
+        <FormattedMessage id="ERROR_EDUCATION_BODY" />
+      </p>
+      <Link to="/education" className={getClasses('error-action')}>
+        <span aria-hidden="true">←</span> <FormattedMessage id="BACK_TO_EDUCATION" />
+      </Link>
+    </div>
   );
 }
 
 export default function EducationDetail() {
   const { data } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
-  const { title, startDate, endDate, institution, description, skills } = data;
-  const startYear = new Date(startDate).getFullYear();
-  const endYear = new Date(endDate).getFullYear();
+  const { title, startLabel, endLabel, institution, description, skills } = data;
 
   return (
     <div className={getClasses()}>
+      <Link to="/education" className={getClasses('back-link')}>
+        <span aria-hidden="true">←</span> <FormattedMessage id="BACK_TO_EDUCATION" />
+      </Link>
       <h1 className={getClasses('title')}>{title}</h1>
       <p className={getClasses('meta')}>
         <span>
-          {startYear} – {endYear}
+          {startLabel} <span className={getClasses('date-arrow')}>→</span> {endLabel}
         </span>
         <span aria-hidden className={getClasses('meta-sep')}>
           ·
         </span>
         <span>{institution}</span>
       </p>
-      <div className={getClasses('description-container')}>
-        <Card title={formatMessage({ id: 'DESCRIPTION' })} texts={[description]} />
-      </div>
-      {skills && skills.length > 0 && (
-        <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
+      <div className={getClasses('bottom-grid')}>
+        <div className={getClasses('description')}>
+          <Card title={formatMessage({ id: 'DESCRIPTION' })} texts={[description]} />
         </div>
-      )}
+        {skills && skills.length > 0 && (
+          <div className={getClasses('skills')}>
+            <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

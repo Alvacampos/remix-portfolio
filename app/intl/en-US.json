@@ -1,4 +1,5 @@
 {
+  "BACK_TO_EDUCATION": "Back to Education",
   "BACK_TO_SKILLS": "Back to Skills",
   "CERTIFICATION": "Certification",
   "CERTIFICATIONS": "Certifications",
@@ -14,6 +15,8 @@
   "DESCRIPTION": "Description",
   "DOWNLOAD_CV": "Download my CV (PDF)",
   "EDUCATION": "Education",
+  "ERROR_EDUCATION_BODY": "We couldn't load this education entry. It may have been removed or the link is broken.",
+  "ERROR_EDUCATION_TITLE": "This education entry isn't available",
   "ERROR_WORK_ITEM_BODY": "We couldn't load this work experience. It may have been removed or the link is broken.",
   "ERROR_WORK_ITEM_TITLE": "This work experience isn't available",
   "EXTRA_ACTIVITIES": "Extra Activities",
