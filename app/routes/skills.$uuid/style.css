@@ -46,13 +46,6 @@
     }
   }
 
-  /* Soften logos that ship with a solid color background (e.g. the
-   * Qubika black square) so they sit on the route's surface instead
-   * of fighting it. The framed surface + subtle border give every
-   * logo the same visual container regardless of its own background,
-   * so the Qubika black square reads the same way as the Cliengo
-   * transparent PNG. Inner padding keeps the logo from touching the
-   * frame edge. */
   &__company-logo {
     padding: $space-16;
     border-radius: $border-8;
@@ -101,9 +94,6 @@
     gap: $space-20;
   }
 
-  /* Semantic skill groups: Languages / Frameworks / Tooling /
-   * Infrastructure / Other. Mirrors the Carousel pattern on /skills
-   * so the chip list reads as the same primitive across routes. */
   &__skill-groups {
     display: flex;
     flex-direction: column;
@@ -168,11 +158,6 @@
       gap: $space-12;
     }
 
-    /* Project entries render as a header strip + body. The accent
-     * left border + elevated background on the h3 makes each project
-     * scannable, while the text below stays plain. Replaces the
-     * single bullet dot that read as a list item but didn't give the
-     * title any extra weight. */
     &__list-item {
       list-style: none;
       color: var(--fg-base);
@@ -198,10 +183,6 @@
     }
   }
 
-  /* Error layout: status code on top in big muted type, headline,
-   * supporting copy, then a back link. Centered on the page. The
-   * `min-height` keeps the panel from feeling cramped on a tall
-   * viewport when the navbar dominates the screen. */
   &__error {
     display: flex;
     flex-direction: column;
@@ -267,34 +248,17 @@
   }
 }
 
-/* Side-by-side Projects + Skills kicks in at $bp-md (768px) so any
- * non-phone width gets the parallel layout. Below that — narrow
- * phones — the base flex column on `.skills-id-route` keeps them
- * stacked. Splitting this off from the $desktop-small block (which
- * still owns the logo show/hide and the info-container max-width)
- * so the column layout isn't gated on the same 1076px threshold. */
 @media screen and (min-width: $bp-md) {
   .skills-id-route {
-    /* Same horizontal padding as $desktop-small below — at tablet
-     * width the content was hitting the viewport edge with no margin.
-     * Re-set on the desktop-small query too to keep both queries
-     * self-contained. */
     padding: 0 $space-20;
 
-    /* Reset the base `flex-direction: column` to row at this
-     * breakpoint — without this the bottom-grid stays stacked at any
-     * width because the column rule from the base block wins. */
+    /* Reset the base flex-direction:column so Projects + Skills go
+     * side by side. Without this the base rule wins at every width. */
     &__bottom-grid {
       flex-direction: row;
       gap: $space-20;
     }
 
-    /* Both columns: equal flex weight semantics (Projects gets the
-     * wider share) AND `height: 100%` so each column matches the
-     * grid row's stretched height. Without `height: 100%` the wrapper
-     * sits at content height even though the flex parent stretches —
-     * flex `align-items: stretch` only stretches direct children's
-     * outer box, not nested `height: auto`. */
     &__projects {
       flex: 2 1 0;
       min-width: 0;
@@ -307,11 +271,8 @@
       height: 100%;
     }
 
-    /* Cascade the height down to the Card primitive AND its inner
-     * text container so the shorter column's Card visually fills the
-     * row. Card's flex-column layout means the title strip + body
-     * sit at content height by default; growing the text container
-     * absorbs the leftover space silently. */
+    /* Cascade height through wrapper → Card → text container so the
+     * shorter column matches the taller column's height. */
     &__projects > .card-component,
     &__skills > .card-component {
       height: 100%;
@@ -320,13 +281,6 @@
     &__projects > .card-component > .card-component__text-container,
     &__skills > .card-component > .card-component__text-container {
       flex: 1 1 auto;
-    }
-
-    .card-component {
-      &__list {
-        padding-left: 0;
-        margin: 0;
-      }
     }
   }
 }

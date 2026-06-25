@@ -61,10 +61,6 @@ const SKILLS = loadSkills(skillsJson);
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const id = params?.uuid;
-  // Throw a Response (not a raw Error) so the route-error boundary
-  // can read `error.status` via `isRouteErrorResponse` and render the
-  // 404/400 code in the error UI. Raw Error throws bubble up as
-  // generic "Error" which doesn't tell the visitor anything useful.
   if (!id) throw new Response('Missing work item id', { status: 400 });
 
   const numericId = Number(id);
@@ -79,12 +75,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const imagePath = `/assets/img/${fileName}`;
   const imageDims = LOGO_DIMS[fileName] ?? FALLBACK_DIMS;
 
-  // Resolve localized copy in the loader so meta + render share one
-  // source of truth and the loader output is fully serializable.
   const locale: Locale = pickLocale(request);
-  // `projects` is either a structured array (each entry has its own
-  // `_es` siblings) or a plain string sentence (Spanish lives in the
-  // workItem-level `projects_es`). Resolve both cases here.
+  // `projects` can be either a structured array (each entry has its
+  // own `_es` siblings) or a plain string sentence (Spanish lives in
+  // the workItem-level `projects_es`). Resolve both cases here.
   let projects: typeof item.projects;
   if (Array.isArray(item.projects)) {
     projects = item.projects.map((p) => ({
@@ -97,10 +91,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     projects = item.projects;
   }
 
-  // Pre-compute the date strings in the loader so the render is plain
-  // text. `formatDate` doesn't know about react-intl, and threading the
-  // locale through both the loader and the component would split the
-  // source of truth — keep it loader-side.
   const startLabel = formatDate(item.startDate, '', undefined, locale);
   const endLabel = item.endDate ? formatDate(item.endDate, '', undefined, locale) : null;
   const duration = formatDate(item.startDate, item.endDate ?? undefined, 'fullYearMonth', locale);

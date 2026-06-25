@@ -20,23 +20,9 @@ export function getCvUrl(locale: Locale): string {
   return CV_URLS[locale];
 }
 
-// Resolve a locale-specific string from a data-layer record.
-//
-// Convention: localizable fields (title, rol, description, project
-// text, etc.) carry an optional `_es` sibling holding the Spanish
-// variant. For locale === 'es' we prefer the sibling; for 'en' or
-// when the sibling is missing/empty we fall back to the base field.
-//
-// Why fall back instead of throwing: a partially-translated record
-// renders correctly in both languages without breaking the page,
-// and copy review can land incrementally without a synchronized
-// big-bang translation pass.
-//
-// The generic constraint binds K to a key whose base value is a
-// string, so the helper is type-safe at the call site:
-//   localized(workItem, 'description', 'es')  // string | undefined
-//   localized(cert, 'institution', 'es')      // type error: institution
-//                                             // is intentionally not _es-able
+// Resolve a localizable field. Reads `<key>_es` when locale === 'es'
+// and falls back to the base field when the sibling is missing/empty
+// — partial translations render in both languages without breaking.
 export function localized<T, K extends keyof T>(
   item: T,
   key: K,
@@ -118,12 +104,9 @@ export function mergeRouteMeta({ matches }: MetaArg, { title, description }: Rou
 // `YYYY-MM` at the Zod boundary, so this only handles that format.
 const parseYearMonth = (s: string): Date => new Date(`${s}-01T00:00:00`);
 
-// `locale` (last arg) opts into Spanish output for the human-readable
-// formats: `fullYearMonth` ("4 años 2 meses") and the single-month case
-// ("agosto 2018"). The numeric `MM/yyyy` branches are locale-neutral
-// and ignore it. `'en'` (the default when omitted) keeps the existing
-// English copy so callers that don't have the locale in scope render
-// unchanged.
+// `locale` only affects the human-readable formats — `fullYearMonth`
+// ("4 años 2 meses") and the single-month case ("agosto 2018"). The
+// numeric `MM/yyyy` branches are locale-neutral.
 export const formatDate = (
   dateA: string,
   dateB?: string,
@@ -349,14 +332,9 @@ export function getSkillsForJob(skillsData: SkillsData, jobId: number): string[]
   return result;
 }
 
-// Same set of skills as `getSkillsForJob`, but bucketed by category.
-// Used on /skills/:uuid to render the Skills card as semantic groups
-// (Languages / Frameworks / Tooling / Infrastructure / Other) so the
-// chip list mirrors the Carousel on /skills. Empty buckets are dropped
-// so a job with no `infra` skills doesn't render an empty heading.
-//
-// The `id` field on each group is the intl message id for the heading;
-// reuses the TECH_GROUP_* keys already defined for the Carousel.
+// Same set of skills as `getSkillsForJob`, bucketed by category for
+// the /skills/:uuid Skills card. Empty buckets are dropped. The `id`
+// on each group is the intl message id for the heading.
 export type SkillGroup = { id: string; items: string[] };
 
 const CATEGORY_GROUPS: Array<{ id: string; categories: SkillCategory[] }> = [
