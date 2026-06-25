@@ -177,16 +177,38 @@
       max-width: 60%;
     }
 
-    /* Side-by-side bottom row: Projects card grows (long-form content),
-     * Skills sidebar is a fixed minimum so it reads as a sidebar even
-     * when there are few chips. `align-items: start` so each column
-     * stops at its own height — Skills doesn't stretch to the height
-     * of the Projects column. */
+    /* Side-by-side bottom row. Switched from a strict 260-320px grid
+     * sidebar to flex with `1 1 0` on both children: each column gets
+     * a fair share of the row, but a content-heavy Projects column
+     * can grow into a Skills column with fewer chips. Feels more
+     * organic than the fixed-cap grid. `flex-basis: 0` plus the wider
+     * weight on Projects keeps the rough 2:1 ratio without locking it
+     * in. `align-items: stretch` (the flex default) keeps both columns
+     * the same height. */
     &__bottom-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+      display: flex;
       gap: $space-20;
-      align-items: start;
+    }
+
+    &__projects {
+      flex: 2 1 0;
+      min-width: 0;
+    }
+
+    &__skills {
+      flex: 1 1 0;
+      min-width: 240px;
+    }
+
+    /* Pass the flex item's stretched height down through the wrapper
+     * div to the actual `.card-component`. Without these the Card
+     * stops at its content height — leaving an empty band at the
+     * bottom of the column. */
+    &__skills,
+    &__projects,
+    &__skills > .card-component,
+    &__projects > .card-component {
+      height: 100%;
     }
 
     .card-component {
