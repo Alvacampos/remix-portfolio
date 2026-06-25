@@ -231,9 +231,6 @@
       "category": "tooling",
       "ranges": [
         {
-          "jobId": 2
-        },
-        {
           "jobId": 6
         }
       ]
@@ -296,9 +293,6 @@
       "ranges": [
         {
           "jobId": 1
-        },
-        {
-          "jobId": 2
         },
         {
           "jobId": 6
@@ -518,9 +512,6 @@
           "jobId": 1
         },
         {
-          "jobId": 2
-        },
-        {
           "jobId": 6
         }
       ]
@@ -542,9 +533,6 @@
       "name": "Tailwind",
       "category": "framework",
       "ranges": [
-        {
-          "jobId": 2
-        },
         {
           "jobId": 6
         }
@@ -569,9 +557,6 @@
       "name": "TypeScript",
       "category": "language",
       "ranges": [
-        {
-          "jobId": 2
-        },
         {
           "jobId": 6
         }
