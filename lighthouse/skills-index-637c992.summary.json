@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-23T00:10:02.155Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-25T20:45:00.600Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "078a265",
+  "commit": "637c992",
   "categories": {
     "performance": 0.94,
-    "accessibility": 0.95,
+    "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2176.9066000000003,
-      "score": 0.78
+      "displayValue": "2.3 s",
+      "numericValue": 2328.5881,
+      "score": 0.73
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2611.03075,
-      "score": 0.87
+      "displayValue": "2.7 s",
+      "numericValue": 2683.7791749999997,
+      "score": 0.86
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2176.9066000000003,
-      "score": 0.99
+      "displayValue": "2.3 s",
+      "numericValue": 2328.5881,
+      "score": 0.98
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,32 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2611.03075,
-      "score": 0.98
+      "displayValue": "2.7 s",
+      "numericValue": 2692.1188775,
+      "score": 0.97
     },
-    "ttfb": 38
+    "ttfb": 130
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.78
+      "score": 0.73
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.87
+      "score": 0.86
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
+      "score": 0.97
     },
     {
       "id": "color-contrast",

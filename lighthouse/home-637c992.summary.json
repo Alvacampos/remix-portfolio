@@ -1,0 +1,118 @@
+{
+  "fetchTime": "2026-06-25T20:44:50.136Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "lighthouseVersion": "13.4.0",
+  "commit": "637c992",
+  "categories": {
+    "performance": 0.43,
+    "accessibility": 0.96,
+    "best-practices": 0.96,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "3.3 s",
+      "numericValue": 3304.532,
+      "score": 0.4
+    },
+    "lcp": {
+      "displayValue": "4.6 s",
+      "numericValue": 4578.4710000000005,
+      "score": 0.35
+    },
+    "si": {
+      "displayValue": "5.4 s",
+      "numericValue": 5425.7051256100385,
+      "score": 0.56
+    },
+    "tbt": {
+      "displayValue": "4,420 ms",
+      "numericValue": 4417.439000000001,
+      "score": 0
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0.0004052002549649367,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "8.5 s",
+      "numericValue": 8464.771,
+      "score": 0.38
+    },
+    "ttfb": 362
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.4
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.35
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.56
+    },
+    {
+      "id": "total-blocking-time",
+      "title": "Total Blocking Time",
+      "score": 0
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0
+    },
+    {
+      "id": "errors-in-console",
+      "title": "Browser errors were logged to the console",
+      "score": 0
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.38
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "score": 0
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "score": 0
+    },
+    {
+      "id": "color-contrast",
+      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+      "score": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}

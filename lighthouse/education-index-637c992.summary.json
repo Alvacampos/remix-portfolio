@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-19T14:46:32.125Z",
+  "fetchTime": "2026-06-25T20:45:07.821Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "77d0a7c",
+  "commit": "637c992",
   "categories": {
-    "performance": 0.88,
-    "accessibility": 0.95,
+    "performance": 0.94,
+    "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
       "displayValue": "2.3 s",
-      "numericValue": 2302.047,
-      "score": 0.74
+      "numericValue": 2279.6646,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "3.5 s",
-      "numericValue": 3484.6980000000003,
-      "score": 0.64
+      "displayValue": "2.7 s",
+      "numericValue": 2654.6646,
+      "score": 0.86
     },
     "si": {
       "displayValue": "2.3 s",
-      "numericValue": 2302.047,
+      "numericValue": 2279.6646,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.5 s",
-      "numericValue": 3484.6980000000003,
-      "score": 0.92
+      "displayValue": "2.7 s",
+      "numericValue": 2662.1646,
+      "score": 0.97
     },
-    "ttfb": 50
+    "ttfb": 44
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.74
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.64
+      "score": 0.86
     },
     {
       "id": "speed-index",
@@ -62,7 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.92
+      "score": 0.97
     },
     {
       "id": "color-contrast",
@@ -77,7 +77,7 @@
     {
       "id": "cache-insight",
       "title": "Use efficient cache lifetimes",
-      "score": 0
+      "score": 0.5
     },
     {
       "id": "network-dependency-tree-insight",
