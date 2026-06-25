@@ -177,18 +177,45 @@
       max-width: 60%;
     }
 
-    /* Projects + Skills stack as full-width rows (the base flex
-     * column still wins). The chip list inside Skills uses
-     * `justify-content: space-between` so chips spread edge-to-edge
-     * across the full row width instead of clumping on the left —
-     * makes the wider row feel intentional rather than empty on the
-     * right. */
+    /* Side-by-side bottom row. Projects gets the wider share for its
+     * long-form content; Skills sits beside it as a chip sidebar.
+     * `flex: 2 1 0` / `flex: 1 1 0` keeps a rough 2:1 ratio that
+     * breathes with content instead of locking exact widths. */
+    &__bottom-grid {
+      display: flex;
+      gap: $space-20;
+    }
+
+    &__projects {
+      flex: 2 1 0;
+      min-width: 0;
+    }
+
+    &__skills {
+      flex: 1 1 0;
+      min-width: 240px;
+    }
+
+    /* Cascade the flex item's stretched height down to the actual
+     * Card so both columns end at the same baseline. Without this
+     * the wrapper stretches but the Card stops at its content
+     * height, leaving an empty band under the Skills chip list. */
+    &__skills,
+    &__projects,
+    &__skills > .card-component,
+    &__projects > .card-component {
+      height: 100%;
+    }
+
     .card-component {
       &__list {
         padding-left: 0;
         margin: 0;
       }
 
+      /* Chips inside the Skills sidebar spread across the full
+       * column width instead of clumping on the left — makes the
+       * sidebar feel intentional at any chip count. */
       &__chip-list {
         justify-content: space-between;
       }
