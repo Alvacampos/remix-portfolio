@@ -53,8 +53,14 @@ test.describe('Education detail (/education/:slug)', () => {
     ).toBeVisible();
     await expect(page.getByText(/Universidad Blas Pascal/i)).toBeVisible();
     // metadata row replaces the previous "Study Dates" / "Institution"
-    // cards — assert the year range instead.
-    await expect(page.getByText(/2024 – 2027/)).toBeVisible();
+    // cards. Months are now full names (e.g. "March 2024 → December 2027").
+    await expect(page.getByText(/2024.*→.*2027/)).toBeVisible();
+  });
+
+  test('back link returns to /education', async ({ page }) => {
+    await page.goto('/education/degree');
+    await page.getByRole('link', { name: /back to education/i }).click();
+    await expect(page).toHaveURL(/\/education\/?$/);
   });
 
   test('navigates from /education to the associate-degree detail', async ({ page }) => {
@@ -74,8 +80,9 @@ test.describe('Education detail (/education/:slug)', () => {
     await page.goto('/education/nope', { waitUntil: 'domcontentloaded' });
     await expect(
       page.getByRole('heading', {
-        name: /problem while loading this education entry/i,
+        name: /this education entry isn't available/i,
       })
     ).toBeVisible();
+    await expect(page.getByRole('link', { name: /back to education/i })).toBeVisible();
   });
 });
