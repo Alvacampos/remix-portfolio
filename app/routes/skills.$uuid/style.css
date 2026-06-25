@@ -7,6 +7,25 @@
   gap: $space-20;
   line-height: 2rem;
 
+  &__back-link {
+    align-self: flex-start;
+    color: var(--fg-muted);
+    font-size: $font-14;
+    text-decoration: none;
+    padding: $space-4 $space-8;
+    margin-left: -$space-8;
+    border-radius: $border-10;
+    transition:
+      color 120ms ease,
+      background 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--fg-base);
+      background: var(--bg-surface);
+    }
+  }
+
   &__title {
     text-align: center;
   }
