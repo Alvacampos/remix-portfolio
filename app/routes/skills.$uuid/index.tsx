@@ -101,7 +101,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       rol: localized(item, 'rol', locale),
       description: localized(item, 'description', locale),
       projects,
-      skills: getSkillsForJob(SKILLS, item.id),
+      skills: [...getSkillsForJob(SKILLS, item.id)].sort((a, b) => a.localeCompare(b)),
     },
     imagePath,
     imageDims,
@@ -177,7 +177,7 @@ export default function UuidIndex() {
       </div>
       {skills.length > 0 && (
         <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} texts={skills} />
+          <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
         </div>
       )}
     </div>

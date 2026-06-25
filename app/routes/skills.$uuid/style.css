@@ -53,6 +53,15 @@
   }
 
   .card-component {
+    /* Detail-page skill chips: match the Carousel chips on /skills so
+     * the same visual primitive (pill, Monaspace, $space-4/$space-12
+     * padding, $border-6) reads consistently across both routes. The
+     * timeline preview chips on /skills keep Card's smaller default. */
+    &__chip {
+      padding: $space-4 $space-12;
+      border-radius: $border-6;
+    }
+
     &__main-text-wrapper {
       display: flex;
       gap: $space-20;
