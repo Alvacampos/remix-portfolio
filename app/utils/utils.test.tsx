@@ -6,6 +6,7 @@ import {
   formatDate,
   getClassMaker,
   getCvUrl,
+  getSkillGroupsForJob,
   getSkillHeatmapData,
   getSkillsForJob,
   getSkillSuggestions,
@@ -81,6 +82,17 @@ describe('formatDate', () => {
     // July 31 — which would render as 07/2018. Local-zone parsing
     // anchors to August 1 and renders as 08/2018.
     expect(formatDate('2018-08')).toBe('08/2018 - Present');
+  });
+
+  it('renders the single-month format in Spanish when locale=es', () => {
+    expect(formatDate('2020-01', '', undefined, 'es')).toBe('enero 2020');
+  });
+
+  it('renders the duration in Spanish when locale=es', () => {
+    // date-fns es locale: "años" / "meses" instead of "years" / "months".
+    const out = formatDate('2020-01', '2022-07', 'fullYearMonth', 'es');
+    expect(out).toMatch(/años|meses/);
+    expect(out).not.toMatch(/years|months/);
   });
 });
 
@@ -247,6 +259,55 @@ describe('getSkillsForJob', () => {
       ]
     );
     expect(getSkillsForJob(data, 1)).toEqual(['Zod', 'Apollo']);
+  });
+});
+
+describe('getSkillGroupsForJob', () => {
+  it('buckets skills by category and sorts each bucket alphabetically', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [
+        { name: 'TypeScript', category: 'language', ranges: [{ jobId: 1 }] },
+        { name: 'CSS', category: 'language', ranges: [{ jobId: 1 }] },
+        { name: 'React', category: 'framework', ranges: [{ jobId: 1 }] },
+        { name: 'Storybook', category: 'tooling', ranges: [{ jobId: 1 }] },
+        { name: 'Cloudflare', category: 'infra', ranges: [{ jobId: 1 }] },
+        { name: 'Mentoring', category: 'meta', ranges: [{ jobId: 1 }] },
+      ]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_LANGUAGES', items: ['CSS', 'TypeScript'] },
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+      { id: 'TECH_GROUP_TOOLING', items: ['Storybook'] },
+      { id: 'TECH_GROUP_INFRA', items: ['Cloudflare'] },
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoring'] },
+    ]);
+  });
+
+  it('drops empty buckets so empty headings never render', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [{ name: 'React', category: 'framework', ranges: [{ jobId: 1 }] }]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+    ]);
+  });
+
+  it('only includes skills whose range references this job', () => {
+    const data = fixture(
+      [
+        { id: 1, startDate: '2020-01' },
+        { id: 2, startDate: '2021-01' },
+      ],
+      [
+        { name: 'React', category: 'framework', ranges: [{ jobId: 1 }] },
+        { name: 'Vue', category: 'framework', ranges: [{ jobId: 2 }] },
+      ]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+    ]);
   });
 });
 

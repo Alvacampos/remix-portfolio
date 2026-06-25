@@ -1,6 +1,7 @@
 import { differenceInMonths, format, formatDuration, intervalToDuration } from 'date-fns';
+import { es as dfEs } from 'date-fns/locale';
 
-import type { Skill, SkillsData, WorkItem } from '~/data/skills-schema';
+import type { Skill, SkillCategory, SkillsData, WorkItem } from '~/data/skills-schema';
 import type { Locale } from '~/intl';
 
 // Toggle this to `true` once a Spanish CV PDF lands at
@@ -19,23 +20,9 @@ export function getCvUrl(locale: Locale): string {
   return CV_URLS[locale];
 }
 
-// Resolve a locale-specific string from a data-layer record.
-//
-// Convention: localizable fields (title, rol, description, project
-// text, etc.) carry an optional `_es` sibling holding the Spanish
-// variant. For locale === 'es' we prefer the sibling; for 'en' or
-// when the sibling is missing/empty we fall back to the base field.
-//
-// Why fall back instead of throwing: a partially-translated record
-// renders correctly in both languages without breaking the page,
-// and copy review can land incrementally without a synchronized
-// big-bang translation pass.
-//
-// The generic constraint binds K to a key whose base value is a
-// string, so the helper is type-safe at the call site:
-//   localized(workItem, 'description', 'es')  // string | undefined
-//   localized(cert, 'institution', 'es')      // type error: institution
-//                                             // is intentionally not _es-able
+// Resolve a localizable field. Reads `<key>_es` when locale === 'es'
+// and falls back to the base field when the sibling is missing/empty
+// — partial translations render in both languages without breaking.
 export function localized<T, K extends keyof T>(
   item: T,
   key: K,
@@ -117,12 +104,22 @@ export function mergeRouteMeta({ matches }: MetaArg, { title, description }: Rou
 // `YYYY-MM` at the Zod boundary, so this only handles that format.
 const parseYearMonth = (s: string): Date => new Date(`${s}-01T00:00:00`);
 
-export const formatDate = (dateA: string, dateB?: string, formatType?: string) => {
+// `locale` only affects the human-readable formats — `fullYearMonth`
+// ("4 años 2 meses") and the single-month case ("agosto 2018"). The
+// numeric `MM/yyyy` branches are locale-neutral.
+export const formatDate = (
+  dateA: string,
+  dateB?: string,
+  formatType?: string,
+  locale: Locale = 'en'
+) => {
+  const dfLocale = locale === 'es' ? dfEs : undefined;
+
   if (formatType === 'fullYearMonth') {
     const start = parseYearMonth(dateA);
     const end = dateB && dateB !== '' && dateB !== null ? parseYearMonth(dateB) : new Date();
     const duration = intervalToDuration({ start, end });
-    return formatDuration(duration, { format: ['years', 'months'] });
+    return formatDuration(duration, { format: ['years', 'months'], locale: dfLocale });
   }
 
   if (dateB === null || dateB === undefined) {
@@ -130,7 +127,7 @@ export const formatDate = (dateA: string, dateB?: string, formatType?: string) =
   }
 
   if (dateB === '') {
-    return format(parseYearMonth(dateA), 'MMMM yyyy');
+    return format(parseYearMonth(dateA), 'MMMM yyyy', { locale: dfLocale });
   }
 
   return `${format(parseYearMonth(dateA), 'MM/yyyy')} - ${format(parseYearMonth(dateB), 'MM/yyyy')}`;
@@ -333,6 +330,40 @@ export function getSkillsForJob(skillsData: SkillsData, jobId: number): string[]
     }
   }
   return result;
+}
+
+// Same set of skills as `getSkillsForJob`, bucketed by category for
+// the /skills/:uuid Skills card. Empty buckets are dropped. The `id`
+// on each group is the intl message id for the heading.
+export type SkillGroup = { id: string; items: string[] };
+
+const CATEGORY_GROUPS: Array<{ id: string; categories: SkillCategory[] }> = [
+  { id: 'TECH_GROUP_LANGUAGES', categories: ['language'] },
+  { id: 'TECH_GROUP_FRAMEWORKS', categories: ['framework'] },
+  { id: 'TECH_GROUP_TOOLING', categories: ['tooling'] },
+  { id: 'TECH_GROUP_INFRA', categories: ['infra'] },
+  { id: 'TECH_GROUP_SOFT', categories: ['meta'] },
+];
+
+export function getSkillGroupsForJob(skillsData: SkillsData, jobId: number): SkillGroup[] {
+  const byName = new Map<string, SkillCategory>();
+  for (const s of skillsData.SKILLS) {
+    if (s.ranges.some((r) => r.jobId === jobId)) {
+      byName.set(s.name, s.category);
+    }
+  }
+  const groups: SkillGroup[] = [];
+  for (const group of CATEGORY_GROUPS) {
+    const items: string[] = [];
+    for (const [name, cat] of byName) {
+      if (group.categories.includes(cat)) items.push(name);
+    }
+    if (items.length > 0) {
+      items.sort((a, b) => a.localeCompare(b));
+      groups.push({ id: group.id, items });
+    }
+  }
+  return groups;
 }
 
 // Names of skills shown in the autocomplete on /skills. Excludes `meta`

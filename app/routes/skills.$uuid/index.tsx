@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
-import { Link, useLoaderData, useRouteError } from '@remix-run/react';
+import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
@@ -8,7 +8,7 @@ import { type Locale, pickLocale } from '~/intl';
 import {
   formatDate,
   getClassMaker,
-  getSkillsForJob,
+  getSkillGroupsForJob,
   localized,
   mergeRouteMeta,
 } from '~/utils/utils';
@@ -61,25 +61,24 @@ const SKILLS = loadSkills(skillsJson);
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const id = params?.uuid;
-  if (!id) throw new Error('Missing work item id.');
+  if (!id) throw new Response('Missing work item id', { status: 400 });
 
   const numericId = Number(id);
-  if (!Number.isInteger(numericId)) throw new Error(`Invalid work item id: ${id}`);
+  if (!Number.isInteger(numericId))
+    throw new Response(`Invalid work item id: ${id}`, { status: 400 });
 
   const item = SKILLS.WORK_ITEMS.find((w) => w.id === numericId);
-  if (!item) throw new Error(`Work item ${id} not found.`);
+  if (!item) throw new Response(`Work item ${id} not found`, { status: 404 });
 
   const lowerTitle = item.title.toLowerCase();
   const fileName = IMAGE_OVERRIDES[lowerTitle] ?? `${lowerTitle}.webp`;
   const imagePath = `/assets/img/${fileName}`;
   const imageDims = LOGO_DIMS[fileName] ?? FALLBACK_DIMS;
 
-  // Resolve localized copy in the loader so meta + render share one
-  // source of truth and the loader output is fully serializable.
   const locale: Locale = pickLocale(request);
-  // `projects` is either a structured array (each entry has its own
-  // `_es` siblings) or a plain string sentence (Spanish lives in the
-  // workItem-level `projects_es`). Resolve both cases here.
+  // `projects` can be either a structured array (each entry has its
+  // own `_es` siblings) or a plain string sentence (Spanish lives in
+  // the workItem-level `projects_es`). Resolve both cases here.
   let projects: typeof item.projects;
   if (Array.isArray(item.projects)) {
     projects = item.projects.map((p) => ({
@@ -92,6 +91,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     projects = item.projects;
   }
 
+  const startLabel = formatDate(item.startDate, '', undefined, locale);
+  const endLabel = item.endDate ? formatDate(item.endDate, '', undefined, locale) : null;
+  const duration = formatDate(item.startDate, item.endDate ?? undefined, 'fullYearMonth', locale);
+
   return {
     data: {
       id: item.id,
@@ -101,7 +104,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       rol: localized(item, 'rol', locale),
       description: localized(item, 'description', locale),
       projects,
-      skills: [...getSkillsForJob(SKILLS, item.id)].sort((a, b) => a.localeCompare(b)),
+      skillGroups: getSkillGroupsForJob(SKILLS, item.id),
+      startLabel,
+      endLabel,
+      duration,
     },
     imagePath,
     imageDims,
@@ -111,30 +117,38 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export function ErrorBoundary() {
   const error = useRouteError();
   console.error(error);
+  const status = isRouteErrorResponse(error) ? error.status : 'Error';
   return (
-    <h1 className={getClasses('error')}>There was a problem while loading this work experience</h1>
+    <div className={getClasses('error')}>
+      <p className={getClasses('error-code')}>{status}</p>
+      <h1 className={getClasses('error-title')}>
+        <FormattedMessage id="ERROR_WORK_ITEM_TITLE" />
+      </h1>
+      <p className={getClasses('error-body')}>
+        <FormattedMessage id="ERROR_WORK_ITEM_BODY" />
+      </p>
+      <Link to="/skills" className={getClasses('error-action')}>
+        <span aria-hidden="true">←</span> <FormattedMessage id="BACK_TO_SKILLS" />
+      </Link>
+    </div>
   );
 }
 
 export default function UuidIndex() {
   const { data, imagePath, imageDims } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
-  const { title, projects, startDate, skills } = data;
+  const { title, projects, skillGroups, startLabel, endLabel, duration } = data;
 
   const renderDates = () => (
-    <div>
-      <p>
-        <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
+    <div className={getClasses('dates')}>
+      <p className={getClasses('date-range')}>
+        <span>{startLabel}</span>
+        <span aria-hidden="true" className={getClasses('date-arrow')}>
+          →
+        </span>
+        <span>{endLabel ?? <FormattedMessage id="PRESENT" />}</span>
       </p>
-      {data.endDate ? (
-        <p>
-          <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
-        </p>
-      ) : (
-        <p>
-          <FormattedMessage id="END_DATE" />: <FormattedMessage id="PRESENT" />
-        </p>
-      )}
+      {duration && <p className={getClasses('date-duration')}>{duration}</p>}
     </div>
   );
 
@@ -168,18 +182,37 @@ export default function UuidIndex() {
           </Card>
         </div>
       </div>
-      <div className={getClasses('projects')}>
-        {Array.isArray(projects) ? (
-          <Card title={formatMessage({ id: 'PROJECTS' })} itemList={projects} />
-        ) : (
-          <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
+      <div className={getClasses('bottom-grid')}>
+        <div className={getClasses('projects')}>
+          {Array.isArray(projects) ? (
+            <Card title={formatMessage({ id: 'PROJECTS' })} itemList={projects} />
+          ) : (
+            <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
+          )}
+        </div>
+        {skillGroups.length > 0 && (
+          <div className={getClasses('skills')}>
+            <Card title={formatMessage({ id: 'SKILLS' })}>
+              <div className={getClasses('skill-groups')}>
+                {skillGroups.map((group) => (
+                  <div key={group.id} className={getClasses('skill-group')}>
+                    <h3 className={getClasses('skill-group-title')}>
+                      <FormattedMessage id={group.id} />
+                    </h3>
+                    <ul className={getClasses('skill-group-list')}>
+                      {group.items.map((name) => (
+                        <li key={name} className={getClasses('skill-group-chip')}>
+                          {name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         )}
       </div>
-      {skills.length > 0 && (
-        <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
-        </div>
-      )}
     </div>
   );
 }
