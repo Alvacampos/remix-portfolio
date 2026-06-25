@@ -159,7 +159,8 @@
         {
           "jobId": 6
         }
-      ]
+      ],
+      "name_es": "Metodologías ágiles"
     },
     {
       "name": "Axios",
@@ -187,7 +188,8 @@
         {
           "jobId": 4
         }
-      ]
+      ],
+      "name_es": "Back End"
     },
     {
       "name": "C",
@@ -205,6 +207,25 @@
         {
           "jobId": 6,
           "to": "2024-01"
+        }
+      ]
+    },
+    {
+      "name": "Code Review",
+      "name_es": "Revisión de código",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 6
         }
       ]
     },
@@ -267,6 +288,25 @@
         {
           "jobId": 6
         }
+      ],
+      "name_es": "Front End"
+    },
+    {
+      "name": "Git",
+      "category": "tooling",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 6
+        }
       ]
     },
     {
@@ -318,15 +358,6 @@
       ]
     },
     {
-      "name": "Interviewing",
-      "category": "meta",
-      "ranges": [
-        {
-          "jobId": 4
-        }
-      ]
-    },
-    {
       "name": "JavaScript",
       "category": "language",
       "ranges": [
@@ -363,7 +394,8 @@
         {
           "jobId": 4
         }
-      ]
+      ],
+      "name_es": "Liderazgo"
     },
     {
       "name": "MarkLogic",
@@ -380,6 +412,19 @@
       "ranges": [
         {
           "jobId": 3
+        }
+      ],
+      "name_es": "Mentoría"
+    },
+    {
+      "name": "MongoDB",
+      "category": "infra",
+      "ranges": [
+        {
+          "jobId": 1
+        },
+        {
+          "jobId": 2
         }
       ]
     },
@@ -429,6 +474,26 @@
         },
         {
           "jobId": 5
+        }
+      ],
+      "name_es": "Programación"
+    },
+    {
+      "name": "Public Speaking",
+      "name_es": "Oratoria",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 3
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 5
+        },
+        {
+          "jobId": 6
         }
       ]
     },
@@ -551,7 +616,31 @@
         {
           "jobId": 5
         }
+      ],
+      "name_es": "Docencia"
+    },
+    {
+      "name": "Team Coordination",
+      "name_es": "Coordinación de equipos",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 6
+        }
       ]
+    },
+    {
+      "name": "Technical Interviewing",
+      "category": "meta",
+      "ranges": [
+        {
+          "jobId": 4
+        }
+      ],
+      "name_es": "Entrevistas técnicas"
     },
     {
       "name": "TypeScript",

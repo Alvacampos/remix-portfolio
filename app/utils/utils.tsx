@@ -345,18 +345,14 @@ const CATEGORY_GROUPS: Array<{ id: string; categories: SkillCategory[] }> = [
   { id: 'TECH_GROUP_SOFT', categories: ['meta'] },
 ];
 
-export function getSkillGroupsForJob(skillsData: SkillsData, jobId: number): SkillGroup[] {
-  const byName = new Map<string, SkillCategory>();
-  for (const s of skillsData.SKILLS) {
-    if (s.ranges.some((r) => r.jobId === jobId)) {
-      byName.set(s.name, s.category);
-    }
-  }
+function buildGroups(skills: Skill[], locale: Locale): SkillGroup[] {
   const groups: SkillGroup[] = [];
   for (const group of CATEGORY_GROUPS) {
     const items: string[] = [];
-    for (const [name, cat] of byName) {
-      if (group.categories.includes(cat)) items.push(name);
+    for (const s of skills) {
+      if (group.categories.includes(s.category)) {
+        items.push(localized(s, 'name', locale));
+      }
     }
     if (items.length > 0) {
       items.sort((a, b) => a.localeCompare(b));
@@ -364,6 +360,23 @@ export function getSkillGroupsForJob(skillsData: SkillsData, jobId: number): Ski
     }
   }
   return groups;
+}
+
+export function getSkillGroupsForJob(
+  skillsData: SkillsData,
+  jobId: number,
+  locale: Locale = 'en'
+): SkillGroup[] {
+  const skills = skillsData.SKILLS.filter((s) => s.ranges.some((r) => r.jobId === jobId));
+  return buildGroups(skills, locale);
+}
+
+// Every skill in the data layer, bucketed by category. Used by the
+// home Carousel to render the full tech-stack overview without
+// hardcoding the list in the component. Mirrors getSkillGroupsForJob
+// but doesn't filter by job — every entry in SKILLS contributes.
+export function getAllSkillGroups(skillsData: SkillsData, locale: Locale = 'en'): SkillGroup[] {
+  return buildGroups(skillsData.SKILLS, locale);
 }
 
 // Names of skills shown in the autocomplete on /skills. Excludes `meta`

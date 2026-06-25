@@ -4,6 +4,7 @@ import type { SkillsData } from '~/data/skills-schema';
 
 import {
   formatDate,
+  getAllSkillGroups,
   getClassMaker,
   getCvUrl,
   getSkillGroupsForJob,
@@ -20,6 +21,7 @@ const fixture = (
   jobs: Array<{ id: number; startDate: string; endDate?: string }>,
   skills: Array<{
     name: string;
+    name_es?: string;
     category?: 'language' | 'framework' | 'tooling' | 'infra' | 'meta';
     ranges: Array<{ jobId: number; from?: string; to?: string }>;
   }>
@@ -33,6 +35,7 @@ const fixture = (
   })),
   SKILLS: skills.map((s) => ({
     name: s.name,
+    name_es: s.name_es,
     category: s.category ?? 'language',
     ranges: s.ranges,
   })),
@@ -307,6 +310,77 @@ describe('getSkillGroupsForJob', () => {
     );
     expect(getSkillGroupsForJob(data, 1)).toEqual([
       { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+    ]);
+  });
+});
+
+describe('getSkillGroupsForJob (localized)', () => {
+  it('returns the English name when locale is en (or omitted)', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [{ name: 'Mentoring', name_es: 'Mentoría', category: 'meta', ranges: [{ jobId: 1 }] }]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoring'] },
+    ]);
+    expect(getSkillGroupsForJob(data, 1, 'en')).toEqual([
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoring'] },
+    ]);
+  });
+
+  it('returns the Spanish name when locale is es and name_es is present', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [{ name: 'Mentoring', name_es: 'Mentoría', category: 'meta', ranges: [{ jobId: 1 }] }]
+    );
+    expect(getSkillGroupsForJob(data, 1, 'es')).toEqual([
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoría'] },
+    ]);
+  });
+
+  it('falls back to English when name_es is missing under locale=es', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [{ name: 'TypeScript', category: 'language', ranges: [{ jobId: 1 }] }]
+    );
+    expect(getSkillGroupsForJob(data, 1, 'es')).toEqual([
+      { id: 'TECH_GROUP_LANGUAGES', items: ['TypeScript'] },
+    ]);
+  });
+});
+
+describe('getAllSkillGroups', () => {
+  it('buckets every skill in the data regardless of job', () => {
+    const data = fixture(
+      [
+        { id: 1, startDate: '2020-01' },
+        { id: 2, startDate: '2021-01' },
+      ],
+      [
+        { name: 'TypeScript', category: 'language', ranges: [{ jobId: 1 }] },
+        { name: 'CSS', category: 'language', ranges: [{ jobId: 2 }] },
+        { name: 'React', category: 'framework', ranges: [{ jobId: 1 }, { jobId: 2 }] },
+        { name: 'Mentoring', name_es: 'Mentoría', category: 'meta', ranges: [{ jobId: 2 }] },
+      ]
+    );
+    expect(getAllSkillGroups(data)).toEqual([
+      { id: 'TECH_GROUP_LANGUAGES', items: ['CSS', 'TypeScript'] },
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoring'] },
+    ]);
+  });
+
+  it('localizes skill names when locale is es', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [
+        { name: 'TypeScript', category: 'language', ranges: [{ jobId: 1 }] },
+        { name: 'Mentoring', name_es: 'Mentoría', category: 'meta', ranges: [{ jobId: 1 }] },
+      ]
+    );
+    expect(getAllSkillGroups(data, 'es')).toEqual([
+      { id: 'TECH_GROUP_LANGUAGES', items: ['TypeScript'] },
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoría'] },
     ]);
   });
 });

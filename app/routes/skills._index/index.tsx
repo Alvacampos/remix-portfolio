@@ -14,6 +14,7 @@ import { loadSkills } from '~/data/skills-schema';
 import { pickLocale } from '~/intl';
 import {
   formatDate,
+  getAllSkillGroups,
   getClassMaker,
   getSkillHeatmapData,
   getSkillsForJob,
@@ -90,6 +91,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       yearsOfExp: formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills: SUGGESTIONS,
       heatmapData: getSkillHeatmapData(SKILLS),
+      carouselGroups: getAllSkillGroups(SKILLS, locale),
       extraActivities,
     },
     {
@@ -111,7 +113,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Skills() {
   const { formatMessage } = useIntl();
-  const { data, yearsOfExp, skills, heatmapData, extraActivities } = useLoaderData<typeof loader>();
+  const { data, yearsOfExp, skills, heatmapData, carouselGroups, extraActivities } =
+    useLoaderData<typeof loader>();
   const [filteredData, setFilteredData] = useState(data);
 
   const filterInput = useCallback(
@@ -161,7 +164,7 @@ export default function Skills() {
             <LazyTenureHeatmap data={heatmapData} />
           </Suspense>
           <Suspense fallback={<LoadingSpinner />}>
-            <LazyCarousel />
+            <LazyCarousel groups={carouselGroups} />
           </Suspense>
         </div>
       </div>
