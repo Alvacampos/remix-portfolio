@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-24T13:34:24.089Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-25T18:49:13.707Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "7124254",
+  "commit": "23e554f",
   "categories": {
-    "performance": 0.94,
-    "accessibility": 0.95,
+    "performance": 0.93,
+    "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2184.2889,
-      "score": 0.78
+      "displayValue": "2.3 s",
+      "numericValue": 2292.4165,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2622.255575,
-      "score": 0.87
+      "displayValue": "2.7 s",
+      "numericValue": 2742.4165000000003,
+      "score": 0.84
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2184.2889,
+      "displayValue": "2.3 s",
+      "numericValue": 2292.4165,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2622.255575,
-      "score": 0.98
+      "displayValue": "2.7 s",
+      "numericValue": 2742.4165000000003,
+      "score": 0.97
     },
-    "ttfb": 47
+    "ttfb": 71
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.78
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.87
+      "score": 0.84
     },
     {
       "id": "speed-index",
@@ -62,7 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
+      "score": 0.97
     },
     {
       "id": "color-contrast",
@@ -80,6 +80,11 @@
       "score": 0.5
     },
     {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "score": 0
+    },
+    {
       "id": "network-dependency-tree-insight",
       "title": "Network dependency tree",
       "score": 0
@@ -87,7 +92,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }

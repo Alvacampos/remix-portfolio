@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-22T17:51:25.588Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-25T18:49:20.553Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "486a5c4",
+  "commit": "23e554f",
   "categories": {
-    "performance": 0.83,
-    "accessibility": 0.95,
+    "performance": 0.94,
+    "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2165.5076,
-      "score": 0.79
+      "displayValue": "2.3 s",
+      "numericValue": 2280.6236,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "4.3 s",
-      "numericValue": 4340.5076,
-      "score": 0.41
+      "displayValue": "2.7 s",
+      "numericValue": 2655.6236,
+      "score": 0.86
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2165.5076,
+      "displayValue": "2.3 s",
+      "numericValue": 2280.6236,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "4.3 s",
-      "numericValue": 4348.0076,
-      "score": 0.84
+      "displayValue": "2.7 s",
+      "numericValue": 2663.1236,
+      "score": 0.97
     },
-    "ttfb": 55
+    "ttfb": 56
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.79
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.41
+      "score": 0.86
     },
     {
       "id": "speed-index",
@@ -62,7 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.84
+      "score": 0.97
     },
     {
       "id": "color-contrast",
@@ -87,7 +87,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
