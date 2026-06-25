@@ -45,6 +45,20 @@
     }
   }
 
+  /* Soften logos that ship with a solid color background (e.g. the
+   * Qubika black square) so they sit on the route's surface instead
+   * of fighting it. The framed surface + subtle border give every
+   * logo the same visual container regardless of its own background,
+   * so the Qubika black square reads the same way as the Cliengo
+   * transparent PNG. Inner padding keeps the logo from touching the
+   * frame edge. */
+  &__company-logo {
+    padding: $space-16;
+    border-radius: $border-8;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+  }
+
   &__info-container {
     display: flex;
     flex-direction: column;
