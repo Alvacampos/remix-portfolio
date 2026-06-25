@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
-import { useLoaderData, useRouteError } from '@remix-run/react';
+import { Link, useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
@@ -147,6 +147,9 @@ export default function UuidIndex() {
 
   return (
     <div className={getClasses()}>
+      <Link to="/skills" className={getClasses('back-link')}>
+        <span aria-hidden="true">←</span> <FormattedMessage id="BACK_TO_SKILLS" />
+      </Link>
       <h1 className={getClasses('title')}>{title}</h1>
       <div className={getClasses('main-container')}>
         <div className={getClasses('img-container')}>

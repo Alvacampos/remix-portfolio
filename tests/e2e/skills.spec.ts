@@ -77,4 +77,10 @@ test.describe('Skill detail (/skills/:uuid)', () => {
     await expect(page.getByText(/Hire Date/i)).toBeVisible();
     await expect(page.getByText(/Role \/ Job Description/i)).toBeVisible();
   });
+
+  test('back link returns to /skills', async ({ page }) => {
+    await page.goto('/skills/6');
+    await page.getByRole('link', { name: /back to skills/i }).click();
+    await expect(page).toHaveURL(/\/skills\/?$/);
+  });
 });
