@@ -103,7 +103,22 @@ export default function EducationDetail() {
         </div>
         {skills && skills.length > 0 && (
           <div className={getClasses('skills')}>
-            <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
+            <Card title={formatMessage({ id: 'SKILLS' })}>
+              <div className={getClasses('skill-groups')}>
+                <div className={getClasses('skill-group')}>
+                  <h3 className={getClasses('skill-group-title')}>
+                    <FormattedMessage id="TOPICS" />
+                  </h3>
+                  <ul className={getClasses('skill-group-list')}>
+                    {skills.map((name) => (
+                      <li key={name} className={getClasses('skill-group-chip')}>
+                        {name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </Card>
           </div>
         )}
       </div>

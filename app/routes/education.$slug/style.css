@@ -57,6 +57,57 @@
     gap: $space-20;
   }
 
+  &__skill-groups {
+    display: flex;
+    flex-direction: column;
+    gap: $space-16;
+  }
+
+  &__skill-group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-8;
+  }
+
+  &__skill-group-title {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__skill-group-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-8;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__skill-group-chip {
+    display: inline-block;
+    padding: $space-4 $space-12;
+    border: 1px solid var(--border-default);
+    border-radius: $border-6;
+    background: var(--bg-elevated);
+    color: var(--fg-base);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-14;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease;
+
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-muted);
+    }
+  }
+
   &__error {
     display: flex;
     flex-direction: column;
@@ -125,10 +176,13 @@
       gap: $space-20;
     }
 
+    /* Description grows naturally with its content; Skills stretches to
+     * match. Same pattern as /skills/:uuid — the long-form column drives
+     * the row height and the chip column fills the rest. */
     &__description {
       flex: 2 1 0;
       min-width: 0;
-      height: 100%;
+      height: auto;
     }
 
     &__skills {
@@ -137,16 +191,17 @@
       height: 100%;
     }
 
-    /* Cascade height through wrapper → Card → text container so the
-     * shorter column matches the taller column's height. */
-    &__description > .card-component,
     &__skills > .card-component {
       height: 100%;
     }
 
-    &__description > .card-component > .card-component__text-container,
     &__skills > .card-component > .card-component__text-container {
       flex: 1 1 auto;
+    }
+
+    .card-component__list {
+      justify-content: space-evenly;
+      height: 100%;
     }
   }
 }
