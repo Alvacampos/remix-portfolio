@@ -1,0 +1,93 @@
+{
+  "fetchTime": "2026-06-25T13:21:03.373Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.4.0",
+  "commit": "ad1a982",
+  "categories": {
+    "performance": 0.89,
+    "accessibility": 0.96,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "2.3 s",
+      "numericValue": 2317.338875,
+      "score": 0.74
+    },
+    "lcp": {
+      "displayValue": "3.0 s",
+      "numericValue": 2967.67775,
+      "score": 0.79
+    },
+    "si": {
+      "displayValue": "4.5 s",
+      "numericValue": 4517.208827999991,
+      "score": 0.72
+    },
+    "tbt": {
+      "displayValue": "0 ms",
+      "numericValue": 0,
+      "score": 1
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "3.0 s",
+      "numericValue": 2975.1777500000003,
+      "score": 0.96
+    },
+    "ttfb": 170
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.74
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.79
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.72
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.96
+    },
+    {
+      "id": "color-contrast",
+      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+      "score": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
