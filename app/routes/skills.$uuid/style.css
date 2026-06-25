@@ -34,6 +34,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: $space-20;
   }
 
   &__img-container {
@@ -100,16 +101,61 @@
     gap: $space-20;
   }
 
-  .card-component {
-    /* Detail-page skill chips: match the Carousel chips on /skills so
-     * the same visual primitive (pill, Monaspace, $space-4/$space-12
-     * padding, $border-6) reads consistently across both routes. The
-     * timeline preview chips on /skills keep Card's smaller default. */
-    &__chip {
-      padding: $space-4 $space-12;
-      border-radius: $border-6;
-    }
+  /* Semantic skill groups: Languages / Frameworks / Tooling /
+   * Infrastructure / Other. Mirrors the Carousel pattern on /skills
+   * so the chip list reads as the same primitive across routes. */
+  &__skill-groups {
+    display: flex;
+    flex-direction: column;
+    gap: $space-16;
+  }
 
+  &__skill-group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-8;
+  }
+
+  &__skill-group-title {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__skill-group-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-8;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__skill-group-chip {
+    display: inline-block;
+    padding: $space-4 $space-12;
+    border: 1px solid var(--border-default);
+    border-radius: $border-6;
+    background: var(--bg-elevated);
+    color: var(--fg-base);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-14;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease;
+
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-muted);
+    }
+  }
+
+  .card-component {
     &__main-text-wrapper {
       display: flex;
       gap: $space-20;
@@ -152,20 +198,64 @@
     }
   }
 
+  /* Error layout: status code on top in big muted type, headline,
+   * supporting copy, then a back link. Centered on the page. The
+   * `min-height` keeps the panel from feeling cramped on a tall
+   * viewport when the navbar dominates the screen. */
   &__error {
-    color: $error-red;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
-    border-radius: $border-10;
-    padding: $space-20 $space-16;
-    margin: $space-40 auto;
-    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    gap: $space-16;
+    padding: $space-40 $space-20;
+    margin: 0 auto;
+    max-width: 600px;
+    min-height: 50vh;
+    justify-content: center;
+  }
+
+  &__error-code {
+    margin: 0;
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: 5rem;
+    font-weight: $weight-700;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  &__error-title {
+    margin: 0;
     font-size: $font-24;
     font-weight: $weight-700;
-    letter-spacing: 0.02em;
-    box-shadow: 0 2px 16px rgba(31, 35, 40, 0.15);
-    font-family: inherit;
+    color: var(--fg-base);
+    line-height: 1.3;
+  }
+
+  &__error-body {
+    margin: 0;
+    color: var(--fg-muted);
+    line-height: 1.5;
+    max-width: 480px;
+  }
+
+  &__error-action {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: $font-14;
+    padding: $space-8 $space-16;
+    border: 1px solid var(--accent);
+    border-radius: $border-6;
+    transition:
+      color 120ms ease,
+      background 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--bg-base);
+      background: var(--accent);
+    }
   }
 }
 
@@ -185,43 +275,57 @@
  * so the column layout isn't gated on the same 1076px threshold. */
 @media screen and (min-width: $bp-md) {
   .skills-id-route {
+    /* Same horizontal padding as $desktop-small below — at tablet
+     * width the content was hitting the viewport edge with no margin.
+     * Re-set on the desktop-small query too to keep both queries
+     * self-contained. */
+    padding: 0 $space-20;
+
+    /* Reset the base `flex-direction: column` to row at this
+     * breakpoint — without this the bottom-grid stays stacked at any
+     * width because the column rule from the base block wins. */
     &__bottom-grid {
-      display: flex;
+      flex-direction: row;
       gap: $space-20;
     }
 
+    /* Both columns: equal flex weight semantics (Projects gets the
+     * wider share) AND `height: 100%` so each column matches the
+     * grid row's stretched height. Without `height: 100%` the wrapper
+     * sits at content height even though the flex parent stretches —
+     * flex `align-items: stretch` only stretches direct children's
+     * outer box, not nested `height: auto`. */
     &__projects {
       flex: 2 1 0;
       min-width: 0;
+      height: 100%;
     }
 
     &__skills {
       flex: 1 1 0;
       min-width: 240px;
+      height: 100%;
     }
 
-    /* Cascade the flex item's stretched height down to the actual
-     * Card so both columns end at the same baseline. Without this
-     * the wrapper stretches but the Card stops at its content
-     * height, leaving an empty band under the Skills chip list. */
-    &__skills,
-    &__projects,
-    &__skills > .card-component,
-    &__projects > .card-component {
+    /* Cascade the height down to the Card primitive AND its inner
+     * text container so the shorter column's Card visually fills the
+     * row. Card's flex-column layout means the title strip + body
+     * sit at content height by default; growing the text container
+     * absorbs the leftover space silently. */
+    &__projects > .card-component,
+    &__skills > .card-component {
       height: 100%;
+    }
+
+    &__projects > .card-component > .card-component__text-container,
+    &__skills > .card-component > .card-component__text-container {
+      flex: 1 1 auto;
     }
 
     .card-component {
       &__list {
         padding-left: 0;
         margin: 0;
-      }
-
-      /* Chips inside the Skills sidebar spread across the full
-       * column width instead of clumping on the left — makes the
-       * sidebar feel intentional at any chip count. */
-      &__chip-list {
-        justify-content: space-between;
       }
     }
   }

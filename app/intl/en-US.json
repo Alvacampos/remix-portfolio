@@ -14,6 +14,8 @@
   "DESCRIPTION": "Description",
   "DOWNLOAD_CV": "Download my CV (PDF)",
   "EDUCATION": "Education",
+  "ERROR_WORK_ITEM_BODY": "We couldn't load this work experience. It may have been removed or the link is broken.",
+  "ERROR_WORK_ITEM_TITLE": "This work experience isn't available",
   "EXTRA_ACTIVITIES": "Extra Activities",
   "FILTER_BY_SPECIFIC_TECHNOLOGY": "Filter by a specific technology",
   "GITHUB_PROFILE": "GitHub profile",

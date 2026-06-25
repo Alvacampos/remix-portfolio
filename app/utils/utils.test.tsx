@@ -6,6 +6,7 @@ import {
   formatDate,
   getClassMaker,
   getCvUrl,
+  getSkillGroupsForJob,
   getSkillHeatmapData,
   getSkillsForJob,
   getSkillSuggestions,
@@ -258,6 +259,55 @@ describe('getSkillsForJob', () => {
       ]
     );
     expect(getSkillsForJob(data, 1)).toEqual(['Zod', 'Apollo']);
+  });
+});
+
+describe('getSkillGroupsForJob', () => {
+  it('buckets skills by category and sorts each bucket alphabetically', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [
+        { name: 'TypeScript', category: 'language', ranges: [{ jobId: 1 }] },
+        { name: 'CSS', category: 'language', ranges: [{ jobId: 1 }] },
+        { name: 'React', category: 'framework', ranges: [{ jobId: 1 }] },
+        { name: 'Storybook', category: 'tooling', ranges: [{ jobId: 1 }] },
+        { name: 'Cloudflare', category: 'infra', ranges: [{ jobId: 1 }] },
+        { name: 'Mentoring', category: 'meta', ranges: [{ jobId: 1 }] },
+      ]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_LANGUAGES', items: ['CSS', 'TypeScript'] },
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+      { id: 'TECH_GROUP_TOOLING', items: ['Storybook'] },
+      { id: 'TECH_GROUP_INFRA', items: ['Cloudflare'] },
+      { id: 'TECH_GROUP_SOFT', items: ['Mentoring'] },
+    ]);
+  });
+
+  it('drops empty buckets so empty headings never render', () => {
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [{ name: 'React', category: 'framework', ranges: [{ jobId: 1 }] }]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+    ]);
+  });
+
+  it('only includes skills whose range references this job', () => {
+    const data = fixture(
+      [
+        { id: 1, startDate: '2020-01' },
+        { id: 2, startDate: '2021-01' },
+      ],
+      [
+        { name: 'React', category: 'framework', ranges: [{ jobId: 1 }] },
+        { name: 'Vue', category: 'framework', ranges: [{ jobId: 2 }] },
+      ]
+    );
+    expect(getSkillGroupsForJob(data, 1)).toEqual([
+      { id: 'TECH_GROUP_FRAMEWORKS', items: ['React'] },
+    ]);
   });
 });
 

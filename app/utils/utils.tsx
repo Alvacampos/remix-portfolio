@@ -1,7 +1,7 @@
 import { differenceInMonths, format, formatDuration, intervalToDuration } from 'date-fns';
 import { es as dfEs } from 'date-fns/locale';
 
-import type { Skill, SkillsData, WorkItem } from '~/data/skills-schema';
+import type { Skill, SkillCategory, SkillsData, WorkItem } from '~/data/skills-schema';
 import type { Locale } from '~/intl';
 
 // Toggle this to `true` once a Spanish CV PDF lands at
@@ -347,6 +347,45 @@ export function getSkillsForJob(skillsData: SkillsData, jobId: number): string[]
     }
   }
   return result;
+}
+
+// Same set of skills as `getSkillsForJob`, but bucketed by category.
+// Used on /skills/:uuid to render the Skills card as semantic groups
+// (Languages / Frameworks / Tooling / Infrastructure / Other) so the
+// chip list mirrors the Carousel on /skills. Empty buckets are dropped
+// so a job with no `infra` skills doesn't render an empty heading.
+//
+// The `id` field on each group is the intl message id for the heading;
+// reuses the TECH_GROUP_* keys already defined for the Carousel.
+export type SkillGroup = { id: string; items: string[] };
+
+const CATEGORY_GROUPS: Array<{ id: string; categories: SkillCategory[] }> = [
+  { id: 'TECH_GROUP_LANGUAGES', categories: ['language'] },
+  { id: 'TECH_GROUP_FRAMEWORKS', categories: ['framework'] },
+  { id: 'TECH_GROUP_TOOLING', categories: ['tooling'] },
+  { id: 'TECH_GROUP_INFRA', categories: ['infra'] },
+  { id: 'TECH_GROUP_SOFT', categories: ['meta'] },
+];
+
+export function getSkillGroupsForJob(skillsData: SkillsData, jobId: number): SkillGroup[] {
+  const byName = new Map<string, SkillCategory>();
+  for (const s of skillsData.SKILLS) {
+    if (s.ranges.some((r) => r.jobId === jobId)) {
+      byName.set(s.name, s.category);
+    }
+  }
+  const groups: SkillGroup[] = [];
+  for (const group of CATEGORY_GROUPS) {
+    const items: string[] = [];
+    for (const [name, cat] of byName) {
+      if (group.categories.includes(cat)) items.push(name);
+    }
+    if (items.length > 0) {
+      items.sort((a, b) => a.localeCompare(b));
+      groups.push({ id: group.id, items });
+    }
+  }
+  return groups;
 }
 
 // Names of skills shown in the autocomplete on /skills. Excludes `meta`

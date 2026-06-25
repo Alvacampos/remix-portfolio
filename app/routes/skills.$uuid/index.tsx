@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
-import { Link, useLoaderData, useRouteError } from '@remix-run/react';
+import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from '~/components/Card';
@@ -8,7 +8,7 @@ import { type Locale, pickLocale } from '~/intl';
 import {
   formatDate,
   getClassMaker,
-  getSkillsForJob,
+  getSkillGroupsForJob,
   localized,
   mergeRouteMeta,
 } from '~/utils/utils';
@@ -61,13 +61,18 @@ const SKILLS = loadSkills(skillsJson);
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const id = params?.uuid;
-  if (!id) throw new Error('Missing work item id.');
+  // Throw a Response (not a raw Error) so the route-error boundary
+  // can read `error.status` via `isRouteErrorResponse` and render the
+  // 404/400 code in the error UI. Raw Error throws bubble up as
+  // generic "Error" which doesn't tell the visitor anything useful.
+  if (!id) throw new Response('Missing work item id', { status: 400 });
 
   const numericId = Number(id);
-  if (!Number.isInteger(numericId)) throw new Error(`Invalid work item id: ${id}`);
+  if (!Number.isInteger(numericId))
+    throw new Response(`Invalid work item id: ${id}`, { status: 400 });
 
   const item = SKILLS.WORK_ITEMS.find((w) => w.id === numericId);
-  if (!item) throw new Error(`Work item ${id} not found.`);
+  if (!item) throw new Response(`Work item ${id} not found`, { status: 404 });
 
   const lowerTitle = item.title.toLowerCase();
   const fileName = IMAGE_OVERRIDES[lowerTitle] ?? `${lowerTitle}.webp`;
@@ -109,7 +114,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       rol: localized(item, 'rol', locale),
       description: localized(item, 'description', locale),
       projects,
-      skills: [...getSkillsForJob(SKILLS, item.id)].sort((a, b) => a.localeCompare(b)),
+      skillGroups: getSkillGroupsForJob(SKILLS, item.id),
       startLabel,
       endLabel,
       duration,
@@ -122,15 +127,27 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export function ErrorBoundary() {
   const error = useRouteError();
   console.error(error);
+  const status = isRouteErrorResponse(error) ? error.status : 'Error';
   return (
-    <h1 className={getClasses('error')}>There was a problem while loading this work experience</h1>
+    <div className={getClasses('error')}>
+      <p className={getClasses('error-code')}>{status}</p>
+      <h1 className={getClasses('error-title')}>
+        <FormattedMessage id="ERROR_WORK_ITEM_TITLE" />
+      </h1>
+      <p className={getClasses('error-body')}>
+        <FormattedMessage id="ERROR_WORK_ITEM_BODY" />
+      </p>
+      <Link to="/skills" className={getClasses('error-action')}>
+        <span aria-hidden="true">←</span> <FormattedMessage id="BACK_TO_SKILLS" />
+      </Link>
+    </div>
   );
 }
 
 export default function UuidIndex() {
   const { data, imagePath, imageDims } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
-  const { title, projects, skills, startLabel, endLabel, duration } = data;
+  const { title, projects, skillGroups, startLabel, endLabel, duration } = data;
 
   const renderDates = () => (
     <div className={getClasses('dates')}>
@@ -183,9 +200,26 @@ export default function UuidIndex() {
             <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
           )}
         </div>
-        {skills.length > 0 && (
+        {skillGroups.length > 0 && (
           <div className={getClasses('skills')}>
-            <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
+            <Card title={formatMessage({ id: 'SKILLS' })}>
+              <div className={getClasses('skill-groups')}>
+                {skillGroups.map((group) => (
+                  <div key={group.id} className={getClasses('skill-group')}>
+                    <h3 className={getClasses('skill-group-title')}>
+                      <FormattedMessage id={group.id} />
+                    </h3>
+                    <ul className={getClasses('skill-group-list')}>
+                      {group.items.map((name) => (
+                        <li key={name} className={getClasses('skill-group-chip')}>
+                          {name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
         )}
       </div>
