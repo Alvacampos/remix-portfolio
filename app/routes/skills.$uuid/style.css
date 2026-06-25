@@ -163,24 +163,14 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+/* Side-by-side Projects + Skills kicks in at $bp-md (768px) so any
+ * non-phone width gets the parallel layout. Below that — narrow
+ * phones — the base flex column on `.skills-id-route` keeps them
+ * stacked. Splitting this off from the $desktop-small block (which
+ * still owns the logo show/hide and the info-container max-width)
+ * so the column layout isn't gated on the same 1076px threshold. */
+@media screen and (min-width: $bp-md) {
   .skills-id-route {
-    padding: 0 $space-20;
-
-    &__img-container {
-      display: flex;
-      justify-content: center;
-      min-width: 50%;
-    }
-
-    &__info-container {
-      max-width: 60%;
-    }
-
-    /* Side-by-side bottom row. Projects gets the wider share for its
-     * long-form content; Skills sits beside it as a chip sidebar.
-     * `flex: 2 1 0` / `flex: 1 1 0` keeps a rough 2:1 ratio that
-     * breathes with content instead of locking exact widths. */
     &__bottom-grid {
       display: flex;
       gap: $space-20;
@@ -219,6 +209,22 @@
       &__chip-list {
         justify-content: space-between;
       }
+    }
+  }
+}
+
+@media screen and (min-width: $desktop-small) {
+  .skills-id-route {
+    padding: 0 $space-20;
+
+    &__img-container {
+      display: flex;
+      justify-content: center;
+      min-width: 50%;
+    }
+
+    &__info-container {
+      max-width: 60%;
     }
   }
 }
