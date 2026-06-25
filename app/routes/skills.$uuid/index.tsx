@@ -104,7 +104,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       rol: localized(item, 'rol', locale),
       description: localized(item, 'description', locale),
       projects,
-      skillGroups: getSkillGroupsForJob(SKILLS, item.id),
+      skillGroups: getSkillGroupsForJob(SKILLS, item.id, locale),
       startLabel,
       endLabel,
       duration,

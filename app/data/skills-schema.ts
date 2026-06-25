@@ -22,6 +22,10 @@ const skillRange = z.object({
 
 const skill = z.object({
   name: z.string().min(1),
+  // Optional Spanish sibling. Resolved via `localized(skill, 'name', locale)`.
+  // Tech names (TypeScript, React, etc.) stay literal in both locales — only
+  // soft / meta skills like "Mentoring" → "Mentoría" need translation.
+  name_es: z.string().optional(),
   category: skillCategory,
   ranges: z.array(skillRange).min(1),
 });
