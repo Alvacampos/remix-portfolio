@@ -92,6 +92,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     projects = item.projects;
   }
 
+  // Pre-compute the date strings in the loader so the render is plain
+  // text. `formatDate` doesn't know about react-intl, and threading the
+  // locale through both the loader and the component would split the
+  // source of truth — keep it loader-side.
+  const startLabel = formatDate(item.startDate, '', undefined, locale);
+  const endLabel = item.endDate ? formatDate(item.endDate, '', undefined, locale) : null;
+  const duration = formatDate(item.startDate, item.endDate ?? undefined, 'fullYearMonth', locale);
+
   return {
     data: {
       id: item.id,
@@ -102,6 +110,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       description: localized(item, 'description', locale),
       projects,
       skills: [...getSkillsForJob(SKILLS, item.id)].sort((a, b) => a.localeCompare(b)),
+      startLabel,
+      endLabel,
+      duration,
     },
     imagePath,
     imageDims,
@@ -119,22 +130,18 @@ export function ErrorBoundary() {
 export default function UuidIndex() {
   const { data, imagePath, imageDims } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
-  const { title, projects, startDate, skills } = data;
+  const { title, projects, skills, startLabel, endLabel, duration } = data;
 
   const renderDates = () => (
-    <div>
-      <p>
-        <FormattedMessage id="START_DATE" />: {formatDate(startDate, '')}
+    <div className={getClasses('dates')}>
+      <p className={getClasses('date-range')}>
+        <span>{startLabel}</span>
+        <span aria-hidden="true" className={getClasses('date-arrow')}>
+          →
+        </span>
+        <span>{endLabel ?? <FormattedMessage id="PRESENT" />}</span>
       </p>
-      {data.endDate ? (
-        <p>
-          <FormattedMessage id="END_DATE" />: {formatDate(data.endDate, '')}
-        </p>
-      ) : (
-        <p>
-          <FormattedMessage id="END_DATE" />: <FormattedMessage id="PRESENT" />
-        </p>
-      )}
+      {duration && <p className={getClasses('date-duration')}>{duration}</p>}
     </div>
   );
 
@@ -168,18 +175,20 @@ export default function UuidIndex() {
           </Card>
         </div>
       </div>
-      <div className={getClasses('projects')}>
-        {Array.isArray(projects) ? (
-          <Card title={formatMessage({ id: 'PROJECTS' })} itemList={projects} />
-        ) : (
-          <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
+      <div className={getClasses('bottom-grid')}>
+        <div className={getClasses('projects')}>
+          {Array.isArray(projects) ? (
+            <Card title={formatMessage({ id: 'PROJECTS' })} itemList={projects} />
+          ) : (
+            <Card title={formatMessage({ id: 'PROJECTS' })} texts={projects ? [projects] : []} />
+          )}
+        </div>
+        {skills.length > 0 && (
+          <div className={getClasses('skills')}>
+            <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
+          </div>
         )}
       </div>
-      {skills.length > 0 && (
-        <div className={getClasses('skills')}>
-          <Card title={formatMessage({ id: 'SKILLS' })} skills={skills} showSkillsCta={false} />
-        </div>
-      )}
     </div>
   );
 }

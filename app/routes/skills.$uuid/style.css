@@ -52,6 +52,40 @@
     gap: $space-20;
   }
 
+  &__dates {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+
+  &__date-range {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: $space-8;
+    margin: 0;
+    font-size: $font-16;
+    font-weight: $weight-700;
+    line-height: 1.4;
+    color: var(--fg-base);
+  }
+
+  &__date-arrow {
+    color: var(--accent);
+  }
+
+  &__date-duration {
+    margin: 0;
+    font-size: $font-14;
+    color: var(--fg-muted);
+  }
+
+  &__bottom-grid {
+    display: flex;
+    flex-direction: column;
+    gap: $space-20;
+  }
+
   .card-component {
     /* Detail-page skill chips: match the Carousel chips on /skills so
      * the same visual primitive (pill, Monaspace, $space-4/$space-12
@@ -68,24 +102,38 @@
       flex-wrap: wrap;
     }
 
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: $space-12;
+    }
+
+    /* Project entries render as a header strip + body. The accent
+     * left border + elevated background on the h3 makes each project
+     * scannable, while the text below stays plain. Replaces the
+     * single bullet dot that read as a list item but didn't give the
+     * title any extra weight. */
     &__list-item {
-      position: relative;
-      margin-bottom: 0.75rem;
-      padding-left: 1.25rem;
       list-style: none;
       color: var(--fg-base);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-left: 3px solid var(--accent);
+      border-radius: $border-6;
+      padding: $space-12 $space-16;
 
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0.95em;
-        width: 0.55em;
-        height: 0.55em;
-        background: var(--accent);
-        border-radius: 50%;
-        transform: translateY(-50%);
-        border: 2px solid var(--bg-base);
+      & h3 {
+        margin: 0 0 $space-8;
+        font-size: $font-16;
+        font-weight: $weight-700;
+        color: var(--fg-base);
+        letter-spacing: 0.01em;
+      }
+
+      & p {
+        margin: 0;
+        line-height: 1.5;
+        color: var(--fg-muted);
       }
     }
   }
@@ -129,10 +177,22 @@
       max-width: 60%;
     }
 
+    /* Side-by-side bottom row: Projects card grows (long-form content),
+     * Skills sidebar is a fixed minimum so it reads as a sidebar even
+     * when there are few chips. `align-items: start` so each column
+     * stops at its own height — Skills doesn't stretch to the height
+     * of the Projects column. */
+    &__bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+      gap: $space-20;
+      align-items: start;
+    }
+
     .card-component {
       &__list {
-        padding-left: 1.5rem;
-        margin: 1rem 0;
+        padding-left: 0;
+        margin: 0;
       }
     }
   }

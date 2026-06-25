@@ -82,6 +82,17 @@ describe('formatDate', () => {
     // anchors to August 1 and renders as 08/2018.
     expect(formatDate('2018-08')).toBe('08/2018 - Present');
   });
+
+  it('renders the single-month format in Spanish when locale=es', () => {
+    expect(formatDate('2020-01', '', undefined, 'es')).toBe('enero 2020');
+  });
+
+  it('renders the duration in Spanish when locale=es', () => {
+    // date-fns es locale: "años" / "meses" instead of "years" / "months".
+    const out = formatDate('2020-01', '2022-07', 'fullYearMonth', 'es');
+    expect(out).toMatch(/años|meses/);
+    expect(out).not.toMatch(/years|months/);
+  });
 });
 
 describe('getSkillHeatmapData', () => {

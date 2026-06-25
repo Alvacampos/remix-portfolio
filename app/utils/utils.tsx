@@ -1,4 +1,5 @@
 import { differenceInMonths, format, formatDuration, intervalToDuration } from 'date-fns';
+import { es as dfEs } from 'date-fns/locale';
 
 import type { Skill, SkillsData, WorkItem } from '~/data/skills-schema';
 import type { Locale } from '~/intl';
@@ -117,12 +118,25 @@ export function mergeRouteMeta({ matches }: MetaArg, { title, description }: Rou
 // `YYYY-MM` at the Zod boundary, so this only handles that format.
 const parseYearMonth = (s: string): Date => new Date(`${s}-01T00:00:00`);
 
-export const formatDate = (dateA: string, dateB?: string, formatType?: string) => {
+// `locale` (last arg) opts into Spanish output for the human-readable
+// formats: `fullYearMonth` ("4 años 2 meses") and the single-month case
+// ("agosto 2018"). The numeric `MM/yyyy` branches are locale-neutral
+// and ignore it. `'en'` (the default when omitted) keeps the existing
+// English copy so callers that don't have the locale in scope render
+// unchanged.
+export const formatDate = (
+  dateA: string,
+  dateB?: string,
+  formatType?: string,
+  locale: Locale = 'en'
+) => {
+  const dfLocale = locale === 'es' ? dfEs : undefined;
+
   if (formatType === 'fullYearMonth') {
     const start = parseYearMonth(dateA);
     const end = dateB && dateB !== '' && dateB !== null ? parseYearMonth(dateB) : new Date();
     const duration = intervalToDuration({ start, end });
-    return formatDuration(duration, { format: ['years', 'months'] });
+    return formatDuration(duration, { format: ['years', 'months'], locale: dfLocale });
   }
 
   if (dateB === null || dateB === undefined) {
@@ -130,7 +144,7 @@ export const formatDate = (dateA: string, dateB?: string, formatType?: string) =
   }
 
   if (dateB === '') {
-    return format(parseYearMonth(dateA), 'MMMM yyyy');
+    return format(parseYearMonth(dateA), 'MMMM yyyy', { locale: dfLocale });
   }
 
   return `${format(parseYearMonth(dateA), 'MM/yyyy')} - ${format(parseYearMonth(dateB), 'MM/yyyy')}`;
