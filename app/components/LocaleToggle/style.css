@@ -57,8 +57,13 @@
     cursor: pointer;
     transition: color 200ms ease;
 
+    /* Near-black on the green knob — `#ffffff` against `--accent`
+     * (`#0fbf3e`) is ~2.4:1, below WCAG AA's 4.5:1 normal-text bar
+     * (caught by Lighthouse). `$gray-6` lands at ~6.5:1 against the
+     * same green and reads correctly in both themes since the knob
+     * background is always green. */
     &--active {
-      color: $default-white;
+      color: $gray-6;
     }
 
     /* Tactile feedback on the freshly-clicked active button. The
@@ -76,7 +81,7 @@
 
     &--active:hover,
     &--active:focus-visible {
-      color: $default-white;
+      color: $gray-6;
     }
   }
 }
