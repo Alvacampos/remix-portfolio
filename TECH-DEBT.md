@@ -21,7 +21,7 @@
 | T3  | Technical | P0       | Stop serving `/data/*` publicly                                | done   |
 | T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | done   |
 | T5  | Technical | P1       | Recover `/skills` Lighthouse perf (0.87 → 0.95+)               | open   |
-| T6  | Technical | P1       | Bundle visualizer audit                                        | open   |
+| T6  | Technical | P1       | Bundle visualizer audit                                        | done   |
 | T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | open   |
 | T8  | Technical | P1       | Remove `legacy-peer-deps=true`                                 | done   |
 | T9  | Technical | P2       | React Router v7 migration                                      | open   |
@@ -90,11 +90,19 @@ Likely the LCP element on `/skills/:uuid`. Add `fetchpriority="high"` + `decodin
 
 ### T5 — Recover `/skills` Lighthouse perf (P1)
 
-Latest run shows 0.87 (LCP 3.5s, FCP 2.5s). Investigate: route stylesheet size, Roboto WOFF2 critical path, QR SVG inline bytes. Target 0.95+ mobile.
+Latest prod run shows 0.87 (LCP 3.5s, FCP 2.5s). The T6 bundle audit (below) ruled out JS payload as the main cause — total client JS is 127 KB gzip across all routes, and `/skills` adds only a few KB on top of the shared chunks. Suspects that remain: route stylesheet weight (heatmap + carousel + timeline inlined into one 20 KB CSS), Roboto WOFF2 critical-path cost, server-response latency on the Cloudflare edge for `/skills` specifically. Investigate via WebPageTest waterfall against prod rather than guessing. Target 0.95+ mobile.
 
-### T6 — Bundle visualizer audit (P1)
+### T6 — Bundle visualizer audit (P1) — DONE
 
-`npx vite-bundle-visualizer` against the prod build. Suspect `react-vertical-timeline-component` is the biggest non-React dep. May warrant replacement or further code-splitting.
+Ran `npx vite-bundle-visualizer` on a fresh `npm run build`. **Total client JS: 393 KB raw / 127 KB gzip across all routes.** Per-route initial-page cost ≈ 115 KB gzip (components + root + utils + route chunk + entry.client). Findings:
+
+- **`components-BRNNisoL.js` — 253 KB raw / 80 KB gzip.** React + ReactDOM + Remix runtime. The dominant chunk by far; no easy wins without dropping React itself.
+- **`utils-BgqF83j_.js` — 76 KB raw / 21 KB gzip.** Mostly `date-fns` (`format`, `formatDuration`, `intervalToDuration`, `differenceInMonths`) + the Spanish locale data. Already using named imports — date-fns v3+ is fully tree-shakeable, so this is already the minimum cost for those 4 functions + ES locale.
+- **`root-JC5yJIQD.js` — 31 KB raw / 11 KB gzip.** root.tsx + IntlProvider + react-intl runtime + @formatjs internals.
+- **`react-vertical-timeline-component`** is in its own lazy chunk (`index-CZhEOpFy.js`, 8 KB) and only loads when `/skills` is visited. Not a bottleneck.
+- Per-route chunks (0.6–5 KB each) are appropriately tiny.
+
+**Conclusion: JS payload is not the perf bottleneck.** T5's 0.87 LCP on `/skills` is more likely CSS-side (route stylesheet bundling, font critical path) or server-response latency. Bundle audit findings reduced the T5 search space significantly.
 
 ### T7 — Move visual-baseline regen to CI workflow (P1)
 
