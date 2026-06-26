@@ -20,10 +20,11 @@
   &:hover,
   &:focus-visible {
     background: var(--accent);
-    /* Hard white on the accent green for contrast on both themes —
-     * GitHub's hero-green is dark enough that white text reads
-     * cleanly. */
-    color: #ffffff;
+    /* Near-black on the green: `#ffffff` against `--accent` is only
+     * ~2.4:1 (below WCAG AA 4.5:1) — same finding Lighthouse flagged
+     * on LocaleToggle. `$gray-6` lands at ~6.5:1 and reads correctly
+     * in both themes since the hover background is theme-invariant. */
+    color: $gray-6;
     border-color: var(--accent);
     box-shadow: 0 4px 16px rgba(15, 191, 62, 0.2);
     text-decoration: none;

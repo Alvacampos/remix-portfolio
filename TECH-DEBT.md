@@ -18,8 +18,8 @@
 | --- | --------- | -------- | -------------------------------------------------------------- | ------ |
 | T1  | Technical | P0       | a11y test coverage in CI (axe-playwright)                      | open   |
 | T2  | Technical | P0       | Lighthouse gating in CI                                        | open   |
-| T3  | Technical | P0       | Stop serving `/data/*` publicly                                | open   |
-| T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | open   |
+| T3  | Technical | P0       | Stop serving `/data/*` publicly                                | done   |
+| T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | done   |
 | T5  | Technical | P1       | Recover `/skills` Lighthouse perf (0.87 → 0.95+)               | open   |
 | T6  | Technical | P1       | Bundle visualizer audit                                        | open   |
 | T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | open   |
@@ -47,7 +47,7 @@
 | U2  | UI        | P0       | Print stylesheet (CV page printable)                           | open   |
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | open   |
 | U4  | UI        | P0       | Locale-aware date format on `/education` (match `:slug`)       | open   |
-| U5  | UI        | P0       | Match contrast fix on DownloadBtn hover state                  | open   |
+| U5  | UI        | P0       | Match contrast fix on DownloadBtn hover state                  | done   |
 | U6  | UI        | P1       | `/contact` route (CF Pages Function + Resend / Loops)          | open   |
 | U7  | UI        | P1       | Case studies — `/projects/<slug>` (3-5 deep-dives)             | open   |
 | U8  | UI        | P1       | Per-route OG images                                            | open   |
