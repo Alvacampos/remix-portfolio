@@ -231,24 +231,31 @@ export default function App() {
 }
 
 export function ErrorBoundary() {
+  // Layout runs around this boundary, so the html/head/body shell is
+  // intact — we just render the error panel where <Outlet /> would.
+  // useRouteLoaderData lets us pick the user's locale even when the
+  // child route's loader is what threw (the root loader still ran).
+  // Falls back to English when the root itself failed.
   const error = useRouteError();
+  const data = useRouteLoaderData<LayoutData>('root');
+  const locale: Locale = data?.locale ?? 'en';
+  const m = messagesFor(locale);
 
-  if (isRouteErrorResponse(error)) {
-    return (
-      <div className="error-boundary">
-        <p>Page under development.</p>
-      </div>
-    );
-  }
-  if (error instanceof Error) {
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>{error.message}</p>
-        <p>The stack trace is:</p>
-        <pre>{error.stack}</pre>
-      </div>
-    );
-  }
-  return <h1>Unknown Error</h1>;
+  const isResponse = isRouteErrorResponse(error);
+  const status = isResponse ? error.status : 'Error';
+  const isNotFound = isResponse && error.status === 404;
+
+  const title = isNotFound ? m.ERROR_NOT_FOUND_TITLE : m.ERROR_GENERIC_TITLE;
+  const body = isNotFound ? m.ERROR_NOT_FOUND_BODY : m.ERROR_GENERIC_BODY;
+
+  return (
+    <div className="error-boundary">
+      <p className="error-boundary__code">{status}</p>
+      <h1 className="error-boundary__title">{title}</h1>
+      <p className="error-boundary__body">{body}</p>
+      <a className="error-boundary__action" href="/">
+        <span aria-hidden="true">←</span> {m.BACK_TO_HOME}
+      </a>
+    </div>
+  );
 }

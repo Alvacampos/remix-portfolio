@@ -1,5 +1,6 @@
 {
   "BACK_TO_EDUCATION": "Volver a Educación",
+  "BACK_TO_HOME": "Volver al inicio",
   "BACK_TO_SKILLS": "Volver a Skills",
   "CERTIFICATION": "Certificación",
   "CERTIFICATIONS": "Certificaciones",
@@ -18,6 +19,10 @@
   "EDUCATION": "Educación",
   "ERROR_EDUCATION_BODY": "No pudimos cargar esta entrada educativa. Es posible que haya sido removida o que el enlace sea inválido.",
   "ERROR_EDUCATION_TITLE": "Esta entrada educativa no está disponible",
+  "ERROR_GENERIC_BODY": "Algo salió mal al cargar esta página. Intenta de nuevo en un momento, o volvé al inicio.",
+  "ERROR_GENERIC_TITLE": "Algo salió mal",
+  "ERROR_NOT_FOUND_BODY": "No pudimos encontrar esa página. El enlace puede estar desactualizado o la URL mal escrita.",
+  "ERROR_NOT_FOUND_TITLE": "Página no encontrada",
   "ERROR_WORK_ITEM_BODY": "No pudimos cargar esta experiencia laboral. Es posible que haya sido removida o que el enlace sea inválido.",
   "ERROR_WORK_ITEM_TITLE": "Esta experiencia laboral no está disponible",
   "EXTRA_ACTIVITIES": "Actividades extra",
