@@ -17,6 +17,16 @@
   --accent: $green-4;
   --accent-soft: $green-3;
   --accent-muted: $green-6;
+  /* Higher-contrast accent for text/icons sitting on --accent-muted
+   * backgrounds (chips, badges). On dark theme green-3 reads cleanly
+   * against the deep green-6 muted; light theme overrides this to
+   * green-6 (near-black) for the inverse case. */
+  --accent-on-muted: $green-3;
+  /* Foreground color for elements sitting ON the bright/dark --accent
+   * fill (e.g. LocaleToggle active-button knob, DownloadBtn hover).
+   * Dark theme accent is bright green → use near-black text.
+   * Light theme accent is deep green → use near-white text. */
+  --fg-on-accent: $gray-6;
 
   /* Height the bottom-stuck mobile nav claims from the viewport.
    * Home subtracts this from its min-height so the body doesn't end
@@ -33,13 +43,27 @@
   --bg-nav: $surface-nav-light;
   --bg-elevated: $surface-elevated-light;
   --fg-base: $gray-6;
-  --fg-muted: $gray-4;
-  --fg-faint: $gray-3;
+  /* gray-4 (#909692) is only 2.85:1 against surface-page-light —
+   * fails WCAG AA. gray-7 (#555b58) lands ~5:1 and reads as a real
+   * muted body text in light theme. */
+  --fg-muted: $gray-7;
+  --fg-faint: $gray-4;
   --border-default: $border-card-light;
   --border-emphasis: $gray-4;
-  --accent: $green-4;
-  --accent-soft: $green-5;
+  /* green-4 (#0fbf3e GitHub green) is only 2.3:1 against
+   * surface-page-light — fails WCAG AA for normal text and only
+   * scrapes large-text. Light theme uses green-5 (deeper teal-tinted)
+   * which clears 4.0:1 for both. Borders and fills shift too, which
+   * is fine: the brand is "green", not specifically #0fbf3e. */
+  --accent: $green-5;
+  --accent-soft: $green-4;
   --accent-muted: $green-1;
+  /* Accent text on the pale green-1 muted background needs near-black
+   * to pass 4.5:1. green-6 lands ~17:1. */
+  --accent-on-muted: $green-6;
+  /* Light theme accent is deep green-5 (#066456) — needs near-white
+   * text for AA. $default-white lands ~7.5:1. */
+  --fg-on-accent: $default-white;
 
   color-scheme: light;
 }

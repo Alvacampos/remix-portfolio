@@ -16,7 +16,7 @@
 
 | ID  | Section   | Priority | Item                                                           | Status |
 | --- | --------- | -------- | -------------------------------------------------------------- | ------ |
-| T1  | Technical | P0       | a11y test coverage in CI (axe-playwright)                      | open   |
+| T1  | Technical | P0       | a11y test coverage in CI (axe-playwright)                      | done   |
 | T2  | Technical | P0       | Lighthouse gating in CI                                        | open   |
 | T3  | Technical | P0       | Stop serving `/data/*` publicly                                | done   |
 | T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | done   |
