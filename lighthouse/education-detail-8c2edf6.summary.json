@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-26T10:37:49.881Z",
+  "fetchTime": "2026-06-26T12:24:07.383Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "d0ee4c5",
+  "commit": "8c2edf6",
   "categories": {
-    "performance": 0.93,
-    "accessibility": 0.96,
+    "performance": 0.94,
+    "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2292.6755,
-      "score": 0.75
+      "displayValue": "2.2 s",
+      "numericValue": 2171.6588,
+      "score": 0.79
     },
     "lcp": {
       "displayValue": "2.7 s",
-      "numericValue": 2742.6755,
-      "score": 0.84
+      "numericValue": 2673.4029,
+      "score": 0.86
     },
     "si": {
-      "displayValue": "2.3 s",
-      "numericValue": 2292.6755,
+      "displayValue": "2.2 s",
+      "numericValue": 2171.6588,
       "score": 0.99
     },
     "tbt": {
@@ -38,21 +38,21 @@
     },
     "tti": {
       "displayValue": "2.7 s",
-      "numericValue": 2742.6755,
+      "numericValue": 2681.59437,
       "score": 0.97
     },
-    "ttfb": 43
+    "ttfb": 52
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.75
+      "score": 0.79
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.84
+      "score": 0.86
     },
     {
       "id": "speed-index",
@@ -63,11 +63,6 @@
       "id": "interactive",
       "title": "Time to Interactive",
       "score": 0.97
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
     },
     {
       "id": "unused-javascript",
@@ -87,7 +82,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
