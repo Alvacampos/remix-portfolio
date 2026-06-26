@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-26T11:48:24.570Z",
+  "fetchTime": "2026-06-26T17:13:53.577Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "97d8535",
+  "commit": "f4995be",
   "categories": {
     "performance": 0.98,
-    "accessibility": 0.96,
+    "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
       "displayValue": "1.5 s",
-      "numericValue": 1521.3038000000001,
+      "numericValue": 1522.2221,
       "score": 0.95
     },
     "lcp": {
       "displayValue": "2.3 s",
-      "numericValue": 2271.3038,
+      "numericValue": 2272.2221,
       "score": 0.94
     },
     "si": {
       "displayValue": "1.5 s",
-      "numericValue": 1521.3038000000001,
+      "numericValue": 1522.2221,
       "score": 1
     },
     "tbt": {
@@ -38,10 +38,10 @@
     },
     "tti": {
       "displayValue": "2.3 s",
-      "numericValue": 2271.3038,
+      "numericValue": 2272.2221,
       "score": 0.99
     },
-    "ttfb": 49
+    "ttfb": 73
   },
   "failingAudits": [
     {
@@ -58,11 +58,6 @@
       "id": "interactive",
       "title": "Time to Interactive",
       "score": 0.99
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
     },
     {
       "id": "unused-javascript",

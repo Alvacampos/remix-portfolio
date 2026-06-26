@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-26T16:54:28.496Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-06-26T17:13:46.407Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "46d1ce7",
+  "commit": "f4995be",
   "categories": {
-    "performance": 0.98,
+    "performance": 0.96,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.5 s",
-      "numericValue": 1525.8952,
-      "score": 0.95
+      "displayValue": "2.0 s",
+      "numericValue": 1969.4243000000001,
+      "score": 0.85
     },
     "lcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2275.8952,
-      "score": 0.93
+      "displayValue": "2.5 s",
+      "numericValue": 2512.4243,
+      "score": 0.89
     },
     "si": {
-      "displayValue": "1.5 s",
-      "numericValue": 1525.8952,
-      "score": 1
+      "displayValue": "2.0 s",
+      "numericValue": 1969.4243000000001,
+      "score": 0.99
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,27 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.3 s",
-      "numericValue": 2275.8952,
-      "score": 0.99
+      "displayValue": "2.5 s",
+      "numericValue": 2521.7243000000003,
+      "score": 0.98
     },
-    "ttfb": 75
+    "ttfb": 102
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.95
+      "score": 0.85
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.93
+      "score": 0.89
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "unused-javascript",
@@ -70,6 +75,11 @@
       "score": 0.5
     },
     {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "score": 0
+    },
+    {
       "id": "network-dependency-tree-insight",
       "title": "Network dependency tree",
       "score": 0
@@ -77,7 +87,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
