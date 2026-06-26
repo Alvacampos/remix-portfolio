@@ -11,8 +11,20 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const SITE = 'https://gonzalo-alvarez-campos-cv.com';
+// `LIGHTHOUSE_SITE` overrides the default production URL. Set to
+// `http://localhost:8788` when gating a PR against a local preview
+// build, or leave unset to score the deployed prod site (the daily
+// post-merge run).
+const SITE = process.env.LIGHTHOUSE_SITE || 'https://gonzalo-alvarez-campos-cv.com';
 const SHA = (process.env.LIGHTHOUSE_SHA || 'local').slice(0, 7);
+
+// `LIGHTHOUSE_GATE=1` turns the run into a hard CI gate: after every
+// route is scored, exit non-zero if any Performance category falls
+// below `LIGHTHOUSE_PERF_MIN` (default 0.85). The gate is opt-in
+// because the post-merge job still wants warn-only behaviour
+// (perf drift on the deployed site is informational, not blocking).
+const GATE = process.env.LIGHTHOUSE_GATE === '1';
+const PERF_MIN = Number(process.env.LIGHTHOUSE_PERF_MIN || '0.85');
 
 // Same five routes as the visual-regression suite.
 // (Note: /skills isn't in the visual suite — see Stage 16 — but it IS
@@ -95,6 +107,8 @@ async function main() {
     chromeFlags: ['--headless=new', '--no-sandbox', '--disable-gpu'],
   });
 
+  const belowThreshold = [];
+
   try {
     for (const route of ROUTES) {
       const url = `${SITE}${route.path}`;
@@ -112,9 +126,22 @@ async function main() {
       console.log(
         `  perf=${cat.performance} a11y=${cat.accessibility} bp=${cat['best-practices']} seo=${cat.seo}`
       );
+      if (GATE && typeof cat.performance === 'number' && cat.performance < PERF_MIN) {
+        belowThreshold.push({ name: route.name, score: cat.performance });
+      }
     }
   } finally {
     await chrome.kill();
+  }
+
+  if (GATE && belowThreshold.length > 0) {
+    console.error(
+      `\nLighthouse gate failed: ${belowThreshold.length} route(s) below perf ${PERF_MIN}:`
+    );
+    for (const r of belowThreshold) {
+      console.error(`  - ${r.name}: ${r.score}`);
+    }
+    process.exit(1);
   }
 
   console.log('Done. Summaries written to lighthouse/. Full reports in lighthouse-reports/.');

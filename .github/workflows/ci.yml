@@ -98,3 +98,75 @@ jobs:
       - run: npm ci
 
       - run: npm run build-storybook
+
+  lighthouse-pr:
+    name: Lighthouse gate
+    # Pre-merge Lighthouse against a production-shape preview build
+    # running locally on the runner. Faster than waiting for the
+    # Cloudflare Pages preview deploy URL (no Cloudflare round-trip
+    # to plumb in), and gates the same code path that ships.
+    # Doesn't catch CDN/edge regressions — the post-merge
+    # .github/workflows/lighthouse.yml run against prod still does.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - run: npm ci
+
+      # lighthouse + chrome-launcher are runtime-only (same pattern as
+      # the post-merge workflow). Install fresh per run.
+      - name: Install Lighthouse runtime
+        run: npm install --no-save --no-audit --no-fund lighthouse@13 chrome-launcher@1
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Start wrangler preview server
+        # Background process; capture the PID so the teardown step
+        # can kill it cleanly even if Lighthouse fails.
+        run: |
+          npx wrangler pages dev ./build/client --port 8788 > wrangler.log 2>&1 &
+          echo "WRANGLER_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for preview server readiness
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:8788/ > /dev/null; then
+              echo "Preview ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Preview server did not come up in 30s. Wrangler log:"
+          cat wrangler.log
+          exit 1
+
+      - name: Run Lighthouse gate
+        env:
+          LIGHTHOUSE_SITE: http://localhost:8788
+          LIGHTHOUSE_GATE: '1'
+          LIGHTHOUSE_PERF_MIN: '0.85'
+          LIGHTHOUSE_SHA: ${{ github.sha }}
+        run: node scripts/run-lighthouse.mjs
+
+      - name: Stop wrangler preview
+        if: always()
+        run: |
+          if [ -n "$WRANGLER_PID" ]; then
+            kill "$WRANGLER_PID" 2>/dev/null || true
+          fi
+
+      - name: Upload Lighthouse reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-pr-reports
+          path: |
+            lighthouse-reports/
+            wrangler.log
+          retention-days: 7
