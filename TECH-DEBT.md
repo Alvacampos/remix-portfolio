@@ -28,7 +28,7 @@
 | T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | open   |
 | T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | open   |
 | T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | open   |
-| T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | open   |
+| T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | done   |
 | T14 | Technical | P3       | Replace husky with simple-git-hooks                            | open   |
 | T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | open   |
 | C1  | Cleanup   | P0       | Doc drift: README locale claims                                | done   |
@@ -41,8 +41,8 @@
 | C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | open   |
 | C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | open   |
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
-| C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | open   |
-| C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | open   |
+| C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | done   |
+| C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | done   |
 | U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | done   |
 | U2  | UI        | P0       | Print stylesheet (CV page printable)                           | done   |
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
@@ -184,13 +184,13 @@ The Learning / Future arrays still live inline in [app/components/TechTree/index
 
 Schema accepts any string for `name_es`. A typo (Mentoria vs Mentoría) won't be caught at boot. Low risk but worth a guard once the soft-skill set stabilizes.
 
-### C11 — Verify `npm run build:og` still works (P3)
+### C11 — Verify `npm run build:og` still works (P3) — DONE
 
-`scripts/render-og-image.mjs` exists. Run clean and confirm `public/assets/img/og.png` regenerates correctly.
+Ran `npm run build:og` on `main` after the per-route OG PR landed. All four PNGs (`og-home.png`, `og-education.png`, `og-projects.png`, `og-skills.png`) re-rendered deterministically with no byte drift against the committed copies. The script reads `scripts/og/<slug>.svg`, swaps in the title/tagline at template time, and writes to `public/assets/img/og-<slug>.png` via `@resvg/resvg-js`. Repeatable + idempotent.
 
-### C12 — Audit `app/assets/icons/` for orphans (P3)
+### C12 — Audit `app/assets/icons/` for orphans (P3) — DONE
 
-9 source SVGs today. Confirm each maps to a real consumer; remove orphans. `app/components/icons/` is generated so it can't be source-of-truth.
+Audited the 8 source SVGs against the codebase. All map to a real consumer: `Briefcase` (NavBar + Timeline), `Education` (NavBar + Timeline + both education routes), `GithubIcon`, `Home`, `LinkedinIcon`, `Paper` (all NavBar), `Sun` + `Moon` (ThemeToggle). No orphans to remove.
 
 ---
 

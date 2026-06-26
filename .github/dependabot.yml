@@ -35,7 +35,6 @@ updates:
         patterns:
           - "storybook"
           - "@storybook/*"
-          - "@chromatic-com/*"
           - "eslint-plugin-storybook"
       types:
         patterns:
