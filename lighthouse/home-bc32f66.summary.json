@@ -1,35 +1,35 @@
 {
-  "fetchTime": "2026-06-19T20:09:58.428Z",
+  "fetchTime": "2026-06-26T10:46:46.080Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "lighthouseVersion": "13.4.0",
-  "commit": "08b3fd8",
+  "commit": "bc32f66",
   "categories": {
-    "performance": 0.83,
-    "accessibility": 1,
+    "performance": 0.87,
+    "accessibility": 0.96,
     "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
       "displayValue": "2.6 s",
-      "numericValue": 2572.95,
-      "score": 0.64
+      "numericValue": 2605.731,
+      "score": 0.63
     },
     "lcp": {
-      "displayValue": "3.5 s",
-      "numericValue": 3475.148,
-      "score": 0.64
+      "displayValue": "2.7 s",
+      "numericValue": 2719.63875,
+      "score": 0.85
     },
     "si": {
       "displayValue": "2.6 s",
-      "numericValue": 2572.95,
+      "numericValue": 2605.731,
       "score": 0.97
     },
     "tbt": {
-      "displayValue": "240 ms",
-      "numericValue": 244,
-      "score": 0.85
+      "displayValue": "280 ms",
+      "numericValue": 279.10474999999997,
+      "score": 0.81
     },
     "cls": {
       "displayValue": "0",
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.5 s",
-      "numericValue": 3475.148,
-      "score": 0.92
+      "displayValue": "3.2 s",
+      "numericValue": 3241.1407750000008,
+      "score": 0.94
     },
-    "ttfb": 308
+    "ttfb": 267
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.64
+      "score": 0.63
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.64
+      "score": 0.85
     },
     {
       "id": "speed-index",
@@ -62,12 +62,12 @@
     {
       "id": "total-blocking-time",
       "title": "Total Blocking Time",
-      "score": 0.85
+      "score": 0.81
     },
     {
       "id": "max-potential-fid",
       "title": "Max Potential First Input Delay",
-      "score": 0.58
+      "score": 0.56
     },
     {
       "id": "errors-in-console",
@@ -77,7 +77,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.92
+      "score": 0.94
     },
     {
       "id": "mainthread-work-breakdown",
@@ -85,8 +85,8 @@
       "score": 0
     },
     {
-      "id": "bootup-time",
-      "title": "Reduce JavaScript execution time",
+      "id": "color-contrast",
+      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
       "score": 0
     },
     {

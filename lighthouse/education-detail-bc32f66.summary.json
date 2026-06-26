@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-21T15:38:57.795Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-06-26T10:47:13.825Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "f04075a",
+  "commit": "bc32f66",
   "categories": {
-    "performance": 0.9,
-    "accessibility": 0.95,
-    "best-practices": 0.96,
+    "performance": 0.94,
+    "accessibility": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.1 s",
-      "numericValue": 2126.7102,
-      "score": 0.8
+      "displayValue": "2.3 s",
+      "numericValue": 2282.3662,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "3.3 s",
-      "numericValue": 3326.7102,
-      "score": 0.69
+      "displayValue": "2.7 s",
+      "numericValue": 2732.3662,
+      "score": 0.85
     },
     "si": {
-      "displayValue": "2.1 s",
-      "numericValue": 2126.7102,
+      "displayValue": "2.3 s",
+      "numericValue": 2282.3662,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.3 s",
-      "numericValue": 3326.7102000000004,
-      "score": 0.93
+      "displayValue": "2.7 s",
+      "numericValue": 2732.3662,
+      "score": 0.97
     },
-    "ttfb": 33
+    "ttfb": 46
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.8
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.69
+      "score": 0.85
     },
     {
       "id": "speed-index",
@@ -62,12 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.93
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
+      "score": 0.97
     },
     {
       "id": "color-contrast",
