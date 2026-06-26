@@ -26,6 +26,15 @@ const SHA = (process.env.LIGHTHOUSE_SHA || 'local').slice(0, 7);
 const GATE = process.env.LIGHTHOUSE_GATE === '1';
 const PERF_MIN = Number(process.env.LIGHTHOUSE_PERF_MIN || '0.85');
 
+// `LIGHTHOUSE_GATE_ROUTES=<csv>` limits the gate's threshold check to
+// the named routes (everything else is scored + reported but NOT
+// gated). Useful when one route has consistently higher CI variance
+// than the others — score it for visibility, don't fail the build on
+// it. Unset = gate every route.
+const GATE_ROUTES = process.env.LIGHTHOUSE_GATE_ROUTES
+  ? new Set(process.env.LIGHTHOUSE_GATE_ROUTES.split(',').map((s) => s.trim()))
+  : null;
+
 // Same five routes as the visual-regression suite.
 // (Note: /skills isn't in the visual suite — see Stage 16 — but it IS
 // the route we've been benchmarking since Stage 7, so it stays in the
@@ -126,7 +135,12 @@ async function main() {
       console.log(
         `  perf=${cat.performance} a11y=${cat.accessibility} bp=${cat['best-practices']} seo=${cat.seo}`
       );
-      if (GATE && typeof cat.performance === 'number' && cat.performance < PERF_MIN) {
+      if (
+        GATE &&
+        (GATE_ROUTES === null || GATE_ROUTES.has(route.name)) &&
+        typeof cat.performance === 'number' &&
+        cat.performance < PERF_MIN
+      ) {
         belowThreshold.push({ name: route.name, score: cat.performance });
       }
     }
