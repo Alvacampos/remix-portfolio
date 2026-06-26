@@ -1,7 +1,7 @@
 import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
-import { Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
+import { Briefcase, Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
 import LocaleToggle from '~/components/LocaleToggle';
 import ThemeToggle from '~/components/ThemeToggle';
 import type { Locale } from '~/intl';
@@ -16,6 +16,7 @@ const LINKEDIN_URL = 'https://www.linkedin.com/in/gonzaloalvarezcampos/';
 const MAIN_NAV = [
   { url: './', labelId: 'HOME', leftIcon: Home },
   { url: './skills', labelId: 'CV', leftIcon: Paper },
+  { url: './projects', labelId: 'PROJECTS', leftIcon: Briefcase },
   { url: './education', labelId: 'EDUCATION', leftIcon: Education },
 ] as const;
 
