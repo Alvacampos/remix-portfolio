@@ -25,6 +25,8 @@ export const meta: MetaFunction<typeof loader> = (args) =>
   mergeRouteMeta(args, {
     title: `${args.data?.data?.title ?? 'Case study'} — Gonzalo Alvarez Campos`,
     description: args.data?.data?.summary ?? 'Project case study.',
+    // Detail page inherits the parent section's OG.
+    ogImage: 'projects',
   });
 
 const BLOCK = 'projects-id-route';

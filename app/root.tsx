@@ -22,7 +22,10 @@ const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.v2.woff2';
 // Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
 // non-relative image URLs. The PNG itself is rendered offline from
 // scripts/og-image.svg via scripts/render-og-image.mjs.
-const OG_IMAGE_URL = `${SITE_URL}/assets/img/og.png`;
+// Default OG image (the home variant). Per-route overrides flow
+// through mergeRouteMeta's `ogImage` prop in app/utils/utils.tsx —
+// see scripts/og/ for the per-route SVG templates.
+const OG_IMAGE_URL = `${SITE_URL}/assets/img/og-home.png`;
 
 export function links() {
   return [

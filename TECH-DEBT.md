@@ -39,7 +39,7 @@
 | C6  | Cleanup   | P2       | Rename ambiguous `Programming` meta skill                      | open   |
 | C7  | Cleanup   | P2       | Merge `getSkillsForJob` into `getSkillGroupsForJob`            | open   |
 | C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | open   |
-| C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of Carousel component                | open   |
+| C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | open   |
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | open   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | open   |
@@ -50,7 +50,7 @@
 | U5  | UI        | P0       | Match contrast fix on DownloadBtn hover state                  | done   |
 | U6  | UI        | P1       | `/contact` route (CF Pages Function + Resend / Loops)          | open   |
 | U7  | UI        | P1       | Case studies — `/projects/<slug>` (3-5 deep-dives)             | done   |
-| U8  | UI        | P1       | Per-route OG images                                            | open   |
+| U8  | UI        | P1       | Per-route OG images                                            | done   |
 | U9  | UI        | P1       | 404 page polish (match `/skills/:uuid` error UI)               | done   |
 | U10 | UI        | P1       | Spanish CV PDF (flip `HAS_ES_CV`)                              | open   |
 | U11 | UI        | P2       | `/blog` or `/notes` — engineering write-ups                    | open   |
@@ -176,9 +176,9 @@ Group helper is a strict superset. Flat-list helper is only used by `/skills` in
 
 [app/utils/utils.tsx](app/utils/utils.tsx) is approaching 400 lines. `mergeRouteMeta` has a distinct concern (Remix meta tags) and belongs in `utils/meta.ts`.
 
-### C9 — Move `FORWARD_GROUPS` out of Carousel component (P3)
+### C9 — Move `FORWARD_GROUPS` out of TechTree component (P3)
 
-The Learning / Future arrays still live inline in [app/components/Carousel/index.tsx](app/components/Carousel/index.tsx). Could move to a constants file, or — for full source-of-truth consistency — into `skills.json` under a new `FORWARD_LOOKING` block.
+The Learning / Future arrays still live inline in [app/components/TechTree/index.tsx](app/components/TechTree/index.tsx). Could move to a constants file, or — for full source-of-truth consistency — into `skills.json` under a new `FORWARD_LOOKING` block.
 
 ### C10 — Validate `name_es` typos against a locale registry (P3)
 

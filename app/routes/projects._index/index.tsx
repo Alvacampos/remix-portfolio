@@ -17,6 +17,7 @@ export const meta: MetaFunction = (args) =>
     title: 'Case Studies — Gonzalo Alvarez Campos',
     description:
       'Selected case studies from recent contract work — abstracted where client names are under NDA. Problem / Constraints / Approach / Outcome for each.',
+    ogImage: 'projects',
   });
 
 const BLOCK = 'projects-route';

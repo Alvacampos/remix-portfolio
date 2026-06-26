@@ -11,33 +11,22 @@
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)"/>
-
-  <!-- Accent rail along the left edge -->
   <rect x="0" y="0" width="12" height="630" fill="url(#accent)"/>
-
-  <!-- Subtle grid texture, faint -->
   <g stroke="#30363d" stroke-width="1" opacity="0.18">
     <line x1="0" y1="120" x2="1200" y2="120"/>
     <line x1="0" y1="510" x2="1200" y2="510"/>
   </g>
 
-  <!-- Top label -->
-  <text x="80" y="180" fill="#2ea043" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700" letter-spacing="3">PORTFOLIO · CV</text>
+  <text x="80" y="180" fill="#2ea043" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700" letter-spacing="3">SKILLS · WORK EXPERIENCE</text>
 
-  <!-- Name: first name on one line, family name on the next so the
-       family name reads as atomic ("Alvarez Campos" together). -->
   <text x="80" y="300" fill="#f0f6fc" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="84" font-weight="700">Gonzalo</text>
   <text x="80" y="395" fill="#f0f6fc" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="84" font-weight="700">Alvarez Campos</text>
 
-  <!-- Role line -->
-  <text x="80" y="465" fill="#c9d1d9" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="36" font-weight="400">Software Engineer</text>
+  <text x="80" y="465" fill="#c9d1d9" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="36" font-weight="400">7+ years across React, TypeScript, Remix, Next.js</text>
 
-  <!-- Bottom URL bar -->
-  <text x="80" y="560" fill="#8b949e" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" font-weight="400">gonzalo-alvarez-campos-cv.com</text>
+  <text x="80" y="560" fill="#8b949e" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" font-weight="400">gonzalo-alvarez-campos-cv.com/skills</text>
 
-  <!-- Decorative chip strip in the bottom-right.
-       Chips: React, TypeScript, Next.js, Node.js, Python, +N more.
-       Widths hand-tuned for 18px bold Roboto + 16px horizontal padding. -->
+  <!-- Tech chip strip matching the page content -->
   <g transform="translate(580, 530)" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="700">
     <rect x="0" y="0" width="74" height="34" rx="10" fill="#161b22" stroke="#30363d"/>
     <text x="37" y="22" fill="#f0f6fc" text-anchor="middle">React</text>
