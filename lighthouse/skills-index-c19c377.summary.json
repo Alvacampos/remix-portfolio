@@ -1,0 +1,88 @@
+{
+  "fetchTime": "2026-06-26T21:07:34.030Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.4.0",
+  "commit": "c19c377",
+  "categories": {
+    "performance": 0.97,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "1.5 s",
+      "numericValue": 1526.9983,
+      "score": 0.95
+    },
+    "lcp": {
+      "displayValue": "2.4 s",
+      "numericValue": 2426.9982999999997,
+      "score": 0.91
+    },
+    "si": {
+      "displayValue": "1.6 s",
+      "numericValue": 1574.7687600000293,
+      "score": 1
+    },
+    "tbt": {
+      "displayValue": "50 ms",
+      "numericValue": 47,
+      "score": 1
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "2.6 s",
+      "numericValue": 2595.9982999999997,
+      "score": 0.98
+    },
+    "ttfb": 112
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.95
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.91
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.98
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.98
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
