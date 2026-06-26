@@ -73,6 +73,34 @@
     height: 100%;
   }
 
+  /* Badge shown above the card title for an in-progress degree.
+   * Pulsing accent dot signals "live" status without animation noise
+   * (respects prefers-reduced-motion below). */
+  &__in-progress-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: $space-8;
+    padding: $space-4 $space-12;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-muted);
+    color: var(--accent);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__in-progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: in-progress-pulse 2s ease-in-out infinite;
+  }
+
   &__card-wrapper--certification-wrapper {
     display: flex;
     flex-direction: column;
@@ -91,6 +119,25 @@
         outline: none;
       }
     }
+  }
+}
+
+@keyframes in-progress-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .education-route__in-progress-dot {
+    animation: none;
   }
 }
 

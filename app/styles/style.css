@@ -144,3 +144,68 @@ main {
     padding: 0;
   }
 }
+
+/* Print: assume a recruiter Ctrl-P'd a route to share or save. Strip
+ * chrome (navbar, skip link, toggles, hover states), force light
+ * theme for ink savings, expand main to the full page width, and
+ * print external URLs after links so the document stays useful
+ * offline. */
+@media print {
+  :root {
+    --bg-base: #ffffff;
+    --bg-surface: #ffffff;
+    --bg-elevated: #ffffff;
+    --fg-base: #000000;
+    --fg-muted: #444444;
+    --accent: #000000;
+    --accent-muted: transparent;
+    --border-default: #cccccc;
+    --border-emphasis: #888888;
+  }
+
+  body {
+    display: block;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  main {
+    padding: 0;
+    margin: 0;
+  }
+
+  .navbar-component,
+  .root__skip-link,
+  .skills-id-route__back-link,
+  .education-id-route__back-link,
+  .download-btn,
+  .theme-toggle,
+  .locale-toggle {
+    display: none !important;
+  }
+
+  /* External links: print their URL alongside so the document still
+   * works on paper. Internal anchors and `mailto:` are skipped. */
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    color: #555555;
+    word-break: break-all;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  .card-component {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+}
