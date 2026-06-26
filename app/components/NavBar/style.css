@@ -28,16 +28,25 @@
   &__special-anchor-container {
     display: flex;
     align-items: center;
-    /* Mobile: space-evenly distributes equal whitespace including the
-     * edges (better for two items on a narrow bottom-stuck nav).
-     * Desktop overrides to space-around. Both rows share identical
-     * flex + padding so the theme/locale pills above sit on the same
-     * horizontal anchors as the GitHub/LinkedIn icons below. */
-    justify-content: space-evenly;
     gap: $space-8;
     height: $space-40;
     padding: 0 $space-12;
     box-shadow: inset 0 -1px 0 var(--border-emphasis);
+  }
+
+  /* Both rows wrap each item in an `__utility-slot` cell. The cell
+   * takes its half of the row width via `flex: 1 1 0` and centers
+   * its content; the inner control (ThemeToggle / LocaleToggle /
+   * GitHub anchor / LinkedIn anchor) keeps its intrinsic width.
+   * Effect: the items sit on identical X anchors across both rows
+   * even though their natural widths differ — without stretching
+   * the controls themselves. */
+  &__utility-slot {
+    flex: 1 1 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 
   &__special-anchor-container {
@@ -171,7 +180,9 @@
 
     &__utility-row,
     &__special-anchor-container {
-      justify-content: space-around;
+      /* Column-equalization (every `& > *` gets `flex: 1 1 0`) does
+       * the alignment work at every width; the desktop variant just
+       * bumps horizontal padding so the rail breathes. */
       padding: 0 $space-20;
     }
 
