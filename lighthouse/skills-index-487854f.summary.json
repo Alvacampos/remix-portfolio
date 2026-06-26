@@ -1,9 +1,9 @@
 {
-  "fetchTime": "2026-06-26T15:41:58.993Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-06-26T15:57:12.666Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "a553d13",
+  "commit": "487854f",
   "categories": {
     "performance": 0.98,
     "accessibility": 1,
@@ -13,22 +13,22 @@
   "metrics": {
     "fcp": {
       "displayValue": "1.5 s",
-      "numericValue": 1515.6826,
+      "numericValue": 1528.7156,
       "score": 0.95
     },
     "lcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2265.6826,
-      "score": 0.94
+      "displayValue": "2.4 s",
+      "numericValue": 2353.7156,
+      "score": 0.92
     },
     "si": {
-      "displayValue": "1.5 s",
-      "numericValue": 1515.6826,
+      "displayValue": "1.6 s",
+      "numericValue": 1591.8666511389438,
       "score": 1
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "10 ms",
+      "numericValue": 13,
       "score": 1
     },
     "cls": {
@@ -37,11 +37,11 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.3 s",
-      "numericValue": 2265.6826,
-      "score": 0.99
+      "displayValue": "2.5 s",
+      "numericValue": 2505.7156000000004,
+      "score": 0.98
     },
-    "ttfb": 40
+    "ttfb": 71
   },
   "failingAudits": [
     {
@@ -52,12 +52,12 @@
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.94
+      "score": 0.92
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "unused-javascript",
@@ -77,7 +77,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
