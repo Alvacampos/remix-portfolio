@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-26T11:48:37.397Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-26T16:33:14.688Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "97d8535",
+  "commit": "ca4ab5f",
   "categories": {
-    "performance": 0.97,
-    "accessibility": 0.96,
+    "performance": 0.96,
+    "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.4 s",
-      "numericValue": 1372.7251,
-      "score": 0.97
+      "displayValue": "2.0 s",
+      "numericValue": 1970.0079,
+      "score": 0.85
     },
     "lcp": {
       "displayValue": "2.4 s",
-      "numericValue": 2422.7251,
+      "numericValue": 2439.0079,
       "score": 0.91
     },
     "si": {
-      "displayValue": "1.4 s",
-      "numericValue": 1372.7251,
-      "score": 1
+      "displayValue": "2.0 s",
+      "numericValue": 1970.0079,
+      "score": 0.99
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -38,16 +38,16 @@
     },
     "tti": {
       "displayValue": "2.4 s",
-      "numericValue": 2422.7251000000006,
+      "numericValue": 2440.9079,
       "score": 0.98
     },
-    "ttfb": 50
+    "ttfb": 68
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.97
+      "score": 0.85
     },
     {
       "id": "largest-contentful-paint",
@@ -55,14 +55,14 @@
       "score": 0.91
     },
     {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.99
+    },
+    {
       "id": "interactive",
       "title": "Time to Interactive",
       "score": 0.98
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
     },
     {
       "id": "unused-javascript",
@@ -73,6 +73,11 @@
       "id": "cache-insight",
       "title": "Use efficient cache lifetimes",
       "score": 0.5
+    },
+    {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "score": 0
     },
     {
       "id": "network-dependency-tree-insight",
