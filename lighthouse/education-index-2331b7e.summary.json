@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-24T15:37:07.929Z",
+  "fetchTime": "2026-06-26T10:57:10.681Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "9c2e158",
+  "commit": "2331b7e",
   "categories": {
-    "performance": 0.98,
-    "accessibility": 0.95,
+    "performance": 0.94,
+    "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.4 s",
-      "numericValue": 1416.2083,
-      "score": 0.97
+      "displayValue": "2.3 s",
+      "numericValue": 2331.1277,
+      "score": 0.73
     },
     "lcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2195.2083000000002,
-      "score": 0.95
+      "displayValue": "2.6 s",
+      "numericValue": 2621.973475,
+      "score": 0.87
     },
     "si": {
-      "displayValue": "1.4 s",
-      "numericValue": 1416.2083,
-      "score": 1
+      "displayValue": "2.3 s",
+      "numericValue": 2331.1277,
+      "score": 0.98
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,27 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.2 s",
-      "numericValue": 2202.7083000000002,
-      "score": 0.99
+      "displayValue": "2.6 s",
+      "numericValue": 2623.0016675,
+      "score": 0.98
     },
-    "ttfb": 36
+    "ttfb": 43
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.97
+      "score": 0.73
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.95
+      "score": 0.87
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "color-contrast",

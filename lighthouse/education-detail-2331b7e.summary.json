@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-25T13:21:12.474Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-06-26T10:57:23.334Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "ad1a982",
+  "commit": "2331b7e",
   "categories": {
-    "performance": 0.94,
+    "performance": 0.93,
     "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2186.7834000000003,
-      "score": 0.78
+      "displayValue": "2.3 s",
+      "numericValue": 2285.4509,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2626.6209500000004,
-      "score": 0.87
+      "displayValue": "2.7 s",
+      "numericValue": 2735.4509000000003,
+      "score": 0.84
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2186.7834000000003,
+      "displayValue": "2.3 s",
+      "numericValue": 2285.4509,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2627.7155350000003,
-      "score": 0.98
+      "displayValue": "2.7 s",
+      "numericValue": 2735.4509000000003,
+      "score": 0.97
     },
-    "ttfb": 71
+    "ttfb": 38
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.78
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.87
+      "score": 0.84
     },
     {
       "id": "speed-index",
@@ -62,7 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
+      "score": 0.97
     },
     {
       "id": "color-contrast",
