@@ -77,7 +77,9 @@ remix-portfolio/
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
-│   └── utils/utils.tsx           # getClassMaker, formatDate, mergeRouteMeta, getSkillHeatmapData, getSkillsForJob, getSkillSuggestions
+│   └── utils/
+│       ├── utils.tsx              # getClassMaker, formatDate, getSkillHeatmapData, getSkillsForJob, getSkillSuggestions, localized, getCvUrl
+│       └── meta.ts                # mergeRouteMeta (per-route title + OG/Twitter merger)
 ├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
