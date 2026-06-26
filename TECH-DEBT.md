@@ -22,7 +22,7 @@
 | T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | done   |
 | T5  | Technical | P1       | Recover `/skills` Lighthouse perf (0.87 → 0.95+)               | open   |
 | T6  | Technical | P1       | Bundle visualizer audit                                        | done   |
-| T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | open   |
+| T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | done   |
 | T8  | Technical | P1       | Remove `legacy-peer-deps=true`                                 | done   |
 | T9  | Technical | P2       | React Router v7 migration                                      | open   |
 | T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | open   |

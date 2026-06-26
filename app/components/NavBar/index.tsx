@@ -51,31 +51,44 @@ export default function NavBar() {
         />
       </div>
       <div className={getClasses('utility-row')}>
-        <ThemeToggle />
-        <LocaleToggle current={locale as Locale} />
+        {/* Each utility-slot wrapper takes half the row width so the
+         * ThemeToggle and LocaleToggle columns align with the GitHub
+         * and LinkedIn columns below — even though the four items
+         * have different intrinsic widths. The toggles inside keep
+         * their natural size. */}
+        <div className={getClasses('utility-slot')}>
+          <ThemeToggle />
+        </div>
+        <div className={getClasses('utility-slot')}>
+          <LocaleToggle current={locale as Locale} />
+        </div>
       </div>
       <div className={getClasses('special-anchor-container')}>
-        <a
-          href={GITHUB_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={formatMessage({ id: 'GITHUB_PROFILE' })}
-        >
-          <div className={getClasses('special-anchor-wrapper')}>
-            <GithubIcon className={getClasses('special-anchor')} />
-          </div>
-        </a>
-        <a
-          href={LINKEDIN_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={getClasses('linkedin-anchor')}
-          aria-label={formatMessage({ id: 'LINKEDIN_PROFILE' })}
-        >
-          <div className={getClasses('special-anchor-wrapper')}>
-            <LinkedinIcon className={getClasses('special-anchor')} />
-          </div>
-        </a>
+        <div className={getClasses('utility-slot')}>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={formatMessage({ id: 'GITHUB_PROFILE' })}
+          >
+            <div className={getClasses('special-anchor-wrapper')}>
+              <GithubIcon className={getClasses('special-anchor')} />
+            </div>
+          </a>
+        </div>
+        <div className={getClasses('utility-slot')}>
+          <a
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={getClasses('linkedin-anchor')}
+            aria-label={formatMessage({ id: 'LINKEDIN_PROFILE' })}
+          >
+            <div className={getClasses('special-anchor-wrapper')}>
+              <LinkedinIcon className={getClasses('special-anchor')} />
+            </div>
+          </a>
+        </div>
       </div>
       <div className={getClasses('main-section')}>
         <div className={getClasses('main-buttons')}>

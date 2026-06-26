@@ -38,18 +38,34 @@ If a future stage moves to a screenshot tool that handles SVG better and dev-ser
 
 ## Updating baselines
 
-When a UI change is intentional, regenerate the baseline:
+Two paths — pick based on whether you hit the hydration race.
+
+### Path 1: local Docker regen (fast)
 
 ```sh
 npm run test:visual:update
 ```
 
-This runs Playwright inside the official `mcr.microsoft.com/playwright:v<version>-jammy` Docker image so the resulting PNGs match what CI will produce. Required setup:
+Runs Playwright inside the official `mcr.microsoft.com/playwright:v<version>-jammy` Docker image so the resulting PNGs match what CI will produce. Required setup:
 
 - **Docker Desktop** (or Colima) running on the host.
 - The image tag automatically tracks the local `@playwright/test` version, so a Playwright bump produces matching baselines on the next regen.
 
 After it finishes, review the regenerated PNGs under `tests/e2e/visual.spec.ts-snapshots/` and commit them.
+
+### Path 2: CI workflow (when the local race fires)
+
+If a route's local regen captures a `useLocation() may be used only in the context of a <Router> component` hydration-race error overlay instead of the rendered page (see ["Why some routes aren't gated"](#why-some-routes-arent-gated) above), use the CI-side workflow:
+
+```sh
+gh workflow run regen-baselines.yml --ref <branch-name>
+```
+
+Or click **Run workflow** on the [Actions tab](.github/workflows/regen-baselines.yml). The workflow runs inside the exact CI environment that gates PRs — the hydration race only reproduces in the local Docker container, not on the GitHub runner, so the captured PNGs are clean. It commits the regen back to the dispatched branch automatically.
+
+The `project` input lets you scope to `chromium`, `mobile`, or `both` (default).
+
+Once T11 lands (a tool that handles SVG diffing better) or this workflow proves stable, the `/skills` / `/education` index / `/skills/:uuid` routes can be re-added to the gated `ROUTES` list in `visual.spec.ts`.
 
 ## Running the suite
 
