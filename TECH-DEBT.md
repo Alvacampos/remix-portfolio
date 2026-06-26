@@ -34,8 +34,8 @@
 | C1  | Cleanup   | P0       | Doc drift: README locale claims                                | done   |
 | C2  | Cleanup   | P0       | Doc drift: README "Future Plans" (Python/Django, contact form) | done   |
 | C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | done   |
-| C4  | Cleanup   | P1       | Data: `Mentoring` ranges (Endava + Qubika missing)             | open   |
-| C5  | Cleanup   | P1       | Data: `Leadership` ranges (Qubika missing?)                    | open   |
+| C4  | Cleanup   | P1       | Data: `Mentoring` ranges (Endava + Qubika missing)             | done   |
+| C5  | Cleanup   | P1       | Data: `Leadership` ranges (Qubika missing?)                    | done   |
 | C6  | Cleanup   | P2       | Rename ambiguous `Programming` meta skill                      | open   |
 | C7  | Cleanup   | P2       | Merge `getSkillsForJob` into `getSkillGroupsForJob`            | open   |
 | C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | open   |
