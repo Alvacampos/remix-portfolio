@@ -169,7 +169,10 @@
     --cell-size: clamp(18px, calc((100vw - 424px) / var(--skills-count)), 36px);
 
     grid-template-rows: 100px repeat(var(--years-count), var(--cell-size));
-    grid-template-columns: minmax(60px, 80px) repeat(var(--skills-count), var(--cell-size));
+    /* Year labels are 3 chars in Monaspace 12px (`'26`, `'25`, etc.)
+     * — ~26px including the trailing padding-right. The old
+     * minmax(60px, 80px) left 30-50px of dead space at desktop. */
+    grid-template-columns: minmax(32px, 40px) repeat(var(--skills-count), var(--cell-size));
   }
 
   /* Skill labels sit tilted at 45° in row 1 across each 18px column.
