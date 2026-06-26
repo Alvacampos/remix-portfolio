@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-26T10:37:36.997Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-06-26T14:31:58.139Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "d0ee4c5",
+  "commit": "36b865b",
   "categories": {
-    "performance": 0.95,
-    "accessibility": 0.96,
+    "performance": 0.94,
+    "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.1 s",
-      "numericValue": 2148.8316,
+      "displayValue": "2.2 s",
+      "numericValue": 2171.5546,
       "score": 0.79
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2598.8316,
-      "score": 0.88
+      "displayValue": "2.7 s",
+      "numericValue": 2676.72055,
+      "score": 0.86
     },
     "si": {
-      "displayValue": "2.1 s",
-      "numericValue": 2148.8316,
+      "displayValue": "2.2 s",
+      "numericValue": 2171.5546,
       "score": 0.99
     },
     "tbt": {
@@ -37,11 +37,11 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2598.8316000000004,
-      "score": 0.98
+      "displayValue": "2.7 s",
+      "numericValue": 2684.9594150000003,
+      "score": 0.97
     },
-    "ttfb": 42
+    "ttfb": 60
   },
   "failingAudits": [
     {
@@ -52,7 +52,7 @@
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.88
+      "score": 0.86
     },
     {
       "id": "speed-index",
@@ -62,12 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
+      "score": 0.97
     },
     {
       "id": "unused-javascript",
