@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-21T15:38:43.333Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "fetchTime": "2026-06-26T16:54:20.633Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "f04075a",
+  "commit": "46d1ce7",
   "categories": {
-    "performance": 0.86,
-    "accessibility": 0.95,
-    "best-practices": 0.92,
+    "performance": 0.95,
+    "accessibility": 1,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.4 s",
-      "numericValue": 2366.0660000000003,
-      "score": 0.72
+      "displayValue": "2.0 s",
+      "numericValue": 1984.2887999999998,
+      "score": 0.85
     },
     "lcp": {
-      "displayValue": "3.7 s",
-      "numericValue": 3728.8115000000007,
-      "score": 0.57
+      "displayValue": "2.6 s",
+      "numericValue": 2608.7888,
+      "score": 0.87
     },
     "si": {
       "displayValue": "2.9 s",
-      "numericValue": 2872.0217919999723,
+      "numericValue": 2928.387009412578,
       "score": 0.95
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.7 s",
-      "numericValue": 3736.8276500000006,
-      "score": 0.9
+      "displayValue": "2.6 s",
+      "numericValue": 2608.7888000000003,
+      "score": 0.98
     },
-    "ttfb": 183
+    "ttfb": 109
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.72
+      "score": 0.85
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.57
+      "score": 0.87
     },
     {
       "id": "speed-index",
@@ -60,24 +60,9 @@
       "score": 0.95
     },
     {
-      "id": "errors-in-console",
-      "title": "Browser errors were logged to the console",
-      "score": 0
-    },
-    {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.9
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
+      "score": 0.98
     },
     {
       "id": "unused-javascript",
@@ -88,6 +73,11 @@
       "id": "cache-insight",
       "title": "Use efficient cache lifetimes",
       "score": 0.5
+    },
+    {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "score": 0
     },
     {
       "id": "network-dependency-tree-insight",
