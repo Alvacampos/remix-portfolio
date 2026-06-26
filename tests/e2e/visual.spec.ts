@@ -63,19 +63,22 @@ async function settle(page: Page) {
   await page.waitForTimeout(200);
 }
 
-// Two routes are intentionally NOT in this list:
+// Three routes are intentionally NOT in this list:
 //   - /skills (the index): the tenure-heatmap cells + inline QR <svg>
 //     hit the anti-aliasing pipeline and drift ~0.4% across regen vs CI.
-//   - /skills/:uuid (a detail page): the local Docker regen environment
-//     reproducibly captures a root-error-boundary screenshot instead of
-//     the page itself — a hydration-time `useLocation()` failure inside
-//     NavBar that doesn't reproduce on CI or in normal browser use.
-//     Behavioral coverage in skills.spec.ts already asserts the route
-//     loads and renders its content; visual regression on a single
-//     detail page wasn't catching anything the behavioral suite missed.
+//   - /skills/:uuid (a detail page) AND /education (the index): the
+//     local Docker regen environment reproducibly captures a
+//     root-error-boundary screenshot instead of the page itself — a
+//     hydration-time `useLocation()` failure inside NavBar that
+//     doesn't reproduce on CI or in normal browser use. The result is
+//     baselines stuck at the viewport height (1280×741) while CI's
+//     actual render is the full page; the gate fails on every regen.
+//     Behavioral coverage in skills.spec.ts / education.spec.ts
+//     already asserts the routes load and render their content;
+//     visual regression on these wasn't catching anything the
+//     behavioral suite missed.
 const ROUTES = [
   { name: 'home', path: '/' },
-  { name: 'education-index', path: '/education' },
   { name: 'education-detail', path: '/education/degree' },
 ];
 

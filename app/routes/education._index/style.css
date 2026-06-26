@@ -65,12 +65,45 @@
   }
 
   &__card-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: $space-20;
     width: 100%;
     max-width: 600px;
     height: 100%;
+  }
+
+  /* Badge floats above the card via absolute positioning so it doesn't
+   * push the Bachelor's card down out of alignment with the Associate
+   * Degree card next to it. Negative `top` places it half-overlapping
+   * the card's top edge — the classic "status badge" placement. */
+  &__in-progress-badge {
+    position: absolute;
+    top: -$space-12;
+    left: $space-16;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-8;
+    padding: $space-4 $space-12;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-muted);
+    color: var(--accent);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__in-progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: in-progress-pulse 2s ease-in-out infinite;
   }
 
   &__card-wrapper--certification-wrapper {
@@ -91,6 +124,25 @@
         outline: none;
       }
     }
+  }
+}
+
+@keyframes in-progress-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .education-route__in-progress-dot {
+    animation: none;
   }
 }
 

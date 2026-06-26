@@ -3,7 +3,7 @@
 ## Specs
 
 - `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts` — behavioural specs (route loaders, navigation, content assertions).
-- `visual.spec.ts` — full-page screenshot diffs. Covers `/`, `/education`, `/education/:slug`. The `/skills` index and `/skills/:uuid` routes are intentionally excluded — see "Why /skills isn't gated" below.
+- `visual.spec.ts` — full-page screenshot diffs. Covers `/` and `/education/:slug`. The `/skills` index, `/skills/:uuid`, and `/education` index routes are intentionally excluded — see "Why some routes aren't gated" below.
 
 ## Visual regression
 
@@ -26,15 +26,15 @@ Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoj
 
 The QR `<svg>` in the nav is masked because its embedded font data hits the SVG anti-aliasing pipeline and produces sub-pixel diffs across environments. (No-op on mobile where the QR is `display: none`.)
 
-### Why /skills isn't gated
+### Why some routes aren't gated
 
-Two routes share the `/skills` namespace and both are excluded:
+Three routes are excluded for two different reasons:
 
 **`/skills` (index)** — the tenure-heatmap renders a tight grid of small SVG cells; sub-pixel rendering on those cells drifts ~0.4% of pixels between the local Docker regen environment (M-series Mac under amd64 emulation) and CI's GitHub Actions runner — invisible to the eye but consistently above the 0.2% diff budget. Masking the chart would leave the gate covering very little of the page, so the route isn't in the visual suite.
 
-**`/skills/:uuid` (detail)** — the local Docker regen environment reproducibly captures a root-error-boundary screenshot instead of the rendered page. The error is `useLocation() may be used only in the context of a <Router> component`, thrown from NavBar during client-side hydration inside the dev server's stripped-down dev container. It does NOT reproduce in normal browser use, on CI's CI runner, or in production builds — only inside the regen container. The result was a baseline that captured the error UI; CI's actual render of the real page diffed by ~600px of layout, breaking the gate. Re-adding the route would require either fixing the Docker hydration race (no clear cause yet — Vite + Remix dev-server cold-start timing) or switching the regen path to a production build (slower, diverges from CI's setup). Behavioural coverage in `skills.spec.ts` already asserts the detail route loads, navigates from the timeline, and renders Hire Date / Role headings — visual regression on a single detail page wasn't catching anything that wasn't.
+**`/skills/:uuid` (detail) AND `/education` (index)** — the local Docker regen environment reproducibly captures a root-error-boundary screenshot instead of the rendered page. The error is `useLocation() may be used only in the context of a <Router> component`, thrown from NavBar during client-side hydration inside the dev server's stripped-down dev container. It does NOT reproduce in normal browser use, on CI's CI runner, or in production builds — only inside the regen container. The result is a baseline stuck at the viewport height (1280×741) while CI's actual render is the full page, breaking the gate every time we try to regen. Re-adding the routes would require either fixing the Docker hydration race (no clear cause yet — Vite + Remix dev-server cold-start timing) or switching the regen path to a production build (slower, diverges from CI's setup). Behavioural coverage in `skills.spec.ts` and `education.spec.ts` already asserts both routes load and render their key content; visual regression on these specific pages wasn't catching anything the behavioural suite missed.
 
-If a future stage moves to a screenshot tool that handles SVG better and dev-server hydration timing more deterministically (Percy, Chromatic), both routes can be re-added.
+If a future stage moves to a screenshot tool that handles SVG better and dev-server hydration timing more deterministically (Percy, Chromatic — tracked as **T11** in [TECH-DEBT.md](../../TECH-DEBT.md)), or to a CI-side regen workflow (**T7**), all three routes can be re-added.
 
 ## Updating baselines
 

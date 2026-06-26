@@ -44,9 +44,9 @@
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | open   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | open   |
 | U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | open   |
-| U2  | UI        | P0       | Print stylesheet (CV page printable)                           | open   |
-| U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | open   |
-| U4  | UI        | P0       | Locale-aware date format on `/education` (match `:slug`)       | open   |
+| U2  | UI        | P0       | Print stylesheet (CV page printable)                           | done   |
+| U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
+| U4  | UI        | P0       | Locale-aware date format on `/education` (match `:slug`)       | done   |
 | U5  | UI        | P0       | Match contrast fix on DownloadBtn hover state                  | done   |
 | U6  | UI        | P1       | `/contact` route (CF Pages Function + Resend / Loops)          | open   |
 | U7  | UI        | P1       | Case studies — `/projects/<slug>` (3-5 deep-dives)             | open   |

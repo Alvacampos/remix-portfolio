@@ -30,15 +30,23 @@ const getClasses = getClassMaker(BLOCK);
 const EDUCATION = loadEducation(educationJson);
 
 export async function loader() {
+  // Cloudflare Workers freeze Date at module-init (Spectre mitigation),
+  // so `new Date()` must run inside the loader. YYYY-MM string compare
+  // is enough — both sides are zero-padded ISO-like.
+  const now = new Date();
+  const todayYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   return {
     degree: EDUCATION.degree,
     associateDegree: EDUCATION.associateDegree,
     certifications: EDUCATION.certifications,
+    degreeInProgress: EDUCATION.degree.endDate > todayYearMonth,
+    associateInProgress: EDUCATION.associateDegree.endDate > todayYearMonth,
   };
 }
 
 export default function Skills() {
-  const { degree, associateDegree, certifications } = useLoaderData<typeof loader>();
+  const { degree, associateDegree, certifications, degreeInProgress, associateInProgress } =
+    useLoaderData<typeof loader>();
   const { formatMessage, locale } = useIntl();
   const loc = locale as Locale;
   const dateLabel = formatMessage({ id: 'DATE' });
@@ -49,10 +57,16 @@ export default function Skills() {
     </p>
   );
 
+  // Format date ranges with full month names in the active locale,
+  // matching the /:slug detail page ("March 2024 → September 2027")
+  // instead of the locale-neutral numeric form (01/2024 - 09/2027).
+  const formatRange = (start: string, end: string) =>
+    `${formatDate(start, '', undefined, loc)} → ${formatDate(end, '', undefined, loc)}`;
+
   const degreeCard = {
     title: localized(degree, 'title', loc),
     texts: [
-      `${dateLabel}: ${formatDate(degree.startDate, degree.endDate)}`,
+      `${dateLabel}: ${formatRange(degree.startDate, degree.endDate)}`,
       degree.institution,
       localized(degree, 'summary', loc),
     ],
@@ -62,18 +76,28 @@ export default function Skills() {
   const associateDegreeCard = {
     title: localized(associateDegree, 'title', loc),
     texts: [
-      `${dateLabel}: ${formatDate(associateDegree.startDate, associateDegree.endDate)}`,
+      `${dateLabel}: ${formatRange(associateDegree.startDate, associateDegree.endDate)}`,
       associateDegree.institution,
       localized(associateDegree, 'summary', loc),
     ],
     children: learnMore,
   };
 
+  const inProgressBadge = (
+    <span
+      className={getClasses('in-progress-badge')}
+      aria-label={formatMessage({ id: 'CURRENTLY_STUDYING' })}
+    >
+      <span className={getClasses('in-progress-dot')} aria-hidden="true" />
+      <FormattedMessage id="CURRENTLY_STUDYING" />
+    </span>
+  );
+
   const certificationsCards = certifications.map((certification) => ({
     key: certification.institution,
     title: localized(certification, 'title', loc),
     texts: [
-      `${dateLabel}: ${formatDate(certification.startDate, '')}`,
+      `${dateLabel}: ${formatDate(certification.startDate, '', undefined, loc)}`,
       certification.institution,
       localized(certification, 'description', loc),
     ],
@@ -93,11 +117,13 @@ export default function Skills() {
         <div className={getClasses('degree-container')}>
           <Link to="/education/degree" className={getClasses('card-link')}>
             <div className={getClasses('card-wrapper')}>
+              {degreeInProgress && inProgressBadge}
               <Card {...degreeCard} />
             </div>
           </Link>
           <Link to="/education/associate-degree" className={getClasses('card-link')}>
             <div className={getClasses('card-wrapper')}>
+              {associateInProgress && inProgressBadge}
               <Card {...associateDegreeCard} />
             </div>
           </Link>
