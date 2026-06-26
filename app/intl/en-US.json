@@ -1,5 +1,6 @@
 {
   "BACK_TO_EDUCATION": "Back to Education",
+  "BACK_TO_HOME": "Back to Home",
   "BACK_TO_SKILLS": "Back to Skills",
   "CERTIFICATION": "Certification",
   "CERTIFICATIONS": "Certifications",
@@ -18,6 +19,10 @@
   "EDUCATION": "Education",
   "ERROR_EDUCATION_BODY": "We couldn't load this education entry. It may have been removed or the link is broken.",
   "ERROR_EDUCATION_TITLE": "This education entry isn't available",
+  "ERROR_GENERIC_BODY": "Something went wrong while loading this page. Try again in a moment, or head back home.",
+  "ERROR_GENERIC_TITLE": "Something went wrong",
+  "ERROR_NOT_FOUND_BODY": "We couldn't find that page. The link may be outdated or the URL might be mistyped.",
+  "ERROR_NOT_FOUND_TITLE": "Page not found",
   "ERROR_WORK_ITEM_BODY": "We couldn't load this work experience. It may have been removed or the link is broken.",
   "ERROR_WORK_ITEM_TITLE": "This work experience isn't available",
   "EXTRA_ACTIVITIES": "Extra Activities",
