@@ -219,10 +219,6 @@ main {
     min-height: 100vh;
     padding-left: $space-200;
   }
-
-  main {
-    padding: 0;
-  }
 }
 
 /* Print: assume a recruiter Ctrl-P'd a route to share or save. Strip
