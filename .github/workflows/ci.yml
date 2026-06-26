@@ -111,9 +111,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Wrangler 4 requires Node >= 22, so this job overrides the
+      # `.nvmrc`-pinned Node 20 used by every other job. The Vite
+      # build, Lighthouse, and chrome-launcher all work on either —
+      # only `wrangler pages dev` forces the bump.
       - uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version: '22'
           cache: 'npm'
 
       - run: npm ci
