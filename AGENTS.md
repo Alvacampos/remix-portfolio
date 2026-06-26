@@ -305,15 +305,15 @@ If/when env vars or bindings are added: edit `wrangler.toml`, then run `npm run 
 
 Two layers, both opt-in via npm scripts and run on CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
-### Pre-push hook (husky)
+### Pre-push hook (simple-git-hooks)
 
-[.husky/pre-push](.husky/pre-push) blocks `git push` if `npm run lint`, `npm run typecheck`, or `npm test` fails. It runs the cheap-but-meaningful trio (~10s on a warm cache) so type/lint/unit regressions get caught before they reach CI. E2E + visual specs are NOT run here — they need the dev server (slow) or Docker (visual). CI is the gate of record for those.
+[scripts/pre-push.sh](scripts/pre-push.sh) blocks `git push` if `npm run lint`, `npm run typecheck`, or `npm test` fails. It runs the cheap-but-meaningful trio (~10s on a warm cache) so type/lint/unit regressions get caught before they reach CI. E2E + visual specs are NOT run here — they need the dev server (slow) or Docker (visual). CI is the gate of record for those.
 
 The hook also emits a soft warning if you changed UI-affecting files (`*.css`, `app/routes/`, `app/components/`, `app/intl/`, `public/data/`, `public/fonts/`, `app/styles/`) since `origin/main` without committing any new visual baselines. It doesn't block the push — sometimes a CSS tweak is below the diff threshold, sometimes you're working on a non-UI branch — but it nudges you so you don't push, get a CI failure, then have to regenerate baselines and push again.
 
 Bypass in an emergency with `git push --no-verify`. Prefer fixing the underlying failure to using `--no-verify`.
 
-The hook installs automatically via `npm install` (the `prepare` script runs `husky`).
+The hook installs automatically via `npm install` (the `prepare` script runs `simple-git-hooks`, which reads the `simple-git-hooks` block in `package.json` and writes the actual hooks into `.git/hooks/`). If you switched from a Husky-managed repo, run `git config --unset core.hooksPath` once so git stops looking at the (deleted) `.husky/_/` directory and picks up the new `.git/hooks/pre-push`.
 
 ### Unit / component — Vitest + React Testing Library
 

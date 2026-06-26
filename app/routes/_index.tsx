@@ -7,8 +7,8 @@ import { loadSkills } from '~/data/skills-schema';
 import { pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { getClassMaker, getCvUrl } from '~/utils/utils';
+import skillsJson from '~data/skills.json';
 
-import skillsJson from '../../public/data/skills.json';
 import styles from './style.css?url';
 
 // The CV PDF is the primary CTA; prefetch it so the Download click is

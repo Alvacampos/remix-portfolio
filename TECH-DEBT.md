@@ -29,8 +29,9 @@
 | T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | open   |
 | T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | open   |
 | T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | done   |
-| T14 | Technical | P3       | Replace husky with simple-git-hooks                            | open   |
-| T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | open   |
+| T14 | Technical | P3       | Replace husky with simple-git-hooks                            | done   |
+| T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | done   |
+| T16 | Technical | P1       | Standardise breakpoints (legacy → Tailwind-aligned scale)      | open   |
 | C1  | Cleanup   | P0       | Doc drift: README locale claims                                | done   |
 | C2  | Cleanup   | P0       | Doc drift: README "Future Plans" (Python/Django, contact form) | done   |
 | C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | done   |
@@ -132,13 +133,69 @@ Formerly TECH-DEBT #1. Re-enables 3 stylelint rules, unlocks runtime theming. Ev
 
 Visual regression is covered by Playwright. Storybook addon is installed but unused.
 
-### T14 — Replace husky with simple-git-hooks (P3)
+### T14 — Replace husky with simple-git-hooks (P3) — DONE
 
-husky adds an install-time hook setup that's slow on fresh `npm ci`. simple-git-hooks is lighter. Tiny improvement.
+Replaced husky with `simple-git-hooks`. The pre-push script now lives at [scripts/pre-push.sh](scripts/pre-push.sh) (was [.husky/pre-push](.husky/pre-push)) and gets wired in via a new `simple-git-hooks` block in `package.json` plus a `prepare` script that invokes the binary. Migrating an existing clone requires `git config --unset core.hooksPath` once (husky set it to `.husky/_`); fresh clones don't need that step.
 
-### T15 — `import/no-relative-parent-imports` ESLint rule (P3)
+### T15 — `import/no-relative-parent-imports` ESLint rule (P3) — DONE
 
-Forces use of the `~/` path alias instead of `../../../`. Already the convention; one rule makes it enforceable.
+Implemented as a `no-restricted-imports` rule (the upstream `import/no-relative-parent-imports` rule resolves aliased paths to absolute paths, which false-positives on every `~/`-prefixed import in `app/`). The rule bans literal `../*` import specifiers and points authors at `~/*` (for `app/`) or the new `~data/*` alias (for `public/data/`). Added `~data/*` to both `tsconfig.json` and `jsconfig.json` so route loaders that read static JSON can use it. One escape hatch at `functions/[[path]].ts` (the Pages Function entrypoint legitimately imports the build output at `../build/server`).
+
+### T16 — Standardise breakpoints (legacy → Tailwind-aligned scale) (P1)
+
+**Current state.** [app/styles/constants.js](app/styles/constants.js) exports two parallel sets of breakpoint tokens:
+
+| Token             | Value  | Usages | Origin                                                    |
+| ----------------- | ------ | ------ | --------------------------------------------------------- |
+| `$mobile-small`   | 496px  | 4      | Legacy — pre-Tailwind. Awkward; mid-phone-landscape band. |
+| `$desktop-small`  | 1076px | 10     | Legacy — splits iPad Pro 11" landscape (1194) awkwardly.  |
+| `$desktop-medium` | 1296px | 2      | Legacy — Tailwind `xl` (1280) + 16px noise.               |
+| `$bp-sm`          | 640px  | —      | Tailwind-aligned. Currently unused in code.               |
+| `$bp-md`          | 768px  | ~6     | iPad portrait, in use.                                    |
+| `$bp-lg`          | 1024px | ~6     | iPad landscape / small laptops, in use.                   |
+| `$bp-xl`          | 1280px | —      | Standard desktop. Currently unused.                       |
+
+17 legacy usages across 10 stylesheets (4 routes + 4 components + 1 route shell + 1 helper) plus 12 new-token usages. The mixed scale makes it impossible to reason about a layout's break behaviour without opening the constants file.
+
+**Goal.** Single mobile-first scale anchored to common device viewport widths, aligned with Tailwind v4 (also matches Bootstrap 5 and Material). Drop the three legacy tokens; add `$bp-2xl` for ultrawide content-max-width work.
+
+**Target scale (`@media (min-width: $bp-*)`)**:
+
+| Token     | Value  | Devices this catches                                          |
+| --------- | ------ | ------------------------------------------------------------- |
+| _(base)_  | < 640  | Every phone in portrait (320 SE → 430 Pro Max).               |
+| `$bp-sm`  | 640px  | Phone landscape (~700-900 wide). Compact tablets.             |
+| `$bp-md`  | 768px  | iPad portrait (744-834). Z Fold inner. Large phone landscape. |
+| `$bp-lg`  | 1024px | iPad landscape (1024-1194). Small laptops.                    |
+| `$bp-xl`  | 1280px | iPad Pro 12.9" landscape. Standard 13-15" laptops.            |
+| `$bp-2xl` | 1536px | 27" external monitors. Cap content max-width above this.      |
+
+Standardising on the Tailwind scale means future contributors (or AI agents) can map directly between Tailwind utility prefixes and our token names without translation.
+
+**Migration plan (one PR, ~30 min):**
+
+1. Add `$bp-2xl: 1536px` to [app/styles/constants.js](app/styles/constants.js).
+2. Sweep all 17 legacy usages and remap:
+   - `$mobile-small` (496) → `$bp-sm` (640). Affected: [Input](app/components/Input/style.css), [Timeline](app/components/Timeline/style.css), [skills.$uuid](app/routes/skills.$uuid/style.css), [skills.\_index](app/routes/skills._index/style.css). The +144px floor is intentional — modern phones in portrait now go up to 430px wide, so the legacy 496 fires mid-landscape on most flagships. Re-test each affected layout at 412-640 to confirm the new floor is comfortable.
+   - `$desktop-small` (1076) → `$bp-lg` (1024). Affected: [Card](app/components/Card/style.css), [Input](app/components/Input/style.css), [TenureHeatmap](app/components/TenureHeatmap/style.css), [Timeline](app/components/Timeline/style.css), all four routes that use it. The -52px lift is small enough that most layouts should hold; the TenureHeatmap explicitly tuned for 1076 (see [TenureHeatmap/style.css#L139](app/components/TenureHeatmap/style.css#L139)) — verify the transposed grid still fits at 1024.
+   - `$desktop-medium` (1296) → `$bp-xl` (1280). Affected: [Timeline](app/components/Timeline/style.css), [skills.\_index](app/routes/skills._index/style.css). The -16px shift is below visual noise.
+3. Delete `mobile-small`, `desktop-small`, `desktop-medium` keys from [constants.js](app/styles/constants.js).
+4. Regenerate visual baselines via the CI workflow ([.github/workflows/regen-baselines.yml](.github/workflows/regen-baselines.yml)) — every gated route (`/`, `/education/:slug`) likely shifts at the 768/1024/1280 boundaries.
+5. Update [AGENTS.md §6](AGENTS.md#L6) and the doc comment in [constants.js](app/styles/constants.js#L122) to reflect the single scale.
+
+**Out of scope.**
+
+- **Sub-640 breakpoint** (e.g. 414 / 480 for large-phone-landscape). web.dev's mobile-first guidance is to let content dictate rather than chase devices; base styles should already cover this band cleanly. Revisit only if a real layout regression appears.
+- **`prefers-reduced-motion` / `prefers-color-scheme` queries** — orthogonal to this work; tracked separately (U24).
+- **Container queries** (`@container`). Worth piloting on a single component (e.g. Card) once we're off the legacy scale, but not a prereq for this migration.
+
+**Devices on the bubble worth manually testing after migration:** iPhone SE 1st gen (320), Galaxy S24 (360), iPad mini portrait (744), iPad Pro 11" landscape (1194), 13" MacBook external (~1440). Chrome DevTools Responsive mode + the Pixel 7 Playwright project cover most of this.
+
+Sources consulted:
+
+- [Tailwind v4 responsive design](https://tailwindcss.com/docs/responsive-design) — sm/md/lg/xl/2xl = 640/768/1024/1280/1536.
+- [MDN Responsive Design](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design) — prefer content-driven over device-driven breakpoints; rem/em over px.
+- [web.dev — Responsive Web Design basics](https://web.dev/articles/responsive-web-design-basics) — let content dictate; minimise breakpoint count.
 
 ---
 
