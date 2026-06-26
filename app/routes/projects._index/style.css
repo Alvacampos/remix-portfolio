@@ -41,6 +41,17 @@
     transition: transform 120ms ease;
   }
 
+  .card-component {
+    height: stretch;
+
+    &__text-container {
+      height: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+
   &__card-link {
     text-decoration: none;
     color: inherit;
@@ -80,18 +91,10 @@
 
 @media screen and (min-width: $bp-md) {
   .projects-route {
-    padding: 0 $space-20;
-
     &__list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
       gap: $space-20;
     }
-  }
-}
-
-@media screen and (min-width: $desktop-small) {
-  .projects-route {
-    padding: 0 $space-20;
   }
 }
