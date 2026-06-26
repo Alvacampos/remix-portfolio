@@ -90,7 +90,9 @@
     border: 1px solid var(--accent);
     border-radius: 999px;
     background: var(--accent-muted);
-    color: var(--accent);
+    /* See app/routes/style.css `__hero-status-badge` — same primitive,
+     * same accent-on-muted contrast requirement. */
+    color: var(--accent-on-muted);
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     font-size: $font-12;
     font-weight: $weight-700;

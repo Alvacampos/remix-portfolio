@@ -81,7 +81,10 @@
     border: 1px solid var(--accent);
     border-radius: 999px;
     background: var(--accent-muted);
-    color: var(--accent);
+    /* Use --accent-on-muted so the text clears WCAG AA against the
+     * pale --accent-muted background in light theme (green-4 on
+     * green-1 is only 2.15:1). */
+    color: var(--accent-on-muted);
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     font-size: $font-12;
     font-weight: $weight-700;
@@ -125,7 +128,10 @@
     &:hover,
     &:focus-visible {
       border-color: var(--accent);
-      color: var(--accent);
+      /* On --accent-muted bg: light theme needs near-black to clear
+       * 4.5:1 against pale green-1. --accent-on-muted encodes both
+       * theme cases (green-3 dark, green-6 light). */
+      color: var(--accent-on-muted);
       background: var(--accent-muted);
       outline: none;
     }

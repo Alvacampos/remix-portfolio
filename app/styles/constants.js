@@ -15,16 +15,17 @@ export default {
   'gray-1': '#f2f5f3', // page background (light)
   'gray-2': '#e4ebe6', // surface (light), border (light)
   'gray-3': '#b6bfb8', // muted text (light), border (dark)
-  'gray-4': '#909692', // body muted (both modes)
+  'gray-4': '#909692', // body muted (dark theme only — fails WCAG AA on light bg)
   'gray-5': '#232925', // surface (dark), elevated (light)
   'gray-6': '#101411', // page background (dark) — process black
+  'gray-7': '#555b58', // body muted on LIGHT theme — clears 4.5:1 vs $surface-page-light
 
   // Greens — light → dark
   'green-1': '#bfffd1', // softest highlight (light-mode accent backgrounds)
   'green-2': '#8cf2a6',
   'green-3': '#5fed83',
   'green-4': '#0fbf3e', // GitHub Green — hero / accent / focus
-  'green-5': '#08827b', // teal-tinted deep
+  'green-5': '#066456', // deep teal-green — light-theme accent text (clears WCAG AA)
   'green-6': '#0a241b', // darkest — dark-mode accent backgrounds
 
   // ─── GitHub-aligned surface + border helpers ─────────────────────
