@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-25T20:45:20.642Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-26T20:21:32.980Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "lighthouseVersion": "13.4.0",
-  "commit": "637c992",
+  "commit": "5c52498",
   "categories": {
-    "performance": 0.94,
-    "accessibility": 0.96,
-    "best-practices": 1,
+    "performance": 0.92,
+    "accessibility": 1,
+    "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2174.1703,
-      "score": 0.79
+      "displayValue": "2.3 s",
+      "numericValue": 2290.6387999999997,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "2.7 s",
-      "numericValue": 2683.048025,
-      "score": 0.86
+      "displayValue": "2.9 s",
+      "numericValue": 2910.9582,
+      "score": 0.8
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2174.1703,
+      "displayValue": "2.3 s",
+      "numericValue": 2290.6387999999997,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.7 s",
-      "numericValue": 2691.3772825000005,
-      "score": 0.97
+      "displayValue": "2.9 s",
+      "numericValue": 2910.9582,
+      "score": 0.96
     },
-    "ttfb": 48
+    "ttfb": 50
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.79
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.86
+      "score": 0.8
     },
     {
       "id": "speed-index",
@@ -62,11 +62,11 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.97
+      "score": 0.96
     },
     {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+      "id": "image-aspect-ratio",
+      "title": "Displays images with incorrect aspect ratio",
       "score": 0
     },
     {
@@ -87,7 +87,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
