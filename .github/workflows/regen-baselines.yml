@@ -1,0 +1,109 @@
+name: Regen visual baselines
+
+# Manual-trigger workflow that regenerates the Playwright visual-regression
+# baselines inside the SAME container CI uses to check them — eliminating
+# the useLocation() hydration race that's reproducible in the local Docker
+# regen but never on CI runners. Click "Run workflow" on the Actions tab
+# (or `gh workflow run regen-baselines.yml`); the job runs against the
+# branch the workflow is dispatched on, commits the new PNGs back, and
+# pushes.
+#
+# Use this instead of `npm run test:visual:update` when:
+#   - Local regen captures a hydration-race error overlay (the 741px
+#     baseline that doesn't match CI's full-page render).
+#   - You don't have Docker locally.
+#   - You want to be 100% sure the regen environment matches what
+#     gates the PR.
+#
+# Local regen still works for fast iteration when it doesn't hit the
+# race — the local script writes to the same place this workflow does.
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Playwright project to regenerate (chromium, mobile, or both)'
+        type: choice
+        default: both
+        options:
+          - both
+          - chromium
+          - mobile
+
+concurrency:
+  group: regen-baselines-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regen:
+    name: Regenerate baselines
+    runs-on: ubuntu-latest
+    # Same image and pinned version the CI gate uses, so baselines and
+    # checks are pixel-identical by construction.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-jammy
+      options: --ipc=host
+    permissions:
+      # Needed to push the regenerated PNGs back to the branch.
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Workflow checks out the branch it was dispatched on
+          # (github.ref). Need write token for the commit-back step.
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
+
+      # Playwright image's bundled Node version drifts (currently 24).
+      # Pin to .nvmrc so this job matches the local dev environment and
+      # the e2e-tests CI job — avoids esbuild ETXTBSY postinstall race
+      # on parallel npm extraction under newer Node.
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+
+      - run: npm ci
+
+      - name: Build project list arg
+        id: projects
+        run: |
+          case "${{ inputs.project }}" in
+            chromium) echo "args=--project=chromium" >> "$GITHUB_OUTPUT" ;;
+            mobile)   echo "args=--project=mobile"   >> "$GITHUB_OUTPUT" ;;
+            *)        echo "args=--project=chromium --project=mobile" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Regenerate baselines
+        env:
+          # visual.spec.ts skips on non-linux unless UPDATE_VISUAL is set.
+          # We're in the Playwright image (linux) so the skip wouldn't
+          # fire, but set it anyway for parity with the local script.
+          UPDATE_VISUAL: '1'
+        run: npx playwright test visual.spec.ts ${{ steps.projects.outputs.args }} --update-snapshots
+
+      - name: Commit regenerated baselines
+        # HUSKY=0 disables the pre-push hook (it would re-run lint /
+        # typecheck / unit on each auto-commit — wasted work for a
+        # PNG-only change).
+        env:
+          HUSKY: '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet tests/e2e/visual.spec.ts-snapshots/ && [ -z "$(git status --porcelain tests/e2e/visual.spec.ts-snapshots/)" ]; then
+            echo "No baseline changes to commit."
+            exit 0
+          fi
+          git add tests/e2e/visual.spec.ts-snapshots/
+          git commit -m "chore(visual): regen baselines via CI workflow"
+          git push
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: regen-baselines-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
