@@ -148,7 +148,7 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 
 There is no `/contact` route today — README mentions one as a future feature but the NavBar doesn't render any entry for it.
 
-Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle. The static asset is still served at `/data/*` for any external consumer via the `_routes.json` exclude.
+Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle. The files are no longer served from `/data/*` — `_routes.json` routes that path to the Pages Function (which 404s), so the JSON is only readable through the rendered routes. This is intentional: the data is the CV content; we don't want scrapers lifting the entire payload (including draft Spanish translations) by hitting a public URL.
 
 ---
 

@@ -5,7 +5,6 @@
     "/favicon.ico",
     "/assets/*",
     "/fonts/*",
-    "/data/*",
     "/robots.txt",
     "/sitemap.xml",
     "/.well-known/*"

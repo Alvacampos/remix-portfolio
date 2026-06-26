@@ -172,6 +172,8 @@ export default function UuidIndex() {
             alt={title}
             width={imageDims.width}
             height={imageDims.height}
+            fetchPriority="high"
+            decoding="async"
             className={getClasses('company-logo')}
           />
         </div>
