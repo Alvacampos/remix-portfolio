@@ -57,7 +57,7 @@ async function settle(page: Page) {
       imgs.map((img) => (img.complete ? Promise.resolve() : img.decode().catch(() => undefined)))
     );
   });
-  // Lazy-loaded chunks (TenureHeatmap, Carousel, Timeline) mount after
+  // Lazy-loaded chunks (TenureHeatmap, TechTree, Timeline) mount after
   // their Suspense boundary resolves; give them a frame to lay out
   // before capturing.
   await page.waitForTimeout(200);

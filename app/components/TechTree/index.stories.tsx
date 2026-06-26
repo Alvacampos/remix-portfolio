@@ -2,16 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import type { SkillGroup } from '~/utils/utils';
 
-import Carousel from './index';
+import TechTree from './index';
 
-const meta: Meta<typeof Carousel> = {
-  title: 'Components/Carousel',
-  component: Carousel,
+const meta: Meta<typeof TechTree> = {
+  title: 'Components/TechTree',
+  component: TechTree,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Carousel>;
+type Story = StoryObj<typeof TechTree>;
 
 const SAMPLE_GROUPS: SkillGroup[] = [
   { id: 'TECH_GROUP_LANGUAGES', items: ['CSS', 'HTML', 'JavaScript', 'TypeScript'] },

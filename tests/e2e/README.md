@@ -22,7 +22,7 @@ Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoj
 1. **`page.clock.install()`** pins "now" to a fixed ISO timestamp. The /skills "Total years of experience" card and any work-item with `endDate: null` both read `new Date()`; without freezing, the rendered text drifts every day.
 2. **Animations + transitions disabled** via an `addInitScript` that injects a global stylesheet. Theme-toggle slides, entrance fades, and the `react-vertical-timeline-component` intersection animation would all otherwise produce different pixels on every run.
 3. **Fonts ready** — `await document.fonts.ready` before capturing. Roboto loads from `/fonts/roboto/`; without this guard the first screenshot can land while the system fallback is still rendering.
-4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, Carousel, Timeline) to land and lay out.
+4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, TechTree, Timeline) to land and lay out.
 
 The QR `<svg>` in the nav is masked because its embedded font data hits the SVG anti-aliasing pipeline and produces sub-pixel diffs across environments. (No-op on mobile where the QR is `display: none`.)
 

@@ -3,10 +3,10 @@ import { FormattedMessage } from 'react-intl';
 import type { SkillGroup } from '~/utils/utils';
 import { getClassMaker } from '~/utils/utils';
 
-// Carousel CSS is `@import`-inlined into the consuming route's style.css
+// TechTree CSS is `@import`-inlined into the consuming route's style.css
 // via postcss-import — no links() export.
 
-const BLOCK = 'carousel-component';
+const BLOCK = 'tech-tree-component';
 const getClasses = getClassMaker(BLOCK);
 
 // Forward-looking groups stay hardcoded — they aren't job experiences
@@ -29,7 +29,7 @@ type Props = {
   groups: SkillGroup[];
 };
 
-export default function Carousel({ groups }: Props) {
+export default function TechTree({ groups }: Props) {
   return (
     <div className={getClasses()}>
       {groups.map((group) => (

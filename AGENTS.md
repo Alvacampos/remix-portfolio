@@ -62,7 +62,7 @@ remix-portfolio/
 │   │   └── skills.$uuid/         # /skills/:uuid      → Single work-item detail
 │   ├── components/
 │   │   ├── Card/                 # Generic card (title / texts / itemList / skills / children)
-│   │   ├── Carousel/             # Categorized tech-stack chip grid (legacy name kept)
+│   │   ├── TechTree/             # Categorized tech-stack chip grid (rendered from skills.json)
 │   │   ├── DownloadBtn/          # Download CV PDF
 │   │   ├── Input/                # Autocomplete combobox (a11y-compliant)
 │   │   ├── LoadingSpinner/
@@ -186,9 +186,9 @@ The component itself just owns its `style.css`. **No `links()` export, no `?url`
 }
 ```
 
-Components currently inlined this way: `Card`, `Carousel`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
+Components currently inlined this way: `Card`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `TechTree`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
 
-> **Lazy-loaded components inline their CSS too.** `Carousel`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`, but their CSS rides eagerly with the route stylesheet — it's tiny (~19 KB raw / ~3.5 KB gzipped including the vendor sheet) and Lighthouse's Lantern simulator was charging ~360 ms of element-render-delay across the four separate render-blocking sheets. One inlined route stylesheet beats four small ones. The JS chunk-split is preserved — only the CSS coalesces.
+> **Lazy-loaded components inline their CSS too.** `TechTree`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`, but their CSS rides eagerly with the route stylesheet — it's tiny (~19 KB raw / ~3.5 KB gzipped including the vendor sheet) and Lighthouse's Lantern simulator was charging ~360 ms of element-render-delay across the four separate render-blocking sheets. One inlined route stylesheet beats four small ones. The JS chunk-split is preserved — only the CSS coalesces.
 
 The chain bottoms out at [app/root.tsx](app/root.tsx)'s `links()`, which loads `app/styles/style.css` — global styles + the `@import`-inlined NavBar / ThemeToggle CSS.
 
@@ -343,7 +343,7 @@ Determinism guards (set up in `prepare()` and `settle()`):
 1. **`page.clock.install({ time: FIXED_NOW })`** — the /skills "Total years of experience" card and any `endDate: null` work item both call `new Date()`; without freezing, rendered text drifts every day.
 2. **Animations + transitions disabled** via an injected stylesheet — the vertical-timeline intersection animation, theme-toggle slide, and any other CSS transitions would otherwise produce different pixels every run.
 3. **`document.fonts.ready`** before snapshotting — Roboto loads from `/fonts/roboto/`; without this guard the first capture can land while the system fallback is still rendering.
-4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, Carousel, Timeline) to land and lay out.
+4. **`networkidle` + 200 ms settle** for lazy chunks (TenureHeatmap, TechTree, Timeline) to land and lay out.
 
 No content is masked on the routes that are gated — token changes and data updates that shift layout are exactly what we want to catch.
 

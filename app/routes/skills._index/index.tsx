@@ -26,7 +26,7 @@ import {
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
-// Lazy-component CSS (Carousel, TenureHeatmap, Timeline, vendor
+// Lazy-component CSS (TechTree, TenureHeatmap, Timeline, vendor
 // vertical-timeline) is now `@import`-inlined into ./style.css via
 // postcss-import — see that file for the rationale. The lazy chunks
 // themselves still split off the eager bundle through `lazy()` below.
@@ -42,7 +42,7 @@ export const links = () => [
 ];
 
 const LazyTimeline = lazy(() => import('~/components/Timeline'));
-const LazyCarousel = lazy(() => import('~/components/Carousel'));
+const LazyTechTree = lazy(() => import('~/components/TechTree'));
 const LazyTenureHeatmap = lazy(() => import('~/components/TenureHeatmap'));
 
 export const meta: MetaFunction = (args) =>
@@ -92,7 +92,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       yearsOfExp: formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills: SUGGESTIONS,
       heatmapData: getSkillHeatmapData(SKILLS),
-      carouselGroups: getAllSkillGroups(SKILLS, locale),
+      techTreeGroups: getAllSkillGroups(SKILLS, locale),
       extraActivities,
     },
     {
@@ -114,7 +114,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Skills() {
   const { formatMessage } = useIntl();
-  const { data, yearsOfExp, skills, heatmapData, carouselGroups, extraActivities } =
+  const { data, yearsOfExp, skills, heatmapData, techTreeGroups, extraActivities } =
     useLoaderData<typeof loader>();
   const [filteredData, setFilteredData] = useState(data);
 
@@ -165,7 +165,7 @@ export default function Skills() {
             <LazyTenureHeatmap data={heatmapData} />
           </Suspense>
           <Suspense fallback={<LoadingSpinner />}>
-            <LazyCarousel groups={carouselGroups} />
+            <LazyTechTree groups={techTreeGroups} />
           </Suspense>
         </div>
       </div>

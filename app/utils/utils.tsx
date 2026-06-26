@@ -412,7 +412,7 @@ export function getSkillGroupsForJob(
 }
 
 // Every skill in the data layer, bucketed by category. Used by the
-// home Carousel to render the full tech-stack overview without
+// home TechTree to render the full tech-stack overview without
 // hardcoding the list in the component. Mirrors getSkillGroupsForJob
 // but doesn't filter by job — every entry in SKILLS contributes.
 export function getAllSkillGroups(skillsData: SkillsData, locale: Locale = 'en'): SkillGroup[] {
