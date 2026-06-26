@@ -42,7 +42,7 @@
 | C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | open   |
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | done   |
-| C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | open   |
+| C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | done   |
 | U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | done   |
 | U2  | UI        | P0       | Print stylesheet (CV page printable)                           | done   |
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
@@ -188,9 +188,9 @@ Schema accepts any string for `name_es`. A typo (Mentoria vs Mentoría) won't be
 
 Ran `npm run build:og` on `main` after the per-route OG PR landed. All four PNGs (`og-home.png`, `og-education.png`, `og-projects.png`, `og-skills.png`) re-rendered deterministically with no byte drift against the committed copies. The script reads `scripts/og/<slug>.svg`, swaps in the title/tagline at template time, and writes to `public/assets/img/og-<slug>.png` via `@resvg/resvg-js`. Repeatable + idempotent.
 
-### C12 — Audit `app/assets/icons/` for orphans (P3)
+### C12 — Audit `app/assets/icons/` for orphans (P3) — DONE
 
-9 source SVGs today. Confirm each maps to a real consumer; remove orphans. `app/components/icons/` is generated so it can't be source-of-truth.
+Audited the 8 source SVGs against the codebase. All map to a real consumer: `Briefcase` (NavBar + Timeline), `Education` (NavBar + Timeline + both education routes), `GithubIcon`, `Home`, `LinkedinIcon`, `Paper` (all NavBar), `Sun` + `Moon` (ThemeToggle). No orphans to remove.
 
 ---
 
