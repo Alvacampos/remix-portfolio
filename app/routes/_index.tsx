@@ -1,24 +1,19 @@
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
-import { useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
 
 import DownloadButton from '~/components/DownloadBtn';
+import { loadSkills } from '~/data/skills-schema';
 import { pickLocale } from '~/intl';
 import { getClassMaker, getCvUrl, mergeRouteMeta } from '~/utils/utils';
 
+import skillsJson from '../../public/data/skills.json';
 import styles from './style.css?url';
 
-// The CV PDF is the primary CTA on this page; prefetch it so the
-// Download click is ~instant. `as: 'fetch'` + `crossOrigin: 'anonymous'`
-// is the documented shape for non-document, non-script asset prefetch
-// — the file is on the same origin (Cloudflare Pages) so anonymous
-// fetch matches the eventual <a href> request.
-//
-// `links()` runs without the request in scope, so we can't pick the
-// locale here. The English PDF is always available (it's the fallback
-// when a translation is missing) so prefetching it is the safe bet —
-// a Spanish visitor still gets the file warmed in cache; only the
-// hash differs.
+// The CV PDF is the primary CTA; prefetch it so the Download click is
+// ~instant. `links()` runs without the request in scope so we always
+// prefetch the English file — Spanish visitors still get it warmed in
+// cache, only the URL differs at click time.
 export const links = () => [
   { rel: 'stylesheet', href: styles },
   {
@@ -29,30 +24,74 @@ export const links = () => [
   },
 ];
 
+const SKILLS = loadSkills(skillsJson);
+const CURRENT_COMPANY = 'Qubika';
+
 export async function loader({ request }: LoaderFunctionArgs) {
-  return { cvUrl: getCvUrl(pickLocale(request)) };
+  // Year count for the hero chip. Cloudflare freezes Date at
+  // module-init (Spectre mitigation) so the math has to run here.
+  // Floor the diff in years — the "+" in "7+ years" handles the rest.
+  const firstStart = SKILLS.WORK_ITEMS[0].startDate; // 'YYYY-MM'
+  const [startYear, startMonth] = firstStart.split('-').map(Number);
+  const now = new Date();
+  const yearsOfExp = Math.floor(
+    now.getFullYear() - startYear + (now.getMonth() + 1 - startMonth) / 12
+  );
+
+  return {
+    cvUrl: getCvUrl(pickLocale(request)),
+    yearsOfExp,
+  };
 }
 
 export const meta: MetaFunction = (args) =>
   mergeRouteMeta(args, {
-    title: 'Gonzalo Alvarez Campos — Senior Software Engineer',
+    title: 'Gonzalo Alvarez Campos — Senior Frontend / Full-stack Engineer',
     description:
-      'Senior Software Engineer with 7+ years across React, TypeScript, Remix, Next.js, Python and Django. Download my CV.',
+      'Senior Frontend / Full-stack Engineer with 7+ years across React, TypeScript, Remix, Next.js, Python and Django. Download my CV.',
   });
 
 const BLOCK = 'home-route';
 const getClasses = getClassMaker(BLOCK);
 
 export default function Index() {
-  const { cvUrl } = useLoaderData<typeof loader>();
+  const { cvUrl, yearsOfExp } = useLoaderData<typeof loader>();
   return (
     <div className={getClasses()}>
-      <h1>
-        <FormattedMessage id="WELCOME_MY_NAME_IS" />
-      </h1>
-      <p>
-        <FormattedMessage id="I_AM_A_SOFTWARE_ENGINEER" />
-      </p>
+      <div className={getClasses('hero')}>
+        <h1 className={getClasses('hero-greeting')}>
+          <FormattedMessage id="WELCOME_MY_NAME_IS" />
+        </h1>
+        <p className={getClasses('hero-role')}>
+          <FormattedMessage id="HOME_ROLE" />
+        </p>
+        <p className={getClasses('hero-tagline')}>
+          <FormattedMessage id="HOME_TAGLINE" />
+        </p>
+
+        <div className={getClasses('hero-chips')}>
+          <span className={getClasses('hero-chip')}>
+            <FormattedMessage id="HOME_YEARS_OF_EXP" values={{ years: yearsOfExp }} />
+          </span>
+          <span className={getClasses('hero-status-badge')}>
+            <span className={getClasses('hero-status-dot')} aria-hidden="true" />
+            <FormattedMessage id="HOME_CURRENTLY_AT" values={{ company: CURRENT_COMPANY }} />
+          </span>
+        </div>
+
+        <div className={getClasses('hero-ctas')}>
+          <DownloadButton fileUrl={cvUrl} fileName="Gonzalo_Alvarez_CV.pdf">
+            <FormattedMessage id="DOWNLOAD_CV" />
+          </DownloadButton>
+          <Link to="/skills" className={getClasses('hero-secondary-cta')}>
+            <FormattedMessage id="HOME_VIEW_SKILLS" />
+            <span aria-hidden="true" className={getClasses('hero-secondary-cta-arrow')}>
+              →
+            </span>
+          </Link>
+        </div>
+      </div>
+
       <p className={getClasses('repo-url')}>
         <FormattedMessage id="CHECK_THIS_PROJECT_REPO" />
         <span className={getClasses('repo-link')}>
@@ -65,9 +104,6 @@ export default function Index() {
           </a>
         </span>
       </p>
-      <DownloadButton fileUrl={cvUrl} fileName="Gonzalo_Alvarez_CV.pdf">
-        <FormattedMessage id="DOWNLOAD_CV" />
-      </DownloadButton>
     </div>
   );
 }

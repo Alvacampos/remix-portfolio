@@ -43,7 +43,7 @@
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | open   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | open   |
-| U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | open   |
+| U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | done   |
 | U2  | UI        | P0       | Print stylesheet (CV page printable)                           | done   |
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
 | U4  | UI        | P0       | Locale-aware date format on `/education` (match `:slug`)       | done   |

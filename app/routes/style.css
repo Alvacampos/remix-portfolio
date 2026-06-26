@@ -10,25 +10,148 @@
    * vertical space). */
   min-height: calc(100vh - var(--nav-h));
   text-align: center;
+  gap: $space-32;
+  padding: 0 $space-20;
   white-space: pretty;
 
-  h1 {
-    font-size: $font-20;
+  &__hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-16;
+    max-width: 720px;
   }
 
-  p {
+  &__hero-greeting {
+    margin: 0;
+    font-size: $font-24;
+    font-weight: $weight-700;
+    line-height: 1.2;
+    color: var(--fg-base);
+  }
+
+  &__hero-role {
+    margin: 0;
     font-size: $font-16;
+    font-weight: $weight-700;
+    color: var(--accent);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  &__hero-tagline {
+    margin: 0;
+    font-size: $font-16;
+    color: var(--fg-muted);
+    line-height: 1.5;
+    max-width: 540px;
+  }
+
+  &__hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-8;
+    margin-top: $space-4;
+  }
+
+  &__hero-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: $space-4 $space-12;
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    color: var(--fg-base);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Same primitive as the /education in-progress badge: accent-tinted
+   * pill with a pulsing dot. Signals "live / current" without animation
+   * noise. Paused under prefers-reduced-motion below. */
+  &__hero-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-8;
+    padding: $space-4 $space-12;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-muted);
+    color: var(--accent);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: $font-12;
+    font-weight: $weight-700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__hero-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: home-hero-pulse 2s ease-in-out infinite;
+  }
+
+  &__hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-12;
+    margin-top: $space-12;
+  }
+
+  &__hero-secondary-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-4;
+    padding: $space-12 $space-20;
+    border: 1px solid var(--border-default);
+    border-radius: $border-6;
+    background: transparent;
+    color: var(--fg-base);
+    font-size: $font-16;
+    font-weight: $weight-700;
+    text-decoration: none;
+    transition:
+      border-color 120ms ease,
+      color 120ms ease,
+      background 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-muted);
+      outline: none;
+    }
+  }
+
+  &__hero-secondary-cta-arrow {
+    display: inline-block;
+    transition: transform 120ms ease;
+  }
+
+  &__hero-secondary-cta:hover &__hero-secondary-cta-arrow,
+  &__hero-secondary-cta:focus-visible &__hero-secondary-cta-arrow {
+    transform: translateX(4px);
   }
 
   &__repo-url {
-    margin-top: 1rem;
+    margin: 0;
     text-decoration: none;
     display: flex;
     gap: $space-4;
+    color: var(--fg-muted);
+    font-size: $font-14;
   }
 
   &__repo-link {
-    font-weight: bold;
+    font-weight: $weight-700;
 
     a {
       color: var(--accent);
@@ -47,10 +170,37 @@
   }
 }
 
+@keyframes home-hero-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-route__hero-status-dot {
+    animation: none;
+  }
+
+  .home-route__hero-secondary-cta-arrow {
+    transition: none;
+  }
+}
+
 @media screen and (min-width: $desktop-small) {
   .home-route {
-    h1 {
+    &__hero-greeting {
       font-size: $font-30;
+    }
+
+    &__hero-role {
+      font-size: $font-20;
     }
   }
 }
