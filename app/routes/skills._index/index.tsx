@@ -50,6 +50,7 @@ export const meta: MetaFunction = (args) =>
     title: 'Skills & Work Experience — Gonzalo Alvarez Campos',
     description:
       'Work history, technologies, and years of experience per skill. Filter by technology to see where each was used.',
+    ogImage: 'skills',
   });
 
 const BLOCK = 'skills-route';

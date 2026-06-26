@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#010408"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2ea043"/>
+      <stop offset="100%" stop-color="#238636"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="0" width="12" height="630" fill="url(#accent)"/>
+  <g stroke="#30363d" stroke-width="1" opacity="0.18">
+    <line x1="0" y1="120" x2="1200" y2="120"/>
+    <line x1="0" y1="510" x2="1200" y2="510"/>
+  </g>
+
+  <text x="80" y="180" fill="#2ea043" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700" letter-spacing="3">CASE STUDIES</text>
+
+  <text x="80" y="300" fill="#f0f6fc" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="84" font-weight="700">Gonzalo</text>
+  <text x="80" y="395" fill="#f0f6fc" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="84" font-weight="700">Alvarez Campos</text>
+
+  <text x="80" y="465" fill="#c9d1d9" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="36" font-weight="400">Problem · Constraints · Approach · Outcome</text>
+
+  <text x="80" y="560" fill="#8b949e" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" font-weight="400">gonzalo-alvarez-campos-cv.com/projects</text>
+
+  <!-- Project chip strip — the three currently published case studies -->
+  <g transform="translate(580, 530)" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="700">
+    <rect x="0" y="0" width="68" height="34" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="34" y="22" fill="#f0f6fc" text-anchor="middle">Avant</text>
+
+    <rect x="78" y="0" width="84" height="34" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="120" y="22" fill="#f0f6fc" text-anchor="middle">Adalabs</text>
+
+    <rect x="172" y="0" width="80" height="34" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="212" y="22" fill="#f0f6fc" text-anchor="middle">Imprint</text>
+
+    <rect x="262" y="0" width="120" height="34" rx="10" fill="transparent" stroke="#2ea043"/>
+    <text x="322" y="22" fill="#2ea043" text-anchor="middle">case studies</text>
+  </g>
+</svg>

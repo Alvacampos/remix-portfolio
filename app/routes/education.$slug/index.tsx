@@ -25,6 +25,8 @@ export const meta: MetaFunction<typeof loader> = (args) =>
   mergeRouteMeta(args, {
     title: `${args.data?.data?.title ?? 'Education'} — Gonzalo Alvarez Campos`,
     description: args.data?.data?.summary ?? 'Education detail.',
+    // Detail page inherits the parent section's OG.
+    ogImage: 'education',
   });
 
 const BLOCK = 'education-id-route';

@@ -19,6 +19,7 @@ export const meta: MetaFunction = (args) =>
     title: 'Education — Gonzalo Alvarez Campos',
     description:
       'Software Development associate degree from Universidad del Norte Santo Tomas de Aquino, plus Cambridge / EF SET English certifications and Udemy programming courses.',
+    ogImage: 'education',
   });
 
 const BLOCK = 'education-route';

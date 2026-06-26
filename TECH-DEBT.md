@@ -50,7 +50,7 @@
 | U5  | UI        | P0       | Match contrast fix on DownloadBtn hover state                  | done   |
 | U6  | UI        | P1       | `/contact` route (CF Pages Function + Resend / Loops)          | open   |
 | U7  | UI        | P1       | Case studies — `/projects/<slug>` (3-5 deep-dives)             | done   |
-| U8  | UI        | P1       | Per-route OG images                                            | open   |
+| U8  | UI        | P1       | Per-route OG images                                            | done   |
 | U9  | UI        | P1       | 404 page polish (match `/skills/:uuid` error UI)               | done   |
 | U10 | UI        | P1       | Spanish CV PDF (flip `HAS_ES_CV`)                              | open   |
 | U11 | UI        | P2       | `/blog` or `/notes` — engineering write-ups                    | open   |
