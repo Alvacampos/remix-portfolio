@@ -393,6 +393,9 @@
       "ranges": [
         {
           "jobId": 4
+        },
+        {
+          "jobId": 6
         }
       ],
       "name_es": "Liderazgo"
@@ -412,6 +415,12 @@
       "ranges": [
         {
           "jobId": 3
+        },
+        {
+          "jobId": 4
+        },
+        {
+          "jobId": 6
         }
       ],
       "name_es": "Mentoría"
