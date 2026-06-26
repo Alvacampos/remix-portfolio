@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-25T17:11:29.700Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-06-26T11:22:27.399Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "571e832",
+  "commit": "9163451",
   "categories": {
-    "performance": 0.98,
+    "performance": 0.93,
     "accessibility": 0.96,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.5 s",
-      "numericValue": 1520.8674,
-      "score": 0.95
+      "displayValue": "2.3 s",
+      "numericValue": 2297.6311,
+      "score": 0.74
     },
     "lcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2270.8674,
-      "score": 0.94
+      "displayValue": "2.7 s",
+      "numericValue": 2747.6311000000005,
+      "score": 0.84
     },
     "si": {
-      "displayValue": "1.5 s",
-      "numericValue": 1520.8674,
-      "score": 1
+      "displayValue": "2.3 s",
+      "numericValue": 2297.6311,
+      "score": 0.99
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,27 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.3 s",
-      "numericValue": 2270.8674,
-      "score": 0.99
+      "displayValue": "2.7 s",
+      "numericValue": 2747.6311000000005,
+      "score": 0.97
     },
-    "ttfb": 68
+    "ttfb": 53
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.95
+      "score": 0.74
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.94
+      "score": 0.84
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.99
+      "score": 0.97
     },
     {
       "id": "color-contrast",
