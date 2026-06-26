@@ -136,6 +136,25 @@ export default [
       // preference (most utility modules export named bindings).
       'import/extensions': 'off',
       'import/prefer-default-export': 'off',
+      // Force the `~/*` (app) and `~data/*` (public/data) aliases
+      // over `../../`-style relative parent imports. Same-level and
+      // child relative paths (`./foo`, `./sub/bar`) are still allowed.
+      // We use `no-restricted-imports` rather than
+      // `import/no-relative-parent-imports` because the latter
+      // resolves aliased paths to absolute paths and false-positives
+      // on `~/`-prefixed imports when the resolved file is in any
+      // ancestor of the current directory.
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*'],
+              message: 'Use the `~/` or `~data/` alias instead of a relative parent import.',
+            },
+          ],
+        },
+      ],
       'import/no-extraneous-dependencies': [
         'error',
         {

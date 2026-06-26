@@ -22,8 +22,8 @@ import {
   getSkillSuggestions,
   localized,
 } from '~/utils/utils';
+import skillsJson from '~data/skills.json';
 
-import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
 // Lazy-component CSS (TechTree, TenureHeatmap, Timeline, vendor

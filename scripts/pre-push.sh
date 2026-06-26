@@ -10,6 +10,10 @@
 #
 # To bypass in an emergency: `git push --no-verify`. Prefer fixing the
 # underlying failure to using --no-verify.
+#
+# Wired via `simple-git-hooks` in package.json. To reinstall after a
+# `package.json` change to that block, run `npm run prepare` (which
+# invokes `simple-git-hooks` and re-creates `.git/hooks/pre-push`).
 
 set -e
 

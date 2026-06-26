@@ -7,8 +7,8 @@ import { loadProjects } from '~/data/projects-schema';
 import type { Locale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
+import projectsJson from '~data/projects.json';
 
-import projectsJson from '../../../public/data/projects.json';
 import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];

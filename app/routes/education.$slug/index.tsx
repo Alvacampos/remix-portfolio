@@ -7,8 +7,8 @@ import { loadEducation } from '~/data/education-schema';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
+import educationJson from '~data/education.json';
 
-import educationJson from '../../../public/data/education.json';
 import styles from './style.css?url';
 
 export const links = () => [

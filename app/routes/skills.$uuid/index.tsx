@@ -7,8 +7,8 @@ import { loadSkills } from '~/data/skills-schema';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, getSkillGroupsForJob, localized } from '~/utils/utils';
+import skillsJson from '~data/skills.json';
 
-import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';
 
 export const links = () => [

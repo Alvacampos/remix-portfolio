@@ -29,7 +29,10 @@
     "test:visual:update": "scripts/update-visual-baselines.sh",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "prepare": "husky"
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-push": "scripts/pre-push.sh"
   },
   "dependencies": {
     "@remix-run/cloudflare": "^2.17.5",
@@ -88,12 +91,12 @@
     "eslint-plugin-storybook": "^10.4.6",
     "globals": "^16.5.0",
     "happy-dom": "^20.10.5",
-    "husky": "^9.1.7",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.61.0",
     "postcss": "^8.5.6",
     "prettier": "^3.8.4",
     "react-router-dom": "6.30.4",
+    "simple-git-hooks": "^2.13.1",
     "storybook": "^10.4.6",
     "stylelint": "^17.13.0",
     "stylelint-config-standard": "^40.0.0",
