@@ -38,8 +38,8 @@
 | C5  | Cleanup   | P1       | Data: `Leadership` ranges (Qubika missing?)                    | done   |
 | C6  | Cleanup   | P2       | Rename ambiguous `Programming` meta skill                      | open   |
 | C7  | Cleanup   | P2       | Merge `getSkillsForJob` into `getSkillGroupsForJob`            | open   |
-| C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | open   |
-| C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | open   |
+| C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | done   |
+| C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | done   |
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | done   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | done   |
@@ -172,13 +172,13 @@ Tagged on Professor (id 3) + Teacher (id 5). The category is `meta` so it's a so
 
 Group helper is a strict superset. Flat-list helper is only used by `/skills` index timeline-card chip strings. Could expose both shapes from one helper, or deprecate the flat one in favor of `getSkillGroupsForJob(...).flatMap(g => g.items)`. Reduces surface area.
 
-### C8 — Move `mergeRouteMeta` out of `utils.tsx` (P3)
+### C8 — Move `mergeRouteMeta` out of `utils.tsx` (P3) — DONE
 
-[app/utils/utils.tsx](app/utils/utils.tsx) is approaching 400 lines. `mergeRouteMeta` has a distinct concern (Remix meta tags) and belongs in `utils/meta.ts`.
+Extracted `mergeRouteMeta`, `RouteMetaOverrides`, and the `SITE_URL` constant into [app/utils/meta.ts](app/utils/meta.ts). All 6 route consumers updated to import from `~/utils/meta`. `utils.tsx` now sits at ~340 lines, focused on layout/data helpers; the meta-tag concern lives in its own module.
 
-### C9 — Move `FORWARD_GROUPS` out of TechTree component (P3)
+### C9 — Move `FORWARD_GROUPS` out of TechTree component (P3) — DONE
 
-The Learning / Future arrays still live inline in [app/components/TechTree/index.tsx](app/components/TechTree/index.tsx). Could move to a constants file, or — for full source-of-truth consistency — into `skills.json` under a new `FORWARD_LOOKING` block.
+Moved `FORWARD_GROUPS` + the `ForwardGroup` type into [app/components/TechTree/forward-groups.ts](app/components/TechTree/forward-groups.ts). The component now just imports the constant. Kept the data co-located with the component rather than promoting it to `skills.json` — these are aspirations (no SKILLS entry, no range), not job experiences, so the data shape doesn't match the skill-first schema.
 
 ### C10 — Validate `name_es` typos against a locale registry (P3)
 

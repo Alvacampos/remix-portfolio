@@ -5,13 +5,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import Card from '~/components/Card';
 import { loadSkills } from '~/data/skills-schema';
 import { type Locale, pickLocale } from '~/intl';
-import {
-  formatDate,
-  getClassMaker,
-  getSkillGroupsForJob,
-  localized,
-  mergeRouteMeta,
-} from '~/utils/utils';
+import { mergeRouteMeta } from '~/utils/meta';
+import { formatDate, getClassMaker, getSkillGroupsForJob, localized } from '~/utils/utils';
 
 import skillsJson from '../../../public/data/skills.json';
 import styles from './style.css?url';

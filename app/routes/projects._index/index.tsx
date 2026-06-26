@@ -5,7 +5,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import Card from '~/components/Card';
 import { loadProjects } from '~/data/projects-schema';
 import type { Locale } from '~/intl';
-import { formatDate, getClassMaker, localized, mergeRouteMeta } from '~/utils/utils';
+import { mergeRouteMeta } from '~/utils/meta';
+import { formatDate, getClassMaker, localized } from '~/utils/utils';
 
 import projectsJson from '../../../public/data/projects.json';
 import styles from './style.css?url';

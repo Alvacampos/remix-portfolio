@@ -23,7 +23,7 @@ const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.v2.woff2';
 // non-relative image URLs. The PNG itself is rendered offline from
 // scripts/og-image.svg via scripts/render-og-image.mjs.
 // Default OG image (the home variant). Per-route overrides flow
-// through mergeRouteMeta's `ogImage` prop in app/utils/utils.tsx —
+// through mergeRouteMeta's `ogImage` prop in app/utils/meta.ts —
 // see scripts/og/ for the per-route SVG templates.
 const OG_IMAGE_URL = `${SITE_URL}/assets/img/og-home.png`;
 

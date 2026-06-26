@@ -12,6 +12,7 @@ import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import { loadSkills } from '~/data/skills-schema';
 import { pickLocale } from '~/intl';
+import { mergeRouteMeta } from '~/utils/meta';
 import {
   formatDate,
   getAllSkillGroups,
@@ -20,7 +21,6 @@ import {
   getSkillsForJob,
   getSkillSuggestions,
   localized,
-  mergeRouteMeta,
 } from '~/utils/utils';
 
 import skillsJson from '../../../public/data/skills.json';

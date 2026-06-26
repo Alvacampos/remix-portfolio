@@ -5,7 +5,8 @@ import { FormattedMessage } from 'react-intl';
 import DownloadButton from '~/components/DownloadBtn';
 import { loadSkills } from '~/data/skills-schema';
 import { pickLocale } from '~/intl';
-import { getClassMaker, getCvUrl, mergeRouteMeta } from '~/utils/utils';
+import { mergeRouteMeta } from '~/utils/meta';
+import { getClassMaker, getCvUrl } from '~/utils/utils';
 
 import skillsJson from '../../public/data/skills.json';
 import styles from './style.css?url';
