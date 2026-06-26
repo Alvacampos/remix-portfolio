@@ -15,6 +15,8 @@ const ROUTES = [
   { name: 'skills-detail', path: '/skills/3' },
   { name: 'education-index', path: '/education' },
   { name: 'education-detail', path: '/education/degree' },
+  { name: 'projects-index', path: '/projects' },
+  { name: 'projects-detail', path: '/projects/avant' },
 ];
 
 const BLOCKING_IMPACTS = ['serious', 'critical'];

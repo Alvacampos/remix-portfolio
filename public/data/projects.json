@@ -1,0 +1,96 @@
+{
+  "_schema": {
+    "version": 1,
+    "description": "Case studies for /projects and /projects/<slug>. Each entry is an abstracted project write-up with Problem / Constraints / Approach / Outcome narrative sections. Localizable fields carry optional _es siblings.",
+    "notes": [
+      "slug is the URL segment — kebab-case, stable across locales.",
+      "company is a proper noun, not localized; used to derive the logo path.",
+      "tech[] is authored chronologically; the detail route sorts alphabetically before rendering."
+    ]
+  },
+  "PROJECTS": [
+    {
+      "slug": "avant",
+      "title": "Avant",
+      "title_es": "Avant",
+      "summary": "Full-stack platform for a US consumer lender — React + Remix.run on the front, Python/Django on the back, with a JavaScript-to-TypeScript migration in flight.",
+      "summary_es": "Plataforma full-stack para un prestamista de consumo en EE. UU. — React + Remix.run en el front, Python/Django en el back, con migración de JavaScript a TypeScript en curso.",
+      "role": "Senior Full-stack Developer",
+      "role_es": "Desarrollador Full-stack Senior",
+      "company": "Qubika",
+      "startDate": "2022-04",
+      "endDate": "2024-03",
+      "tech": [
+        "React",
+        "Remix",
+        "PostCSS",
+        "TypeScript",
+        "JavaScript",
+        "Cypress",
+        "Playwright",
+        "Python",
+        "Django"
+      ],
+      "problem": "The team needed to modernize a long-lived consumer-lending platform: bring the frontend onto a server-rendering React framework for faster page loads on regulated content, expand test coverage so feature work could ship without manual QA bottlenecks, and incrementally migrate a large JavaScript codebase to TypeScript without freezing product delivery.",
+      "problem_es": "El equipo necesitaba modernizar una plataforma de préstamos consolidada: llevar el frontend a un framework React con renderizado en servidor para acelerar páginas con contenido regulado, ampliar la cobertura de tests para que el trabajo de producto pudiera salir sin cuellos de botella de QA manual, y migrar incrementalmente un codebase JavaScript a TypeScript sin congelar la entrega de producto.",
+      "constraints": "Production traffic and regulatory copy meant zero tolerance for visible regressions. The TypeScript migration had to happen file-by-file alongside feature work, not as a freeze-and-rewrite. Backend (Python/Django) and frontend teams shared ownership of contract evolution — every change had to be discussed across stacks.",
+      "constraints_es": "El tráfico en producción y el contenido regulado no daban margen para regresiones visibles. La migración a TypeScript debía hacerse archivo por archivo en paralelo a las features, no como un freeze-and-rewrite. Los equipos de backend (Python/Django) y frontend compartían la dueñidad del contrato — cada cambio se discutía cruzando ambos lados.",
+      "approach": "Stood up Remix.run for new server-rendered routes while keeping the existing React shell intact, so migration could happen route-at-a-time. Added Cypress for end-to-end coverage of credit-flow happy paths and Playwright for newer feature work where the cross-browser matrix mattered. Drove the JS→TS migration with strict-mode-on-by-default on new files and incremental opt-in (`// @ts-check` then `.ts`) for legacy modules; reviewed every cross-stack interface change with the Django side before merging.",
+      "approach_es": "Levanté Remix.run para las nuevas rutas con renderizado en servidor, manteniendo el shell de React existente intacto para que la migración pasara ruta-por-ruta. Sumé Cypress para cubrir los happy paths del flujo de crédito de punta a punta y Playwright para las features más nuevas donde el matrix cross-browser pesaba. Lideré la migración JS→TS con strict-mode-on-by-default en archivos nuevos y opt-in incremental (`// @ts-check` luego `.ts`) en módulos legacy; revisé cada cambio de interface cruzando con el lado Django antes de mergear.",
+      "outcome": "Server-rendered routes shipped without rollback. Test coverage went from spot-checked manual QA to a fast Cypress+Playwright suite gating CI. The TS migration progressed steadily over the engagement, with no feature-delivery freeze. Cross-stack API contract changes now go through a documented review path that catches breakages before they hit staging.",
+      "outcome_es": "Las rutas con renderizado en servidor salieron sin rollback. La cobertura de tests pasó de QA manual puntual a una suite Cypress+Playwright rápida que gatea CI. La migración a TS avanzó de manera sostenida durante el engagement, sin freeze de delivery. Los cambios de contrato de API cruzando stacks ahora pasan por un camino de revisión documentado que atrapa las regresiones antes de staging."
+    },
+    {
+      "slug": "adalabs",
+      "title": "Adalabs AI Platform",
+      "title_es": "Plataforma de IA Adalabs",
+      "summary": "Client-facing interface for a US AI platform that organizes finance-related documentation for fintechs — Next.js on Vercel, designed as the single source of truth across client data and AI-assisted workflows.",
+      "summary_es": "Interfaz cliente para una plataforma de IA en EE. UU. que organiza documentación financiera para fintechs — Next.js en Vercel, pensada como la fuente única de verdad para datos de clientes y workflows asistidos por IA.",
+      "role": "Senior Frontend Developer",
+      "role_es": "Desarrollador Frontend Senior",
+      "company": "Qubika",
+      "startDate": "2024-03",
+      "endDate": "2024-12",
+      "tech": ["Next.js", "React", "TypeScript", "Vercel"],
+      "problem": "Fintechs and financial-service providers needed one place to organize, retrieve, and act on a sprawling pile of client documentation. The product had to surface AI-generated insights without the user losing trust in where the data came from — every assertion the model made had to trace back to a source document the user could open.",
+      "problem_es": "Fintechs y proveedores de servicios financieros necesitaban un único lugar para organizar, recuperar y actuar sobre una pila enorme de documentación de clientes. El producto tenía que mostrar insights generados por IA sin que el usuario perdiera la confianza en de dónde venían los datos — cada afirmación del modelo tenía que rastrearse hasta un documento fuente que el usuario pudiera abrir.",
+      "constraints": "Regulated industry meant compliance review on every UX pattern that handled client data. Tight launch window (a flagship customer onboarding was the forcing function). Next.js on Vercel as the deployment target, which constrained some architectural choices — incremental static regeneration patterns had to work around per-customer data isolation.",
+      "constraints_es": "Industria regulada — cada patrón de UX que manejaba datos de clientes pasaba por revisión de compliance. Ventana de lanzamiento ajustada (el onboarding de un cliente faro era la forcing function). Next.js en Vercel como target de deploy, lo que restringió algunas decisiones arquitectónicas — los patrones de ISR debían trabajar alrededor del aislamiento de datos por cliente.",
+      "approach": "Built the document explorer + AI-summary panes as server components where the data fetch could be co-located with the render, and progressively-enhanced interactive bits (filters, multi-select, inline annotations) as client components. Every AI-generated claim links back to the source span in the original document via a side-by-side panel — no orphan assertions. Worked closely with the AI/ML team to align response schemas so the frontend could render confidence states (high / medium / unsupported) without re-shaping every payload.",
+      "approach_es": "Construí el explorador de documentos y los paneles de resumen IA como server components donde el fetch de datos podía co-localizarse con el render, y los bits interactivos (filtros, selección múltiple, anotaciones inline) como client components con mejora progresiva. Cada afirmación generada por IA enlaza al span de origen en el documento original vía un panel lado-a-lado — sin afirmaciones huérfanas. Trabajé estrechamente con el equipo de IA/ML para alinear los schemas de respuesta y que el frontend pudiera renderizar estados de confianza (alta / media / sin respaldo) sin re-modelar cada payload.",
+      "outcome": "Shipped to the flagship customer on schedule. The traceable-source pattern became a feature the sales team highlighted in pitches — no AI hallucination concerns because every claim had a clickable origin. Performance held under load testing at the rendering layer (server components moved the heavy fetch off the critical path) and the design system established here was reused on the next Qubika engagement.",
+      "outcome_es": "Salió al cliente faro en fecha. El patrón de origen rastreable terminó siendo una feature que el equipo de ventas resaltaba en sus pitches — sin preocupaciones de alucinación de IA porque cada afirmación tenía un origen clickeable. La performance se sostuvo bajo carga en la capa de render (los server components movieron el fetch pesado fuera del critical path) y el design system establecido acá se reutilizó en el siguiente engagement de Qubika."
+    },
+    {
+      "slug": "imprint",
+      "title": "Imprint",
+      "title_es": "Imprint",
+      "summary": "Loan and credit handler for US banks — front-end work on a TypeScript + React + GraphQL stack with a custom Design System, behind a feature-flag platform (Statsig), shipped at modern-frontend scale.",
+      "summary_es": "Gestor de préstamos y crédito para bancos en EE. UU. — trabajo de front-end sobre un stack TypeScript + React + GraphQL con un Design System propio, detrás de una plataforma de feature flags (Statsig), enviado a escala de frontend moderno.",
+      "role": "Senior Frontend Developer",
+      "role_es": "Desarrollador Frontend Senior",
+      "company": "Qubika",
+      "startDate": "2024-12",
+      "tech": [
+        "TypeScript",
+        "React",
+        "GraphQL",
+        "CSS",
+        "Styled Components",
+        "Playwright",
+        "Statsig",
+        "Storybook",
+        "Design System",
+        "Claude Code"
+      ],
+      "problem": "Banks issuing white-label credit products needed a single configurable handler that could ship customer-facing flows fast without recompiling per customer. Feature variations (different copy, different decision rules, different fields shown) had to roll out and roll back without engineering re-deploys, and every variant needed to be debuggable from the support side.",
+      "problem_es": "Bancos que emiten productos de crédito white-label necesitaban un único handler configurable capaz de enviar flows de cara al cliente rápido sin recompilar por cada cliente. Las variaciones de feature (distintos textos, distintas reglas de decisión, distintos campos visibles) tenían que poder activarse y desactivarse sin re-deploys de ingeniería, y cada variante tenía que ser debuggable desde soporte.",
+      "constraints": "Heavy compliance footprint — every UI string had a compliance reviewer attached, so iteration had to happen behind flags rather than in main. Design System adoption was actively rolling out across the org; new work had to consume it AND occasionally drive new primitives back into it. GraphQL contract was shared with the backend team that owned the credit-decision engine, so frontend schema work needed coordinated changes.",
+      "constraints_es": "Footprint de compliance pesado — cada string de UI tenía un revisor de compliance asignado, así que la iteración tenía que pasar detrás de flags en lugar de en main. La adopción del Design System estaba en pleno rollout por la organización; el trabajo nuevo tenía que consumirlo Y a veces empujar primitives nuevos de vuelta. El contrato GraphQL estaba compartido con el equipo de backend que dueño del motor de decisiones de crédito, así que el trabajo de schema en frontend necesitaba cambios coordinados.",
+      "approach": "Built every new flow behind a Statsig feature flag so compliance review could happen on a deployed variant before rollout. Wrote components against the in-flight Design System with explicit fallbacks for primitives that hadn't shipped yet — and contributed back when a missing pattern blocked a flow. Used Claude Code (Anthropic's CLI) heavily as a pair-programming collaborator for refactors and test scaffolding; tracked the AI assistance in commit messages so reviewers had context. Storybook-first development meant every variant was reviewable without spinning up the full app shell.",
+      "approach_es": "Construí cada flow nuevo detrás de una feature flag de Statsig para que la revisión de compliance pudiera pasar en una variante desplegada antes del rollout. Escribí componentes contra el Design System en pleno rollout con fallbacks explícitos para primitives que aún no habían salido — y contribuí de vuelta cuando un patrón faltante bloqueaba un flow. Usé Claude Code (la CLI de Anthropic) intensamente como colaborador de pair-programming para refactors y scaffolding de tests; registré la asistencia con IA en los commit messages para que los reviewers tuvieran el contexto. El desarrollo Storybook-first significó que cada variante era reviewable sin levantar el shell completo de la app.",
+      "outcome": "Rollouts went from \"merge-and-pray\" to flag-gated, observable releases — compliance review happens on the deployed variant, not the PR. Design System adoption accelerated because the Imprint team became one of the early load-bearing consumers (and contributors). Test stability improved with Playwright on the new flows; existing flows kept their previous coverage. Engineering velocity went up measurably; AI-assisted scaffolding shortened the gap between \"design approved\" and \"PR ready for review.\"",
+      "outcome_es": "Los rollouts pasaron de \"merge-and-pray\" a releases con flags y observabilidad — la revisión de compliance pasa sobre la variante desplegada, no sobre el PR. La adopción del Design System aceleró porque el equipo de Imprint terminó siendo uno de los consumidores (y contribuidores) tempranos load-bearing. La estabilidad de tests mejoró con Playwright sobre los flows nuevos; los flows existentes mantuvieron su cobertura previa. La velocidad de ingeniería subió medible; el scaffolding asistido por IA acortó la distancia entre \"diseño aprobado\" y \"PR listo para review.\""
+    }
+  ]
+}
