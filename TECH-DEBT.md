@@ -17,7 +17,7 @@
 | ID  | Section   | Priority | Item                                                           | Status |
 | --- | --------- | -------- | -------------------------------------------------------------- | ------ |
 | T1  | Technical | P0       | a11y test coverage in CI (axe-playwright)                      | done   |
-| T2  | Technical | P0       | Lighthouse gating in CI                                        | open   |
+| T2  | Technical | P0       | Lighthouse gating in CI                                        | done   |
 | T3  | Technical | P0       | Stop serving `/data/*` publicly                                | done   |
 | T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | done   |
 | T5  | Technical | P1       | Recover `/skills` Lighthouse perf (0.87 → 0.95+)               | open   |
