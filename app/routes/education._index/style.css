@@ -65,6 +65,7 @@
   }
 
   &__card-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: $space-20;
@@ -73,12 +74,16 @@
     height: 100%;
   }
 
-  /* Badge shown above the card title for an in-progress degree.
-   * Pulsing accent dot signals "live" status without animation noise
-   * (respects prefers-reduced-motion below). */
+  /* Badge floats above the card via absolute positioning so it doesn't
+   * push the Bachelor's card down out of alignment with the Associate
+   * Degree card next to it. Negative `top` places it half-overlapping
+   * the card's top edge — the classic "status badge" placement. */
   &__in-progress-badge {
+    position: absolute;
+    top: -$space-12;
+    left: $space-16;
+    z-index: 1;
     display: inline-flex;
-    align-self: flex-start;
     align-items: center;
     gap: $space-8;
     padding: $space-4 $space-12;
