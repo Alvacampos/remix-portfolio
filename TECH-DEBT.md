@@ -31,9 +31,9 @@
 | T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | open   |
 | T14 | Technical | P3       | Replace husky with simple-git-hooks                            | open   |
 | T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | open   |
-| C1  | Cleanup   | P0       | Doc drift: README locale claims                                | open   |
-| C2  | Cleanup   | P0       | Doc drift: README "Future Plans" (Python/Django, contact form) | open   |
-| C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | open   |
+| C1  | Cleanup   | P0       | Doc drift: README locale claims                                | done   |
+| C2  | Cleanup   | P0       | Doc drift: README "Future Plans" (Python/Django, contact form) | done   |
+| C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | done   |
 | C4  | Cleanup   | P1       | Data: `Mentoring` ranges (Endava + Qubika missing)             | open   |
 | C5  | Cleanup   | P1       | Data: `Leadership` ranges (Qubika missing?)                    | open   |
 | C6  | Cleanup   | P2       | Rename ambiguous `Programming` meta skill                      | open   |
