@@ -1,6 +1,6 @@
 # Remix Portfolio
 
-Welcome to my personal portfolio project! This is an ongoing project built with [Remix](https://remix.run/) and deployed on [Cloudflare Pages](https://pages.cloudflare.com/). The goal of this project is to showcase my skills, experience, and education in a visually appealing and interactive way. While the current focus is on the frontend, the backend will eventually be developed using Python and Django. Additionally, a contact form will be added in the future to make it easier for visitors to reach out.
+Welcome to my personal portfolio project! This is an ongoing project built with [Remix](https://remix.run/) and deployed on [Cloudflare Pages](https://pages.cloudflare.com/). The goal of this project is to showcase my skills, experience, and education in a visually appealing and interactive way. The site is bilingual (English + Spanish) with a visible locale toggle and a downloadable CV.
 
 The project has been deployed and is hosted in this url https://gonzalo-alvarez-campos-cv.com/
 
@@ -65,7 +65,7 @@ For the full agent-facing reference (architecture, conventions, gotchas), see [A
 What this project ships that goes beyond a "static CV page":
 
 - **Multi-route Remix app** with file-based flat routing — Home, Skills (with detail pages per work item), Education (with detail pages per degree), and a downloadable CV.
-- **Internationalization** via `react-intl` — English and Spanish, picked from the request's `Accept-Language` header at the root loader.
+- **Internationalization** via `react-intl` — English and Spanish, with a visible `EN | ES` toggle in the NavBar. The active locale is resolved server-side by `pickLocale(request)` in priority order: `?lang=` URL param → `locale` cookie (set by the toggle) → `Accept-Language` header. The cookie ships on every request so the chosen locale persists across page navigations.
 - **Single Fetch + lazy route discovery** — Remix v3 future flags enabled. Loaders return raw objects; the tenure heatmap, tech-grid, and timeline are JS-lazy-loaded so the initial `/skills` bundle stays small.
 - **Skill-first JSON schema with Zod validation** — `public/data/skills.json` follows a skill-first model: every skill is authored once with a list of date-bounded ranges that point at jobs by id. Validated at worker boot (a malformed file throws a path-precise error before any consumer reads it). The tenure heatmap, autocomplete suggestions, and per-job chip lists all derive from the same payload — no parallel data sources.
 - **Cloudflare Pages deployment** — Pages Functions handle SSR via Wrangler, with edge-cached static assets (`Cache-Control: public, max-age=31536000, immutable`) and a per-route 1h cache on the skills page.
@@ -108,13 +108,6 @@ Things I learned about working with an AI collaborator on a real project:
 
 ---
 
-## Future Plans
+## Roadmap
 
-This project is a work in progress, and here are some planned features and improvements:
-
-- **Backend development**: Python and Django for handling dynamic content + data persistence.
-- **Contact form**: easier outreach for visitors.
-- **Locale switcher UI**: today the locale is browser-driven (`Accept-Language`); a visible en/es toggle is on the backlog.
-- **Possible framework migration**: React Router v7 or Next.js are on the table but not actively planned.
-
-Stay tuned for updates as the project evolves!
+The active backlog lives in [TECH-DEBT.md](TECH-DEBT.md) — technical improvements, cleanup items, and UI/feature ideas, each with a priority and a status column.

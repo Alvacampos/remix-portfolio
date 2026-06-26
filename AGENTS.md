@@ -10,8 +10,8 @@ Guidelines for AI agents (Claude Code, Cursor, Aider, etc.) working in this repo
 Personal portfolio / online CV for **Gonzalo Alvarez Campos**, deployed at <https://gonzalo-alvarez-campos-cv.com/>.
 
 - Single-page-feel multi-route web app showcasing work history, skills, education, and a downloadable CV (PDF).
-- The frontend is the entire product today. The README mentions a future Python/Django backend and a contact form, but neither exists yet.
-- A future migration to React Router v7 or Next.js is on the table but not planned.
+- The frontend is the entire product today. Cloudflare Pages Functions handle SSR; there's no separate backend service. Future server-side concerns (e.g. a `/contact` form) would land as Pages Functions, not a standalone backend.
+- A future migration to React Router v7 is on the table (tracked as **T9** in [TECH-DEBT.md](TECH-DEBT.md)) but not actively planned.
 
 The site is content-driven: routes load static JSON files from [public/data/](public/data/) at request time and render them.
 
@@ -19,24 +19,24 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 
 ## 2. Stack
 
-| Layer             | Tech                                                                                         |
-| ----------------- | -------------------------------------------------------------------------------------------- |
-| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                        |
-| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)          |
-| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                               |
-| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                          |
-| UI                | React 18 + TypeScript                                                                        |
-| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                  |
-| Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                 |
-| i18n              | `react-intl` (English + Spanish — picked from `Accept-Language`; see [app/intl/](app/intl/)) |
-| Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))     |
-| Timeline          | `react-vertical-timeline-component`                                                          |
-| Dates             | `date-fns`                                                                                   |
-| Icons             | Local SVGs → SVGO → SVGR-generated React components                                          |
-| Linting           | ESLint 9 flat-config + Prettier, Stylelint, ls-lint                                          |
-| Type-check        | `tsc --noEmit` (Vite handles emit)                                                           |
-| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                  |
-| npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                    |
+| Layer             | Tech                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                                        |
+| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)                          |
+| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                                               |
+| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                                          |
+| UI                | React 18 + TypeScript                                                                                        |
+| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                                  |
+| Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                                 |
+| i18n              | `react-intl` (English + Spanish; `?lang=` → `locale` cookie → `Accept-Language`; see [app/intl/](app/intl/)) |
+| Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))                     |
+| Timeline          | `react-vertical-timeline-component`                                                                          |
+| Dates             | `date-fns`                                                                                                   |
+| Icons             | Local SVGs → SVGO → SVGR-generated React components                                                          |
+| Linting           | ESLint 9 flat-config + Prettier, Stylelint, ls-lint                                                          |
+| Type-check        | `tsc --noEmit` (Vite handles emit)                                                                           |
+| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                                  |
+| npm               | `legacy-peer-deps=true` (set in `.npmrc`)                                                                    |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
 
@@ -73,7 +73,7 @@ remix-portfolio/
 │   │   └── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
 │   ├── data/skills-schema.ts     # Zod schema + types + loadSkills() boot validator
 │   ├── assets/icons/             # Source .svg files (kebab-case)
-│   ├── intl/                     # en-US.json + es-ES.json + Accept-Language picker (index.ts)
+│   ├── intl/                     # en-US.json + es-ES.json + locale picker (index.ts)
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
@@ -138,13 +138,13 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 
 **Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
 
-| URL                | File                                                                            | Loader                                                                                                                                                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                                  |
-| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | validates `education.json` via Zod once per worker boot (`loadEducation`); resolves `_es` siblings per request via `localized()`                                                                                                      |
-| `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key, localizes title/summary/description in the loader (so `<meta>` and render share copy); throws on miss → local `ErrorBoundary`                                                                        |
-| `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS` hoisted); the heatmap + total-years figure derive in the loader. Per-request: timeline cards + extras resolve `_es`. 1h cache + `Vary: Accept-Language` |
-| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                         |
+| URL                | File                                                                            | Loader                                                                                                                                                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                                          |
+| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | validates `education.json` via Zod once per worker boot (`loadEducation`); resolves `_es` siblings per request via `localized()`                                                                                                              |
+| `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key, localizes title/summary/description in the loader (so `<meta>` and render share copy); throws on miss → local `ErrorBoundary`                                                                                |
+| `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS` hoisted); the heatmap + total-years figure derive in the loader. Per-request: timeline cards + extras resolve `_es`. 1h cache + `Vary: Accept-Language, Cookie` |
+| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                                 |
 
 There is no `/contact` route today — README mentions one as a future feature but the NavBar doesn't render any entry for it.
 
@@ -231,7 +231,7 @@ If a rule starts emitting false positives on a postcss-simple-vars expansion, pr
 
 ## 8. Internationalization
 
-`IntlProvider` wraps the app in [app/root.tsx](app/root.tsx) with the locale and messages chosen by the **root loader**: it calls `pickLocale(request)` from [app/intl/index.ts](app/intl/index.ts), which reads the `Accept-Language` header and returns `'en'` or `'es'` (falling back to English). Messages live next to that helper in [en-US.json](app/intl/en-US.json) and [es-ES.json](app/intl/es-ES.json).
+`IntlProvider` wraps the app in [app/root.tsx](app/root.tsx) with the locale and messages chosen by the **root loader**: it calls `pickLocale(request)` from [app/intl/index.ts](app/intl/index.ts), which resolves a locale in priority order — `?lang=` URL param → `locale` cookie (set by the NavBar `LocaleToggle`) → `Accept-Language` header → `'en'` default. Messages live next to that helper in [en-US.json](app/intl/en-US.json) and [es-ES.json](app/intl/es-ES.json).
 
 Use one of:
 
@@ -240,7 +240,7 @@ Use one of:
 
 Adding a key: append it to **both** `en-US.json` and `es-ES.json` — the registry is case-sensitive and will warn at runtime when a key is missing in one locale. Both files share the same `UPPER_SNAKE_CASE` shape; sort keys alphabetically by convention.
 
-Adding a third locale: extend `SUPPORTED_LOCALES` and the `MESSAGES` map in `app/intl/index.ts`, drop a sibling JSON next to the existing two. There is no UI switcher today — locale is browser-driven via `Accept-Language`.
+Adding a third locale: extend `SUPPORTED_LOCALES` and the `MESSAGES` map in `app/intl/index.ts`, drop a sibling JSON next to the existing two, and add a button to [app/components/LocaleToggle/index.tsx](app/components/LocaleToggle/index.tsx) (the toggle iterates over `SUPPORTED_LOCALES` so no math changes — just ensure the CSS knob's `--knob-index` math still works with the new column count).
 
 ---
 
@@ -257,7 +257,7 @@ To update content, edit those JSON files. Route loaders import them server-side 
 
 Both data files use **inline `_es` siblings** for localizable string fields. A field like `description` carries an optional `description_es` next to it; consumers resolve via [`localized(item, key, locale)`](app/utils/utils.tsx) in `app/utils/utils.tsx`. The helper falls back to the English field when the `_es` sibling is missing or empty, so partial translation is fine and never breaks a render. **Not** localized: company names, institution names, dates, ids, tech-stack chip text (proper nouns).
 
-Locale is resolved by [`pickLocale(request)`](app/intl/index.ts) in priority order: `?lang=` URL param → `Accept-Language` header → `'en'` default. Loaders that emit localized copy resolve it server-side and set `Vary: Accept-Language` on the response so the edge cache segments correctly.
+Locale is resolved by [`pickLocale(request)`](app/intl/index.ts) in priority order: `?lang=` URL param → `locale` cookie (set by `LocaleToggle` on click; 1-year expiry, `SameSite=Lax`) → `Accept-Language` header → `'en'` default. Loaders that emit localized copy resolve it server-side and set `Vary: Accept-Language, Cookie` on the response so the edge cache segments correctly across both signals.
 
 Adding a new field:
 
