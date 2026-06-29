@@ -199,7 +199,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+@media screen and (min-width: $bp-lg) {
   .home-route {
     &__hero-greeting {
       font-size: $font-30;

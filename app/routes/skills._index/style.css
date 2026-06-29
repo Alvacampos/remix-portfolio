@@ -97,7 +97,7 @@
   }
 }
 
-@media screen and (min-width: $mobile-small) {
+@media screen and (min-width: $bp-sm) {
   .skills-route {
     &__time-line {
       &-controls {
@@ -122,7 +122,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+@media screen and (min-width: $bp-lg) {
   .skills-route {
     &__time-line {
       display: flex;
@@ -148,7 +148,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-medium) {
+@media screen and (min-width: $bp-xl) {
   .skills-route {
     &__time-line {
       display: flex;

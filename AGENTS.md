@@ -158,7 +158,7 @@ Loaders import the JSON directly from `public/data/` so Vite bakes it into the s
 
 ### Design tokens
 
-All design tokens live in [app/styles/constants.js](app/styles/constants.js) and are injected as PostCSS `simple-vars` (e.g. `$text-color`, `$space-20`, `$desktop-small`). Unknown variable refs emit warnings — keep tokens centralized there.
+All design tokens live in [app/styles/constants.js](app/styles/constants.js) and are injected as PostCSS `simple-vars` (e.g. `$text-color`, `$space-20`, `$bp-md`). Unknown variable refs emit warnings — keep tokens centralized there.
 
 ### Component CSS
 

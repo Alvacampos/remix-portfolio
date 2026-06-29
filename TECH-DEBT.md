@@ -64,7 +64,7 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 
 - **Plan.**
   1. **T16 first.** Migration plan is already written (see [T16
-     entry](#t16--standardise-breakpoints-legacy--tailwind-aligned-scale-p1));
+     entry](#t16--standardise-breakpoints-legacy--tailwind-aligned-scale-p1--done));
      remaps 17 legacy `$mobile-small`/`$desktop-small`/`$desktop-medium`
      callsites to `$bp-sm`/`$bp-md`/`$bp-lg`/`$bp-xl`/`$bp-2xl`. No
      other token changes in that PR — keeps the diff reviewable and
@@ -160,7 +160,7 @@ every route file plus dev tooling.
 | T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | done   |
 | T14 | Technical | P3       | Replace husky with simple-git-hooks                            | done   |
 | T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | done   |
-| T16 | Technical | P1       | Standardise breakpoints (legacy → Tailwind-aligned scale)      | open   |
+| T16 | Technical | P1       | Standardise breakpoints (legacy → Tailwind-aligned scale)      | done   |
 | C1  | Cleanup   | P0       | Doc drift: README locale claims                                | done   |
 | C2  | Cleanup   | P0       | Doc drift: README "Future Plans" (Python/Django, contact form) | done   |
 | C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | done   |
@@ -270,9 +270,13 @@ Replaced husky with `simple-git-hooks`. The pre-push script now lives at [script
 
 Implemented as a `no-restricted-imports` rule (the upstream `import/no-relative-parent-imports` rule resolves aliased paths to absolute paths, which false-positives on every `~/`-prefixed import in `app/`). The rule bans literal `../*` import specifiers and points authors at `~/*` (for `app/`) or the new `~data/*` alias (for `public/data/`). Added `~data/*` to both `tsconfig.json` and `jsconfig.json` so route loaders that read static JSON can use it. One escape hatch at `functions/[[path]].ts` (the Pages Function entrypoint legitimately imports the build output at `../build/server`).
 
-### T16 — Standardise breakpoints (legacy → Tailwind-aligned scale) (P1)
+### T16 — Standardise breakpoints (legacy → Tailwind-aligned scale) (P1) — DONE
 
-**Current state.** [app/styles/constants.js](app/styles/constants.js) exports two parallel sets of breakpoint tokens:
+All 17 legacy callsites swept to the Tailwind-aligned scale: `$mobile-small` (496) → `$bp-sm` (640); `$desktop-small` (1076) → `$bp-lg` (1024); `$desktop-medium` (1296) → `$bp-xl` (1280). Added `$bp-2xl: 1536px` for future ultrawide work. Deleted the three legacy keys from [constants.js](app/styles/constants.js). Also caught a hardcoded `(min-width: 1076px)` in [TenureHeatmap/index.tsx](app/components/TenureHeatmap/index.tsx) that mirrored the CSS breakpoint and updated it to `1024px` so JS and CSS gate at the same width.
+
+**Original plan + current state for reference:**
+
+[app/styles/constants.js](app/styles/constants.js) exports two parallel sets of breakpoint tokens:
 
 | Token             | Value  | Usages | Origin                                                    |
 | ----------------- | ------ | ------ | --------------------------------------------------------- |
