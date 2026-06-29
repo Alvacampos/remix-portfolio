@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-23T00:09:55.886Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-06-29T21:42:12.590Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "078a265",
+  "commit": "8d216fb",
   "categories": {
     "performance": 0.94,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
       "displayValue": "2.2 s",
-      "numericValue": 2176.931,
+      "numericValue": 2180.8831,
       "score": 0.78
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2612.87925,
-      "score": 0.87
+      "displayValue": "2.7 s",
+      "numericValue": 2687.7954250000003,
+      "score": 0.86
     },
     "si": {
       "displayValue": "2.2 s",
-      "numericValue": 2176.931,
+      "numericValue": 2180.8831,
       "score": 0.99
     },
     "tbt": {
@@ -37,11 +37,11 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2612.87925,
-      "score": 0.98
+      "displayValue": "2.7 s",
+      "numericValue": 2696.1925025,
+      "score": 0.97
     },
-    "ttfb": 32
+    "ttfb": 76
   },
   "failingAudits": [
     {
@@ -52,7 +52,7 @@
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.87
+      "score": 0.86
     },
     {
       "id": "speed-index",
@@ -60,14 +60,14 @@
       "score": 0.99
     },
     {
-      "id": "interactive",
-      "title": "Time to Interactive",
-      "score": 0.98
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.99
     },
     {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.97
     },
     {
       "id": "unused-javascript",

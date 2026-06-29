@@ -1,35 +1,35 @@
 {
-  "fetchTime": "2026-06-29T19:22:59.392Z",
+  "fetchTime": "2026-06-29T21:42:03.952Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "lighthouseVersion": "13.4.0",
-  "commit": "b807380",
+  "commit": "8d216fb",
   "categories": {
-    "performance": 0.89,
+    "performance": 0.7,
     "accessibility": 1,
     "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.6 s",
-      "numericValue": 1606.774,
-      "score": 0.94
+      "displayValue": "2.7 s",
+      "numericValue": 2708.514,
+      "score": 0.6
     },
     "lcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2289.774,
-      "score": 0.93
+      "displayValue": "3.0 s",
+      "numericValue": 3033.218,
+      "score": 0.77
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2224.7455073271467,
-      "score": 0.99
+      "displayValue": "2.8 s",
+      "numericValue": 2817.537873510364,
+      "score": 0.96
     },
     "tbt": {
-      "displayValue": "350 ms",
-      "numericValue": 350,
-      "score": 0.73
+      "displayValue": "860 ms",
+      "numericValue": 862.8629999999998,
+      "score": 0.33
     },
     "cls": {
       "displayValue": "0",
@@ -37,37 +37,37 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2639.7740000000003,
-      "score": 0.98
+      "displayValue": "4.1 s",
+      "numericValue": 4090.7270000000003,
+      "score": 0.87
     },
-    "ttfb": 291
+    "ttfb": 259
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.94
+      "score": 0.6
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.93
+      "score": 0.77
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.96
     },
     {
       "id": "total-blocking-time",
       "title": "Total Blocking Time",
-      "score": 0.73
+      "score": 0.33
     },
     {
       "id": "max-potential-fid",
       "title": "Max Potential First Input Delay",
-      "score": 0.36
+      "score": 0.12
     },
     {
       "id": "errors-in-console",
@@ -77,7 +77,17 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
+      "score": 0.87
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "score": 0
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "score": 0
     },
     {
       "id": "unused-javascript",
