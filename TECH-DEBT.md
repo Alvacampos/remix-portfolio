@@ -25,7 +25,7 @@ the framework cutover.
 | --- | --------------------- | -------------- | ----------- | ---------------------------------------------------------- |
 | 1   | Style-system overhaul | T16 + T10      | done        | Token sweep across `constants.js` + every CSS callsite     |
 | 2   | `/skills` quality     | T5 + T11 + C13 | done        | Perf investigation + visual-gate decision + README refresh |
-| 3   | Contact + CF infra    | U6 + T12       | not started | Pages Function + KV bindings                               |
+| 3   | Contact + CF infra    | U6 + T12       | planned     | Pages Function + KV bindings                               |
 | 4   | Framework future      | T9             | not started | React Router v7 migration (multi-PR)                       |
 
 **Ride-along candidates** (small enough to bundle with any of the above
@@ -118,20 +118,42 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 
 ### Bundle 3 — Contact + CF infra (U6 + T12)
 
-**Why bundle.** U6 (`/contact`) is what motivates T12 (Cloudflare
-bindings); they ship together or T12 is just speculative scaffolding.
+**Why bundle.** U6 (`/contact`) is what motivates T12 (Cloudflare bindings); they ship together or T12 is just speculative scaffolding.
 
-- **Investigate.** Evaluate Resend vs Loops for transactional email
-  (deliverability, free tier, DX). Decide rate-limit design (per-IP
-  per-hour via KV) and spam protection (honeypot field vs Cloudflare
-  Turnstile vs both). Confirm CF Pages Function patterns for body
-  parsing + KV reads.
-- **Plan.** Pages Function endpoint, form schema (Zod), intl keys for
-  every state (idle / submitting / success / error / rate-limited),
-  UX shape (single-page form vs modal).
-- **Apply.** Route + Pages Function + KV binding wiring + NavBar entry
-  in a single PR. Closes T12 implicitly (bindings are now real, not
-  speculative).
+- **Investigate — DONE.** Four research streams:
+
+  - **Email provider — Resend.** Free tier is 3,000 emails/month with 100/day cap, 1 verified sending domain, 30-day log retention ([resend.com pricing docs](https://resend.com/pricing)). The `resend` npm SDK runs in Pages Functions without `nodejs_compat` — it's fetch-only with guarded `process.env` access; Resend publishes an [official Cloudflare Workers quickstart](https://resend.com/docs/send-with-cloudflare-workers). Bare-`fetch` against `POST https://api.resend.com/emails` is also viable (5-line implementation) if we want to avoid SDK dep-risk. **Loops is the wrong fit:** its free tier is marketing-focused (1,000 contacts cap, "Powered by Loops" footer); transactional sending is paid-plan only. No Cloudflare Workers guide. The Loops API requires pre-created `transactionalId` templates, awkward for a single-form contact endpoint.
+  - **Spam protection — honeypot only, no Turnstile (yet).** Honeypot field catches generic form-spam bots with ~5 lines of code, zero deps, zero external calls. Modern LLM-driven scrapers can defeat it but for a CV site with zero existing spam traffic that risk isn't real yet. Turnstile is a fine fallback (free, WCAG 2.2 AA, three modes; siteverify endpoint with 300s single-use tokens) — keep it documented as "add if spam arrives" rather than premature complexity. **Both = marginal gain at the cost of two failure paths.**
+  - **Rate limit — per-IP per-hour via KV.** Key: `ratelimit:<sha256(ip)>`, TTL 3600s. Read on POST; if count > 3, return 429. Otherwise increment and continue. KV's eventual consistency is fine for a soft rate limit (~5–60s propagation). Cost: 1 read + 1 write per submission, well under the free-tier limits.
+  - **CF Pages Function pattern — no separate function needed.** The catch-all `functions/[[path]].ts` already routes every request through the Remix server build. The `/contact` route's `action` export receives the form `Request` and can read bindings via `context.cloudflare.env.*`. No new function file, just a new route module + a binding declared in `wrangler.toml` + the `worker-configuration.d.ts` regen via `npm run cf-typegen`.
+
+- **Plan.**
+
+  1. **Bindings + secrets** (`wrangler.toml`, `worker-configuration.d.ts`):
+     - `RATELIMIT_KV` — KV namespace, per-IP submission counter.
+     - `RESEND_API_KEY` — Secret (set via `wrangler secret put` or the Pages dashboard, not committed).
+     - `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` — plain vars (the recipient inbox and the verified sender address on `gonzalo-alvarez-campos-cv.com`).
+  2. **Route**: `app/routes/contact.tsx` with:
+     - `meta` via `mergeRouteMeta` (title "Contact — Gonzalo Alvarez Campos", description from intl).
+     - `loader` returns `{ siteKey: null }` (placeholder for Turnstile if added later); cache via `Vary: Cookie, Accept-Language`.
+     - Default export — a `<Form method="post">` with name + email + subject + message fields, an inline `<input type="text" name="website" tabIndex={-1} aria-hidden="true" autoComplete="off">` honeypot, `useNavigation` to surface submitting state, and `useActionData` to render success/error/rate-limited messages. All copy via `react-intl`.
+     - `action` parses the form, validates via Zod (`ContactSchema` — required name 2–80 char, email RFC, subject 2–120, message 10–4000), rejects on filled honeypot (silent 200), reads `RATELIMIT_KV` for the client's IP (`request.headers.get('CF-Connecting-IP')`), increments + 429 if over 3/hr, otherwise sends via Resend and returns `{ status: 'ok' }`.
+     - Local `ErrorBoundary` mirroring the `/skills/:uuid` shape.
+  3. **Intl keys** (~12 new entries in `en-US.json` + `es-ES.json`):
+     - `CONTACT_PAGE_TITLE`, `CONTACT_LEAD` (the intro paragraph)
+     - `CONTACT_NAME_LABEL`, `CONTACT_EMAIL_LABEL`, `CONTACT_SUBJECT_LABEL`, `CONTACT_MESSAGE_LABEL`
+     - `CONTACT_SUBMIT`, `CONTACT_SUBMITTING`
+     - `CONTACT_SUCCESS`, `CONTACT_ERROR`, `CONTACT_RATE_LIMITED`
+     - `CONTACT_VALIDATION_REQUIRED`, `CONTACT_VALIDATION_EMAIL`, `CONTACT_VALIDATION_LENGTH`
+  4. **NavBar entry** in [app/components/NavBar/index.tsx](app/components/NavBar/index.tsx) `MAIN_NAV` — labelled `NAV_CONTACT` (already used elsewhere? check or add), pointing at `/contact`.
+  5. **Styling**: per-route stylesheet `app/routes/contact/style.css` (form layout, label/input spacing, error-state borders, success card). Reuses `route-page-title` global.
+  6. **Tests**:
+     - `tests/e2e/contact.spec.ts` — happy path (form renders, validation surfaces, mocked success state). Don't actually send email in tests.
+     - Add `/contact` to a11y route iteration in `tests/e2e/a11y.spec.ts`.
+     - Add `/contact` to visual ROUTES in `tests/e2e/visual.spec.ts` and regen baselines via the CI workflow.
+  7. **Docs**: README "Updating content" gets a brief "Contact form configuration" subsection covering the three env-var/secret values. AGENTS.md §10 (Cloudflare Pages) gets a mention that bindings are now real, not commented templates.
+
+- **Apply.** Single PR is fine — it's all one concern, and reviewing the form code separately from the wiring would be more confusing than less. Sequence inside the PR: bindings + types → route + action → intl keys → NavBar + styles → tests → docs. Closes both U6 and T12.
 
 ### Bundle 4 — Framework future (T9)
 
