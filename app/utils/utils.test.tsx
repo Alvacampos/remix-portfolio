@@ -9,7 +9,6 @@ import {
   getCvUrl,
   getSkillGroupsForJob,
   getSkillHeatmapData,
-  getSkillsForJob,
   getSkillSuggestions,
   localized,
 } from './utils';
@@ -233,35 +232,6 @@ describe('getSkillHeatmapData', () => {
     );
     const react = getSkillHeatmapData(data).rows.find((r) => r.skill === 'React');
     expect(react?.monthsPerYear).toEqual([6]); // clipped to job's 6-month span
-  });
-});
-
-describe('getSkillsForJob', () => {
-  it('lists every skill with at least one range pointing at the jobId', () => {
-    const data = fixture(
-      [
-        { id: 1, startDate: '2020-01', endDate: '2021-01' },
-        { id: 2, startDate: '2021-01' },
-      ],
-      [
-        { name: 'React', ranges: [{ jobId: 1 }, { jobId: 2 }] },
-        { name: 'Vue', ranges: [{ jobId: 1 }] },
-        { name: 'Next.js', ranges: [{ jobId: 2 }] },
-      ]
-    );
-    expect(getSkillsForJob(data, 1)).toEqual(['React', 'Vue']);
-    expect(getSkillsForJob(data, 2)).toEqual(['React', 'Next.js']);
-  });
-
-  it('preserves authored order in SKILLS', () => {
-    const data = fixture(
-      [{ id: 1, startDate: '2020-01' }],
-      [
-        { name: 'Zod', ranges: [{ jobId: 1 }] },
-        { name: 'Apollo', ranges: [{ jobId: 1 }] },
-      ]
-    );
-    expect(getSkillsForJob(data, 1)).toEqual(['Zod', 'Apollo']);
   });
 });
 

@@ -283,23 +283,14 @@ export function getSkillHeatmapData(skillsData: SkillsData): SkillHeatmapData {
   return { years, rows };
 }
 
-// Skills attached to a single job, ordered as authored in SKILLS.
-// Replaces the per-job `skills: SkillEntry[]` array that v1 carried on
-// each WORK_ITEM. Used by the timeline cards on /skills and the chip
-// list on /skills/:uuid.
-export function getSkillsForJob(skillsData: SkillsData, jobId: number): string[] {
-  const result: string[] = [];
-  for (const s of skillsData.SKILLS) {
-    if (s.ranges.some((r) => r.jobId === jobId)) {
-      result.push(s.name);
-    }
-  }
-  return result;
-}
-
-// Same set of skills as `getSkillsForJob`, bucketed by category for
-// the /skills/:uuid Skills card. Empty buckets are dropped. The `id`
-// on each group is the intl message id for the heading.
+// Skills attached to a single job, bucketed by category. The `id` on
+// each group is the intl message id for the heading rendered above
+// the chip list. Empty buckets are dropped.
+//
+// Consumers that just need a flat chip list (e.g. timeline cards on
+// /skills) call this and flatMap the items — the bucket order
+// (language → framework → tooling → infra → meta) gives them
+// deterministic, category-grouped ordering for free.
 export type SkillGroup = { id: string; items: string[] };
 
 const CATEGORY_GROUPS: Array<{ id: string; categories: SkillCategory[] }> = [

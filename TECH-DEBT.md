@@ -37,8 +37,8 @@
 | C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | done   |
 | C4  | Cleanup   | P1       | Data: `Mentoring` ranges (Endava + Qubika missing)             | done   |
 | C5  | Cleanup   | P1       | Data: `Leadership` ranges (Qubika missing?)                    | done   |
-| C6  | Cleanup   | P2       | Rename ambiguous `Programming` meta skill                      | open   |
-| C7  | Cleanup   | P2       | Merge `getSkillsForJob` into `getSkillGroupsForJob`            | open   |
+| C6  | Cleanup   | P2       | Rename ambiguous `Programming` meta skill                      | done   |
+| C7  | Cleanup   | P2       | Merge `getSkillsForJob` into `getSkillGroupsForJob`            | done   |
 | C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | done   |
 | C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | done   |
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
@@ -221,13 +221,13 @@ Currently `[{ jobId: 3 }]` (Professor only). Description text shows mentoring at
 
 Currently `[{ jobId: 4 }]` (Endava only). Qubika (id 6) senior-track work likely includes leadership moments. User to confirm.
 
-### C6 — Rename ambiguous `Programming` meta skill (P2)
+### C6 — Rename ambiguous `Programming` meta skill (P2) — DONE
 
-Tagged on Professor (id 3) + Teacher (id 5). The category is `meta` so it's a soft skill. Renaming to "Programming Education" or "Teaching Programming" disambiguates from the literal act of writing code.
+Renamed to "Teaching Programming" (`Enseñanza de Programación`) in [public/data/skills.json](public/data/skills.json). The meta-skill is tagged on Professor + Teacher roles; the verb-first form reads naturally next to the existing "Teaching" chip and disambiguates from the literal act of writing code.
 
-### C7 — Merge `getSkillsForJob` into `getSkillGroupsForJob` (P2)
+### C7 — Merge `getSkillsForJob` into `getSkillGroupsForJob` (P2) — DONE
 
-Group helper is a strict superset. Flat-list helper is only used by `/skills` index timeline-card chip strings. Could expose both shapes from one helper, or deprecate the flat one in favor of `getSkillGroupsForJob(...).flatMap(g => g.items)`. Reduces surface area.
+Dropped `getSkillsForJob` from [app/utils/utils.tsx](app/utils/utils.tsx); its single consumer (`/skills` index timeline cards) now calls `getSkillGroupsForJob(SKILLS, item.id, locale).flatMap((g) => g.items)`. Side effects: timeline-card chips are now (a) locale-aware (previously always English for meta skills) and (b) deterministically ordered (`language → framework → tooling → infra → meta`, alphabetical within each) instead of SKILLS-array order. Test suite trimmed accordingly.
 
 ### C8 — Move `mergeRouteMeta` out of `utils.tsx` (P3) — DONE
 

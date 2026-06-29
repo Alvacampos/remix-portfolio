@@ -475,7 +475,7 @@
       ]
     },
     {
-      "name": "Programming",
+      "name": "Teaching Programming",
       "category": "meta",
       "ranges": [
         {
@@ -485,7 +485,7 @@
           "jobId": 5
         }
       ],
-      "name_es": "Programación"
+      "name_es": "Enseñanza de Programación"
     },
     {
       "name": "Public Speaking",
