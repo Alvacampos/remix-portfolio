@@ -250,6 +250,11 @@ Remix v2 is in maintenance mode; RRv7 is the official upgrade path. Resolves T15
 
 Formerly TECH-DEBT #1. Re-enables 3 stylelint rules, unlocks runtime theming. Every `$token` becomes `var(--token)`; need an equivalent typo-catcher (linter or build-time check) since simple-vars' unknown callback is the current safety net.
 
+**Status:** in progress. Split into T10a (colour + theme tokens, palette layer) and T10b (spacing / typography / borders / shadows).
+
+- **T10a — DONE.** Migrated the colour palette and semantic theme tokens out of [constants.js](app/styles/constants.js) into the existing `:root` + `[data-theme='light']` blocks in [app/styles/style.css](app/styles/style.css). The 26 in-file `$gray-*`/`$green-*`/`$surface-*`/`$border-card-*` simple-vars references were replaced with raw hex values; the legacy color aliases (`$default-white`, `$success-green`, `$text-color`, etc.) were audit-confirmed unused outside the palette block and deleted entirely. Consumption sites already used `var(--accent)` etc., so component CSS didn't need changes. Stylelint re-enable + typo-catcher work moves to T10b.
+- **T10b — open.** Sweep ~25 remaining numeric scale tokens (`$space-*`, `$font-*`, `$border-*`, `$weight-*`, `$shadow-*`) into `:root` custom properties. Keep breakpoint subset (`$bp-*`) on simple-vars (CSS spec forbids `var()` in `@media` preludes — see Bundle 1 investigation). Re-enables stylelint's `declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`, `color-function-alias-notation` per the §6 note in [AGENTS.md](AGENTS.md). Add a typo-catcher (stylelint `custom-property-pattern` + `--*` validity rule, or a small postcss plugin) since simple-vars' unknown callback only fires for `$tokens`, not `var(--foo)`.
+
 ### T11 — Switch to Percy/Chromatic for `/skills` visual gate (P2)
 
 `/skills` and `/skills/:uuid` are both excluded from the visual suite ([tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated)). Reasons are documented (SVG anti-aliasing, hydration race). Percy/Chromatic handle SVG diffing better and run in CI not local Docker. Tradeoff: paid service. Alternative: T7 (CI-only regen) solves the hydration race without changing tools.

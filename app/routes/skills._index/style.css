@@ -30,8 +30,15 @@
     padding: 0;
     gap: $space-20;
 
+    /* `width: stretch` isn't supported in Safari (would need
+     * `-webkit-fill-available`). `width: 100%` + `box-sizing:
+     * border-box` gives the same visual result everywhere — the
+     * border-box bit is required because the rule sets horizontal
+     * padding; without it the padding would push the box beyond
+     * the flex parent and cause horizontal overflow. */
     & .input-component {
-      width: stretch;
+      box-sizing: border-box;
+      width: 100%;
       padding: 0 $space-12;
     }
   }

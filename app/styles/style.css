@@ -2,31 +2,90 @@
 
 @import '../components/NavBar/style.css';
 
-/* Theme-aware tokens. The data-theme attribute is set by an inline
- * blocking <script> in app/root.tsx before paint to avoid FOUC. */
+/* ─── Theme system ────────────────────────────────────────────────
+ *
+ * Two layers:
+ *   1. A "palette" — the raw GitHub-aligned colour ramp. Sits inside
+ *      `:root` as inline hex values (commented so the relationships
+ *      between greys/greens stay scrutable). NOT exposed as custom
+ *      properties because palette names should never leak past this
+ *      file — components only ever see the semantic role names below.
+ *   2. A "semantic" layer — the `--bg-*`, `--fg-*`, `--accent*`,
+ *      `--border-*` tokens that every component consumes. These ARE
+ *      exposed as custom properties and re-bind under
+ *      `[data-theme='light']` for the light-mode flip. The
+ *      data-theme attribute is set by an inline blocking <script> in
+ *      app/root.tsx before paint to avoid FOUC.
+ *
+ * Discipline: aim for an 80/10/10 ratio (neutral / gray-tinted
+ * surfaces / green accent). Most surfaces should be neutral; green
+ * does primary CTAs, focus rings, and the chart accent only.
+ *
+ * Sampled from github.com (dark page #0d1117, card #151b23, ~9 RGB-
+ * step lift); our greens are our own (GitHub Green #0fbf3e) so the
+ * brand isn't a literal GitHub clone. */
 :root {
-  --bg-base: $gray-6;
-  --bg-surface: $surface-card-dark;
-  --bg-nav: $surface-nav-dark;
-  --bg-elevated: $surface-elevated-dark;
-  --fg-base: $gray-1;
-  --fg-muted: $gray-3;
-  --fg-faint: $gray-4;
-  --border-default: $border-card-dark;
-  --border-emphasis: $gray-4;
-  --accent: $green-4;
-  --accent-soft: $green-3;
-  --accent-muted: $green-6;
+  /* Greys — cool neutral, light → dark. Comments retain the
+   * pre-migration semantic naming so the file still reads as a token
+   * map even though only the dark/light :root blocks consume them. */
+  /* #f2f5f3 — gray-1: page background (light), body text (dark)
+   * #e4ebe6 — gray-2: surface (light), border (light)
+   * #b6bfb8 — gray-3: muted text (light), border (dark)
+   * #909692 — gray-4: body muted (dark theme only — fails WCAG AA on light bg)
+   * #232925 — gray-5: surface (dark), elevated (light)
+   * #101411 — gray-6: page background (dark) — process black
+   * #555b58 — gray-7: body muted on LIGHT theme — clears 4.5:1 vs surface-page-light */
+
+  /* Greens — light → dark.
+   * #bfffd1 — green-1: softest highlight (light-mode accent backgrounds)
+   * #8cf2a6 — green-2 (unused, kept for future scale extension)
+   * #5fed83 — green-3: dark-theme accent-on-muted text
+   * #0fbf3e — green-4: GitHub Green — hero / accent / focus
+   * #066456 — green-5: deep teal-green — light-theme accent text (clears WCAG AA)
+   * #0a241b — green-6: darkest — dark-mode accent backgrounds */
+
+  /* GitHub-aligned surface + border helpers (dark).
+   * Same-hue lifts (green-on-green) read smaller than GitHub's
+   * neutral-blue lifts, so the perceptual step needs to be bigger
+   * than the raw RGB step. ~25 RGB units lifts the card off our
+   * process-black page enough to read as a distinct surface.
+   *   #262e29 — surface-card-dark: card body
+   *   #323a35 — surface-elevated-dark: chip/hover lift
+   *   #4a524b — border-card-dark: visible 1px border
+   *   #1a201c — surface-nav-dark: nav rail, distinct from card */
+
+  /* Light theme surfaces. Page is GitHub's canvas-subtle (#f6f8fa);
+   * card is slightly off-white (#fbfcfd). Pure-white-on-pure-white
+   * was too harsh.
+   *   #f6f8fa — surface-page-light: page bg
+   *   #fbfcfd — surface-card-light: card bg
+   *   #eef1f4 — surface-elevated-light: chip/hover lift
+   *   #d1d9e0 — border-card-light: visible 1px border
+   *   #eaeef1 — surface-nav-light: nav rail, distinct from page */
+
+  /* Dark-theme semantic role bindings (palette → role). */
+  --bg-base: #101411;
+  --bg-surface: #262e29;
+  --bg-nav: #1a201c;
+  --bg-elevated: #323a35;
+  --fg-base: #f2f5f3;
+  --fg-muted: #b6bfb8;
+  --fg-faint: #909692;
+  --border-default: #4a524b;
+  --border-emphasis: #909692;
+  --accent: #0fbf3e;
+  --accent-soft: #5fed83;
+  --accent-muted: #0a241b;
   /* Higher-contrast accent for text/icons sitting on --accent-muted
    * backgrounds (chips, badges). On dark theme green-3 reads cleanly
    * against the deep green-6 muted; light theme overrides this to
    * green-6 (near-black) for the inverse case. */
-  --accent-on-muted: $green-3;
+  --accent-on-muted: #5fed83;
   /* Foreground color for elements sitting ON the bright/dark --accent
    * fill (e.g. LocaleToggle active-button knob, DownloadBtn hover).
    * Dark theme accent is bright green → use near-black text.
    * Light theme accent is deep green → use near-white text. */
-  --fg-on-accent: $gray-6;
+  --fg-on-accent: #101411;
 
   /* Height the bottom-stuck mobile nav claims from the viewport.
    * Home subtracts this from its min-height so the body doesn't end
@@ -38,32 +97,32 @@
 }
 
 [data-theme='light'] {
-  --bg-base: $surface-page-light;
-  --bg-surface: $surface-card-light;
-  --bg-nav: $surface-nav-light;
-  --bg-elevated: $surface-elevated-light;
-  --fg-base: $gray-6;
+  --bg-base: #f6f8fa;
+  --bg-surface: #fbfcfd;
+  --bg-nav: #eaeef1;
+  --bg-elevated: #eef1f4;
+  --fg-base: #101411;
   /* gray-4 (#909692) is only 2.85:1 against surface-page-light —
    * fails WCAG AA. gray-7 (#555b58) lands ~5:1 and reads as a real
    * muted body text in light theme. */
-  --fg-muted: $gray-7;
-  --fg-faint: $gray-4;
-  --border-default: $border-card-light;
-  --border-emphasis: $gray-4;
+  --fg-muted: #555b58;
+  --fg-faint: #909692;
+  --border-default: #d1d9e0;
+  --border-emphasis: #909692;
   /* green-4 (#0fbf3e GitHub green) is only 2.3:1 against
    * surface-page-light — fails WCAG AA for normal text and only
    * scrapes large-text. Light theme uses green-5 (deeper teal-tinted)
    * which clears 4.0:1 for both. Borders and fills shift too, which
    * is fine: the brand is "green", not specifically #0fbf3e. */
-  --accent: $green-5;
-  --accent-soft: $green-4;
-  --accent-muted: $green-1;
+  --accent: #066456;
+  --accent-soft: #0fbf3e;
+  --accent-muted: #bfffd1;
   /* Accent text on the pale green-1 muted background needs near-black
    * to pass 4.5:1. green-6 lands ~17:1. */
-  --accent-on-muted: $green-6;
+  --accent-on-muted: #0a241b;
   /* Light theme accent is deep green-5 (#066456) — needs near-white
-   * text for AA. $default-white lands ~7.5:1. */
-  --fg-on-accent: $default-white;
+   * text for AA. #ffffff lands ~7.5:1. */
+  --fg-on-accent: #ffffff;
 
   color-scheme: light;
 }
