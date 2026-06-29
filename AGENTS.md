@@ -210,13 +210,13 @@ getClasses('', { active: true }); // 'card-component card-component--active'
 
 ### Stylelint
 
-`stylelint-config-standard` runs as part of `npm run lint` (via `lint:css`) and gates CI. Several rules are relaxed in [.stylelintrc.json](.stylelintrc.json):
+`stylelint-config-standard` runs as part of `npm run lint` (via `lint:css`) and gates CI. Most of the standard rule set is in effect. Project-specific tweaks in [.stylelintrc.json](.stylelintrc.json):
 
-- `declaration-property-value-no-unknown` and `shorthand-property-no-redundant-values` are **disabled** because stylelint's value parser doesn't understand postcss-simple-vars `$tokens`. Mixed shapes like `padding: 0 $space-5` or `border: 1px solid $alternative-green` are valid in our pipeline (postcss-simple-vars expands them at build) but stylelint reads them as unparseable. Re-enable if/when we move off `simple-vars` to native CSS custom properties.
-- `color-function-alias-notation` is **disabled** — stylistic, prefers `rgb()` 4-arg over `rgba()`. We use `rgba()` consistently; flipping isn't worth the churn.
-- The token-rejection set (`alpha-value-notation`, `at-rule-no-unknown`, `color-function-notation`, `color-hex-length`, `comment-empty-line-before`, `import-notation`, `length-zero-no-unit`, `media-query-no-invalid`, `selector-class-pattern`) is unchanged — pre-existing relaxations from before stylelint was gated.
+- **Re-enabled in T10b** (Bundle 1): `declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`, `color-function-alias-notation`. These were previously disabled because stylelint's value parser couldn't understand postcss-simple-vars `$tokens` (e.g. `padding: 0 $space-12`). Now that the scale tokens live as CSS custom properties (`var(--space-12)`), the parser handles them and the rules can gate.
+- **Typo-catchers added in T10b**: `custom-property-no-missing-var-function` (catches `--token: --otherToken` written without `var()`) + `custom-property-pattern` enforcing `kebab-case`. These replace the simple-vars `unknown` callback as the safety net for the now-much-larger custom-property surface area.
+- **Still relaxed** (`alpha-value-notation`, `at-rule-no-unknown`, `color-function-notation`, `color-hex-length`, `comment-empty-line-before`, `custom-property-empty-line-before`, `import-notation`, `length-zero-no-unit`, `media-query-no-invalid`, `selector-class-pattern`): pre-existing token-rejection set from before stylelint was gated. Most flag stylistic preferences (long vs short hex, rgb-vs-rgba arg shape) that aren't worth the churn to flip across the existing codebase.
 
-If a rule starts emitting false positives on a postcss-simple-vars expansion, prefer disabling that specific rule over wrapping the value in a `/* stylelint-disable */` comment (the comment fights ESLint's import sort order in some cases and is noisier in diffs).
+If a future rule emits a false positive on a build-time substitution (anything involving `$bp-*` breakpoint tokens, since those still go through simple-vars), prefer disabling that specific rule in `.stylelintrc.json` over wrapping the value in a `/* stylelint-disable */` comment.
 
 ---
 

@@ -93,6 +93,47 @@
    * nav becomes a fixed-position sidebar. */
   --nav-h: 148px;
 
+  /* ─── Numeric scale tokens ──────────────────────────────────────
+   *
+   * Migrated from postcss-simple-vars to CSS custom properties in
+   * T10b (see TECH-DEBT.md Bundle 1). Theme-invariant — these stay
+   * the same in both light and dark, so they live outside the theme
+   * re-binding under [data-theme='light']. Breakpoints stay on
+   * simple-vars (CSS forbids `var()` inside @media preludes; see the
+   * Bundle 1 investigation entry). Value-as-name discipline applies:
+   * add new steps from the documented ladders only, don't invent
+   * intermediates. */
+
+  /* Border-radius scale. */
+  --border-4: 4px;
+  --border-6: 6px;
+  --border-8: 8px; /* GitHub-style card radius */
+  --border-10: 10px;
+
+  /* Spacing scale — 4-based ladder, value-as-name. */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-200: 200px;
+
+  /* Type scale — 1.25 ratio, value-as-name (12 → 14 → 16 → 20 →
+   * 24 → 30 → 36 → 48 → 60). Steps beyond 30 not yet referenced. */
+  --font-12: 12px;
+  --font-14: 14px;
+  --font-16: 16px;
+  --font-20: 20px;
+  --font-24: 24px;
+  --font-30: 30px;
+
+  /* Font weight. */
+  --weight-700: 700;
+
   color-scheme: dark;
 }
 
@@ -150,7 +191,7 @@ body {
 }
 
 main {
-  padding: 0 $space-4;
+  padding: 0 var(--space-4);
 }
 
 /* Catch-all keyboard focus. :focus-visible only fires for keyboard
@@ -158,7 +199,7 @@ main {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: $border-4;
+  border-radius: var(--border-4);
 }
 
 /* Root-level error UI (404, generic errors). Mirrors the design of
@@ -172,8 +213,8 @@ main {
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: $space-16;
-  padding: $space-40 $space-20;
+  gap: var(--space-16);
+  padding: var(--space-40) var(--space-20);
   margin: 0 auto;
   max-width: 600px;
   min-height: calc(100vh - var(--nav-h));
@@ -182,7 +223,7 @@ main {
     margin: 0;
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     font-size: 5rem;
-    font-weight: $weight-700;
+    font-weight: var(--weight-700);
     line-height: 1;
     color: var(--accent);
     letter-spacing: -0.02em;
@@ -190,8 +231,8 @@ main {
 
   &__title {
     margin: 0;
-    font-size: $font-24;
-    font-weight: $weight-700;
+    font-size: var(--font-24);
+    font-weight: var(--weight-700);
     color: var(--fg-base);
     line-height: 1.3;
   }
@@ -206,11 +247,11 @@ main {
   &__action {
     color: var(--accent);
     text-decoration: none;
-    font-size: $font-14;
-    font-weight: $weight-700;
-    padding: $space-8 $space-16;
+    font-size: var(--font-14);
+    font-weight: var(--weight-700);
+    padding: var(--space-8) var(--space-16);
     border: 1px solid var(--accent);
-    border-radius: $border-6;
+    border-radius: var(--border-6);
     transition:
       color 120ms ease,
       background 120ms ease;
@@ -231,9 +272,9 @@ main {
  * visually consistent without divergent edits. Home (`/`) is excluded
  * — its `<h1>` is the hero greeting and has its own typography. */
 .route-page-title {
-  margin: $space-20 0 0 0;
+  margin: var(--space-20) 0 0 0;
   text-align: center;
-  font-size: $font-30;
+  font-size: var(--font-30);
 }
 
 /* WCAG 2.4.1 skip-link — visually hidden off-canvas, slides into view
@@ -243,11 +284,11 @@ main {
   top: -100px;
   left: 0;
   z-index: 1000;
-  padding: $space-12 $space-16;
+  padding: var(--space-12) var(--space-16);
   color: var(--fg-base);
   background: var(--bg-surface);
   text-decoration: none;
-  border-radius: 0 0 $border-4 0;
+  border-radius: 0 0 var(--border-4) 0;
 }
 
 .root__skip-link:focus {
@@ -288,7 +329,7 @@ main {
     display: block;
     height: auto;
     min-height: 100vh;
-    padding-left: $space-200;
+    padding-left: var(--space-200);
   }
 }
 

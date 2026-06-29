@@ -10,30 +10,30 @@
    * vertical space). */
   min-height: calc(100vh - var(--nav-h));
   text-align: center;
-  gap: $space-32;
-  padding: 0 $space-20;
+  gap: var(--space-32);
+  padding: 0 var(--space-20);
   white-space: pretty;
 
   &__hero {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $space-16;
+    gap: var(--space-16);
     max-width: 720px;
   }
 
   &__hero-greeting {
     margin: 0;
-    font-size: $font-24;
-    font-weight: $weight-700;
+    font-size: var(--font-24);
+    font-weight: var(--weight-700);
     line-height: 1.2;
     color: var(--fg-base);
   }
 
   &__hero-role {
     margin: 0;
-    font-size: $font-16;
-    font-weight: $weight-700;
+    font-size: var(--font-16);
+    font-weight: var(--weight-700);
     color: var(--accent);
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
     letter-spacing: 0.04em;
@@ -41,7 +41,7 @@
 
   &__hero-tagline {
     margin: 0;
-    font-size: $font-16;
+    font-size: var(--font-16);
     color: var(--fg-muted);
     line-height: 1.5;
     max-width: 540px;
@@ -51,21 +51,21 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: $space-8;
-    margin-top: $space-4;
+    gap: var(--space-8);
+    margin-top: var(--space-4);
   }
 
   &__hero-chip {
     display: inline-flex;
     align-items: center;
-    padding: $space-4 $space-12;
+    padding: var(--space-4) var(--space-12);
     border: 1px solid var(--border-default);
     border-radius: 999px;
     background: var(--bg-elevated);
     color: var(--fg-base);
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
-    font-size: $font-12;
-    font-weight: $weight-700;
+    font-size: var(--font-12);
+    font-weight: var(--weight-700);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -76,8 +76,8 @@
   &__hero-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: $space-8;
-    padding: $space-4 $space-12;
+    gap: var(--space-8);
+    padding: var(--space-4) var(--space-12);
     border: 1px solid var(--accent);
     border-radius: 999px;
     background: var(--accent-muted);
@@ -86,8 +86,8 @@
      * green-1 is only 2.15:1). */
     color: var(--accent-on-muted);
     font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
-    font-size: $font-12;
-    font-weight: $weight-700;
+    font-size: var(--font-12);
+    font-weight: var(--weight-700);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -104,21 +104,21 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: $space-12;
-    margin-top: $space-12;
+    gap: var(--space-12);
+    margin-top: var(--space-12);
   }
 
   &__hero-secondary-cta {
     display: inline-flex;
     align-items: center;
-    gap: $space-4;
-    padding: $space-12 $space-20;
+    gap: var(--space-4);
+    padding: var(--space-12) var(--space-20);
     border: 1px solid var(--border-default);
-    border-radius: $border-6;
+    border-radius: var(--border-6);
     background: transparent;
     color: var(--fg-base);
-    font-size: $font-16;
-    font-weight: $weight-700;
+    font-size: var(--font-16);
+    font-weight: var(--weight-700);
     text-decoration: none;
     transition:
       border-color 120ms ease,
@@ -151,13 +151,13 @@
     margin: 0;
     text-decoration: none;
     display: flex;
-    gap: $space-4;
+    gap: var(--space-4);
     color: var(--fg-muted);
-    font-size: $font-14;
+    font-size: var(--font-14);
   }
 
   &__repo-link {
-    font-weight: $weight-700;
+    font-weight: var(--weight-700);
 
     a {
       color: var(--accent);
@@ -202,11 +202,11 @@
 @media screen and (min-width: $bp-lg) {
   .home-route {
     &__hero-greeting {
-      font-size: $font-30;
+      font-size: var(--font-30);
     }
 
     &__hero-role {
-      font-size: $font-20;
+      font-size: var(--font-20);
     }
   }
 }
