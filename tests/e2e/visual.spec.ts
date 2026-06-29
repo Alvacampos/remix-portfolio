@@ -63,23 +63,29 @@ async function settle(page: Page) {
   await page.waitForTimeout(200);
 }
 
-// Three routes are intentionally NOT in this list:
-//   - /skills (the index): the tenure-heatmap cells + inline QR <svg>
-//     hit the anti-aliasing pipeline and drift ~0.4% across regen vs CI.
-//   - /skills/:uuid (a detail page) AND /education (the index): the
-//     local Docker regen environment reproducibly captures a
-//     root-error-boundary screenshot instead of the page itself — a
-//     hydration-time `useLocation()` failure inside NavBar that
-//     doesn't reproduce on CI or in normal browser use. The result is
-//     baselines stuck at the viewport height (1280×741) while CI's
-//     actual render is the full page; the gate fails on every regen.
-//     Behavioral coverage in skills.spec.ts / education.spec.ts
-//     already asserts the routes load and render their content;
-//     visual regression on these wasn't catching anything the
-//     behavioral suite missed.
+// /skills (the index) is intentionally NOT in this list. The
+// tenure-heatmap renders ~30 SVG cells × ~10 years on a tight grid,
+// and sub-pixel anti-aliasing on those cells drifts ~0.4% across
+// regen environments (Apple Silicon under amd64 emulation vs GitHub
+// Actions x86_64) — invisible to the eye but consistently above the
+// 0.2% diff budget. This is a tool-agnostic limitation: Percy /
+// Chromatic pixel-diff SVG the same way. Masking the chart would
+// leave the gate covering very little of the page, so the route
+// stays out. Behavioural coverage in skills.spec.ts already asserts
+// the page loads and renders its content; tracked in TECH-DEBT.md
+// (T11 was closed with this rationale, not "switch to Percy").
+//
+// /skills/:uuid + /education (the index) were previously excluded
+// because of a local-Docker `useLocation()` hydration race, but
+// T7's CI-side regen workflow runs Playwright in the actual CI
+// container where the race doesn't fire — so both routes are gated
+// again. To regenerate their baselines after an intentional UI
+// change: gh workflow run regen-baselines.yml --ref <branch>.
 const ROUTES = [
   { name: 'home', path: '/' },
+  { name: 'education-index', path: '/education' },
   { name: 'education-detail', path: '/education/degree' },
+  { name: 'skills-detail', path: '/skills/1' },
 ];
 
 test.describe('Visual regression', () => {

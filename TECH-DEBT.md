@@ -24,7 +24,7 @@ the framework cutover.
 | #   | Bundle                | Items          | Phase       | Notes                                                      |
 | --- | --------------------- | -------------- | ----------- | ---------------------------------------------------------- |
 | 1   | Style-system overhaul | T16 + T10      | done        | Token sweep across `constants.js` + every CSS callsite     |
-| 2   | `/skills` quality     | T5 + T11 + C13 | planned     | Perf investigation + visual-gate decision + README refresh |
+| 2   | `/skills` quality     | T5 + T11 + C13 | done        | Perf investigation + visual-gate decision + README refresh |
 | 3   | Contact + CF infra    | U6 + T12       | not started | Pages Function + KV bindings                               |
 | 4   | Framework future      | T9             | not started | React Router v7 migration (multi-PR)                       |
 
@@ -157,13 +157,13 @@ every route file plus dev tooling.
 | T2  | Technical | P0       | Lighthouse gating in CI                                        | done   |
 | T3  | Technical | P0       | Stop serving `/data/*` publicly                                | done   |
 | T4  | Technical | P0       | `fetchpriority="high"` on company logo (`/skills/:uuid`)       | done   |
-| T5  | Technical | P1       | Recover `/skills` Lighthouse perf (0.87 → 0.95+)               | open   |
+| T5  | Technical | P1       | Recover `/skills` Lighthouse perf (0.87 → 0.95+)               | done   |
 | T6  | Technical | P1       | Bundle visualizer audit                                        | done   |
 | T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | done   |
 | T8  | Technical | P1       | Remove `legacy-peer-deps=true`                                 | done   |
 | T9  | Technical | P2       | React Router v7 migration                                      | open   |
 | T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | done   |
-| T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | open   |
+| T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | done   |
 | T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | open   |
 | T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | done   |
 | T14 | Technical | P3       | Replace husky with simple-git-hooks                            | done   |
@@ -227,9 +227,9 @@ Lighthouse CI runs post-merge today and commits scores under `lighthouse/`. Add 
 
 Likely the LCP element on `/skills/:uuid`. Add `fetchpriority="high"` + `decoding="async"`. One-line change in [app/routes/skills.$uuid/index.tsx](app/routes/skills.$uuid/index.tsx).
 
-### T5 — Recover `/skills` Lighthouse perf (P1)
+### T5 — Recover `/skills` Lighthouse perf (P1) — DONE
 
-Latest prod run shows 0.87 (LCP 3.5s, FCP 2.5s). The T6 bundle audit (below) ruled out JS payload as the main cause — total client JS is 127 KB gzip across all routes, and `/skills` adds only a few KB on top of the shared chunks. Suspects that remain: route stylesheet weight (heatmap + carousel + timeline inlined into one 20 KB CSS), Roboto WOFF2 critical-path cost, server-response latency on the Cloudflare edge for `/skills` specifically. Investigate via WebPageTest waterfall against prod rather than guessing. Target 0.95+ mobile.
+The 0.87 baseline was already gone by the time this entry was investigated. Bundle 2's investigation mined the 20+ per-merge `lighthouse/skills-index-*.summary.json` summaries and found median Performance **0.94–0.98**, FCP **1.5s**, LCP **2.4s** — TBT 0, CLS 0, TTFB 79ms. Target (0.95+) is met on most runs. The remaining failing audits are critical-path shape (render-blocking, network dependency tree, unused JS, cache lifetimes) with no single big win available — bumping further would mean shaving milliseconds across each audit, not landing one fix. Closing this entry; if a future regression drops a route below 0.90, file a new perf entry rather than reopening this one.
 
 ### T6 — Bundle visualizer audit (P1) — DONE
 
@@ -262,9 +262,14 @@ Migrated in two PRs (T10a + T10b). End state: every non-breakpoint token in the 
 - **T10a — DONE.** Migrated the color palette and semantic theme tokens (`--bg-*`, `--fg-*`, `--accent*`, `--border-default`, `--border-emphasis`). The 26 in-file `$gray-*`/`$green-*`/`$surface-*`/`$border-card-*` simple-vars references were replaced with raw hex values; 12 legacy color aliases (`$default-white`, `$success-green`, `$text-color`, etc.) were audit-confirmed unused and deleted. Consumption sites already used `var(--accent)` etc., so component CSS didn't need changes.
 - **T10b — DONE.** Swept the remaining numeric scale tokens (`--space-*`, `--font-*`, `--border-N`, `--weight-*`) across 16 stylesheets in one mechanical pass. Dropped 4 unused tokens (`$space-24`, `$space-48`, `$space-60`, `$shadow-1`) during the sweep. Re-enabled the three stylelint rules that were disabled while simple-vars confused the parser (`declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`, `color-function-alias-notation`); the third surfaced 7 `rgba()` callsites which auto-fixed to modern `rgb(... / α)`. Added two typo-catchers to replace the simple-vars `unknown` callback: `custom-property-no-missing-var-function` (catches `--token: --otherToken` written without `var()`) and `custom-property-pattern` enforcing kebab-case.
 
-### T11 — Switch to Percy/Chromatic for `/skills` visual gate (P2)
+### T11 — Switch to Percy/Chromatic for `/skills` visual gate (P2) — DONE (dissolved)
 
-`/skills` and `/skills/:uuid` are both excluded from the visual suite ([tests/e2e/README.md](tests/e2e/README.md#why-skills-isnt-gated)). Reasons are documented (SVG anti-aliasing, hydration race). Percy/Chromatic handle SVG diffing better and run in CI not local Docker. Tradeoff: paid service. Alternative: T7 (CI-only regen) solves the hydration race without changing tools.
+The original premise was that three routes were excluded for two reasons and a paid tool might fix both. The Bundle 2 investigation separated the two reasons:
+
+1. **`/skills/:uuid` + `/education` index** were out because of a local-Docker `useLocation()` hydration race — not a tool problem, an environment problem. **T7's CI-side regen workflow already runs Playwright in the actual CI container where the race doesn't fire** (proven on T16 and T10b PRs). Both routes are gated again as of this PR. Baselines captured via `gh workflow run regen-baselines.yml`.
+2. **`/skills` index** is excluded for a different reason: the tenure-heatmap renders ~30 SVG cells × ~10 years on a tight grid, and sub-pixel anti-aliasing drifts ~0.4% across environments. **Percy / Chromatic pixel-diff SVG the same way** — they wouldn't escape this. The only "fixes" are masking the chart (defeats the gate) or raising the diff budget to ~0.5% (gate becomes useless for content shifts).
+
+So T11 dissolves: no tool switch needed, the visual gate now covers `/`, `/education`, `/education/:slug`, and `/skills/1` (a stable detail page), with `/skills` index documented out for a permanent reason rather than a fixable one. See [tests/e2e/README.md](tests/e2e/README.md#why-skills-index-isnt-gated) for the updated rationale.
 
 ### T12 — Cloudflare KV / D1 / R2 bindings (P3)
 

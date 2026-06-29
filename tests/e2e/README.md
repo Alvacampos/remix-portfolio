@@ -2,8 +2,8 @@
 
 ## Specs
 
-- `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts` — behavioural specs (route loaders, navigation, content assertions).
-- `visual.spec.ts` — full-page screenshot diffs. Covers `/` and `/education/:slug`. The `/skills` index, `/skills/:uuid`, and `/education` index routes are intentionally excluded — see "Why some routes aren't gated" below.
+- `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts`, `projects.spec.ts`, `error.spec.ts`, `a11y.spec.ts` — behavioural + a11y specs (route loaders, navigation, content assertions, axe violations).
+- `visual.spec.ts` — full-page screenshot diffs. Covers `/`, `/education`, `/education/:slug`, and `/skills/1` (a stable detail page). The `/skills` index is intentionally excluded — see "Why `/skills` index isn't gated" below.
 
 ## Visual regression
 
@@ -26,15 +26,13 @@ Playwright screenshots are pixel-level. Fonts, sub-pixel anti-aliasing, and emoj
 
 The QR `<svg>` in the nav is masked because its embedded font data hits the SVG anti-aliasing pipeline and produces sub-pixel diffs across environments. (No-op on mobile where the QR is `display: none`.)
 
-### Why some routes aren't gated
+### Why `/skills` index isn't gated
 
-Three routes are excluded for two different reasons:
+`/skills` is the only route still excluded. The tenure-heatmap renders ~30 SVG cells × ~10 years on a tight grid; sub-pixel anti-aliasing on those cells drifts ~0.4% of pixels between regen environments (Apple Silicon under amd64 emulation vs CI's GitHub Actions runner) — invisible to the eye but consistently above the 0.2% diff budget. Masking the chart would leave the gate covering very little of the page.
 
-**`/skills` (index)** — the tenure-heatmap renders a tight grid of small SVG cells; sub-pixel rendering on those cells drifts ~0.4% of pixels between the local Docker regen environment (M-series Mac under amd64 emulation) and CI's GitHub Actions runner — invisible to the eye but consistently above the 0.2% diff budget. Masking the chart would leave the gate covering very little of the page, so the route isn't in the visual suite.
+This is a tool-agnostic limitation: Percy / Chromatic pixel-diff SVG the same way. **T11 was closed with this rationale, not "switch to a paid tool".** Behavioural coverage in `skills.spec.ts` keeps the route asserted at the loader + interaction level.
 
-**`/skills/:uuid` (detail) AND `/education` (index)** — the local Docker regen environment reproducibly captures a root-error-boundary screenshot instead of the rendered page. The error is `useLocation() may be used only in the context of a <Router> component`, thrown from NavBar during client-side hydration inside the dev server's stripped-down dev container. It does NOT reproduce in normal browser use, on CI's CI runner, or in production builds — only inside the regen container. The result is a baseline stuck at the viewport height (1280×741) while CI's actual render is the full page, breaking the gate every time we try to regen. Re-adding the routes would require either fixing the Docker hydration race (no clear cause yet — Vite + Remix dev-server cold-start timing) or switching the regen path to a production build (slower, diverges from CI's setup). Behavioural coverage in `skills.spec.ts` and `education.spec.ts` already asserts both routes load and render their key content; visual regression on these specific pages wasn't catching anything the behavioural suite missed.
-
-If a future stage moves to a screenshot tool that handles SVG better and dev-server hydration timing more deterministically (Percy, Chromatic — tracked as **T11** in [TECH-DEBT.md](../../TECH-DEBT.md)), or to a CI-side regen workflow (**T7**), all three routes can be re-added.
+`/skills/:uuid` (detail) and `/education` (index) were previously excluded too, because of a local-Docker `useLocation()` hydration race that captured a root-error-boundary screenshot instead of the page. **T7's CI-side regen workflow runs Playwright in the actual CI container where the race doesn't fire**, so both routes are gated again as of this revision. To regenerate their baselines after an intentional UI change, use Path 2 below (CI workflow).
 
 ## Updating baselines
 
@@ -53,9 +51,9 @@ Runs Playwright inside the official `mcr.microsoft.com/playwright:v<version>-jam
 
 After it finishes, review the regenerated PNGs under `tests/e2e/visual.spec.ts-snapshots/` and commit them.
 
-### Path 2: CI workflow (when the local race fires)
+### Path 2: CI workflow (recommended)
 
-If a route's local regen captures a `useLocation() may be used only in the context of a <Router> component` hydration-race error overlay instead of the rendered page (see ["Why some routes aren't gated"](#why-some-routes-arent-gated) above), use the CI-side workflow:
+Runs Playwright inside the actual CI container, sidestepping a local Docker `useLocation()` hydration race that affects `/skills/:uuid` and `/education` regen. Also the only path that doesn't need Docker Desktop on your machine. Use it as the default:
 
 ```sh
 gh workflow run regen-baselines.yml --ref <branch-name>
@@ -64,8 +62,6 @@ gh workflow run regen-baselines.yml --ref <branch-name>
 Or click **Run workflow** on the [Actions tab](.github/workflows/regen-baselines.yml). The workflow runs inside the exact CI environment that gates PRs — the hydration race only reproduces in the local Docker container, not on the GitHub runner, so the captured PNGs are clean. It commits the regen back to the dispatched branch automatically.
 
 The `project` input lets you scope to `chromium`, `mobile`, or `both` (default).
-
-Once T11 lands (a tool that handles SVG diffing better) or this workflow proves stable, the `/skills` / `/education` index / `/skills/:uuid` routes can be re-added to the gated `ROUTES` list in `visual.spec.ts`.
 
 ## Running the suite
 
