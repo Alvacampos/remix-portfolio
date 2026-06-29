@@ -39,6 +39,8 @@
   }
 
   &__main-text-wrapper {
+    display: flex;
+    flex-direction: column;
     margin-bottom: var(--space-12);
   }
 
