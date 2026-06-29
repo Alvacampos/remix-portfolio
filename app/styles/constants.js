@@ -1,85 +1,15 @@
-// Design tokens injected as PostCSS simple-vars (e.g. `$text-color`).
+// Design tokens injected as PostCSS simple-vars (e.g. `$space-20`).
 // Single source of truth — unknown variable refs emit warnings via
 // postcss.config.js's `unknown` callback.
+//
+// Color / theme tokens previously lived here too but were migrated
+// to CSS custom properties in app/styles/style.css's `:root` /
+// `[data-theme='light']` blocks (T10a) — see TECH-DEBT.md Bundle 1.
+// The remaining simple-vars exports are values that can't be served
+// via `var()` (breakpoint dimensions inside `@media` preludes) or
+// numeric scale tokens we haven't migrated yet (T10b will sweep
+// spacing, font, border-radius, weight, shadow).
 export default {
-  // ─── GitHub brand palette ────────────────────────────────────────
-  // Adopted from GitHub's published brand guidelines. Used for both
-  // light and dark themes — the [data-theme] CSS-variable wiring in
-  // app/styles/style.css picks the right tokens per mode.
-  //
-  // Discipline: aim for an 80/10/10 ratio (neutral / gray-tinted
-  // surfaces / green accent). Most surfaces should be neutral; green
-  // does primary CTAs, focus rings, and the chart accent only.
-
-  // Grays — cool neutral, light → dark
-  'gray-1': '#f2f5f3', // page background (light)
-  'gray-2': '#e4ebe6', // surface (light), border (light)
-  'gray-3': '#b6bfb8', // muted text (light), border (dark)
-  'gray-4': '#909692', // body muted (dark theme only — fails WCAG AA on light bg)
-  'gray-5': '#232925', // surface (dark), elevated (light)
-  'gray-6': '#101411', // page background (dark) — process black
-  'gray-7': '#555b58', // body muted on LIGHT theme — clears 4.5:1 vs $surface-page-light
-
-  // Greens — light → dark
-  'green-1': '#bfffd1', // softest highlight (light-mode accent backgrounds)
-  'green-2': '#8cf2a6',
-  'green-3': '#5fed83',
-  'green-4': '#0fbf3e', // GitHub Green — hero / accent / focus
-  'green-5': '#066456', // deep teal-green — light-theme accent text (clears WCAG AA)
-  'green-6': '#0a241b', // darkest — dark-mode accent backgrounds
-
-  // ─── GitHub-aligned surface + border helpers ─────────────────────
-  // GitHub's actual UI uses a TWO-layer model — page < card — and
-  // leans on visible 1px borders to define edges. Card headers don't
-  // get a separate background; they sit flush with the body and
-  // are separated only by a hairline divider + typography.
-  //
-  // Sampled from github.com:
-  //   - dark page  #0d1117, card #151b23 (~9 RGB-step lift)
-  //   - light page #ffffff, card #ffffff (border-defined)
-  //   - dark border  #3d444d, light border #d1d9e0
-  //
-  // Greens stay our own (GitHub Green #0fbf3e) to keep the brand
-  // signature distinct from a pure GitHub clone.
-  // Card surface in dark is a green-tinted neutral. Same-hue lifts
-  // (green-on-green) read smaller than GitHub's neutral-blue lifts,
-  // so the perceptual step needs to be bigger than the raw RGB step.
-  // ~25 RGB units lifts the card off our process-black page enough
-  // to read as a distinct surface. Border is bright enough to
-  // backstop when surface contrast is subtle.
-  'surface-card-dark': '#262e29', // card body (dark)
-  'surface-elevated-dark': '#323a35', // chip/hover lift (dark)
-  'border-card-dark': '#4a524b', // visible 1px border on dark
-  // NavBar uses its own token (not card surface) so the rail can
-  // sit at a tone DISTINCT from the card surface — otherwise nav +
-  // cards merge into one visual block. Slightly cooler than
-  // surface-card-dark.
-  'surface-nav-dark': '#1a201c', // nav rail (dark) — visible above page
-  'surface-nav-light': '#eaeef1', // nav rail (light) — distinct from page bg
-  // Light theme: page is GitHub's canvas-subtle (#f6f8fa, the same
-  // shade GitHub itself uses behind cards), card is the slightly
-  // off-white #fbfcfd. Pure-white-on-pure-white was too harsh —
-  // these values keep the border-defined feel without burning the
-  // user's eyes on full luminance.
-  'surface-page-light': '#f6f8fa', // light mode page (canvas-subtle)
-  'surface-card-light': '#fbfcfd', // light card — soft off-white
-  'surface-elevated-light': '#eef1f4', // chip/hover lift (light)
-  'border-card-light': '#d1d9e0', // visible 1px border on light
-
-  // ─── Legacy colors (point at GitHub palette so un-migrated CSS
-  //     picks up the new look automatically) ──────────────────────
-  'text-color': '#f2f5f3', // → gray-1 (legible on dark)
-  'default-white': '#ffffff',
-  'default-grey': '#909692', // → gray-4
-  'default-black': '#101411', // → gray-6
-  'success-green': '#0fbf3e', // → green-4
-  'variation-green': '#08827b', // → green-5
-  'alternative-green': '#5fed83', // → green-3
-  'background-default': '#101411', // → gray-6
-  'background-variation': '#232925', // → gray-5
-  'card-border': '1px solid #232925', // → gray-5
-  'error-red': '#f85149',
-
   // Border
   'border-10': '10px',
   'border-8': '8px', // GitHub-style card radius
