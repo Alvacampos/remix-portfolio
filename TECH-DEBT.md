@@ -23,7 +23,7 @@ the framework cutover.
 
 | #   | Bundle                | Items     | Phase       | Notes                                                  |
 | --- | --------------------- | --------- | ----------- | ------------------------------------------------------ |
-| 1   | Style-system overhaul | T16 + T10 | investigate | Token sweep across `constants.js` + every CSS callsite |
+| 1   | Style-system overhaul | T16 + T10 | planned     | Token sweep across `constants.js` + every CSS callsite |
 | 2   | `/skills` quality     | T5 + T11  | not started | Perf investigation + visual-gate decision              |
 | 3   | Contact + CF infra    | U6 + T12  | not started | Pages Function + KV bindings                           |
 | 4   | Framework future      | T9        | not started | React Router v7 migration (multi-PR)                   |
@@ -37,21 +37,56 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 
 **Why bundle.** Both touch [app/styles/constants.js](app/styles/constants.js) and every CSS callsite. Sequencing them in one workstream means tokens get sweep-edited once instead of twice.
 
-- **Investigate.** Confirm how `@media (min-width: $token)` survives the
-  postcss-simple-vars expansion vs whether CSS custom properties can
-  carry breakpoint values — `@media (min-width: var(--bp-md))` is
-  invalid per the CSS spec, so T10 may need to leave breakpoints behind
-  as a separate mechanism (JS-emitted constants, postcss plugin, or
-  keep simple-vars _only_ for media-query tokens).
-- **Plan.** Sequence T16 first — the migration plan is already written
-  and ships a concrete set of token remaps. T10 then either rewrites
-  every non-breakpoint token to `var(--…)` or splits the system into
-  "media-query tokens (simple-vars)" + "everything else (custom
-  properties)" depending on the investigation outcome.
-- **Apply.** T16 PR (with visual baseline regen) → T10 PR (or two
-  smaller PRs if the surface area is bigger than expected). Re-enables
-  `declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`,
-  `color-function-alias-notation` in stylelint per the §6 note in [AGENTS.md](AGENTS.md).
+- **Investigate — DONE.** `var(--token)` cannot be used inside `@media`
+  queries. The MQL5 grammar (`<mf-value> = <number> | <dimension> |
+<ident> | <ratio>`) admits no function tokens, and custom properties
+  resolve per-element at computed-value time — there's no element
+  context for `@media` evaluation. MDN states it directly: _"Variables
+  do not work inside media queries and container queries"_ ([MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)).
+  Confirmed unsupported in every mainstream browser; this is
+  spec-level, not a vendor gap. Workaround options:
+  - Stay on a preprocessor (postcss-simple-vars, Sass) for media-query
+    tokens — build-time substitution, works everywhere.
+  - `@custom-media` rule (MQL5 working draft Feb 2026) via
+    `postcss-custom-media` — native support is essentially 0% in 2026,
+    so this is still build-time anyway, just with different syntax.
+  - JS-emitted token generators (Style Dictionary, etc.) — overkill
+    for ~5 breakpoints.
+
+  **Decision: keep `postcss-simple-vars` for breakpoint tokens only;
+  migrate every other token to CSS custom properties.** This unifies
+  the system with the existing `:root { --bg-*, --fg-*, --accent }`
+  setup that already powers dark/light theming in [app/styles/style.css](app/styles/style.css)
+  — there's already a CSS-custom-property layer there, we're just
+  rolling the rest of the tokens into it. Breakpoints stay on
+  simple-vars (which is what they already use today) so we don't have
+  to invent a separate mechanism just for `@media`.
+
+- **Plan.**
+  1. **T16 first.** Migration plan is already written (see [T16
+     entry](#t16--standardise-breakpoints-legacy--tailwind-aligned-scale-p1));
+     remaps 17 legacy `$mobile-small`/`$desktop-small`/`$desktop-medium`
+     callsites to `$bp-sm`/`$bp-md`/`$bp-lg`/`$bp-xl`/`$bp-2xl`. No
+     other token changes in that PR — keeps the diff reviewable and
+     the visual-baseline regen scope bounded to layout shifts at the
+     new breakpoint boundaries.
+  2. **T10 second.** Sweep every non-breakpoint token in
+     [constants.js](app/styles/constants.js) (~50 colour/spacing/border/
+     radius/typography/shadow entries) into `:root` custom properties.
+     Keep the JSON-keyed export only for the breakpoint subset that
+     simple-vars consumes. Drop the simple-vars `unknown` callback for
+     non-breakpoint tokens — `var(--foo)` typos read as inherited
+     `unset` rather than a build warning, so we'll need stylelint's
+     `declaration-property-value-no-unknown` (now re-enableable) +
+     potentially `stylelint-use-defined-vars` or a small custom check
+     to keep the typo-catcher coverage. T10 likely splits into 2 PRs
+     by category (palette + theme first, then spacing/typography/
+     borders) to keep visual-baseline regen scoped.
+- **Apply.** T16 PR (visual baseline regen) → T10a PR (colour + theme
+  tokens) → T10b PR (spacing + typography + borders + shadows). Final
+  PR re-enables stylelint's `declaration-property-value-no-unknown`,
+  `shorthand-property-no-redundant-values`, `color-function-alias-notation`
+  per the §6 note in [AGENTS.md](AGENTS.md).
 
 ### Bundle 2 — `/skills` quality (T5 + T11)
 
