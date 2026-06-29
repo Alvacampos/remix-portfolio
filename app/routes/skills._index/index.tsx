@@ -17,8 +17,8 @@ import {
   formatDate,
   getAllSkillGroups,
   getClassMaker,
+  getSkillGroupsForJob,
   getSkillHeatmapData,
-  getSkillsForJob,
   getSkillSuggestions,
   localized,
 } from '~/utils/utils';
@@ -77,7 +77,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     date: formatDate(item.startDate, item.endDate ?? undefined),
     texts: [localized(item, 'rol', locale)],
     textsLabel: 'ROLE',
-    skills: getSkillsForJob(SKILLS, item.id),
+    skills: getSkillGroupsForJob(SKILLS, item.id, locale).flatMap((g) => g.items),
   }));
   const extraActivities = SKILLS.EXTRA_ACTIVITIES.map((activity) => ({
     title: activity.title,

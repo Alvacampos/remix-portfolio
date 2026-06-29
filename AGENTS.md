@@ -78,7 +78,7 @@ remix-portfolio/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
 │   └── utils/
-│       ├── utils.tsx              # getClassMaker, formatDate, getSkillHeatmapData, getSkillsForJob, getSkillSuggestions, localized, getCvUrl
+│       ├── utils.tsx              # getClassMaker, formatDate, getSkillHeatmapData, getSkillGroupsForJob, getAllSkillGroups, getSkillSuggestions, localized, getCvUrl
 │       └── meta.ts                # mergeRouteMeta (per-route title + OG/Twitter merger)
 ├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
 ├── public/
@@ -146,7 +146,7 @@ Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersi
 | `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | validates `education.json` via Zod once per worker boot (`loadEducation`); resolves `_es` siblings per request via `localized()`                                                                                                              |
 | `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key, localizes title/summary/description in the loader (so `<meta>` and render share copy); throws on miss → local `ErrorBoundary`                                                                                |
 | `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS` hoisted); the heatmap + total-years figure derive in the loader. Per-request: timeline cards + extras resolve `_es`. 1h cache + `Vary: Accept-Language, Cookie` |
-| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives skill chips via `getSkillsForJob`, throws on miss → renders local `ErrorBoundary`                                                                                 |
+| `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives bucketed skill chips via `getSkillGroupsForJob`, throws on miss → renders local `ErrorBoundary`                                                                   |
 
 There is no `/contact` route today — README mentions one as a future feature but the NavBar doesn't render any entry for it.
 
@@ -281,7 +281,7 @@ Adding a new field:
 
 **Adding a job:** push a new `WORK_ITEMS` entry with the next `id`, then go through every relevant `SKILLS[].ranges` and add `{ jobId: <new-id> }` to the ones that apply at this job.
 
-**Heatmap, chart, autocomplete:** all derive from `SKILLS` via helpers in [app/utils/utils.tsx](app/utils/utils.tsx) — `getSkillHeatmapData`, `getSkillsForJob`, `getSkillSuggestions`. Computed once per worker boot and reused across requests.
+**Heatmap, chart, autocomplete:** all derive from `SKILLS` via helpers in [app/utils/utils.tsx](app/utils/utils.tsx) — `getSkillHeatmapData`, `getSkillGroupsForJob`, `getSkillSuggestions`. Computed once per worker boot and reused across requests.
 
 Per-company logos live in `public/assets/img/<company-slug>.webp`. The `skills.$uuid` route resolves the image path by lowercasing `data.title`, with overrides for titles that don't directly map to a logo file (`Professor (part-time)` → `unsta2.webp`, `Teacher` → `coderhouse.webp`) — see `IMAGE_OVERRIDES` in the route.
 
