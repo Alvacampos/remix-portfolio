@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-22T13:52:20.211Z",
+  "fetchTime": "2026-06-29T22:10:50.622Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "9a29f4b",
+  "commit": "f35a2df",
   "categories": {
-    "performance": 0.83,
-    "accessibility": 0.95,
+    "performance": 0.94,
+    "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.1 s",
-      "numericValue": 2134.2212,
-      "score": 0.8
+      "displayValue": "2.3 s",
+      "numericValue": 2333.8586,
+      "score": 0.73
     },
     "lcp": {
-      "displayValue": "4.4 s",
-      "numericValue": 4384.2212,
-      "score": 0.4
+      "displayValue": "2.7 s",
+      "numericValue": 2687.7879,
+      "score": 0.86
     },
     "si": {
-      "displayValue": "2.1 s",
-      "numericValue": 2134.2212,
-      "score": 0.99
+      "displayValue": "2.3 s",
+      "numericValue": 2333.8586,
+      "score": 0.98
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,37 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "4.4 s",
-      "numericValue": 4384.2212,
-      "score": 0.84
+      "displayValue": "2.7 s",
+      "numericValue": 2695.2879000000003,
+      "score": 0.97
     },
-    "ttfb": 41
+    "ttfb": 58
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.8
+      "score": 0.73
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.4
+      "score": 0.86
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.84
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
+      "score": 0.97
     },
     {
       "id": "unused-javascript",
@@ -87,7 +82,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
