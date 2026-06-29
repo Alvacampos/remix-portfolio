@@ -84,10 +84,17 @@ jobs:
       - name: Commit regenerated baselines
         # HUSKY=0 disables the pre-push hook (it would re-run lint /
         # typecheck / unit on each auto-commit — wasted work for a
-        # PNG-only change).
+        # PNG-only change). Still set even though we switched off Husky
+        # in T14 — simple-git-hooks honors the same env-var convention.
         env:
           HUSKY: '0'
         run: |
+          # The Playwright image runs as root but actions/checkout writes
+          # the working tree owned by a different UID, which makes modern
+          # git refuse to operate ("fatal: not in a git directory" or
+          # "dubious ownership"). Whitelist the workspace as safe before
+          # any git command runs.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git diff --quiet tests/e2e/visual.spec.ts-snapshots/ && [ -z "$(git status --porcelain tests/e2e/visual.spec.ts-snapshots/)" ]; then
