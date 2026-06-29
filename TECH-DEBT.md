@@ -21,12 +21,12 @@ without touching code), **plan** (decide the concrete sequence), then
 first, then the last `/skills` quality gap, then a real feature, then
 the framework cutover.
 
-| #   | Bundle                | Items     | Phase       | Notes                                                  |
-| --- | --------------------- | --------- | ----------- | ------------------------------------------------------ |
-| 1   | Style-system overhaul | T16 + T10 | done        | Token sweep across `constants.js` + every CSS callsite |
-| 2   | `/skills` quality     | T5 + T11  | not started | Perf investigation + visual-gate decision              |
-| 3   | Contact + CF infra    | U6 + T12  | not started | Pages Function + KV bindings                           |
-| 4   | Framework future      | T9        | not started | React Router v7 migration (multi-PR)                   |
+| #   | Bundle                | Items          | Phase       | Notes                                                      |
+| --- | --------------------- | -------------- | ----------- | ---------------------------------------------------------- |
+| 1   | Style-system overhaul | T16 + T10      | done        | Token sweep across `constants.js` + every CSS callsite     |
+| 2   | `/skills` quality     | T5 + T11 + C13 | planned     | Perf investigation + visual-gate decision + README refresh |
+| 3   | Contact + CF infra    | U6 + T12       | not started | Pages Function + KV bindings                               |
+| 4   | Framework future      | T9             | not started | React Router v7 migration (multi-PR)                       |
 
 **Ride-along candidates** (small enough to bundle with any of the above
 when they fit thematically): C10, individual U11–U24 nice-to-haves.
@@ -88,25 +88,33 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
   `shorthand-property-no-redundant-values`, `color-function-alias-notation`
   per the §6 note in [AGENTS.md](AGENTS.md).
 
-### Bundle 2 — `/skills` quality (T5 + T11)
+### Bundle 2 — `/skills` quality (T5 + T11 + C13)
 
-**Why bundle.** Both are the last open items about `/skills`'s end-user
-experience (one perf, one visual-regression coverage). Investigating
-together avoids relearning the route's render path twice.
+**Why bundle.** T5 + T11 are the last open items about `/skills`'s end-user experience (one perf, one visual-regression coverage). Investigating together avoids relearning the route's render path twice. C13 (README refresh) rides along because the perf investigation touches the Lighthouse narrative the README already cites.
 
-- **Investigate.** Run a WebPageTest waterfall against prod `/skills`
-  to identify the LCP contributor (likely route stylesheet weight or
-  Roboto critical path per [T5's notes](#t5--recover-skills-lighthouse-perf-p1)).
-  Separately, assess whether [T7's CI-side regen workflow](#t7--move-visual-baseline-regen-to-ci-workflow-p1)
-  already eliminates the hydration race that excludes `/skills` from
-  the visual gate — if so, T11 reduces to "add `/skills` back to the
-  ROUTES list in [visual.spec.ts](tests/e2e/visual.spec.ts)" and no
-  paid service is needed.
-- **Plan.** T5 fix scope depends on the waterfall (preload tweak, font
-  subset, critical-path CSS extraction, etc.). T11 either becomes a
-  one-line ROUTES change or gets dropped with rationale.
-- **Apply.** T5 perf PR; T11 either a tiny extend-ROUTES PR or a
-  TECH-DEBT entry update closing it out.
+- **Investigate — DONE.** Mined the per-merge `lighthouse/skills-index-*.summary.json` files instead of a fresh WebPageTest run; we have 20+ data points across recent commits and the pattern is clear.
+
+  **T5 perf (current state):**
+  - The T5 entry claims 0.87 baseline with LCP 3.5s / FCP 2.5s. **Stale.** Across the last ~20 merges to main, `/skills` index has scored Performance **0.94–0.98** on Lighthouse mobile (Lantern simulator), with median **FCP 1.5s / LCP 2.4s**. The d93e747 run that prompted this investigation (0.93, FCP 2.3s, LCP 2.7s) sits on the noisy end of the band, not the median.
+  - TBT 0ms · CLS 0 · TTFB 79ms · Speed Index 2.3s — all excellent. **JS payload and edge latency are not bottlenecks.**
+  - The 4 failing audits on `/skills` are all critical-path shape, not weight: `render-blocking-insight` (0), `network-dependency-tree-insight` (0), `unused-javascript` (0), `cache-insight` (0.5).
+  - Roboto IS preloaded at root level (rides every route). Monaspace IS preloaded on `/skills`. The route stylesheet is 20.78 KB raw / 3.66 KB gzip — small.
+  - **Verdict:** T5's 0.95 target is essentially met. Whatever marginal gain remains is in critical-path shape (fewer chained requests, smaller render-blocking CSS for FCP), not in any single big win. Marking T5 as a wider scope than warranted; **dropping the entry to a smaller follow-up**.
+
+  **T11 visual gate (was the premise still true?):**
+  - The exclusion list in [visual.spec.ts](tests/e2e/visual.spec.ts) covers _three_ routes, for **two different reasons**:
+    1. `/skills/:uuid` + `/education` index — local Docker regen captures a `useLocation()` hydration overlay instead of the page. **T7's CI-side regen workflow solves this** (the race only fires in the local Docker env, not on the GitHub runner — we just used it on T16 for the breakpoint baselines and again on T10b for the equal-height card change). These two routes can be re-added.
+    2. `/skills` index — separate problem. The tenure-heatmap renders ~30 SVG cells × ~10 years, anti-aliased per pixel. The grid drifts ~0.4% across regen environments invisible to the eye but consistently above the 0.2% diff budget. **A different visual-regression tool wouldn't escape this** — Percy/Chromatic also pixel-diff SVG. The only fixes are (a) masking the chart entirely (defeats the gate's point for that route) or (b) raising `maxDiffPixelRatio` to ~0.005 (gate becomes useless for content shifts).
+  - **Verdict on T11:** dissolve. Re-add `/skills/:uuid` + `/education` index to ROUTES (via T7's workflow for the baselines); keep `/skills` index out with the now-clarified rationale (SVG anti-aliasing, not hydration race, not tool-fixable). **No paid service needed.**
+
+- **Plan.**
+  1. **C13 README refresh + visual-baseline how-to** (own PR, doc-only). Sweeps the ~20 PRs of drift documented in the C13 entry and adds a "Visual baselines" section covering both flows (`npm run test:visual:update` locally vs `regen-baselines.yml` on CI). Lands first because it's reviewable independent of code changes.
+  2. **T5 + T11 in one PR**:
+     - Re-add `/skills/:uuid` + `/education` index to the visual-spec ROUTES list. Dispatch `regen-baselines.yml` for fresh PNGs (those two routes never had committed baselines because the local regen kept failing).
+     - Update the in-file exclusion comment in `visual.spec.ts` so future readers understand `/skills` index stays out for a different reason than the others.
+     - Flip T5 + T11 to `done` in TECH-DEBT, with the updated rationale captured in the long-form entries. No code change in the perf direction — the data shows we're already at target.
+
+- **Apply.** C13 first (doc-only, fast review). Then T5+T11 combined PR. C13 lands the bundle table flip; T5+T11 closes it out.
 
 ### Bundle 3 — Contact + CF infra (U6 + T12)
 
@@ -173,6 +181,7 @@ every route file plus dev tooling.
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | done   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | done   |
+| C13 | Cleanup   | P1       | README refresh + visual-baseline how-to                        | open   |
 | U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | done   |
 | U2  | UI        | P0       | Print stylesheet (CV page printable)                           | done   |
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
@@ -384,6 +393,35 @@ Ran `npm run build:og` on `main` after the per-route OG PR landed. All four PNGs
 ### C12 — Audit `app/assets/icons/` for orphans (P3) — DONE
 
 Audited the 8 source SVGs against the codebase. All map to a real consumer: `Briefcase` (NavBar + Timeline), `Education` (NavBar + Timeline + both education routes), `GithubIcon`, `Home`, `LinkedinIcon`, `Paper` (all NavBar), `Sun` + `Moon` (ThemeToggle). No orphans to remove.
+
+### C13 — README refresh + visual-baseline how-to (P1)
+
+[README.md](README.md) has drifted across the last ~20 PRs. Concrete stale or missing items:
+
+- **Stale claims to fix:**
+  - "husky" pre-push hook → migrated to simple-git-hooks in T14.
+  - `npm run build:og` writes `og.png` → now writes 4 per-route PNGs (`og-home`, `og-skills`, `og-education`, `og-projects`) via U8.
+  - "Visual baselines for `/`, `/education`, `/education/:slug`" — `/education` index was excluded; current list is `/` + `/education/:slug`.
+  - "Design tokens via simple-vars / unknown callback" — migrated to CSS custom properties in T10a/T10b with stylelint typo-catchers (`custom-property-no-missing-var-function`, `custom-property-pattern`).
+  - Roadmap line about React Router / Next migration → currently tracked as T9 (React Router v7), Next.js no longer on the table.
+- **Features shipped without README coverage:**
+  - Lighthouse CI gating (T2) + the `lighthouse/` per-commit summary commit-back flow.
+  - a11y testing via `@axe-core/playwright` (T1).
+  - `/data/*` no longer publicly served — JSON only reaches the client via the rendered route (T3).
+  - Per-route OG images (U8): `scripts/og/<slug>.svg` templates rendered by `npm run build:og`.
+  - `/projects` index + `/projects/:slug` case studies (U7).
+  - Print stylesheet for the CV pages (U2).
+  - ESLint `~/`-alias enforcement + `~data/*` alias for `public/data` JSON imports (T15).
+  - Standardised `.route-page-title` utility (recent doc PR).
+  - Bundle 1 style-system overhaul: Tailwind-aligned breakpoint scale (T16), CSS custom properties migration (T10a + T10b).
+- **Missing how-to sections:**
+  - **Visual baselines** — two paths, both worth documenting in README rather than scattered across `tests/e2e/README.md` and AGENTS.md:
+    - Local Docker: `npm run test:visual:update` (requires Docker Desktop, slower on Apple Silicon under amd64 emulation).
+    - CI workflow: `gh workflow run regen-baselines.yml --ref <branch>` or the Actions UI dispatch. Runs in the exact CI environment so output is pixel-perfect; commits new PNGs back to the dispatched branch automatically.
+  - **Updating content** — pointer to `public/data/skills.json` + `public/data/education.json` + the localisation pattern (`_es` siblings, `localized()` helper).
+  - **Adding a locale** — pointer to `app/intl/index.ts`'s `SUPPORTED_LOCALES` list + `LocaleToggle` `--knob-index` math, with a 3-step recipe.
+
+Bundled into Bundle 2 (`/skills` quality) because the perf investigation phase touches the lighthouse story anyway and the prose changes pair naturally with that.
 
 ---
 
