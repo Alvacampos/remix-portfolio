@@ -134,7 +134,7 @@ export default function Skills() {
 
   return (
     <div className={getClasses()}>
-      <h1 className={getClasses('page-title')}>
+      <h1 className="route-page-title">
         <FormattedMessage id="PAGE_TITLE_SKILLS" />
       </h1>
       <div className={getClasses('time-line')}>
