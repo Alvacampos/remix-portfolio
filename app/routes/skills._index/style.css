@@ -19,12 +19,6 @@
   flex-direction: column;
   gap: $space-32;
 
-  &__page-title {
-    text-align: center;
-    font-size: $font-30;
-    margin: $space-20 0 0 0;
-  }
-
   & h2 {
     text-align: center;
     font-size: $font-24;

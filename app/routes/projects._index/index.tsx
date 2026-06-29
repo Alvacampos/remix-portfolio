@@ -44,7 +44,7 @@ export default function ProjectsIndex() {
 
   return (
     <div className={getClasses()}>
-      <h1 className={getClasses('page-title')}>
+      <h1 className="route-page-title">
         <FormattedMessage id="PAGE_TITLE_PROJECTS" />
       </h1>
       <p className={getClasses('intro')}>

@@ -112,6 +112,9 @@ export default function Skills() {
 
   return (
     <div className={getClasses()}>
+      <h1 className="route-page-title">
+        <FormattedMessage id="PAGE_TITLE_EDUCATION" />
+      </h1>
       <div className={getClasses('degree')}>
         <h2>
           <FormattedMessage id="DEGREES" />
