@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-22T13:52:06.563Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "fetchTime": "2026-06-29T13:10:11.735Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "9a29f4b",
+  "commit": "f7d1bb3",
   "categories": {
-    "performance": 0.83,
-    "accessibility": 0.95,
-    "best-practices": 0.96,
+    "performance": 0.98,
+    "accessibility": 1,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.1 s",
-      "numericValue": 2074.747,
-      "score": 0.82
+      "displayValue": "1.5 s",
+      "numericValue": 1516.0122999999999,
+      "score": 0.95
     },
     "lcp": {
-      "displayValue": "4.4 s",
-      "numericValue": 4379.2175,
-      "score": 0.4
+      "displayValue": "2.3 s",
+      "numericValue": 2266.0123,
+      "score": 0.94
     },
     "si": {
-      "displayValue": "2.1 s",
-      "numericValue": 2074.747,
-      "score": 0.99
+      "displayValue": "1.5 s",
+      "numericValue": 1516.0122999999999,
+      "score": 1
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,42 +37,27 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "4.4 s",
-      "numericValue": 4387.16395,
-      "score": 0.83
+      "displayValue": "2.3 s",
+      "numericValue": 2266.0123,
+      "score": 0.99
     },
-    "ttfb": 150
+    "ttfb": 60
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.82
+      "score": 0.95
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.4
-    },
-    {
-      "id": "speed-index",
-      "title": "Speed Index",
-      "score": 0.99
-    },
-    {
-      "id": "errors-in-console",
-      "title": "Browser errors were logged to the console",
-      "score": 0
+      "score": 0.94
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.83
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
+      "score": 0.99
     },
     {
       "id": "unused-javascript",
@@ -92,7 +77,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
