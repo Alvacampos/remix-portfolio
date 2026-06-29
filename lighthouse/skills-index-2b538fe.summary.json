@@ -1,0 +1,93 @@
+{
+  "fetchTime": "2026-06-29T20:25:57.303Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.4.0",
+  "commit": "2b538fe",
+  "categories": {
+    "performance": 0.95,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "2.1 s",
+      "numericValue": 2053.6596,
+      "score": 0.82
+    },
+    "lcp": {
+      "displayValue": "2.5 s",
+      "numericValue": 2487.6596,
+      "score": 0.9
+    },
+    "si": {
+      "displayValue": "3.1 s",
+      "numericValue": 3100.500367588084,
+      "score": 0.93
+    },
+    "tbt": {
+      "displayValue": "40 ms",
+      "numericValue": 39.5,
+      "score": 1
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "2.6 s",
+      "numericValue": 2636.0596,
+      "score": 0.98
+    },
+    "ttfb": 110
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.82
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.9
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.93
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.97
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.98
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}

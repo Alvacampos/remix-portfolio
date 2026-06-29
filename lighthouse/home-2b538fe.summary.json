@@ -1,73 +1,73 @@
 {
-  "fetchTime": "2026-06-25T18:49:05.481Z",
+  "fetchTime": "2026-06-29T20:25:48.460Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "lighthouseVersion": "13.4.0",
-  "commit": "23e554f",
+  "commit": "2b538fe",
   "categories": {
-    "performance": 0.77,
-    "accessibility": 0.96,
+    "performance": 0.78,
+    "accessibility": 1,
     "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.7 s",
-      "numericValue": 2740.4700000000003,
-      "score": 0.58
+      "displayValue": "2.0 s",
+      "numericValue": 2000.3715,
+      "score": 0.84
     },
     "lcp": {
-      "displayValue": "3.1 s",
-      "numericValue": 3052.0110000000004,
-      "score": 0.76
+      "displayValue": "2.3 s",
+      "numericValue": 2298.3715,
+      "score": 0.93
     },
     "si": {
-      "displayValue": "2.8 s",
-      "numericValue": 2757.997403684146,
-      "score": 0.96
+      "displayValue": "2.9 s",
+      "numericValue": 2918.9976099539367,
+      "score": 0.95
     },
     "tbt": {
-      "displayValue": "500 ms",
-      "numericValue": 495.07100000000037,
-      "score": 0.58
+      "displayValue": "750 ms",
+      "numericValue": 746.5000000000002,
+      "score": 0.39
     },
     "cls": {
       "displayValue": "0",
-      "numericValue": 0.0004052002549649367,
+      "numericValue": 0.0001990404033765582,
       "score": 1
     },
     "tti": {
-      "displayValue": "3.6 s",
-      "numericValue": 3573.6713500000005,
-      "score": 0.91
+      "displayValue": "3.2 s",
+      "numericValue": 3237.1215,
+      "score": 0.94
     },
-    "ttfb": 233
+    "ttfb": 387
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.58
+      "score": 0.84
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.76
+      "score": 0.93
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.96
+      "score": 0.95
     },
     {
       "id": "total-blocking-time",
       "title": "Total Blocking Time",
-      "score": 0.58
+      "score": 0.39
     },
     {
       "id": "max-potential-fid",
       "title": "Max Potential First Input Delay",
-      "score": 0.42
+      "score": 0.36
     },
     {
       "id": "errors-in-console",
@@ -77,7 +77,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.91
+      "score": 0.94
     },
     {
       "id": "mainthread-work-breakdown",
@@ -87,11 +87,6 @@
     {
       "id": "bootup-time",
       "title": "Reduce JavaScript execution time",
-      "score": 0
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
       "score": 0
     },
     {
