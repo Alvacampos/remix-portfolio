@@ -23,7 +23,7 @@ the framework cutover.
 
 | #   | Bundle                | Items     | Phase       | Notes                                                  |
 | --- | --------------------- | --------- | ----------- | ------------------------------------------------------ |
-| 1   | Style-system overhaul | T16 + T10 | planned     | Token sweep across `constants.js` + every CSS callsite |
+| 1   | Style-system overhaul | T16 + T10 | done        | Token sweep across `constants.js` + every CSS callsite |
 | 2   | `/skills` quality     | T5 + T11  | not started | Perf investigation + visual-gate decision              |
 | 3   | Contact + CF infra    | U6 + T12  | not started | Pages Function + KV bindings                           |
 | 4   | Framework future      | T9        | not started | React Router v7 migration (multi-PR)                   |
@@ -154,7 +154,7 @@ every route file plus dev tooling.
 | T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | done   |
 | T8  | Technical | P1       | Remove `legacy-peer-deps=true`                                 | done   |
 | T9  | Technical | P2       | React Router v7 migration                                      | open   |
-| T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | open   |
+| T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | done   |
 | T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | open   |
 | T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | open   |
 | T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | done   |
@@ -246,14 +246,12 @@ Set because of `@types/react@19` vs `react@18` mismatch. Either upgrade React to
 
 Remix v2 is in maintenance mode; RRv7 is the official upgrade path. Resolves T15 (formerly TECH-DEBT #2 — react-router-dom pin). Route file conventions change. Large effort, but eventual.
 
-### T10 — postcss-simple-vars → CSS custom properties (P2)
+### T10 — postcss-simple-vars → CSS custom properties (P2) — DONE
 
-Formerly TECH-DEBT #1. Re-enables 3 stylelint rules, unlocks runtime theming. Every `$token` becomes `var(--token)`; need an equivalent typo-catcher (linter or build-time check) since simple-vars' unknown callback is the current safety net.
+Migrated in two PRs (T10a + T10b). End state: every non-breakpoint token in the system lives as a CSS custom property declared in [app/styles/style.css](app/styles/style.css)'s `:root` block. Only the 5 breakpoint tokens (`$bp-sm` through `$bp-2xl`) remain on postcss-simple-vars, because `var()` is invalid inside `@media` preludes (CSS spec — see Bundle 1 investigation). [app/styles/constants.js](app/styles/constants.js) shrank from ~150 lines (with palette, legacy aliases, spacing/typography/borders/weights/shadows) to ~40 lines (breakpoints + their doc comment).
 
-**Status:** in progress. Split into T10a (colour + theme tokens, palette layer) and T10b (spacing / typography / borders / shadows).
-
-- **T10a — DONE.** Migrated the colour palette and semantic theme tokens out of [constants.js](app/styles/constants.js) into the existing `:root` + `[data-theme='light']` blocks in [app/styles/style.css](app/styles/style.css). The 26 in-file `$gray-*`/`$green-*`/`$surface-*`/`$border-card-*` simple-vars references were replaced with raw hex values; the legacy color aliases (`$default-white`, `$success-green`, `$text-color`, etc.) were audit-confirmed unused outside the palette block and deleted entirely. Consumption sites already used `var(--accent)` etc., so component CSS didn't need changes. Stylelint re-enable + typo-catcher work moves to T10b.
-- **T10b — open.** Sweep ~25 remaining numeric scale tokens (`$space-*`, `$font-*`, `$border-*`, `$weight-*`, `$shadow-*`) into `:root` custom properties. Keep breakpoint subset (`$bp-*`) on simple-vars (CSS spec forbids `var()` in `@media` preludes — see Bundle 1 investigation). Re-enables stylelint's `declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`, `color-function-alias-notation` per the §6 note in [AGENTS.md](AGENTS.md). Add a typo-catcher (stylelint `custom-property-pattern` + `--*` validity rule, or a small postcss plugin) since simple-vars' unknown callback only fires for `$tokens`, not `var(--foo)`.
+- **T10a — DONE.** Migrated the color palette and semantic theme tokens (`--bg-*`, `--fg-*`, `--accent*`, `--border-default`, `--border-emphasis`). The 26 in-file `$gray-*`/`$green-*`/`$surface-*`/`$border-card-*` simple-vars references were replaced with raw hex values; 12 legacy color aliases (`$default-white`, `$success-green`, `$text-color`, etc.) were audit-confirmed unused and deleted. Consumption sites already used `var(--accent)` etc., so component CSS didn't need changes.
+- **T10b — DONE.** Swept the remaining numeric scale tokens (`--space-*`, `--font-*`, `--border-N`, `--weight-*`) across 16 stylesheets in one mechanical pass. Dropped 4 unused tokens (`$space-24`, `$space-48`, `$space-60`, `$shadow-1`) during the sweep. Re-enabled the three stylelint rules that were disabled while simple-vars confused the parser (`declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`, `color-function-alias-notation`); the third surfaced 7 `rgba()` callsites which auto-fixed to modern `rgb(... / α)`. Added two typo-catchers to replace the simple-vars `unknown` callback: `custom-property-no-missing-var-function` (catches `--token: --otherToken` written without `var()`) and `custom-property-pattern` enforcing kebab-case.
 
 ### T11 — Switch to Percy/Chromatic for `/skills` visual gate (P2)
 

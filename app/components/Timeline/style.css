@@ -11,7 +11,7 @@
    * "Total years of experience" card on /skills). Tighten the
    * bottom so the timeline ends close to its last card. */
   & .vertical-timeline {
-    padding: 0 0 $space-16 0;
+    padding: 0 0 var(--space-16) 0;
   }
 
   & .vertical-timeline-element:last-child {
@@ -30,7 +30,7 @@
     padding: 0;
 
     & .bounce-in {
-      border-radius: $border-8;
+      border-radius: var(--border-8);
       overflow: hidden;
     }
 
@@ -68,8 +68,8 @@
     color: var(--accent);
     box-shadow:
       0 0 0 4px var(--accent),
-      inset 0 2px 0 rgba(0, 0, 0, 0.08),
-      0 3px 0 4px rgba(0, 0, 0, 0.05);
+      inset 0 2px 0 rgb(0, 0, 0, 0.08),
+      0 3px 0 4px rgb(0, 0, 0, 0.05);
   }
 
   & .vertical-timeline-element-icon svg {
@@ -81,7 +81,7 @@
   &__element-link {
     color: inherit;
     text-decoration: none;
-    border-radius: $border-10;
+    border-radius: var(--border-10);
 
     /* Keyboard-focus affordance. The Card inside fires its own
      * :hover on mouse, but a tab-focused link gets no feedback
@@ -136,29 +136,29 @@
       }
 
       & .vertical-timeline-element-icon {
-        height: $space-80;
-        width: $space-80;
-        margin-left: -$space-40;
+        height: var(--space-80);
+        width: var(--space-80);
+        margin-left: -var(--space-40);
 
         svg {
-          width: $space-40;
-          height: $space-40;
+          width: var(--space-40);
+          height: var(--space-40);
           top: 40%;
           left: 40%;
         }
       }
 
       & .vertical-timeline-element-content {
-        padding: $space-20 0 0;
+        padding: var(--space-20) 0 0;
       }
 
       & .vertical-timeline-element-content-arrow {
         border-right-color: var(--accent);
-        margin-top: $space-12;
+        margin-top: var(--space-12);
       }
 
       & .vertical-timeline-element-date {
-        margin: $space-4 0 0 $space-12;
+        margin: var(--space-4) 0 0 var(--space-12);
       }
     }
   }

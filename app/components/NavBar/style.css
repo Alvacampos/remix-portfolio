@@ -28,9 +28,9 @@
   &__special-anchor-container {
     display: flex;
     align-items: center;
-    gap: $space-8;
-    height: $space-40;
-    padding: 0 $space-12;
+    gap: var(--space-8);
+    height: var(--space-40);
+    padding: 0 var(--space-12);
     box-shadow: inset 0 -1px 0 var(--border-emphasis);
   }
 
@@ -63,12 +63,12 @@
   }
 
   &__special-anchor {
-    width: $space-20;
-    height: $space-20;
+    width: var(--space-20);
+    height: var(--space-20);
 
     & svg {
-      width: $space-20;
-      height: $space-20;
+      width: var(--space-20);
+      height: var(--space-20);
     }
   }
 
@@ -103,12 +103,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: $space-4;
+    gap: var(--space-4);
     width: 100%;
-    padding: $space-8 0;
+    padding: var(--space-8) 0;
     text-decoration: none;
     color: inherit;
-    font-size: $font-12;
+    font-size: var(--font-12);
     transition: background 120ms ease;
 
     &:hover {
@@ -124,8 +124,8 @@
   }
 
   &__nav-link-icon {
-    width: $space-20;
-    height: $space-20;
+    width: var(--space-20);
+    height: var(--space-20);
     flex-shrink: 0;
   }
 
@@ -135,7 +135,7 @@
   &__nav-link--active {
     background: var(--accent-muted);
     color: var(--fg-base);
-    font-weight: $weight-700;
+    font-weight: var(--weight-700);
   }
 }
 
@@ -145,7 +145,7 @@
      * border for the content gutter. */
     box-shadow: none;
     border-right: 1px solid var(--border-default);
-    min-width: $space-200;
+    min-width: var(--space-200);
 
     /* `position: fixed` not `sticky` — body's grid layout doesn't
      * establish a sticky-cooperative parent in all browsers, so
@@ -157,7 +157,7 @@
     left: 0;
     height: 100vh;
     max-height: 100vh;
-    width: $space-200;
+    width: var(--space-200);
     /* X clipped to contain hover pills; Y scrolls if rail content
      * ever exceeds viewport height. */
     overflow: hidden auto;
@@ -166,7 +166,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: $space-20 0 $space-12;
+      padding: var(--space-20) 0 var(--space-12);
       box-shadow: inset 0 -1px 0 var(--border-emphasis);
     }
 
@@ -183,7 +183,7 @@
       /* Column-equalization (every `& > *` gets `flex: 1 1 0`) does
        * the alignment work at every width; the desktop variant just
        * bumps horizontal padding so the rail breathes. */
-      padding: 0 $space-20;
+      padding: 0 var(--space-20);
     }
 
     &__main-section {
@@ -204,7 +204,7 @@
         & li {
           display: block;
           flex: none;
-          height: $space-72;
+          height: var(--space-72);
         }
       }
     }
@@ -212,16 +212,16 @@
     &__nav-link {
       flex-direction: row;
       justify-content: flex-start;
-      gap: $space-12;
-      padding: 0 $space-12;
-      border-radius: $border-6;
-      font-size: $font-14;
+      gap: var(--space-12);
+      padding: 0 var(--space-12);
+      border-radius: var(--border-6);
+      font-size: var(--font-14);
       height: 100%;
     }
 
     &__nav-link-icon {
-      width: $space-20;
-      height: $space-20;
+      width: var(--space-20);
+      height: var(--space-20);
     }
 
     /* Desktop active state adds a 3px left stripe to the base bg/text. */
@@ -233,10 +233,10 @@
         content: '';
         position: absolute;
         left: 0;
-        top: $space-4;
-        bottom: $space-4;
+        top: var(--space-4);
+        bottom: var(--space-4);
         width: 3px;
-        border-radius: $border-4;
+        border-radius: var(--border-4);
         background: var(--accent);
       }
     }
