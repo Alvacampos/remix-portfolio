@@ -181,7 +181,7 @@ every route file plus dev tooling.
 | C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | done   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | done   |
-| C13 | Cleanup   | P1       | README refresh + visual-baseline how-to                        | open   |
+| C13 | Cleanup   | P1       | README refresh + visual-baseline how-to                        | done   |
 | U1  | UI        | P0       | Real Home hero (value prop + metrics + CTAs)                   | done   |
 | U2  | UI        | P0       | Print stylesheet (CV page printable)                           | done   |
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
@@ -394,7 +394,7 @@ Ran `npm run build:og` on `main` after the per-route OG PR landed. All four PNGs
 
 Audited the 8 source SVGs against the codebase. All map to a real consumer: `Briefcase` (NavBar + Timeline), `Education` (NavBar + Timeline + both education routes), `GithubIcon`, `Home`, `LinkedinIcon`, `Paper` (all NavBar), `Sun` + `Moon` (ThemeToggle). No orphans to remove.
 
-### C13 — README refresh + visual-baseline how-to (P1)
+### C13 — README refresh + visual-baseline how-to (P1) — DONE
 
 [README.md](README.md) has drifted across the last ~20 PRs. Concrete stale or missing items:
 
