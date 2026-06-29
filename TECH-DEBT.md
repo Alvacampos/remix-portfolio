@@ -12,6 +12,100 @@
 > - **P2** — high effort, high payoff. Multi-PR.
 > - **P3** — nice-to-have / low impact.
 
+## Active bundles (investigation → plan → apply)
+
+Remaining work is grouped into four substantive bundles. Each bundle
+runs in three phases — **investigate** (research the surface area
+without touching code), **plan** (decide the concrete sequence), then
+**apply** (one or more PRs). Order is intentional: foundational tokens
+first, then the last `/skills` quality gap, then a real feature, then
+the framework cutover.
+
+| #   | Bundle                | Items     | Phase       | Notes                                                  |
+| --- | --------------------- | --------- | ----------- | ------------------------------------------------------ |
+| 1   | Style-system overhaul | T16 + T10 | investigate | Token sweep across `constants.js` + every CSS callsite |
+| 2   | `/skills` quality     | T5 + T11  | not started | Perf investigation + visual-gate decision              |
+| 3   | Contact + CF infra    | U6 + T12  | not started | Pages Function + KV bindings                           |
+| 4   | Framework future      | T9        | not started | React Router v7 migration (multi-PR)                   |
+
+**Ride-along candidates** (small enough to bundle with any of the above
+when they fit thematically): C10, individual U11–U24 nice-to-haves.
+
+**Blocked**: U10 (needs the Spanish CV PDF produced).
+
+### Bundle 1 — Style-system overhaul (T16 + T10)
+
+**Why bundle.** Both touch [app/styles/constants.js](app/styles/constants.js) and every CSS callsite. Sequencing them in one workstream means tokens get sweep-edited once instead of twice.
+
+- **Investigate.** Confirm how `@media (min-width: $token)` survives the
+  postcss-simple-vars expansion vs whether CSS custom properties can
+  carry breakpoint values — `@media (min-width: var(--bp-md))` is
+  invalid per the CSS spec, so T10 may need to leave breakpoints behind
+  as a separate mechanism (JS-emitted constants, postcss plugin, or
+  keep simple-vars _only_ for media-query tokens).
+- **Plan.** Sequence T16 first — the migration plan is already written
+  and ships a concrete set of token remaps. T10 then either rewrites
+  every non-breakpoint token to `var(--…)` or splits the system into
+  "media-query tokens (simple-vars)" + "everything else (custom
+  properties)" depending on the investigation outcome.
+- **Apply.** T16 PR (with visual baseline regen) → T10 PR (or two
+  smaller PRs if the surface area is bigger than expected). Re-enables
+  `declaration-property-value-no-unknown`, `shorthand-property-no-redundant-values`,
+  `color-function-alias-notation` in stylelint per the §6 note in [AGENTS.md](AGENTS.md).
+
+### Bundle 2 — `/skills` quality (T5 + T11)
+
+**Why bundle.** Both are the last open items about `/skills`'s end-user
+experience (one perf, one visual-regression coverage). Investigating
+together avoids relearning the route's render path twice.
+
+- **Investigate.** Run a WebPageTest waterfall against prod `/skills`
+  to identify the LCP contributor (likely route stylesheet weight or
+  Roboto critical path per [T5's notes](#t5--recover-skills-lighthouse-perf-p1)).
+  Separately, assess whether [T7's CI-side regen workflow](#t7--move-visual-baseline-regen-to-ci-workflow-p1)
+  already eliminates the hydration race that excludes `/skills` from
+  the visual gate — if so, T11 reduces to "add `/skills` back to the
+  ROUTES list in [visual.spec.ts](tests/e2e/visual.spec.ts)" and no
+  paid service is needed.
+- **Plan.** T5 fix scope depends on the waterfall (preload tweak, font
+  subset, critical-path CSS extraction, etc.). T11 either becomes a
+  one-line ROUTES change or gets dropped with rationale.
+- **Apply.** T5 perf PR; T11 either a tiny extend-ROUTES PR or a
+  TECH-DEBT entry update closing it out.
+
+### Bundle 3 — Contact + CF infra (U6 + T12)
+
+**Why bundle.** U6 (`/contact`) is what motivates T12 (Cloudflare
+bindings); they ship together or T12 is just speculative scaffolding.
+
+- **Investigate.** Evaluate Resend vs Loops for transactional email
+  (deliverability, free tier, DX). Decide rate-limit design (per-IP
+  per-hour via KV) and spam protection (honeypot field vs Cloudflare
+  Turnstile vs both). Confirm CF Pages Function patterns for body
+  parsing + KV reads.
+- **Plan.** Pages Function endpoint, form schema (Zod), intl keys for
+  every state (idle / submitting / success / error / rate-limited),
+  UX shape (single-page form vs modal).
+- **Apply.** Route + Pages Function + KV binding wiring + NavBar entry
+  in a single PR. Closes T12 implicitly (bindings are now real, not
+  speculative).
+
+### Bundle 4 — Framework future (T9)
+
+**Why standalone.** Doesn't share code with the other bundles; touches
+every route file plus dev tooling.
+
+- **Investigate.** Walk the [RR v7 upgrade guide](https://reactrouter.com/upgrading/v7),
+  identify which Single Fetch behaviours need adjustment, list the
+  file moves (`app/routes/` flat-routes → RR v7 convention), and check
+  Cloudflare adapter compatibility.
+- **Plan.** Probably 2–3 PRs (tooling/deps, routes migration, cleanup).
+  Also resolves the T15-era `react-router-dom` pinning workaround
+  documented in [AGENTS.md](AGENTS.md) — the v7 single package
+  replaces the dual `@remix-run/react` + `react-router-dom` setup.
+- **Apply.** Sequence the staged PRs. Visual baselines stay valid if
+  the rendered HTML doesn't change.
+
 ## Status
 
 | ID  | Section   | Priority | Item                                                           | Status |
