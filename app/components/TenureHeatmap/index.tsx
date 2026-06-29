@@ -13,13 +13,13 @@ const getClasses = getClassMaker(BLOCK);
 
 const DEFAULT_VISIBLE = 18;
 
-// Desktop breakpoint shared with the route stylesheet ($desktop-small).
+// Desktop breakpoint shared with the route stylesheet ($bp-lg = 1024px).
 // Above this width the layout transposes (skills become columns, years
 // become rows) and we expand the rendered set to all rows. Below it,
 // 30 skill columns + the 200px nav rail can't fit without horizontal
 // overflow, so we keep the mobile orientation (skills down the left,
 // years across the top) which scales gracefully on narrow screens.
-const DESKTOP_QUERY = '(min-width: 1076px)';
+const DESKTOP_QUERY = '(min-width: 1024px)';
 
 // Five-step intensity scale matching GitHub's contribution graph.
 // 0 → no activity, 4 → full year. Anything in between is interpolated

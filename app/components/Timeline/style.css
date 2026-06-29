@@ -107,7 +107,7 @@
   }
 }
 
-@media screen and (min-width: $mobile-small) {
+@media screen and (min-width: $bp-sm) {
   .timeline-component {
     & .vertical-timeline {
       max-width: 95%;
@@ -115,7 +115,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+@media screen and (min-width: $bp-lg) {
   .timeline-component {
     & .vertical-timeline {
       &.vertical-timeline--two-columns {
@@ -125,7 +125,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-medium) {
+@media screen and (min-width: $bp-xl) {
   .timeline-component {
     & .vertical-timeline {
       max-width: 100%;

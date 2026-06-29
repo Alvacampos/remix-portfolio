@@ -121,29 +121,27 @@ export default {
 
   // Break points
   //
-  // The legacy tokens ($mobile-small, $desktop-small, $desktop-medium)
-  // are mobile-first min-width queries — base styles target the
-  // smallest viewport, breakpoints add at larger sizes. Both naming
-  // (`mobile-small` is the *bigger-than-smallest-mobile* threshold)
-  // and coverage (no tablet stop between 497-1075px) are awkward.
+  // Mobile-first min-width queries — base styles target the smallest
+  // viewport (sub-640px, every phone in portrait), and breakpoints add
+  // rules at larger sizes. Tailwind v4-aligned (also matches Bootstrap
+  // 5 and Material) so future contributors can map directly between
+  // Tailwind utility prefixes and our token names without translation.
   //
-  // Tablet stop added below: $bp-md = 768px catches iPad portrait,
-  // every Android tablet, and narrow laptop windows. Old tokens
-  // retained — they still work — so each route can opt into the new
-  // breakpoint as it gets touched.
+  // Devices each band catches:
+  //   bp-sm   640px   phone landscape (~700-900 wide). Compact tablets.
+  //   bp-md   768px   iPad portrait (744-834). Z Fold inner. Large phone landscape.
+  //   bp-lg  1024px   iPad landscape (1024-1194). Small laptops.
+  //   bp-xl  1280px   iPad Pro 12.9" landscape. Standard 13-15" laptops.
+  //   bp-2xl 1536px   27" external monitors. Cap content max-width above this.
   //
-  // Tailwind-aligned for source-readability:
-  //   bp-sm  640px   small phone landscape, large mobile
-  //   bp-md  768px   tablet portrait (iPad), large phones landscape
-  //   bp-lg  1024px  tablet landscape, small laptops
-  //   bp-xl  1280px  standard desktops
+  // Note: postcss-simple-vars carries these into @media rules at build
+  // time. `var(--bp-md)` can't be used in @media preludes (CSS spec
+  // limitation — see TECH-DEBT.md Bundle 1 investigation), so the
+  // breakpoint subset stays on simple-vars even as other tokens migrate
+  // to CSS custom properties.
   'bp-sm': '640px',
   'bp-md': '768px',
   'bp-lg': '1024px',
   'bp-xl': '1280px',
-
-  // Legacy (still referenced by un-migrated CSS).
-  'desktop-medium': '1296px',
-  'desktop-small': '1076px',
-  'mobile-small': '496px',
+  'bp-2xl': '1536px',
 };

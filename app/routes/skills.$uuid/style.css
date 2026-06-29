@@ -240,7 +240,7 @@
   }
 }
 
-@media screen and (min-width: $mobile-small) {
+@media screen and (min-width: $bp-sm) {
   .skills-id-route {
     &__img-container {
       display: none;
@@ -290,7 +290,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+@media screen and (min-width: $bp-lg) {
   .skills-id-route {
     padding: 0 $space-20;
 

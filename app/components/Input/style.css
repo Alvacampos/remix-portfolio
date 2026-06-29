@@ -68,7 +68,7 @@
   }
 }
 
-@media screen and (min-width: $mobile-small) {
+@media screen and (min-width: $bp-sm) {
   .input-component {
     width: 75vw;
     align-self: center;
@@ -79,7 +79,7 @@
   }
 }
 
-@media screen and (min-width: $desktop-small) {
+@media screen and (min-width: $bp-lg) {
   .input-component {
     width: 30vw;
     margin-left: $space-20;

@@ -126,19 +126,14 @@
   }
 }
 
-/* Desktop ($desktop-small and up): transpose the grid. Skills become
- * columns (labels tilted along the top), years become rows (labels
- * down the left, newest at top). Rows are `display: contents`, so
- * cells are direct grid children, and inline `--skill-idx` /
- * `--year-idx` let each item place itself via grid-column / grid-row
- * — keeping mobile DOM order untouched. We gate at 1076px (not the
- * 768 tablet stop) because below that, 30 skill columns + the 200px
- * nav rail can't fit without horizontal overflow; tablets keep the
- * mobile orientation. */
-/* Transposed (horizontal) layout kicks in at $bp-xl (1280px) — not
- * $desktop-small (1076px) — because the chart needs more horizontal
- * room than the cell-size clamp can deliver at 1076. Below 1280 the
- * default (vertical) layout fills the column better. */
+/* Transpose the grid at $bp-lg (1024px) and up: skills become columns
+ * (labels tilted along the top), years become rows (labels down the
+ * left, newest at top). Rows are `display: contents`, so cells are
+ * direct grid children, and inline `--skill-idx` / `--year-idx` let
+ * each item place itself via grid-column / grid-row — keeping mobile
+ * DOM order untouched. We gate at $bp-lg (not the $bp-md tablet stop)
+ * because below 1024, 30 skill columns + the 200px nav rail can't fit
+ * without horizontal overflow; tablets keep the mobile orientation. */
 @media screen and (min-width: $bp-lg) {
   .tenure-heatmap {
     /* The card sized to the data instead of stretching to fill the
