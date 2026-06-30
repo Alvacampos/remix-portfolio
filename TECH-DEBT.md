@@ -21,12 +21,12 @@ without touching code), **plan** (decide the concrete sequence), then
 first, then the last `/skills` quality gap, then a real feature, then
 the framework cutover.
 
-| #   | Bundle                | Items          | Phase   | Notes                                                       |
-| --- | --------------------- | -------------- | ------- | ----------------------------------------------------------- |
-| 1   | Style-system overhaul | T16 + T10      | done    | Token sweep across `constants.js` + every CSS callsite      |
-| 2   | `/skills` quality     | T5 + T11 + C13 | done    | Perf investigation + visual-gate decision + README refresh  |
-| 3   | Contact + CF infra    | U6 + T12       | done    | Pages Function + KV bindings                                |
-| 4   | Framework future      | T9             | planned | React Router v7 migration (multi-PR; Pages→Workers cutover) |
+| #   | Bundle                | Items          | Phase  | Notes                                                        |
+| --- | --------------------- | -------------- | ------ | ------------------------------------------------------------ |
+| 1   | Style-system overhaul | T16 + T10      | done   | Token sweep across `constants.js` + every CSS callsite       |
+| 2   | `/skills` quality     | T5 + T11 + C13 | done   | Perf investigation + visual-gate decision + README refresh   |
+| 3   | Contact + CF infra    | U6 + T12       | done   | Pages Function + KV bindings                                 |
+| 4   | Framework future      | T9             | parked | React Router v7 migration — deferred; site works on Remix v2 |
 
 **Ride-along candidates** (small enough to bundle with any of the above
 when they fit thematically): C10, individual U11–U24 nice-to-haves.
@@ -155,9 +155,40 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 
 - **Apply.** Single PR is fine — it's all one concern, and reviewing the form code separately from the wiring would be more confusing than less. Sequence inside the PR: bindings + types → route + action → intl keys → NavBar + styles → tests → docs. Closes both U6 and T12.
 
-### Bundle 4 — Framework future (T9)
+### Bundle 4 — Framework future (T9) — PARKED
 
-**Why standalone.** Doesn't share code with the other bundles; touches every route file plus dev tooling. **Biggest scope of any remaining bundle** — re-read the investigation findings carefully before opening any PR.
+**Decision (2026-06-30):** Bundle 4 is parked. The site runs fine on Remix v2.17; the migration is technical-debt cleanup with no user-visible payoff, no active deadline (Remix v2 still ships security patches and no EOL is announced), and the deploy-mechanism flip (CF Pages → CF Workers) is the highest-risk change in the whole roadmap. Project is a personal CV site with no active job search driving urgency.
+
+A safety-net branch `remix-version-backup` lives on origin at the last known-good Remix v2 SHA, in case we ever need to roll back from a future migration attempt.
+
+**When ready to unpark, the executable runbook lives at [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md)** — file-by-file change list, smoke-test checklist, DNS-flip procedure, rollback procedure. Don't open a PR without working through it linearly.
+
+**Revisit triggers** (any of):
+
+- Remix v2 EOL is announced or security patches stop landing.
+- A direct dependency drops Remix v2 support (e.g. `@remix-run/cloudflare` deprecation).
+- An RR v7 feature becomes meaningfully useful to this project.
+- Owner enters an active job search and wants the migration on the CV.
+
+**What the investigation surfaced** (record so future-self doesn't relearn it cold):
+
+- **The codemod is a starting point, not a finished migration.** Running `npx codemod remix/2/react-router/upgrade` rewrites imports across the codebase but produces:
+  - A `package.json` that references `@react-router/cloudflare-pages` — **this package does not exist on npm.** The codemod's template assumes a Pages adapter that was never published.
+  - `functions/[[path]].ts` rewritten to import from the non-existent package — broken.
+  - Stale `future:` flags left in `vite.config.ts` even though Single Fetch is the default in v7.
+  - `package.json` scripts (`build`, `dev`, `start`, `preview`, `deploy`) not all updated.
+  - `overrides.@remix-run/dev` block left in `package.json`.
+  - The peer-dep on `react-router-dom@6.30.4` not removed.
+- **Cloudflare's official 2026 stance is "RR v7 apps run on Workers, not Pages".** There is no first-party `@react-router/cloudflare-pages` adapter, and the "Pages-via-bridge" path I documented in the original investigation is fragile — the codemod doesn't support it cleanly, so the migration is effectively forced into a Pages → Workers deploy change in the same PR as the framework swap.
+- **Scope estimate:** 30–50 files changed in one combined PR (codemod output + manual fixes + `workers/app.ts` + `wrangler.jsonc` + `_headers`/`_routes.json` port + `ci.yml` updates + `load-context.ts` + test-utils + Storybook preview). Multi-hour focused session, not "do it while we chat".
+
+**Original three-PR plan (kept for reference if Bundle 4 is unparked):**
+
+1. **PR 1 — Codemod + dep swap.** Run codemod, manually fix the bogus `@react-router/cloudflare-pages` reference, create `app/routes.ts` + `react-router.config.ts`, drop `app/single-fetch.d.ts`, delete the `react-router-dom` pin, drop all `v3_*` future flags. Keep deploying to CF Pages via the transitional bridge.
+2. **PR 2 — Cloudflare Workers cutover.** Replace `functions/[[path]].ts` with `workers/app.ts`, port `_headers` + `_routes.json` into `wrangler.jsonc`, set `run_worker_first: true`, smoke-test against a `*.workers.dev` URL **before** flipping the custom-domain DNS. Highest-risk PR.
+3. **PR 3 — Type cleanup.** Migrate loaders/components to `Route.LoaderArgs` / `Route.ComponentProps`; regen visual baselines if anything shifts.
+
+**Investigation findings** (kept verbatim since they're the substantive research output):
 
 - **Investigate — DONE.** Walked the [official RR v7 upgrade guide](https://reactrouter.com/upgrading/remix), Cloudflare's [Workers + React Router framework guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/react-router/), and the [CF Pages → Workers migration docs](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/). Headline findings:
 
@@ -219,7 +250,7 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 | T6  | Technical | P1       | Bundle visualizer audit                                        | done   |
 | T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | done   |
 | T8  | Technical | P1       | Remove `legacy-peer-deps=true`                                 | done   |
-| T9  | Technical | P2       | React Router v7 migration                                      | open   |
+| T9  | Technical | P2       | React Router v7 migration                                      | parked |
 | T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | done   |
 | T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | done   |
 | T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | done   |
