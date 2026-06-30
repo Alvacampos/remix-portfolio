@@ -8,7 +8,8 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-20);
-  width: 100%;
+  width: auto;
+  padding: 0 var(--space-4);
 
   &__lead {
     max-width: 60ch;
