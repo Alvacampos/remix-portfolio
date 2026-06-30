@@ -12,7 +12,7 @@ Bilingual (English + Spanish) with a visible locale toggle, a downloadable CV (P
 
 To run this project locally, you will need:
 
-- **Node.js** (v20.19 or higher — see [.nvmrc](.nvmrc))
+- **Node.js** (v22.0 or higher — see [.nvmrc](.nvmrc))
 - **npm** (v10 or higher)
 - **Wrangler CLI** (for Cloudflare Pages — included as a dev dependency)
 - **Docker Desktop** (only required if you regenerate visual-regression baselines locally — the CI workflow is the recommended path; see [Visual baselines](#visual-baselines) below)
