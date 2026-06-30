@@ -21,12 +21,12 @@ without touching code), **plan** (decide the concrete sequence), then
 first, then the last `/skills` quality gap, then a real feature, then
 the framework cutover.
 
-| #   | Bundle                | Items          | Phase       | Notes                                                      |
-| --- | --------------------- | -------------- | ----------- | ---------------------------------------------------------- |
-| 1   | Style-system overhaul | T16 + T10      | done        | Token sweep across `constants.js` + every CSS callsite     |
-| 2   | `/skills` quality     | T5 + T11 + C13 | done        | Perf investigation + visual-gate decision + README refresh |
-| 3   | Contact + CF infra    | U6 + T12       | done        | Pages Function + KV bindings                               |
-| 4   | Framework future      | T9             | not started | React Router v7 migration (multi-PR)                       |
+| #   | Bundle                | Items          | Phase   | Notes                                                       |
+| --- | --------------------- | -------------- | ------- | ----------------------------------------------------------- |
+| 1   | Style-system overhaul | T16 + T10      | done    | Token sweep across `constants.js` + every CSS callsite      |
+| 2   | `/skills` quality     | T5 + T11 + C13 | done    | Perf investigation + visual-gate decision + README refresh  |
+| 3   | Contact + CF infra    | U6 + T12       | done    | Pages Function + KV bindings                                |
+| 4   | Framework future      | T9             | planned | React Router v7 migration (multi-PR; Pages→Workers cutover) |
 
 **Ride-along candidates** (small enough to bundle with any of the above
 when they fit thematically): C10, individual U11–U24 nice-to-haves.
@@ -157,19 +157,55 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 
 ### Bundle 4 — Framework future (T9)
 
-**Why standalone.** Doesn't share code with the other bundles; touches
-every route file plus dev tooling.
+**Why standalone.** Doesn't share code with the other bundles; touches every route file plus dev tooling. **Biggest scope of any remaining bundle** — re-read the investigation findings carefully before opening any PR.
 
-- **Investigate.** Walk the [RR v7 upgrade guide](https://reactrouter.com/upgrading/v7),
-  identify which Single Fetch behaviours need adjustment, list the
-  file moves (`app/routes/` flat-routes → RR v7 convention), and check
-  Cloudflare adapter compatibility.
-- **Plan.** Probably 2–3 PRs (tooling/deps, routes migration, cleanup).
-  Also resolves the T15-era `react-router-dom` pinning workaround
-  documented in [AGENTS.md](AGENTS.md) — the v7 single package
-  replaces the dual `@remix-run/react` + `react-router-dom` setup.
-- **Apply.** Sequence the staged PRs. Visual baselines stay valid if
-  the rendered HTML doesn't change.
+- **Investigate — DONE.** Walked the [official RR v7 upgrade guide](https://reactrouter.com/upgrading/remix), Cloudflare's [Workers + React Router framework guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/react-router/), and the [CF Pages → Workers migration docs](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/). Headline findings:
+
+  **The boring parts (mostly automated).**
+
+  - Package renames are handled by `npx codemod remix/2/react-router/upgrade`:
+    - `@remix-run/react` → `react-router` (shared APIs — `Link`, hooks, `redirect`, `data`, etc.)
+    - `@remix-run/cloudflare` → `@react-router/cloudflare`
+    - `@remix-run/dev` → `@react-router/dev`
+    - `react-router-dom@6.30.4` devDep → **delete** (v7 collapses the dual-package setup, finally resolving the T15-era pinning workaround)
+  - Vite plugin renames: `vitePlugin as remix` → `reactRouter` from `@react-router/dev/vite`. `future:` block disappears entirely. Config moves to a new `react-router.config.ts` (`{ ssr: true }`).
+  - **Single Fetch is default in v7** — `v3_singleFetch` flag and `app/single-fetch.d.ts` augmentation can both be deleted with no behaviour change.
+  - Flat routes still work — `skills.$uuid/`, `_index.tsx`, `contact._index/` directory conventions all continue to function. Just add an `app/routes.ts` exporting `flatRoutes()` from `@react-router/fs-routes`.
+  - `loader`/`action`/`meta` exports unchanged. `LoaderFunctionArgs` etc. move to `react-router`.
+
+  **The real landmine — Cloudflare Pages → Workers cutover.**
+
+  - There is **no first-party `@react-router/cloudflare-pages` adapter**. Cloudflare's official position in 2026 is that React Router v7 apps deploy to **Workers + Static Assets**, not Pages. `@remix-run/cloudflare-pages` has no v7 equivalent.
+  - This means the catch-all `functions/[[path]].ts` + `createPagesFunctionHandler` pattern goes away. Replacement: a `workers/app.ts` exporting a `fetch` handler that calls `createRequestHandler` from `@react-router/cloudflare`.
+  - `_headers` (1y immutable cache on `/assets/*`) and `_routes.json` (excludes `/data/*` from the Function) translate into `wrangler.jsonc` asset rules + `run_worker_first: true`.
+  - The 1h `Cache-Control` on `/skills` and `Vary: Accept-Language, Cookie` segmentation need re-verification on the Workers path — semantics should be identical but worth a manual smoke test against prod.
+  - **Bridge option:** `npx wrangler pages functions build` compiles the existing `functions/` folder into a Worker; Cloudflare explicitly documents this as transitional. For a 12-route SSR app it's only useful as a stopgap to keep the dep-rename PR small.
+
+  **Type system upgrade — adjacent, optional, recommended.**
+
+  - `useLoaderData<typeof loader>()` typing **silently degrades** under v7's default Single Fetch — the turbo-stream serialiser preserves `Date`, `Map`, `undefined`, but JSON-narrowed types lie about that. The fix is the new generated-types pattern: `import type { Route } from './+types/<route>'` → `Route.LoaderArgs`, `Route.ComponentProps`. Auto-generated into `.react-router/` (gitignore + add to `tsconfig.include`).
+  - Replaces `useLoaderData<typeof loader>()` everywhere. Not a blocker, but the right way to land on v7.
+
+  **Other heads-ups.**
+
+  - `defer()` is deprecated — return Promises directly. We don't use `defer()`, so a non-issue.
+  - Visual baselines will likely shift (different hydration script tags, possible `Layout` export pattern changes) — plan one CI regen pass.
+  - Storybook 10 supports RR v7's `react-router` package; the preview decorator's `createMemoryRouter` usage stays the same.
+
+- **Plan — three PRs, sequenced.**
+
+  1. **PR 1 — Codemod + dep swap (low risk, biggest auto-changed footprint).** Run `npx codemod remix/2/react-router/upgrade`, manually review the diff, add the new `app/routes.ts` + `react-router.config.ts`, rename Vite plugin, rename entries (`ServerRouter`/`HydratedRouter`), delete `react-router-dom` pin, delete `app/single-fetch.d.ts`, drop all five `v3_*` future flags. **Keep deploying to Cloudflare Pages** via the `wrangler pages functions build` bridge so the deploy path doesn't change in the same PR as the framework swap. Gates green (typecheck, tests, lint, build, e2e behavioural). Visual baselines may need a single regen.
+  2. **PR 2 — Cloudflare Workers cutover (highest risk, smallest dep diff).** Replace `functions/[[path]].ts` with `workers/app.ts`, port `_headers` + `_routes.json` into `wrangler.jsonc` asset rules, set `run_worker_first: true`, update `npm run deploy` to `wrangler deploy`, smoke-test the deploy against prod (including the 1h `/skills` cache + locale `Vary`). Lighthouse should be unchanged — same edge, same SSR runtime.
+  3. **PR 3 — Type cleanup (low risk, mechanical).** Migrate loaders + components to `Route.LoaderArgs` / `Route.ComponentProps`, drop `LoaderFunctionArgs` imports, regen visual baselines if anything shifts. Closes the migration.
+
+- **Apply.** Three PRs in sequence. Wait for each to merge + go green on prod before opening the next. **PR 2 is the one to be careful about** — if anything breaks the prod deploy it'll be that one, so consider doing it on a weekend and having `wrangler pages deploy` ready as the rollback path while the bridge is still in place.
+
+**Sources** (Bundle 4 investigation):
+
+- [React Router 7 upgrade guide](https://reactrouter.com/upgrading/remix) — canonical 9-step path + codemod command.
+- [React Router framework Cloudflare guide](https://developers.cloudflare.com/workers/framework-guides/web-apps/react-router/) — confirms Workers-only stance and `wrangler.jsonc` setup.
+- [Cloudflare Pages → Workers migration](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/) — `wrangler pages functions build` bridge and `run_worker_first` requirement for SSR.
+- [React Router framework installation](https://reactrouter.com/start/framework/installation) — confirms `@react-router/dev` Vite plugin + `@react-router/cloudflare` adapter shape.
 
 ## Status
 
