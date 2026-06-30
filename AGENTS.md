@@ -35,7 +35,7 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Icons             | Local SVGs → SVGO → SVGR-generated React components                                                          |
 | Linting           | ESLint 9 flat-config + Prettier, Stylelint, ls-lint                                                          |
 | Type-check        | `tsc --noEmit` (Vite handles emit)                                                                           |
-| Node              | `>=20.19.0` (`.nvmrc` pins `v20.19.5` — Storybook 10 floor)                                                  |
+| Node              | `>=22.0.0` (`.nvmrc` pins `v22.22.2` — Wrangler 4 floor)                                                     |
 | npm               | strict peer deps; `package.json` uses an `overrides` block for wrangler                                      |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
