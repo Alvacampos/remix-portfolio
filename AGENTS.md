@@ -323,7 +323,7 @@ The hook installs automatically via `npm install` (the `prepare` script runs `si
 - Tests live next to the component as `index.test.tsx`. Pattern: `app/**/*.{test,spec}.{ts,tsx}`.
 - Run: `npm test` (one shot), `npm run test:watch`, `npm run test:ui`.
 
-> **Router dedupe matters.** `react-router-dom` is pinned to an **exact** version (no caret) in `devDependencies` and must match whatever copy `@remix-run/react` ships internally. Two copies = two `Router` contexts = `useHref() may be used only in the context of a <Router> component`. When you bump `@remix-run/react`, run `npm ls react-router-dom` and re-pin our dev-dep to whatever Remix is now bundling. Current pin: `6.30.4` against `@remix-run/react@2.17.5`.
+> **Router dedupe matters.** `react-router` is pinned to an **exact** version (no caret) in `devDependencies` and must match whatever copy `@remix-run/react` ships internally. Two copies = two `Router` contexts = `useHref() may be used only in the context of a <Router> component`. When you bump `@remix-run/react`, run `npm ls react-router` and re-pin our dev-dep to whatever Remix is now bundling. Current pin: `6.30.4` against `@remix-run/react@2.17.5`. (Note: the `react-router-dom` package is no longer pinned directly — its `createMemoryRouter` and `RouterProvider` exports re-export from `react-router`, which is the package the Bundle 4 RR v7 migration will consolidate on.)
 
 ### E2E — Playwright
 

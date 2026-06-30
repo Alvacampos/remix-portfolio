@@ -3,7 +3,7 @@ import '~/styles/style.css';
 import type { Preview } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import messages from '~/intl/en-US.json';
 
