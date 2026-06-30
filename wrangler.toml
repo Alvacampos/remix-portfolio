@@ -3,6 +3,29 @@ name = "remix-portfolio"
 compatibility_date = "2024-07-18"
 pages_build_output_dir = "./build/client"
 
+# ─── /contact route bindings ────────────────────────────────────
+#
+# Plain vars are safe to commit (sender address, recipient inbox).
+# The Resend API key lives as a Pages secret instead:
+#   npx wrangler pages secret put RESEND_API_KEY --project-name=gonzalo-alvarez-campos-cv
+# The contact action reads it via context.cloudflare.env.RESEND_API_KEY.
+#
+# Switch CONTACT_FROM to a verified-domain sender (e.g.
+# `contact@gonzalo-alvarez-campos-cv.com`) once Resend's domain
+# verification completes for gonzalo-alvarez-campos-cv.com.
+[vars]
+CONTACT_FROM = "onboarding@resend.dev"
+CONTACT_TO = "gonzaloralvarezcampos@gmail.com"
+
+# Per-IP per-hour submission counter for the /contact form.
+# Key shape: `ratelimit:<sha256(ip)>` → integer count, TTL 3600s.
+# Free-tier KV is generous (100k reads/day, 1k writes/day) — well
+# above realistic contact-form volume.
+[[kv_namespaces]]
+binding = "RATELIMIT_KV"
+id = "59ab728758e24f2a91706b8b502ad72a"
+preview_id = "edf739a3760848b7a696cec78f21eca0"
+
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Pages Function, running it closer to your back-end infrastructure
 # rather than the end user may result in better performance.

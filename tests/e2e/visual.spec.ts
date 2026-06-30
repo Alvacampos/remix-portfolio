@@ -86,6 +86,7 @@ const ROUTES = [
   { name: 'education-index', path: '/education' },
   { name: 'education-detail', path: '/education/degree' },
   { name: 'skills-detail', path: '/skills/1' },
+  { name: 'contact', path: '/contact' },
 ];
 
 test.describe('Visual regression', () => {

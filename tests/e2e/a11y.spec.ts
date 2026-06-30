@@ -17,6 +17,7 @@ const ROUTES = [
   { name: 'education-detail', path: '/education/degree' },
   { name: 'projects-index', path: '/projects' },
   { name: 'projects-detail', path: '/projects/avant' },
+  { name: 'contact', path: '/contact' },
 ];
 
 const BLOCKING_IMPACTS = ['serious', 'critical'];

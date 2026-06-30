@@ -1,7 +1,15 @@
 import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
 
-import { Briefcase, Education, GithubIcon, Home, LinkedinIcon, Paper } from '~/components/icons';
+import {
+  Briefcase,
+  Education,
+  GithubIcon,
+  Home,
+  LinkedinIcon,
+  Mail,
+  Paper,
+} from '~/components/icons';
 import LocaleToggle from '~/components/LocaleToggle';
 import ThemeToggle from '~/components/ThemeToggle';
 import type { Locale } from '~/intl';
@@ -18,6 +26,7 @@ const MAIN_NAV = [
   { url: './skills', labelId: 'CV', leftIcon: Paper },
   { url: './projects', labelId: 'PROJECTS', leftIcon: Briefcase },
   { url: './education', labelId: 'EDUCATION', leftIcon: Education },
+  { url: './contact', labelId: 'CONTACT', leftIcon: Mail },
 ] as const;
 
 export default function NavBar() {
