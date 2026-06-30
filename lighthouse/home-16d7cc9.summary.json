@@ -1,58 +1,58 @@
 {
-  "fetchTime": "2026-06-29T22:11:03.555Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-30T19:39:12.553Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "lighthouseVersion": "13.4.0",
-  "commit": "f35a2df",
+  "commit": "16d7cc9",
   "categories": {
-    "performance": 0.94,
+    "performance": 0.97,
     "accessibility": 1,
-    "best-practices": 1,
+    "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2284.4908,
-      "score": 0.75
+      "displayValue": "1.7 s",
+      "numericValue": 1661.4160000000002,
+      "score": 0.93
     },
     "lcp": {
-      "displayValue": "2.7 s",
-      "numericValue": 2734.4908,
-      "score": 0.85
+      "displayValue": "2.3 s",
+      "numericValue": 2282.987,
+      "score": 0.93
     },
     "si": {
-      "displayValue": "2.3 s",
-      "numericValue": 2284.4908,
+      "displayValue": "2.1 s",
+      "numericValue": 2106.834450648251,
       "score": 0.99
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "10 ms",
+      "numericValue": 6,
       "score": 1
     },
     "cls": {
       "displayValue": "0",
-      "numericValue": 0,
+      "numericValue": 0.0001990404033765582,
       "score": 1
     },
     "tti": {
-      "displayValue": "2.7 s",
-      "numericValue": 2734.4908000000005,
-      "score": 0.97
+      "displayValue": "2.6 s",
+      "numericValue": 2589.2074000000002,
+      "score": 0.98
     },
-    "ttfb": 38
+    "ttfb": 429
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.75
+      "score": 0.93
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.85
+      "score": 0.93
     },
     {
       "id": "speed-index",
@@ -60,14 +60,19 @@
       "score": 0.99
     },
     {
+      "id": "errors-in-console",
+      "title": "Browser errors were logged to the console",
+      "score": 0
+    },
+    {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.97
+      "score": 0.98
     },
     {
       "id": "unused-javascript",
       "title": "Reduce unused JavaScript",
-      "score": 0
+      "score": 0.5
     },
     {
       "id": "cache-insight",
