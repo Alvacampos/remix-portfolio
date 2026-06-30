@@ -1,34 +1,34 @@
 {
-  "fetchTime": "2026-06-30T11:56:29.061Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-06-30T21:09:58.047Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "d6aa3df",
+  "commit": "69d02ec",
   "categories": {
-    "performance": 0.92,
+    "performance": 0.95,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2285.1272,
-      "score": 0.75
+      "displayValue": "2.0 s",
+      "numericValue": 2013.8289,
+      "score": 0.84
     },
     "lcp": {
-      "displayValue": "2.9 s",
-      "numericValue": 2902.6908,
-      "score": 0.8
+      "displayValue": "2.6 s",
+      "numericValue": 2579.3289,
+      "score": 0.88
     },
     "si": {
-      "displayValue": "2.3 s",
-      "numericValue": 2285.1272,
-      "score": 0.99
+      "displayValue": "3.0 s",
+      "numericValue": 2961.739059999997,
+      "score": 0.94
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "20 ms",
+      "numericValue": 17.5,
       "score": 1
     },
     "cls": {
@@ -37,37 +37,37 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.9 s",
-      "numericValue": 2902.6908,
-      "score": 0.96
+      "displayValue": "2.6 s",
+      "numericValue": 2583.9289,
+      "score": 0.98
     },
-    "ttfb": 43
+    "ttfb": 124
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.75
+      "score": 0.84
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.8
+      "score": 0.88
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
+      "score": 0.94
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
       "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.96
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
+      "score": 0.98
     },
     {
       "id": "unused-javascript",
@@ -87,7 +87,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
