@@ -25,7 +25,7 @@ the framework cutover.
 | --- | --------------------- | -------------- | ----------- | ---------------------------------------------------------- |
 | 1   | Style-system overhaul | T16 + T10      | done        | Token sweep across `constants.js` + every CSS callsite     |
 | 2   | `/skills` quality     | T5 + T11 + C13 | done        | Perf investigation + visual-gate decision + README refresh |
-| 3   | Contact + CF infra    | U6 + T12       | planned     | Pages Function + KV bindings                               |
+| 3   | Contact + CF infra    | U6 + T12       | done        | Pages Function + KV bindings                               |
 | 4   | Framework future      | T9             | not started | React Router v7 migration (multi-PR)                       |
 
 **Ride-along candidates** (small enough to bundle with any of the above
@@ -186,7 +186,7 @@ every route file plus dev tooling.
 | T9  | Technical | P2       | React Router v7 migration                                      | open   |
 | T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | done   |
 | T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | done   |
-| T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | open   |
+| T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | done   |
 | T13 | Technical | P3       | Drop unused `@chromatic-com/storybook`                         | done   |
 | T14 | Technical | P3       | Replace husky with simple-git-hooks                            | done   |
 | T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | done   |
@@ -209,7 +209,7 @@ every route file plus dev tooling.
 | U3  | UI        | P0       | Promote in-progress Bachelor's on `/education`                 | done   |
 | U4  | UI        | P0       | Locale-aware date format on `/education` (match `:slug`)       | done   |
 | U5  | UI        | P0       | Match contrast fix on DownloadBtn hover state                  | done   |
-| U6  | UI        | P1       | `/contact` route (CF Pages Function + Resend / Loops)          | open   |
+| U6  | UI        | P1       | `/contact` route (CF Pages Function + Resend / Loops)          | done   |
 | U7  | UI        | P1       | Case studies — `/projects/<slug>` (3-5 deep-dives)             | done   |
 | U8  | UI        | P1       | Per-route OG images                                            | done   |
 | U9  | UI        | P1       | 404 page polish (match `/skills/:uuid` error UI)               | done   |
