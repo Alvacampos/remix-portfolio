@@ -1,9 +1,9 @@
 {
-  "fetchTime": "2026-06-29T14:27:18.382Z",
+  "fetchTime": "2026-06-30T17:24:04.111Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "7441d1a",
+  "commit": "40d16c6",
   "categories": {
     "performance": 0.97,
     "accessibility": 1,
@@ -13,17 +13,17 @@
   "metrics": {
     "fcp": {
       "displayValue": "1.5 s",
-      "numericValue": 1518.4791,
+      "numericValue": 1523.444,
       "score": 0.95
     },
     "lcp": {
       "displayValue": "2.4 s",
-      "numericValue": 2418.4791,
+      "numericValue": 2423.444,
       "score": 0.91
     },
     "si": {
       "displayValue": "1.5 s",
-      "numericValue": 1518.4791,
+      "numericValue": 1523.444,
       "score": 1
     },
     "tbt": {
@@ -38,10 +38,10 @@
     },
     "tti": {
       "displayValue": "2.4 s",
-      "numericValue": 2418.4791000000005,
+      "numericValue": 2423.4440000000004,
       "score": 0.98
     },
-    "ttfb": 49
+    "ttfb": 75
   },
   "failingAudits": [
     {

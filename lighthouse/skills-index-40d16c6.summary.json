@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-23T16:48:06.114Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-06-30T17:23:44.353Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "8a7f145",
+  "commit": "40d16c6",
   "categories": {
-    "performance": 0.95,
-    "accessibility": 0.95,
+    "performance": 0.96,
+    "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.1 s",
-      "numericValue": 2137.6485000000002,
-      "score": 0.8
+      "displayValue": "2.0 s",
+      "numericValue": 1969.8631,
+      "score": 0.85
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2606.4727500000004,
-      "score": 0.87
+      "displayValue": "2.4 s",
+      "numericValue": 2442.8631,
+      "score": 0.91
     },
     "si": {
-      "displayValue": "2.1 s",
-      "numericValue": 2137.6485000000002,
+      "displayValue": "2.0 s",
+      "numericValue": 1969.8631,
       "score": 0.99
     },
     "tbt": {
@@ -37,22 +37,22 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2606.472750000001,
+      "displayValue": "2.4 s",
+      "numericValue": 2442.8631000000005,
       "score": 0.98
     },
-    "ttfb": 75
+    "ttfb": 129
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.8
+      "score": 0.85
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.87
+      "score": 0.91
     },
     {
       "id": "speed-index",
@@ -63,11 +63,6 @@
       "id": "interactive",
       "title": "Time to Interactive",
       "score": 0.98
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
     },
     {
       "id": "unused-javascript",
@@ -87,7 +82,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
