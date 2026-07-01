@@ -5,7 +5,15 @@
  */
 
 import { isbot } from 'isbot';
-import { renderToReadableStream } from 'react-dom/server';
+// `react-dom/server` only ships `renderToPipeableStream` (Node
+// streams) in the Node ESM entry — `renderToReadableStream` (Web
+// Streams) lives at `react-dom/server.browser`. Both Cloudflare
+// Workers (V8 has native Web Streams) and Node 18+ can execute the
+// browser subpath, so this single import path works for the Workers
+// prod runtime AND Vite's Node SSR dev runtime. Under Remix v2 the
+// Cloudflare adapter installed a shim that made the export available
+// from the plain `react-dom/server` path; RR v7 does not.
+import { renderToReadableStream } from 'react-dom/server.browser';
 import type { AppLoadContext, EntryContext } from 'react-router';
 import { ServerRouter } from 'react-router';
 
