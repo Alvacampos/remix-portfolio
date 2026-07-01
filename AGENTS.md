@@ -151,17 +151,18 @@ export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
 
 Currently used on `/skills` (1h `Cache-Control` + `Vary: Accept-Language, Cookie`). Any new route that wants edge-cache behaviour needs this export too.
 
-| URL                | File                                                                            | Loader                                                                                                                                                                                                                                        |
+| URL                | File                                                                            | Loader / action                                                                                                                                                                                                                               |
 | ------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                | [app/routes/\_index.tsx](app/routes/_index.tsx)                                 | none                                                                                                                                                                                                                                          |
-| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | validates `education.json` via Zod once per worker boot (`loadEducation`); resolves `_es` siblings per request via `localized()`                                                                                                              |
+| `/`                | [app/routes/\_index/index.tsx](app/routes/_index/index.tsx)                     | resolves the CV PDF URL via `getCvUrl(locale)`                                                                                                                                                                                                |
+| `/education`       | [app/routes/education.\_index/index.tsx](app/routes/education._index/index.tsx) | validates `education.json` via Zod once per worker boot (`loadEducation`); resolves `_es` siblings per request via `localized()`. Renders a "Currently studying" badge for entries with `inProgress: true`                                    |
 | `/education/:slug` | [app/routes/education.\$slug/index.tsx](app/routes/education.$slug/index.tsx)   | resolves `slug` to a degree key, localizes title/summary/description in the loader (so `<meta>` and render share copy); throws on miss → local `ErrorBoundary`                                                                                |
 | `/skills`          | [app/routes/skills.\_index/index.tsx](app/routes/skills._index/index.tsx)       | validates `skills.json` via Zod once per worker boot (`SKILLS`, `SUGGESTIONS` hoisted); the heatmap + total-years figure derive in the loader. Per-request: timeline cards + extras resolve `_es`. 1h cache + `Vary: Accept-Language, Cookie` |
 | `/skills/:uuid`    | [app/routes/skills.\$uuid/index.tsx](app/routes/skills.$uuid/index.tsx)         | shares the same validated payload, finds `WORK_ITEMS[id == +uuid]`, derives bucketed skill chips via `getSkillGroupsForJob`, throws on miss → renders local `ErrorBoundary`                                                                   |
+| `/projects`        | [app/routes/projects.\_index/index.tsx](app/routes/projects._index/index.tsx)   | validates `projects.json` via Zod once per worker boot; resolves `_es` siblings per request                                                                                                                                                   |
+| `/projects/:slug`  | [app/routes/projects.\$slug/index.tsx](app/routes/projects.$slug/index.tsx)     | resolves `slug` to a case study, localizes problem/constraints/approach/outcome; throws on miss → local `ErrorBoundary`                                                                                                                       |
+| `/contact`         | [app/routes/contact.\_index/index.tsx](app/routes/contact._index/index.tsx)     | **action** validates the payload (Zod + honeypot), rate-limits per hashed IP via the `RATELIMIT_KV` binding (3/hour), and sends via Resend. `CONTACT_FROM` / `CONTACT_TO` are `wrangler.jsonc` vars; `RESEND_API_KEY` is a Worker secret      |
 
-There is no `/contact` route today — README mentions one as a future feature but the NavBar doesn't render any entry for it.
-
-Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle. The files are no longer served from `/data/*` — `_routes.json` routes that path to the Pages Function (which 404s), so the JSON is only readable through the rendered routes. This is intentional: the data is the CV content; we don't want scrapers lifting the entire payload (including draft Spanish translations) by hitting a public URL.
+Loaders import the JSON directly from `public/data/` so Vite bakes it into the server bundle. The files are not served publicly from `/data/*` — `workers/app.ts` only delegates a small allowlist of static-asset paths to `env.ASSETS.fetch()` (`/assets/`, `/fonts/`, `/.well-known/`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml`); anything else falls through to the RR handler, which has no route for `/data/*` and returns a 404. This is intentional: the data is the CV content; we don't want scrapers lifting the entire payload (including draft Spanish translations) by hitting a public URL.
 
 ---
 
@@ -261,8 +262,9 @@ Adding a third locale: extend `SUPPORTED_LOCALES` and the `MESSAGES` map in `app
 
 Site content is **not in the database** — it's static JSON under `public/data/`:
 
-- [public/data/education.json](public/data/education.json) — degree + associate degree + certifications. Validated at boot via [app/data/education-schema.ts](app/data/education-schema.ts).
+- [public/data/education.json](public/data/education.json) — degree + associate degree + certifications. Validated at boot via [app/data/education-schema.ts](app/data/education-schema.ts). Entries can set `inProgress: true` (currently used by the CCA-F certification and the in-progress Bachelor's) to render a "Currently studying" badge on the `/education` card.
 - [public/data/skills.json](public/data/skills.json) — `WORK_ITEMS`, `SKILLS`, `EXTRA_ACTIVITIES`. **Skill-first model** — see below. Validated at boot via [app/data/skills-schema.ts](app/data/skills-schema.ts).
+- [public/data/projects.json](public/data/projects.json) — case studies rendered by `/projects` + `/projects/:slug`. Validated at boot via [app/data/projects-schema.ts](app/data/projects-schema.ts).
 
 To update content, edit those JSON files. Route loaders import them server-side (Vite bakes the JSON into the server bundle); the skills loader still caches for 1h via `Cache-Control` so the edge holds the rendered HTML.
 
@@ -285,7 +287,7 @@ Adding a new field:
 **Shape:**
 
 - `WORK_ITEMS` — jobs, identified by stable numeric `id`. Authored chronologically (oldest first); the timeline route reverses for display. **No skill data on work items** — that lives in `SKILLS`.
-- `SKILLS` — every skill authored once, regardless of how many jobs used it. Each entry: `{ name, category, ranges }`. `category` is one of `language | framework | tooling | infra | meta` — the `meta` bucket (Front End, Back End, Agile, Mentoring, etc.) is filtered out of the chart, heatmap, and autocomplete suggestions but still renders as chips on per-job timeline cards. `ranges` is an array of `{ jobId, from?, to? }`; `from`/`to` are `YYYY-MM` strings, both optional (defaults to the referenced job's full span). A skill can have multiple ranges, including multiple ranges on the same `jobId` (used early, paused, resumed — all merged at read time).
+- `SKILLS` — every skill authored once, regardless of how many jobs used it. Each entry: `{ name, category, ranges }`. `category` is one of `language | framework | tooling | infra | ai | meta`. The `meta` bucket (Front End, Back End, Agile, Mentoring, etc.) is filtered out of the chart, heatmap, and autocomplete suggestions but still renders as chips on per-job timeline cards. The `ai` bucket (GitHub Copilot, Claude Code, etc.) is its own TechTree group and appears as regular rows in the heatmap — treated as first-class tools, not filtered. `ranges` is an array of `{ jobId, from?, to? }`; `from`/`to` are `YYYY-MM` strings, both optional (defaults to the referenced job's full span). A skill can have multiple ranges, including multiple ranges on the same `jobId` (used early, paused, resumed — all merged at read time).
 - `EXTRA_ACTIVITIES` — flat list of internship / mentoring write-ups.
 
 **Adding a skill to a job:** find the skill in `SKILLS`, push `{ jobId: N }` onto its `ranges`. If it's a brand-new skill, add a new entry. The schema validates that every `jobId` exists, names don't collide, and all dates are `YYYY-MM`.
@@ -300,15 +302,14 @@ The English CV PDF is at [public/assets/files/gonzalo_alvarez_campos_cv.pdf](pub
 
 ---
 
-## 10. Cloudflare Pages
+## 10. Cloudflare Workers
 
 - [wrangler.jsonc](wrangler.jsonc) — Workers config: `main = "./workers/app.ts"`, `compatibility_date = "2024-07-18"`, `assets.directory = "./build/client"`, `assets.run_worker_first = true`, plus vars (`CONTACT_FROM`, `CONTACT_TO`) and the `RATELIMIT_KV` binding used by the `/contact` action.
 - [workers/app.ts](workers/app.ts) — the Worker's `fetch` entrypoint. Delegates `/assets/*`, `/fonts/*`, `/.well-known/*`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml` to `env.ASSETS.fetch(request)`; everything else routes through the RR v7 request handler with `{ cloudflare: { env, ctx } }` as the load context.
-- [public/\_headers](public/_headers) — `Cache-Control: public, max-age=31536000, immutable` for `/assets/*`.
-- [public/\_routes.json](public/_routes.json) — invokes the Function for everything except `/favicon.ico` and `/assets/*`.
-- [load-context.ts](load-context.ts) — augments `AppLoadContext` with `cloudflare: PlatformProxy<Env>`; access bindings (when any are added) via `context.cloudflare.env.*` inside loaders.
+- [public/\_headers](public/_headers) — `Cache-Control` headers for the static-asset paths delegated to `env.ASSETS` (`/favicon.ico`, `/assets/*`, `/fonts/*`, `/robots.txt`, `/sitemap.xml`).
+- [load-context.ts](load-context.ts) — augments `AppLoadContext` with `cloudflare: PlatformProxy<Env>`; bindings are accessed via `context.cloudflare.env.*` inside loaders / actions (e.g. `env.RATELIMIT_KV` in the `/contact` action).
 
-If/when env vars or bindings are added: edit `wrangler.jsonc`, then run `npm run cf-typegen` to regenerate [worker-configuration.d.ts](worker-configuration.d.ts). Secrets (`RESEND_API_KEY`) are set via `npx wrangler secret put NAME` — no `pages` subcommand, no `--project-name` flag.
+When you add or change vars / bindings in `wrangler.jsonc`, run `npm run cf-typegen` to regenerate [worker-configuration.d.ts](worker-configuration.d.ts) so `context.cloudflare.env.*` picks up the new fields. Secrets (`RESEND_API_KEY`) are set via `npx wrangler secret put NAME` — no `pages` subcommand, no `--project-name` flag.
 
 ---
 
@@ -360,19 +361,12 @@ Determinism guards (set up in `prepare()` and `settle()`):
 
 No content is masked on the routes that are gated — token changes and data updates that shift layout are exactly what we want to catch.
 
-**Updating baselines after an intentional UI change:**
+**Updating baselines after an intentional UI change** — two paths, both write to the same snapshot directory:
 
-```sh
-npm run test:visual:update
-```
+- **Path A (preferred): CI workflow** — `gh workflow run regen-baselines.yml --ref <branch>` (or the **Run workflow** button on the [Actions tab](.github/workflows/regen-baselines.yml)). Runs Playwright inside the exact CI container that gates PRs, so the regen and the check are pixel-identical by construction. No Docker needed locally, and it sidesteps a `useLocation()` hydration race that's reproducible in the local Docker container but never on the GitHub runner (which is why `/skills/:uuid` + `/education` index have to be regenerated this way). The workflow commits + pushes the new PNGs back to the dispatched branch automatically.
+- **Path B (local, fast iteration):** `npm run test:visual:update`. Shells out to [scripts/update-visual-baselines.sh](scripts/update-visual-baselines.sh), which runs Playwright inside `mcr.microsoft.com/playwright:v<version>-jammy` (`--platform=linux/amd64` so freetype rendering matches GitHub Actions runners; on Apple Silicon this means QEMU emulation, 3-5× slower). Requires Docker Desktop (or Colima) running. Fine for routes that don't hit the hydration race — for `/skills/:uuid` + `/education` index, use Path A.
 
-This shells out to [scripts/update-visual-baselines.sh](scripts/update-visual-baselines.sh), which runs Playwright inside the official `mcr.microsoft.com/playwright:v<version>-jammy` Docker image so the resulting PNGs match the Linux runners on CI. Required setup:
-
-- **Docker Desktop** (or Colima) running on the host.
-- The image tag automatically tracks the local `@playwright/test` version, so a Playwright bump produces matching baselines on the next regen.
-- The script forces `--platform=linux/amd64` so the regen runs as x86_64 — matching GitHub Actions runners. On Apple Silicon Macs this means Docker emulates x86_64 via QEMU (3-5× slower regen, ~2-3 min total). Without this, freetype renders fonts slightly differently between arm64 and x86_64 and baselines won't match CI.
-
-Review the regenerated PNGs under `tests/e2e/visual.spec.ts-snapshots/` and commit them.
+Review the regenerated PNGs under `tests/e2e/visual.spec.ts-snapshots/` and commit them (Path B) or pull the auto-committed baseline commit (Path A). See [tests/e2e/README.md](tests/e2e/README.md) for the full breakdown.
 
 **Tolerances** (`playwright.config.ts → expect.toHaveScreenshot`):
 
@@ -538,4 +532,4 @@ Before opening a PR:
 - Live site: <https://gonzalo-alvarez-campos-cv.com/>
 - Repo: <https://github.com/Alvacampos/remix-portfolio>
 - React Router docs: <https://reactrouter.com/>
-- Cloudflare Pages docs: <https://developers.cloudflare.com/pages/>
+- Cloudflare Workers docs: <https://developers.cloudflare.com/workers/>
