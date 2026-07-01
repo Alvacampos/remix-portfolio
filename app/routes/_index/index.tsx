@@ -1,6 +1,6 @@
-import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
-import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage } from 'react-intl';
+import { type LoaderFunctionArgs, type MetaFunction } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 
 import DownloadButton from '~/components/DownloadBtn';
 import { loadSkills } from '~/data/skills-schema';

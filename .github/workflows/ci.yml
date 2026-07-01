@@ -128,9 +128,11 @@ jobs:
 
       - name: Start wrangler preview server
         # Background process; capture the PID so the teardown step
-        # can kill it cleanly even if Lighthouse fails.
+        # can kill it cleanly even if Lighthouse fails. `wrangler dev`
+        # (Workers) replaces `wrangler pages dev` (Pages) — the CLI
+        # reads main + assets from wrangler.jsonc.
         run: |
-          npx wrangler pages dev ./build/client --port 8788 > wrangler.log 2>&1 &
+          npx wrangler dev --port 8788 > wrangler.log 2>&1 &
           echo "WRANGLER_PID=$!" >> "$GITHUB_ENV"
 
       - name: Wait for preview server readiness

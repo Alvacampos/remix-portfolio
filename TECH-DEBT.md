@@ -21,12 +21,12 @@ without touching code), **plan** (decide the concrete sequence), then
 first, then the last `/skills` quality gap, then a real feature, then
 the framework cutover.
 
-| #   | Bundle                | Items          | Phase  | Notes                                                        |
-| --- | --------------------- | -------------- | ------ | ------------------------------------------------------------ |
-| 1   | Style-system overhaul | T16 + T10      | done   | Token sweep across `constants.js` + every CSS callsite       |
-| 2   | `/skills` quality     | T5 + T11 + C13 | done   | Perf investigation + visual-gate decision + README refresh   |
-| 3   | Contact + CF infra    | U6 + T12       | done   | Pages Function + KV bindings                                 |
-| 4   | Framework future      | T9             | parked | React Router v7 migration — deferred; site works on Remix v2 |
+| #   | Bundle                | Items          | Phase | Notes                                                      |
+| --- | --------------------- | -------------- | ----- | ---------------------------------------------------------- |
+| 1   | Style-system overhaul | T16 + T10      | done  | Token sweep across `constants.js` + every CSS callsite     |
+| 2   | `/skills` quality     | T5 + T11 + C13 | done  | Perf investigation + visual-gate decision + README refresh |
+| 3   | Contact + CF infra    | U6 + T12       | done  | Pages Function + KV bindings                               |
+| 4   | Framework future      | T9             | done  | React Router v7 migration + CF Pages → Workers cutover     |
 
 **Ride-along candidates** (small enough to bundle with any of the above
 when they fit thematically): C10, individual U11–U24 nice-to-haves.
@@ -155,20 +155,29 @@ when they fit thematically): C10, individual U11–U24 nice-to-haves.
 
 - **Apply.** Single PR is fine — it's all one concern, and reviewing the form code separately from the wiring would be more confusing than less. Sequence inside the PR: bindings + types → route + action → intl keys → NavBar + styles → tests → docs. Closes both U6 and T12.
 
-### Bundle 4 — Framework future (T9) — PARKED
+### Bundle 4 — Framework future (T9) — DONE
 
-**Decision (2026-06-30):** Bundle 4 is parked. The site runs fine on Remix v2.17; the migration is technical-debt cleanup with no user-visible payoff, no active deadline (Remix v2 still ships security patches and no EOL is announced), and the deploy-mechanism flip (CF Pages → CF Workers) is the highest-risk change in the whole roadmap. Project is a personal CV site with no active job search driving urgency.
+**Migrated (2026-07-01).** Site is now on React Router v7 (7.18.x) with Cloudflare Workers + Static Assets, replacing Remix v2 + CF Pages.
 
-A safety-net branch `remix-version-backup` lives on origin at the last known-good Remix v2 SHA, in case we ever need to roll back from a future migration attempt.
+The safety-net branch `remix-version-backup` remains on origin at the last known-good Remix v2 SHA. If any regression surfaces post-deploy that isn't fixable forward, the rollback is: flip DNS in the CF dashboard back to the Pages project (Cloudflare keeps both parallel for a while), then `git reset --hard remix-version-backup` on main.
 
-**When ready to unpark, the executable runbook lives at [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md)** — file-by-file change list, smoke-test checklist, DNS-flip procedure, rollback procedure. Don't open a PR without working through it linearly.
+**Migration notes captured for posterity** (record what the runbook didn't cover):
 
-**Revisit triggers** (any of):
+- The codemod's `package.json` output references `@react-router/cloudflare-pages@^7.0.0` — **this package does not exist on npm.** Delete it manually. Also the codemod pins everything at `^7.0.0`; bump to current `^7.18.1`.
+- The codemod wraps `Layout`'s JSX return in an outer `(...)`. Syntactically valid, cosmetically weird — Prettier normalises it.
+- `flatRoutes()` from `@react-router/fs-routes` scans **every** file in `app/routes/`, including `.css`. Under Remix v2, the shared home-route stylesheet lived at `app/routes/style.css`; under RR v7 that path made the route plugin try to parse the CSS as a route module and crash. **Fix:** moved home route into `app/routes/_index/` (folder) with `index.tsx` + `style.css` inside — the plugin now sees the CSS as a route-adjacent file, not a top-level route candidate.
+- `data(payload, { headers })` in a loader **doesn't propagate response headers automatically** in RR v7 the way it did in Remix v2. You have to explicitly export a `headers` function from the route that returns the loader-set headers:
 
-- Remix v2 EOL is announced or security patches stop landing.
-- A direct dependency drops Remix v2 support (e.g. `@remix-run/cloudflare` deprecation).
-- An RR v7 feature becomes meaningfully useful to this project.
-- Owner enters an active job search and wants the migration on the CV.
+  ```ts
+  export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+    return loaderHeaders;
+  }
+  ```
+
+  Added to `app/routes/skills._index/index.tsx` so the 1h `Cache-Control` + `Vary: Accept-Language, Cookie` still ship. Any future route that wants edge-cache behaviour needs this export too.
+
+- **Static assets need explicit `env.ASSETS.fetch(request)` delegation from `workers/app.ts`.** With `run_worker_first: true`, every request hits the Worker first — including `/assets/*`, `/fonts/*`, `/favicon.ico`, etc. The RR handler returns 404 for those. Workaround: `workers/app.ts` checks a small allowlist of static-prefix paths and hands them off to `env.ASSETS.fetch(request)` before the RR handler runs. This replaces the Pages `_routes.json` exclusion list.
+- **`virtual:react-router/server-build`** is only resolvable inside Vite. `wrangler dev` chokes on it. Use the classic pattern instead: `import * as build from '../build/server'`.
 
 **What the investigation surfaced** (record so future-self doesn't relearn it cold):
 
@@ -250,7 +259,7 @@ A safety-net branch `remix-version-backup` lives on origin at the last known-goo
 | T6  | Technical | P1       | Bundle visualizer audit                                        | done   |
 | T7  | Technical | P1       | Move visual-baseline regen to CI workflow                      | done   |
 | T8  | Technical | P1       | Remove `legacy-peer-deps=true`                                 | done   |
-| T9  | Technical | P2       | React Router v7 migration                                      | parked |
+| T9  | Technical | P2       | React Router v7 migration                                      | done   |
 | T10 | Technical | P2       | postcss-simple-vars → CSS custom properties                    | done   |
 | T11 | Technical | P2       | Switch to Percy/Chromatic for `/skills` visual gate            | done   |
 | T12 | Technical | P3       | Cloudflare KV / D1 / R2 bindings (for contact form)            | done   |

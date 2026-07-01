@@ -7,6 +7,7 @@ node_modules
 .dev.vars
 
 .wrangler
+.react-router
 
 # Playwright
 playwright-report/

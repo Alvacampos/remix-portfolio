@@ -1,6 +1,6 @@
-import type { MetaFunction } from '@remix-run/cloudflare';
-import { Link, useLoaderData } from '@remix-run/react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import type { MetaFunction } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 
 import Card from '~/components/Card';
 import { loadProjects } from '~/data/projects-schema';

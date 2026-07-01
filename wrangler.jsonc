@@ -1,0 +1,50 @@
+// Cloudflare Workers + Static Assets config for the RR v7 build.
+// Migrated from wrangler.toml (Pages) during the Bundle 4 cutover —
+// same edge, same V8 runtime, same SSR pipeline; different CF product
+// wrapping it. See docs/migrations/remix-to-rr7.md §B for context.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gonzalo-alvarez-campos-cv",
+  "compatibility_date": "2024-07-18",
+  // Workers-side entrypoint (was `functions/[[path]].ts` under Pages).
+  // Every request hits this file first; the Worker delegates static
+  // assets to `env.ASSETS.fetch()` via the RR v7 request handler.
+  "main": "./workers/app.ts",
+  "assets": {
+    // `react-router build` writes the client bundle here. Wrangler
+    // serves any file matching a path in this directory as a static
+    // asset, and falls through to the Worker for everything else —
+    // which is why we don't need `public/_routes.json` anymore.
+    "directory": "./build/client",
+    "binding": "ASSETS",
+    // Critical for SSR apps: without this, `/` requests short-circuit
+    // to a static index.html that doesn't exist. With it, the Worker
+    // runs first for every request and hands static-asset requests
+    // back to Wrangler via `ASSETS.fetch()`.
+    "run_worker_first": true,
+  },
+  "observability": {
+    "enabled": true,
+  },
+  // Contact form config. Plain vars are safe to commit; secrets
+  // live outside this file. Set the API key on first deploy with:
+  //   npx wrangler secret put RESEND_API_KEY
+  // (No `--project-name` flag — this is a Worker, not a Pages
+  // project.) Switch CONTACT_FROM to a verified-domain sender once
+  // gonzalo-alvarez-campos-cv.com is verified on Resend.
+  "vars": {
+    "CONTACT_FROM": "onboarding@resend.dev",
+    "CONTACT_TO": "gonzaloralvarezcampos@gmail.com",
+  },
+  // Per-IP per-hour submission counter for the /contact form.
+  // Same KV namespace the Pages project used — namespaces are
+  // account-level, not product-scoped, so the id + preview_id
+  // carry over untouched from wrangler.toml.
+  "kv_namespaces": [
+    {
+      "binding": "RATELIMIT_KV",
+      "id": "59ab728758e24f2a91706b8b502ad72a",
+      "preview_id": "edf739a3760848b7a696cec78f21eca0",
+    },
+  ],
+}

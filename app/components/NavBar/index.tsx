@@ -1,5 +1,5 @@
-import { Link, useLocation } from '@remix-run/react';
 import { useIntl } from 'react-intl';
+import { Link, useLocation } from 'react-router';
 
 import {
   Briefcase,

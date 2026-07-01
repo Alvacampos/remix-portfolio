@@ -1,4 +1,4 @@
-@import '../components/DownloadBtn/style.css';
+@import '../../components/DownloadBtn/style.css';
 
 .home-route {
   display: flex;

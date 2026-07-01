@@ -1,10 +1,10 @@
 # Remix v2 → React Router v7 migration runbook
 
-> Executable playbook for the migration documented in TECH-DEBT.md as Bundle 4 / T9. Currently **parked** — see TECH-DEBT.md for the deferral rationale. When unparked, work through this file linearly.
+> **Historical.** This runbook was written pre-migration, executed on 2026-07-01, and kept for reference. TECH-DEBT.md Bundle 4 / T9 records the outcome + landmines the runbook didn't cover; `remix-version-backup` on origin is the pre-migration SHA in case rollback is ever needed.
 >
-> **Snapshot:** Written 2026-06-30 against `react-router@7.18.1`. Re-verify version pins against current latest before starting; the codemod template's pins were stale by ~10 minor versions when first run.
+> Left in place because (a) the "known landmines" section is still useful if a future framework migration hits similar issues, and (b) the rollback procedure at the bottom is what you'd follow if the current RR v7 deploy needed to revert.
 >
-> **Safety net:** `remix-version-backup` branch lives on origin at the last known-good Remix v2 SHA. If anything in the migration causes prod issues, the rollback is "flip the DNS back to the Pages project and reset main to that SHA" — see the [Rollback procedure](#rollback-procedure) at the bottom.
+> **Snapshot:** Written 2026-06-30 against `react-router@7.18.1`. The migration itself used `^7.18.1` and the CF Workers + Static Assets deploy target.
 
 ---
 

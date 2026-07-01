@@ -1,5 +1,5 @@
-import { Link } from '@remix-run/react';
 import { memo } from 'react';
+import { Link } from 'react-router';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 
 import Card from '~/components/Card';

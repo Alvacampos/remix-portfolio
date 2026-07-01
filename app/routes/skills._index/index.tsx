@@ -1,11 +1,7 @@
-import {
-  data as remixData,
-  type LoaderFunctionArgs,
-  type MetaFunction,
-} from '@remix-run/cloudflare';
-import { useLoaderData } from '@remix-run/react';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { data as remixData, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
+import { useLoaderData } from 'react-router';
 
 import Card from '~/components/Card';
 import Input from '~/components/Input';
@@ -110,6 +106,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     }
   );
+}
+
+// RR v7 requires an explicit `headers` export to propagate the
+// response headers set by `data()` in the loader. Under Remix v2
+// this was automatic; the aggregated Single Fetch response now
+// asks each route which headers it wants exposed. Pass the
+// loader-set headers through untouched.
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export default function Skills() {
