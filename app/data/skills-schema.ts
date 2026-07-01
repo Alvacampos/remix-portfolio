@@ -12,7 +12,13 @@ import { z } from 'zod';
 
 const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Expected YYYY-MM');
 
-const skillCategory = z.enum(['language', 'framework', 'tooling', 'infra', 'meta']);
+// Categories the SKILLS array can carry. `ai` is a dedicated bucket
+// for AI-assisted development tools (GitHub Copilot, Claude Code,
+// etc.) — separated from `tooling` because these are workflow
+// multipliers with distinct recruiter signal, not editor plugins.
+// The bucket surfaces as its own group in the TechTree and its own
+// section of rows in the tenure heatmap.
+const skillCategory = z.enum(['language', 'framework', 'tooling', 'infra', 'ai', 'meta']);
 
 const skillRange = z.object({
   jobId: z.number().int().positive(),

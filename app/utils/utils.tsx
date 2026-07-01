@@ -298,6 +298,12 @@ const CATEGORY_GROUPS: Array<{ id: string; categories: SkillCategory[] }> = [
   { id: 'TECH_GROUP_FRAMEWORKS', categories: ['framework'] },
   { id: 'TECH_GROUP_TOOLING', categories: ['tooling'] },
   { id: 'TECH_GROUP_INFRA', categories: ['infra'] },
+  // AI-assisted development sits between infra and soft skills — after
+  // the "how you build" categories and before the "how you work"
+  // meta bucket. Own group so it stands out; heatmap includes it as a
+  // regular row (not filtered like `meta`) since these are actual
+  // tools with tenure at specific jobs.
+  { id: 'TECH_GROUP_AI', categories: ['ai'] },
   { id: 'TECH_GROUP_SOFT', categories: ['meta'] },
 ];
 

@@ -171,6 +171,9 @@
 
     .card-component {
       min-width: 500px;
+      min-height: 350px;
+      display: flex;
+      justify-content: left;
       /* `min-height: stretch` would be ideal here but Safari only
        * supports it via `-webkit-fill-available` — plain `stretch`
        * gets dropped on iOS and the cards collapse to content height.
