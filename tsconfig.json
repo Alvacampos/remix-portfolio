@@ -30,7 +30,8 @@
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    // No `baseUrl` — deprecated in TS 6, removal in 7. `paths` resolves
+    // relative to this tsconfig.json without it (has since TS 4.1).
     "paths": {
       "~/*": ["./app/*"],
       "~data/*": ["./public/data/*"]

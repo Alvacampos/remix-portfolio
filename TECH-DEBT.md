@@ -28,10 +28,9 @@ the framework cutover.
 | 3   | Contact + CF infra    | U6 + T12       | done  | Pages Function + KV bindings                               |
 | 4   | Framework future      | T9             | done  | React Router v7 migration + CF Pages → Workers cutover     |
 
-**Ride-along candidates** (small enough to bundle with any of the above
-when they fit thematically): C10, individual U11–U24 nice-to-haves.
-
-**Blocked**: U10 (needs the Spanish CV PDF produced).
+All four bundles are shipped. The tracker is effectively closed — remaining
+UI ideas (U10–U24) are **parked** under a decision noted below; the last
+open technical item (C10) landed with the same PR that added this note.
 
 ### Bundle 1 — Style-system overhaul (T16 + T10)
 
@@ -281,7 +280,7 @@ The single-PR path ended up being cleaner because PRs 1 + 2 turned out to be ent
 | C7  | Cleanup   | P2       | Merge `getSkillsForJob` into `getSkillGroupsForJob`            | done   |
 | C8  | Cleanup   | P3       | Move `mergeRouteMeta` out of `utils.tsx`                       | done   |
 | C9  | Cleanup   | P3       | Move `FORWARD_GROUPS` out of TechTree component                | done   |
-| C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | open   |
+| C10 | Cleanup   | P3       | Validate `name_es` typos against a locale registry             | done   |
 | C11 | Cleanup   | P3       | Verify `npm run build:og` still works                          | done   |
 | C12 | Cleanup   | P3       | Audit `app/assets/icons/` for orphans                          | done   |
 | C13 | Cleanup   | P1       | README refresh + visual-baseline how-to                        | done   |
@@ -294,21 +293,21 @@ The single-PR path ended up being cleaner because PRs 1 + 2 turned out to be ent
 | U7  | UI        | P1       | Case studies — `/projects/<slug>` (3-5 deep-dives)             | done   |
 | U8  | UI        | P1       | Per-route OG images                                            | done   |
 | U9  | UI        | P1       | 404 page polish (match `/skills/:uuid` error UI)               | done   |
-| U10 | UI        | P1       | Spanish CV PDF (flip `HAS_ES_CV`)                              | open   |
-| U11 | UI        | P2       | `/blog` or `/notes` — engineering write-ups                    | open   |
-| U12 | UI        | P2       | Heatmap cell tooltips (hover detail)                           | open   |
-| U13 | UI        | P2       | Cmd-K / `/` keyboard shortcut for skills filter                | open   |
-| U14 | UI        | P2       | Realtime "viewers" badge (CF Durable Objects)                  | open   |
-| U15 | UI        | P2       | Edge-side A/B testing on hero copy (CF Workers)                | open   |
-| U16 | UI        | P3       | Second accent color (alongside GitHub Green)                   | open   |
-| U17 | UI        | P3       | Display-weight typography for `h1`s                            | open   |
-| U18 | UI        | P3       | Skill chip hover tooltips ("Used at: X · N years")             | open   |
-| U19 | UI        | P3       | Mobile hamburger / FAB pattern                                 | open   |
-| U20 | UI        | P3       | Endorsements / testimonials section                            | open   |
-| U21 | UI        | P3       | GitHub activity stream (public contribs)                       | open   |
-| U22 | UI        | P3       | Extended filter chips on `/skills` (by category)               | open   |
-| U23 | UI        | P3       | Per-job duration totals as a stat strip                        | open   |
-| U24 | UI        | P3       | `prefers-reduced-motion` sweep beyond LocaleToggle             | open   |
+| U10 | UI        | P1       | Spanish CV PDF (flip `HAS_ES_CV`)                              | parked |
+| U11 | UI        | P2       | `/blog` or `/notes` — engineering write-ups                    | parked |
+| U12 | UI        | P2       | Heatmap cell tooltips (hover detail)                           | parked |
+| U13 | UI        | P2       | Cmd-K / `/` keyboard shortcut for skills filter                | parked |
+| U14 | UI        | P2       | Realtime "viewers" badge (CF Durable Objects)                  | parked |
+| U15 | UI        | P2       | Edge-side A/B testing on hero copy (CF Workers)                | parked |
+| U16 | UI        | P3       | Second accent color (alongside GitHub Green)                   | parked |
+| U17 | UI        | P3       | Display-weight typography for `h1`s                            | parked |
+| U18 | UI        | P3       | Skill chip hover tooltips ("Used at: X · N years")             | parked |
+| U19 | UI        | P3       | Mobile hamburger / FAB pattern                                 | parked |
+| U20 | UI        | P3       | Endorsements / testimonials section                            | parked |
+| U21 | UI        | P3       | GitHub activity stream (public contribs)                       | parked |
+| U22 | UI        | P3       | Extended filter chips on `/skills` (by category)               | parked |
+| U23 | UI        | P3       | Per-job duration totals as a stat strip                        | parked |
+| U24 | UI        | P3       | `prefers-reduced-motion` sweep beyond LocaleToggle             | parked |
 
 ---
 
@@ -374,9 +373,9 @@ The original premise was that three routes were excluded for two reasons and a p
 
 So T11 dissolves: no tool switch needed, the visual gate now covers `/`, `/education`, `/education/:slug`, and `/skills/1` (a stable detail page), with `/skills` index documented out for a permanent reason rather than a fixable one. See [tests/e2e/README.md](tests/e2e/README.md#why-skills-index-isnt-gated) for the updated rationale.
 
-### T12 — Cloudflare KV / D1 / R2 bindings (P3)
+### T12 — Cloudflare KV / D1 / R2 bindings (P3) — DONE
 
-[wrangler.toml](wrangler.toml) has no bindings. Will be needed for U6 (contact form rate-limiting) or U14 (Durable Objects). Scaffold when the first consumer lands.
+Landed with Bundle 3 (U6 `/contact` route). [wrangler.jsonc](wrangler.jsonc) now declares the `RATELIMIT_KV` binding + `CONTACT_FROM` / `CONTACT_TO` vars; [worker-configuration.d.ts](worker-configuration.d.ts) is regenerated via `npm run cf-typegen`, and the contact action reads them via `context.cloudflare.env.*`. Additional bindings (D1, R2, Durable Objects) can slot in the same file when a consumer lands.
 
 ### T13 — Drop unused `@chromatic-com/storybook` (P3)
 
@@ -490,9 +489,9 @@ Extracted `mergeRouteMeta`, `RouteMetaOverrides`, and the `SITE_URL` constant in
 
 Moved `FORWARD_GROUPS` + the `ForwardGroup` type into [app/components/TechTree/forward-groups.ts](app/components/TechTree/forward-groups.ts). The component now just imports the constant. Kept the data co-located with the component rather than promoting it to `skills.json` — these are aspirations (no SKILLS entry, no range), not job experiences, so the data shape doesn't match the skill-first schema.
 
-### C10 — Validate `name_es` typos against a locale registry (P3)
+### C10 — Validate `name_es` typos against a locale registry (P3) — DONE
 
-Schema accepts any string for `name_es`. A typo (Mentoria vs Mentoría) won't be caught at boot. Low risk but worth a guard once the soft-skill set stabilizes.
+`SKILL_NAME_ES_REGISTRY` in [app/data/skills-schema.ts](app/data/skills-schema.ts) is now the canonical map of English → Spanish skill names. The Zod `superRefine` on the skills payload checks each `SKILLS[].name_es` against the registry and throws a path-precise error on mismatch or on a `name_es` set for a skill with no registry entry. Committed with the tests in [app/data/skills-schema.test.ts](app/data/skills-schema.test.ts), including one that re-parses `public/data/skills.json` so a real drift between the file and the registry fails CI, not prod.
 
 ### C11 — Verify `npm run build:og` still works (P3) — DONE
 
@@ -571,65 +570,48 @@ OG image is generated from SVG today (`scripts/render-og-image.mjs`). Add per-ro
 
 Route-level ErrorBoundary on `/skills/:uuid` and `/education/:slug` looks good. The root error boundary (unknown URLs) doesn't match. Unify the design.
 
-### U10 — Spanish CV PDF (P1)
+### U10–U24 — Parked (2026-07-01)
 
-Flip `HAS_ES_CV` in [app/utils/utils.tsx](app/utils/utils.tsx) when the file lands at `public/assets/files/gonzalo_alvarez_campos_cv_es.pdf`. Update the assertion in [app/utils/utils.test.tsx](app/utils/utils.test.tsx).
+The four active bundles delivered the site's core proposition (skill-first
+model, tenure heatmap, /skills detail pages, /education timeline, /projects
+case studies, /contact form on CF Workers + Resend, per-route OG, print
+stylesheet, a11y + Lighthouse gates, RR v7 + Workers migration). The
+remaining UI ideas below are **parked**, not open. Two reasons:
 
-### U11 — `/blog` or `/notes` (P2)
+1. **The app is at its content density limit.** The mobile NavBar is
+   already at the edge of what fits without a hamburger drawer, and the
+   `/skills` page carries the tenure heatmap + TechTree + timeline +
+   autocomplete on one route. Adding tooltips (U12, U18), stat strips
+   (U23), or a Cmd-K modal (U13) makes each surface heavier for
+   diminishing recruiter signal.
+2. **The items are demo-driven, not user-driven.** U14 (Durable Objects
+   viewer count), U15 (edge A/B on the tagline), U21 (GitHub activity
+   feed) are CF Workers show-off features that visitors don't need.
+   They belong in a separate demo project if the interviewing signal is
+   what's wanted.
 
-Engineering write-ups on decisions made in this repo (e.g. "How I diagnosed an LCP regression", "Why visual baselines live in Docker"). The README "AI Assistance" section is already doing some of this — formalize into its own surface.
+**Individually parked:**
 
-### U12 — Heatmap cell tooltips (P2)
+- **U10** (Spanish CV PDF): the site already falls back cleanly to the
+  English PDF for `es` visitors via `getCvUrl` in [app/utils/utils.tsx](app/utils/utils.tsx#L18).
+  Not worth producing a translated design for a low-traffic asset.
+- **U11** (`/blog` or `/notes`): the README "AI Assistance" section
+  captures the useful write-up already. A blog surface would need
+  ongoing content.
+- **U12, U13, U17, U18, U22, U23** (heatmap tooltips, Cmd-K, display
+  typography, chip tooltips, extended filter chips, stat strip): pure
+  polish; the base UX is already at 0.95+ Lighthouse across routes.
+- **U14, U15, U21** (viewers badge, edge A/B, GitHub feed): interview
+  demo material that adds surface without user value.
+- **U16, U19** (second accent, hamburger/FAB): visual identity changes;
+  the current GitHub-green + sidebar+bottom-nav pattern is stable.
+- **U20** (endorsements): friction is asking managers, not the code.
+- **U24** (`prefers-reduced-motion` sweep beyond LocaleToggle): only
+  ThemeToggle + Timeline animate meaningfully; both are under 300 ms
+  and unlikely to trip vestibular sensitivity.
 
-Hover shows "React · 2024 · 11 months." Currently the chart is visual only. Adds depth + a11y (keyboard nav).
-
-### U13 — Cmd-K / `/` keyboard shortcut for skills filter (P2)
-
-Focus the `/skills` autocomplete on Cmd-K or `/`. Keyboard-first interaction signal. ~10 lines.
-
-### U14 — Realtime "viewers" badge (P2)
-
-CF Durable Objects maintain a live count of current visitors. Talking-point material for interviews. Overkill for a CV but a strong CF demonstration.
-
-### U15 — Edge-side A/B testing on hero copy (P2)
-
-Workers can split-test the home tagline with no client flicker. Few CVs demonstrate this; senior-IC signal.
-
-### U16 — Second accent color (P3)
-
-Color palette is heavily GitHub Green. A second accent (warm orange / blue) used sparingly (Learning / Future chips, focus rings) would feel more personal than a GitHub clone.
-
-### U17 — Display-weight typography for `h1`s (P3)
-
-Current `<h1>` is small and centered. Bigger / heavier Roboto variant (or a serif companion) on `h1`s only signals more craft.
-
-### U18 — Skill chip hover tooltips (P3)
-
-Chip "Cypress" on hover shows "Used at: Qubika · 3 years." Tiny but classy.
-
-### U19 — Mobile hamburger / FAB pattern (P3)
-
-Sidebar collapses to bottom bar on mobile (works). A FAB hamburger expanding to overlay would feel more app-like and reclaim vertical space.
-
-### U20 — Endorsements / testimonials (P3)
-
-2-3 quotes from past managers/colleagues (with permission + LinkedIn link). > 100 LinkedIn skill endorsements. The friction is getting permissions.
-
-### U21 — GitHub activity stream (P3)
-
-`octokit` + CF KV cache for the API quota. Pulls public contribs from `Alvacampos`. Shows pulse even when most projects are private.
-
-### U22 — Extended filter chips on `/skills` (P3)
-
-Current filter is by tech name. Add toggle chips for "Leadership / Mentoring / Public Speaking" categories. Lets the `/skills` page surface soft-skill highlights, not just tech.
-
-### U23 — Per-job duration totals as a stat strip (P3)
-
-Home or `/skills` shows "7+ years total experience" as a stat. `getSkillHeatmapData` already does most of this math.
-
-### U24 — `prefers-reduced-motion` sweep (P3)
-
-LocaleToggle honors it. Extend to ThemeToggle, NavBar transitions, Timeline entrance animation. ESLint-style sweep.
+If any of these gets revisited, restore the individual `### Un — ...`
+section and flip the row in the Status table back to `open`.
 
 ---
 
@@ -640,4 +622,5 @@ LocaleToggle honors it. Extend to ThemeToggle, NavBar transitions, Timeline entr
 3. When merged → `done` (and check off the entry in any open PR description that referenced it).
 4. New items get appended to the right section and added to the Status table.
 
-Status legend: `open` / `in-progress` / `done` / `dropped` (decided not to do).
+Status legend: `open` / `in-progress` / `done` / `parked` (deliberately
+not pursuing; reason recorded above) / `dropped` (decided not to do).
