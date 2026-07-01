@@ -12,6 +12,30 @@ import { z } from 'zod';
 
 const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Expected YYYY-MM');
 
+// Canonical Spanish translation for every skill name that has one.
+// The superRefine below reads this at boot: any `SKILLS[].name_es`
+// that disagrees with the registered value throws a path-precise
+// error. Prevents typos like "Mentoria" vs "Mentoría" from silently
+// shipping. Skills without a `name_es` (tech proper nouns like
+// "React", "TypeScript") don't need an entry — the registry only
+// governs translations we've already committed to.
+//
+// Adding a translation: put the pair here first, then set `name_es`
+// on the SKILL entry to match. The two must agree.
+export const SKILL_NAME_ES_REGISTRY: Readonly<Record<string, string>> = {
+  Agile: 'Metodologías ágiles',
+  'Back End': 'Back End',
+  'Code Review': 'Revisión de código',
+  'Front End': 'Front End',
+  Leadership: 'Liderazgo',
+  Mentoring: 'Mentoría',
+  'Public Speaking': 'Oratoria',
+  Teaching: 'Docencia',
+  'Teaching Programming': 'Enseñanza de Programación',
+  'Team Coordination': 'Coordinación de equipos',
+  'Technical Interviewing': 'Entrevistas técnicas',
+};
+
 // Categories the SKILLS array can carry. `ai` is a dedicated bucket
 // for AI-assisted development tools (GitHub Copilot, Claude Code,
 // etc.) — separated from `tooling` because these are workflow
@@ -148,6 +172,27 @@ export const SkillsSchema = z
         });
       }
       seenIds.add(w.id);
+    });
+
+    // Spanish name registry check. Anything in the file's `name_es`
+    // that doesn't match the canonical registry above is a typo
+    // waiting to slip past code review.
+    data.SKILLS.forEach((s, sIdx) => {
+      if (s.name_es === undefined) return;
+      const expected = SKILL_NAME_ES_REGISTRY[s.name];
+      if (expected === undefined) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SKILLS', sIdx, 'name_es'],
+          message: `Skill "${s.name}" has a name_es but no entry in SKILL_NAME_ES_REGISTRY. Add the pair to the registry in app/data/skills-schema.ts first.`,
+        });
+      } else if (expected !== s.name_es) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SKILLS', sIdx, 'name_es'],
+          message: `name_es "${s.name_es}" for skill "${s.name}" disagrees with registry ("${expected}"). Update the registry or fix the typo.`,
+        });
+      }
     });
   });
 

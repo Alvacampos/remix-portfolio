@@ -94,10 +94,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
   await env.RATELIMIT_KV.put(key, String(count + 1), { expirationTtl: 3600 });
 
   // Send via Resend. Bare fetch — no SDK dependency, no Node-isms to
-  // shim. The from/to addresses live as plain wrangler.toml vars; the
-  // API key lives as a CF Pages secret. Sandbox sender works without
-  // domain verification but is rate-limited and marked "via resend.dev";
-  // switch CONTACT_FROM in wrangler.toml once the prod domain is verified.
+  // shim. The from/to addresses live as plain vars in wrangler.jsonc;
+  // the API key is a Worker secret (`npx wrangler secret put
+  // RESEND_API_KEY`). Sandbox sender works without domain verification
+  // but is rate-limited and marked "via resend.dev"; switch
+  // CONTACT_FROM in wrangler.jsonc once the prod domain is verified.
   const { name, email, subject, message } = parsed.data;
   const html = `
     <h2>New contact-form submission</h2>
