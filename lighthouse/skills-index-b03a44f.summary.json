@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-30T17:23:57.897Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-07-01T18:51:42.322Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "40d16c6",
+  "commit": "b03a44f",
   "categories": {
-    "performance": 0.97,
+    "performance": 0.98,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.6 s",
-      "numericValue": 1561.2267000000002,
-      "score": 0.95
+      "displayValue": "1.9 s",
+      "numericValue": 1856.4138,
+      "score": 0.88
     },
     "lcp": {
-      "displayValue": "2.5 s",
-      "numericValue": 2496.2267,
-      "score": 0.9
+      "displayValue": "1.9 s",
+      "numericValue": 1856.4138,
+      "score": 0.98
     },
     "si": {
-      "displayValue": "1.6 s",
-      "numericValue": 1561.2267000000002,
+      "displayValue": "1.9 s",
+      "numericValue": 1856.4138,
       "score": 1
     },
     "tbt": {
@@ -32,42 +32,32 @@
       "score": 1
     },
     "cls": {
-      "displayValue": "0",
-      "numericValue": 0,
+      "displayValue": "0.006",
+      "numericValue": 0.005709081668834352,
       "score": 1
     },
     "tti": {
-      "displayValue": "2.5 s",
-      "numericValue": 2503.7267,
-      "score": 0.98
+      "displayValue": "1.9 s",
+      "numericValue": 1856.4138000000003,
+      "score": 1
     },
-    "ttfb": 66
+    "ttfb": 108
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.95
+      "score": 0.88
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.9
-    },
-    {
-      "id": "interactive",
-      "title": "Time to Interactive",
       "score": 0.98
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
     },
     {
       "id": "unused-javascript",
       "title": "Reduce unused JavaScript",
-      "score": 0
+      "score": 0.5
     },
     {
       "id": "cache-insight",

@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-22T19:25:44.406Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-07-01T18:51:49.464Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "42a193a",
+  "commit": "b03a44f",
   "categories": {
-    "performance": 0.83,
+    "performance": 0.96,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2160.0027,
-      "score": 0.79
+      "displayValue": "1.7 s",
+      "numericValue": 1688.6156999999998,
+      "score": 0.92
     },
     "lcp": {
-      "displayValue": "4.3 s",
-      "numericValue": 4335.0027,
-      "score": 0.41
+      "displayValue": "2.5 s",
+      "numericValue": 2513.6157,
+      "score": 0.89
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2160.0027,
-      "score": 0.99
+      "displayValue": "1.7 s",
+      "numericValue": 1688.6156999999998,
+      "score": 1
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,37 +37,27 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "4.3 s",
-      "numericValue": 4342.5027,
-      "score": 0.84
+      "displayValue": "2.5 s",
+      "numericValue": 2521.1157,
+      "score": 0.98
     },
-    "ttfb": 62
+    "ttfb": 31
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.79
+      "score": 0.92
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.41
-    },
-    {
-      "id": "speed-index",
-      "title": "Speed Index",
-      "score": 0.99
+      "score": 0.89
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.84
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
+      "score": 0.98
     },
     {
       "id": "unused-javascript",
@@ -87,7 +77,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
