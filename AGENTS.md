@@ -10,8 +10,8 @@ Guidelines for AI agents (Claude Code, Cursor, Aider, etc.) working in this repo
 Personal portfolio / online CV for **Gonzalo Alvarez Campos**, deployed at <https://gonzalo-alvarez-campos-cv.com/>.
 
 - Single-page-feel multi-route web app showcasing work history, skills, education, and a downloadable CV (PDF).
-- The frontend is the entire product today. Cloudflare Pages Functions handle SSR; there's no separate backend service. Future server-side concerns (e.g. a `/contact` form) would land as Pages Functions, not a standalone backend.
-- A future migration to React Router v7 is on the table (tracked as **T9** in [TECH-DEBT.md](TECH-DEBT.md)) but not actively planned.
+- The frontend is the entire product today. Cloudflare Workers handle SSR via the Worker at [workers/app.ts](workers/app.ts); there's no separate backend service. Future server-side concerns (e.g. the `/contact` route's action) land as route actions inside the same Worker.
+- Migrated from Remix v2 → React Router v7 in Bundle 4 (see [TECH-DEBT.md](TECH-DEBT.md) T9). Full migration notes + landmines in [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md).
 
 The site is content-driven: routes load static JSON files from [public/data/](public/data/) at request time and render them.
 
@@ -21,12 +21,12 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 
 | Layer             | Tech                                                                                                         |
 | ----------------- | ------------------------------------------------------------------------------------------------------------ |
-| Framework         | [Remix](https://remix.run/) v2.17 (Vite plugin), `cloudflare` adapter                                        |
-| Build / dev       | Vite 5 + `@remix-run/dev` Vite plugin, Terser minification (sourcemaps off in prod)                          |
-| Runtime / hosting | Cloudflare Pages (Pages Functions via `functions/[[path]].ts`)                                               |
-| Wrangler          | v4 (`wrangler pages dev` / `wrangler pages deploy`)                                                          |
+| Framework         | [React Router](https://reactrouter.com/) v7 (framework mode, Vite plugin)                                    |
+| Build / dev       | Vite 5 + `@react-router/dev` Vite plugin, Terser minification (sourcemaps off in prod)                       |
+| Runtime / hosting | Cloudflare Workers + Static Assets (Worker at [workers/app.ts](workers/app.ts))                              |
+| Wrangler          | v4 (`wrangler dev` / `wrangler deploy`)                                                                      |
 | UI                | React 18 + TypeScript                                                                                        |
-| Routing           | Remix file-based / flat routes ([app/routes/](app/routes/))                                                  |
+| Routing           | React Router flat routes via `@react-router/fs-routes` ([app/routes.ts](app/routes.ts))                      |
 | Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                                 |
 | i18n              | `react-intl` (English + Spanish; `?lang=` → `locale` cookie → `Accept-Language`; see [app/intl/](app/intl/)) |
 | Charts            | CSS-grid tenure heatmap ([app/components/TenureHeatmap/](app/components/TenureHeatmap/))                     |
@@ -36,7 +36,7 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Linting           | ESLint 9 flat-config + Prettier, Stylelint, ls-lint                                                          |
 | Type-check        | `tsc --noEmit` (Vite handles emit)                                                                           |
 | Node              | `>=22.0.0` (`.nvmrc` pins `v22.22.2` — Wrangler 4 floor)                                                     |
-| npm               | strict peer deps; `package.json` uses an `overrides` block for wrangler                                      |
+| npm               | strict peer deps; no overrides block required post-RR v7 migration                                           |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
 
@@ -50,12 +50,13 @@ CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/
 
 ```
 remix-portfolio/
-├── app/                          # Remix app source
+├── app/                          # React Router v7 app source
 │   ├── root.tsx                  # HTML shell, IntlProvider, NavBar, error boundary
-│   ├── entry.client.tsx          # hydrateRoot in StrictMode
-│   ├── entry.server.tsx          # renderToReadableStream + isbot
+│   ├── routes.ts                 # `flatRoutes()` — file-based routing entry
+│   ├── entry.client.tsx          # hydrateRoot in StrictMode (HydratedRouter)
+│   ├── entry.server.tsx          # renderToReadableStream + isbot (ServerRouter)
 │   ├── routes/
-│   │   ├── _index.tsx            # /                  → Home
+│   │   ├── _index/               # /                  → Home
 │   │   ├── education._index/     # /education         → Degrees + certifications grid
 │   │   ├── education.$slug/      # /education/:slug   → Single degree detail
 │   │   ├── skills._index/        # /skills            → Work timeline + tech grid + tenure heatmap
@@ -80,19 +81,19 @@ remix-portfolio/
 │   └── utils/
 │       ├── utils.tsx              # getClassMaker, formatDate, getSkillHeatmapData, getSkillGroupsForJob, getAllSkillGroups, getSkillSuggestions, localized, getCvUrl
 │       └── meta.ts                # mergeRouteMeta (per-route title + OG/Twitter merger)
-├── functions/[[path]].ts         # Cloudflare Pages Function — serves the Remix server build
+├── workers/app.ts                # Cloudflare Worker — serves the RR v7 server build + delegates static assets to `env.ASSETS`
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
 │   ├── robots.txt + sitemap.xml  # SEO basics
 │   ├── fonts/roboto/             # Roboto VariableFont (WOFF2)
 │   ├── assets/img/               # webp logos for each company
 │   ├── assets/files/             # CV PDF
-│   ├── _headers                  # Cloudflare Pages cache-control headers
-│   └── _routes.json              # Pages Functions invocation rules
+│   └── _headers                  # Cache-Control headers for static assets (read by CF Workers + Static Assets)
 ├── build/                        # Vite output (gitignored): build/client + build/server
-├── load-context.ts               # Augments Remix AppLoadContext with `cloudflare` proxy
+├── load-context.ts               # Augments RR v7 AppLoadContext with `cloudflare: { env, ctx }`
 ├── worker-configuration.d.ts     # Generated `interface Env` (run `npm run cf-typegen`)
-├── wrangler.toml                 # name, compatibility_date, pages_build_output_dir
+├── wrangler.jsonc                # Workers config: main, assets, KV bindings, vars, `run_worker_first`
+├── react-router.config.ts        # RR v7 config: `{ ssr: true }`
 ├── vite.config.ts
 ├── tsconfig.json + jsconfig.json # `~/*` → `./app/*`
 ├── postcss.config.js + svgo.config.cjs + svgr.config.cjs
@@ -105,30 +106,30 @@ remix-portfolio/
 
 From [package.json](package.json):
 
-| Command                      | What it does                                                                     |
-| ---------------------------- | -------------------------------------------------------------------------------- |
-| `npm run dev`                | `remix vite:dev` — local dev server on **port 8788**                             |
-| `npm run build`              | `NODE_ENV=production remix vite:build` — emits `build/client` and `build/server` |
-| `npm run start`              | `wrangler pages dev ./build/client` — preview the built bundle on Pages          |
-| `npm run preview`            | `npm run build && wrangler pages dev`                                            |
-| `npm run deploy`             | `npm run build && wrangler pages deploy` — deploys to Cloudflare Pages           |
-| `npm run typecheck`          | `tsc` (no emit)                                                                  |
-| `npm run typegen`            | `wrangler types` — regenerates `worker-configuration.d.ts` from bindings         |
-| `npm run cf-typegen`         | Alias of the above                                                               |
-| `npm run lint`               | `run-s lint:*` — runs all linters in sequence                                    |
-| `npm run lint:css`           | `stylelint 'app/**/*.css'`                                                       |
-| `npm run lint:es`            | ESLint over `.js,.jsx,.ts,.tsx`                                                  |
-| `npm run lint:ls`            | `@ls-lint/ls-lint` — file/folder naming rules                                    |
-| `npm run lint:prettier`      | `prettier --check .`                                                             |
-| `npm run build:svg`          | `svgo -f ./app/assets/icons` — optimize source SVGs                              |
-| `npm run build:icons`        | `svgr` over `./app/assets/icons` → `app/components/icons/*.jsx`                  |
-| `npm test`                   | `vitest run` — unit / component tests                                            |
-| `npm run test:watch`         | `vitest` watch mode                                                              |
-| `npm run test:e2e`           | `playwright test` — chromium + Pixel 7 mobile projects                           |
-| `npm run test:visual`        | Visual-regression spec only (chromium). Self-skips on macOS — see §11.           |
-| `npm run test:visual:update` | Regenerate visual baselines via the Playwright Docker image.                     |
-| `npm run storybook`          | `storybook dev -p 6006` — local Storybook on port 6006                           |
-| `npm run build-storybook`    | `storybook build` — static build to `storybook-static/`                          |
+| Command                      | What it does                                                                       |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| `npm run dev`                | `react-router dev` — local dev server on **port 8788**                             |
+| `npm run build`              | `NODE_ENV=production react-router build` — emits `build/client` and `build/server` |
+| `npm run start`              | `wrangler pages dev ./build/client` — preview the built bundle on Pages            |
+| `npm run preview`            | `npm run build && wrangler pages dev`                                              |
+| `npm run deploy`             | `npm run build && wrangler pages deploy` — deploys to Cloudflare Pages             |
+| `npm run typecheck`          | `tsc` (no emit)                                                                    |
+| `npm run typegen`            | `wrangler types` — regenerates `worker-configuration.d.ts` from bindings           |
+| `npm run cf-typegen`         | Alias of the above                                                                 |
+| `npm run lint`               | `run-s lint:*` — runs all linters in sequence                                      |
+| `npm run lint:css`           | `stylelint 'app/**/*.css'`                                                         |
+| `npm run lint:es`            | ESLint over `.js,.jsx,.ts,.tsx`                                                    |
+| `npm run lint:ls`            | `@ls-lint/ls-lint` — file/folder naming rules                                      |
+| `npm run lint:prettier`      | `prettier --check .`                                                               |
+| `npm run build:svg`          | `svgo -f ./app/assets/icons` — optimize source SVGs                                |
+| `npm run build:icons`        | `svgr` over `./app/assets/icons` → `app/components/icons/*.jsx`                    |
+| `npm test`                   | `vitest run` — unit / component tests                                              |
+| `npm run test:watch`         | `vitest` watch mode                                                                |
+| `npm run test:e2e`           | `playwright test` — chromium + Pixel 7 mobile projects                             |
+| `npm run test:visual`        | Visual-regression spec only (chromium). Self-skips on macOS — see §11.             |
+| `npm run test:visual:update` | Regenerate visual baselines via the Playwright Docker image.                       |
+| `npm run storybook`          | `storybook dev -p 6006` — local Storybook on port 6006                             |
+| `npm run build-storybook`    | `storybook build` — static build to `storybook-static/`                            |
 
 > **Always run `npm run typecheck`, `npm run lint`, `npm test`, and (for component changes) `npm run build-storybook` before reporting work as done.**
 
@@ -136,9 +137,19 @@ From [package.json](package.json):
 
 ## 5. Routing
 
-Remix flat-routes convention. All Remix v3 future flags are on (`v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`, `v3_singleFetch`, `v3_lazyRouteDiscovery`).
+React Router v7 flat-routes convention via `@react-router/fs-routes`'s `flatRoutes()`, wired in [app/routes.ts](app/routes.ts). The route directory names (`_index/`, `skills.$uuid/`, `contact._index/`, etc.) carry over unchanged from the Remix v2 era.
 
-**Single Fetch is on.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status; everything else is just `return { ... }`. The deprecated `json()` import will fail typecheck because `app/single-fetch.d.ts` augments `Future` to enable Single Fetch types.
+**Single Fetch is the default in RR v7.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `react-router` only when you need to set response headers or a custom status.
+
+**Response headers from loaders require an explicit `headers` export.** In Remix v2 the second arg to `data()` propagated response headers automatically; in RR v7's Single Fetch aggregation, each route has to opt in:
+
+```ts
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
+}
+```
+
+Currently used on `/skills` (1h `Cache-Control` + `Vary: Accept-Language, Cookie`). Any new route that wants edge-cache behaviour needs this export too.
 
 | URL                | File                                                                            | Loader                                                                                                                                                                                                                                        |
 | ------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -291,13 +302,13 @@ The English CV PDF is at [public/assets/files/gonzalo_alvarez_campos_cv.pdf](pub
 
 ## 10. Cloudflare Pages
 
-- [wrangler.toml](wrangler.toml) — `compatibility_date = "2024-07-18"`, `pages_build_output_dir = "./build/client"`, project name `remix-portfolio`. No bindings (KV / D1 / R2 / Durable Objects) are configured; the file is mostly commented templates.
-- [functions/\[\[path\]\].ts](functions/[[path]].ts) — the catch-all Pages Function that imports the Remix server build (`../build/server`) and hands it to `createPagesFunctionHandler`. This is what runs on every request.
+- [wrangler.jsonc](wrangler.jsonc) — Workers config: `main = "./workers/app.ts"`, `compatibility_date = "2024-07-18"`, `assets.directory = "./build/client"`, `assets.run_worker_first = true`, plus vars (`CONTACT_FROM`, `CONTACT_TO`) and the `RATELIMIT_KV` binding used by the `/contact` action.
+- [workers/app.ts](workers/app.ts) — the Worker's `fetch` entrypoint. Delegates `/assets/*`, `/fonts/*`, `/.well-known/*`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml` to `env.ASSETS.fetch(request)`; everything else routes through the RR v7 request handler with `{ cloudflare: { env, ctx } }` as the load context.
 - [public/\_headers](public/_headers) — `Cache-Control: public, max-age=31536000, immutable` for `/assets/*`.
 - [public/\_routes.json](public/_routes.json) — invokes the Function for everything except `/favicon.ico` and `/assets/*`.
 - [load-context.ts](load-context.ts) — augments `AppLoadContext` with `cloudflare: PlatformProxy<Env>`; access bindings (when any are added) via `context.cloudflare.env.*` inside loaders.
 
-If/when env vars or bindings are added: edit `wrangler.toml`, then run `npm run cf-typegen` to regenerate [worker-configuration.d.ts](worker-configuration.d.ts).
+If/when env vars or bindings are added: edit `wrangler.jsonc`, then run `npm run cf-typegen` to regenerate [worker-configuration.d.ts](worker-configuration.d.ts). Secrets (`RESEND_API_KEY`) are set via `npx wrangler secret put NAME` — no `pages` subcommand, no `--project-name` flag.
 
 ---
 
@@ -319,11 +330,11 @@ The hook installs automatically via `npm install` (the `prepare` script runs `si
 
 - Config: [vitest.config.ts](vitest.config.ts) (happy-dom env, globals, `~/*` alias via Vitest 4's native `resolve.tsconfigPaths: true`).
 - Setup: [test/setup.ts](test/setup.ts) — adds `jest-dom` matchers, RTL `cleanup`, and stub polyfills for `ResizeObserver` and `IntersectionObserver` (`react-vertical-timeline-component` needs them).
-- Render helper: [test/test-utils.tsx](test/test-utils.tsx) — wraps trees in a `createMemoryRouter` data-router (so `@remix-run/react`'s `Link` works) plus an `IntlProvider` populated from `app/intl/en-US.json`.
+- Render helper: [test/test-utils.tsx](test/test-utils.tsx) — wraps trees in a `createMemoryRouter` data-router (so `react-router`'s `Link` works) plus an `IntlProvider` populated from `app/intl/en-US.json`.
 - Tests live next to the component as `index.test.tsx`. Pattern: `app/**/*.{test,spec}.{ts,tsx}`.
 - Run: `npm test` (one shot), `npm run test:watch`, `npm run test:ui`.
 
-> **Router dedupe matters.** `react-router` is pinned to an **exact** version (no caret) in `devDependencies` and must match whatever copy `@remix-run/react` ships internally. Two copies = two `Router` contexts = `useHref() may be used only in the context of a <Router> component`. When you bump `@remix-run/react`, run `npm ls react-router` and re-pin our dev-dep to whatever Remix is now bundling. Current pin: `6.30.4` against `@remix-run/react@2.17.5`. (Note: the `react-router-dom` package is no longer pinned directly — its `createMemoryRouter` and `RouterProvider` exports re-export from `react-router`, which is the package the Bundle 4 RR v7 migration will consolidate on.)
+> **Router dedupe.** `react-router` is the single package for router + hooks + data APIs in v7; the T15-era `react-router-dom` peer-pin workaround is gone. If you ever add a second package that transitively pulls a different `react-router` version, `npm ls react-router` should surface it.
 
 ### E2E — Playwright
 
@@ -395,8 +406,8 @@ Every component in [app/components/](app/components/) has a colocated `index.sto
 
 ### Config
 
-- [.storybook/main.ts](.storybook/main.ts) — picks up `app/**/*.stories.@(ts|tsx|mdx)`, points the Vite builder at [.storybook/vite.config.ts](.storybook/vite.config.ts) (a clean Vite config without the `@remix-run/dev` plugin, which only works inside Remix's own pipeline). Add-ons: a11y, docs, chromatic.
-- [.storybook/preview.tsx](.storybook/preview.tsx) — one global decorator wraps stories in `IntlProvider` (so `FormattedMessage` works) and a `createMemoryRouter` data router (so `@remix-run/react`'s `<Link>` doesn't trip the `useHref` invariant). Imports `app/styles/style.css` so design tokens render.
+- [.storybook/main.ts](.storybook/main.ts) — picks up `app/**/*.stories.@(ts|tsx|mdx)`, points the Vite builder at [.storybook/vite.config.ts](.storybook/vite.config.ts) (a clean Vite config without the `@react-router/dev` plugin, which only works inside RR v7's own pipeline). Add-ons: a11y, docs, chromatic.
+- [.storybook/preview.tsx](.storybook/preview.tsx) — one global decorator wraps stories in `IntlProvider` (so `FormattedMessage` works) and a `createMemoryRouter` data router (so `react-router`'s `<Link>` doesn't trip the `useHref` invariant). Imports `app/styles/style.css` so design tokens render.
 
 ### Adding a story
 
@@ -412,9 +423,7 @@ const meta: Meta<typeof MyComponent> = {
 };
 export default meta;
 export const Default: StoryObj<typeof MyComponent> = {
-  args: {
-    /* … */
-  },
+  args: {/* … */},
 };
 ```
 
@@ -432,7 +441,7 @@ Hardcoded values are fine — stories are for visual review, not type guarantees
 | ---------------------------------------- | ------------------------------------------------------------------ |
 | Directories                              | `lowercase \| kebab-case` (default)                                |
 | `app/components/*` dirs                  | `lowercase \| PascalCase` (allows consecutive caps, e.g. `NavBar`) |
-| `app/routes/*` dirs                      | `[a-zA-Z\$-_.]+` (Remix flat-route chars: `$`, `-`, `_`, `.`)      |
+| `app/routes/*` dirs                      | `[a-zA-Z\$-_.]+` (RR flat-route chars: `$`, `-`, `_`, `.`)         |
 | `.js`, `.ts`                             | `lowercase \| kebab-case`                                          |
 | `.jsx`, `.tsx`                           | `lowercase \| PascalCase`                                          |
 | `.css`, `.svg`, `.html`, `.png`, `.webp` | `lowercase \| kebab-case`                                          |
@@ -441,7 +450,7 @@ Hardcoded values are fine — stories are for visual review, not type guarantees
 
 - Path alias `~/*` resolves to `app/*` (configured in both `tsconfig.json` and `jsconfig.json` for tooling that doesn't speak TS).
 - `strict: true`, `isolatedModules: true`, `noEmit: true` — Vite owns the build.
-- Types: `@remix-run/cloudflare`, `vite/client`, `@cloudflare/workers-types/2023-07-01`.
+- Types: `vite/client`, `@cloudflare/workers-types/2023-07-01`.
 
 ### ESLint highlights ([eslint.config.js](eslint.config.js))
 
@@ -475,13 +484,13 @@ When adding a new component, mirror the existing shape:
 3. Default-export the component. **No `links()` export.** The consuming route's stylesheet `@import`s the CSS via postcss-import (see §6). This applies even to JS-lazy-loaded components — their CSS rides eagerly with the route stylesheet so Lantern doesn't penalise extra render-blocking round-trips.
 4. Type props inline (`type FooProps = { ... }`) and give optional props defaults in the parameter destructure (so `react/require-default-props` is satisfied).
 5. Use `~/components/icons` for any iconography rather than inlining SVG.
-6. For links, use `<Link to=...>` from `@remix-run/react`. If an element should only render as a link under some condition, do the conditional inline rather than reaching for a wrapper component.
+6. For links, use `<Link to=...>` from `react-router`. If an element should only render as a link under some condition, do the conditional inline rather than reaching for a wrapper component.
 7. For copy, use `react-intl` — never hardcode user-facing strings.
 
 When adding a new route:
 
 1. Create `app/routes/<flat-route-name>/index.tsx` (or `<flat-route-name>.tsx`).
-2. Export `loader` if you need data — `import` the JSON from `public/data/` directly (Vite bakes it into the server bundle, no HTTP hop). Single Fetch is on, so return a raw object; use `data(payload, { headers })` from `@remix-run/cloudflare` only when you need to set response headers or a custom status.
+2. Export `loader` if you need data — `import` the JSON from `public/data/` directly (Vite bakes it into the server bundle, no HTTP hop). Single Fetch is on by default; return a raw object, or use `data(payload, { headers, status })` from `react-router` when you need response headers or a custom status. If the route needs to expose those headers on the response (e.g. cache-control), also export a `headers` function that returns `loaderHeaders`.
 3. Add a `style.css` next to the route if it has styles, and `@import` any components it consumes at the top of that file (see §6). Export `links` listing the route's own stylesheet, plus any per-route `<link rel="preload">` entries (e.g. fonts that are only needed on this route — Monaspace lives on `/skills`, `/skills/:uuid`, and `/education/:slug`).
 4. Add a NavBar entry in [app/components/NavBar/index.tsx](app/components/NavBar/index.tsx) `MAIN_NAV` if the route should be reachable from the nav.
 5. Optionally export a route-local `ErrorBoundary` (skills.\$uuid does this).
@@ -491,7 +500,7 @@ When adding a new route:
 ## 15. Gotchas
 
 - **`app/components/icons/` is generated** — it's in `eslint.config.js`'s `ignores` block and `.ls-lint.yml`'s ignore list, and the lint pipeline will fail if you check it in by hand with bad names. Always go through SVGR.
-- **npm peer-deps resolve cleanly without `--legacy-peer-deps`.** Two upstream peer ranges were forcing `legacy-peer-deps=true` previously: `@types/react@19` against `react@18`, and `@remix-run/dev@2.17`'s `wrangler@^3` peerOptional against the project's `wrangler@^4`. Fixed by pinning `@types/react` + `@types/react-dom` to `^18.x` and adding an `overrides` block in `package.json` that maps `@remix-run/dev`'s wrangler peer to the project-pinned `$wrangler`. If a future dep bump reintroduces a real conflict, add an explicit override instead of restoring the global flag.
+- **npm peer-deps resolve cleanly without `--legacy-peer-deps`.** `@types/react` + `@types/react-dom` are pinned to `^18.x` to match `react@18`. The pre-migration `overrides` block for `@remix-run/dev`'s `wrangler@^3` peer is gone; `@react-router/dev` doesn't need it.
 - **Type annotations on dates**: `formatDate(start, end)` has three overloaded behaviors keyed off `formatType` and the shape of `end` (`undefined` → `"MM/yyyy - Present"`, `''` → `"MMMM yyyy"`, otherwise → `"MM/yyyy - MM/yyyy"`); see [app/utils/utils.tsx](app/utils/utils.tsx).
 - **Skills route loader 1h cache**: `/skills` sets `Cache-Control: public, max-age=3600`. After editing `skills.json`, expect up to an hour of stale data on prod.
 - **Image path lookup in `skills.$uuid`** lowercases the work-item title; new companies need a `public/assets/img/<lowercased-title>.webp` file or another override branch. Also add an entry to `LOGO_DIMS` in the loader so the `<img>` gets `width`/`height` and doesn't cause CLS.
@@ -524,5 +533,5 @@ Before opening a PR:
 
 - Live site: <https://gonzalo-alvarez-campos-cv.com/>
 - Repo: <https://github.com/Alvacampos/remix-portfolio>
-- Remix docs: <https://remix.run/docs>
+- React Router docs: <https://reactrouter.com/>
 - Cloudflare Pages docs: <https://developers.cloudflare.com/pages/>

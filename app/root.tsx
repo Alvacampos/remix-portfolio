@@ -1,4 +1,5 @@
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
+import { IntlProvider } from 'react-intl';
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 import {
   isRouteErrorResponse,
   Links,
@@ -9,8 +10,7 @@ import {
   useLoaderData,
   useRouteError,
   useRouteLoaderData,
-} from '@remix-run/react';
-import { IntlProvider } from 'react-intl';
+} from 'react-router';
 
 import NavBar from '~/components/NavBar';
 import { type Locale, messagesFor, pickLocale } from '~/intl';

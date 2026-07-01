@@ -1,6 +1,6 @@
-import { useNavigate, useSearchParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import { type Locale, SUPPORTED_LOCALES } from '~/intl';
 import { getClassMaker } from '~/utils/utils';

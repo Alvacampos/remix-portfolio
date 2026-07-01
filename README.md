@@ -2,7 +2,9 @@
 
 Personal portfolio + online CV for Gonzalo Alvarez Campos, built with [Remix](https://remix.run/) v2.17 and deployed on [Cloudflare Pages](https://pages.cloudflare.com/). Live at <https://gonzalo-alvarez-campos-cv.com/>.
 
-Bilingual (English + Spanish) with a visible locale toggle, a downloadable CV (PDF), per-route Open Graph previews, dark/light theming, and a print stylesheet. A future migration to [React Router v7](https://reactrouter.com/) is on the roadmap ([TECH-DEBT.md](TECH-DEBT.md), entry T9) but not actively planned.
+Bilingual (English + Spanish) with a visible locale toggle, a downloadable CV (PDF), per-route Open Graph previews, dark/light theming, and a print stylesheet.
+
+**Framework:** [React Router v7](https://reactrouter.com/) in framework mode, deployed to Cloudflare Workers + Static Assets. Migrated from Remix v2 + CF Pages in July 2026 — see [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md) for the migration story.
 
 ---
 

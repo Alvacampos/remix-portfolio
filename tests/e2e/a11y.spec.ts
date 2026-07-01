@@ -45,7 +45,7 @@ test.describe('Accessibility (axe)', () => {
             return `  - [${v.impact}] ${v.id}: ${v.help}\n      ${nodes}`;
           })
           .join('\n');
-        // eslint-disable-next-line no-console
+
         console.error(`axe found ${blocking.length} blocking violation(s) on ${path}:\n${summary}`);
       }
 

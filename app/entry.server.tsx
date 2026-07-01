@@ -4,16 +4,24 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
-import type { AppLoadContext, EntryContext } from '@remix-run/cloudflare';
-import { RemixServer } from '@remix-run/react';
 import { isbot } from 'isbot';
-import { renderToReadableStream } from 'react-dom/server';
+// `react-dom/server` only ships `renderToPipeableStream` (Node
+// streams) in the Node ESM entry — `renderToReadableStream` (Web
+// Streams) lives at `react-dom/server.browser`. Both Cloudflare
+// Workers (V8 has native Web Streams) and Node 18+ can execute the
+// browser subpath, so this single import path works for the Workers
+// prod runtime AND Vite's Node SSR dev runtime. Under Remix v2 the
+// Cloudflare adapter installed a shim that made the export available
+// from the plain `react-dom/server` path; RR v7 does not.
+import { renderToReadableStream } from 'react-dom/server.browser';
+import type { AppLoadContext, EntryContext } from 'react-router';
+import { ServerRouter } from 'react-router';
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  reactRouterContext: EntryContext,
   // This is ignored so we can keep it in the template for visibility.  Feel
   // free to delete this parameter in your app if you're not using it!
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,7 +29,7 @@ export default async function handleRequest(
 ) {
   let status = responseStatusCode;
   const body = await renderToReadableStream(
-    <RemixServer context={remixContext} url={request.url} />,
+    <ServerRouter context={reactRouterContext} url={request.url} />,
     {
       signal: request.signal,
       onError(error: unknown) {

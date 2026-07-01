@@ -1,8 +1,7 @@
-import type { ActionFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
-import { data } from '@remix-run/cloudflare';
-import { Form, useActionData, useNavigation } from '@remix-run/react';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import type { ActionFunctionArgs, MetaFunction } from 'react-router';
+import { data, Form, useActionData, useNavigation } from 'react-router';
 import { z } from 'zod';
 
 import { mergeRouteMeta } from '~/utils/meta';
