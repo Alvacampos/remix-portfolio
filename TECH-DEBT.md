@@ -178,6 +178,9 @@ The safety-net branch `remix-version-backup` remains on origin at the last known
 
 - **Static assets need explicit `env.ASSETS.fetch(request)` delegation from `workers/app.ts`.** With `run_worker_first: true`, every request hits the Worker first — including `/assets/*`, `/fonts/*`, `/favicon.ico`, etc. The RR handler returns 404 for those. Workaround: `workers/app.ts` checks a small allowlist of static-prefix paths and hands them off to `env.ASSETS.fetch(request)` before the RR handler runs. This replaces the Pages `_routes.json` exclusion list.
 - **`virtual:react-router/server-build`** is only resolvable inside Vite. `wrangler dev` chokes on it. Use the classic pattern instead: `import * as build from '../build/server'`.
+- **`renderToReadableStream` doesn't exist on `react-dom/server` in Node.** The codemod leaves it there — works in Workers (V8) but blows up under `react-router dev` (Vite's Node SSR runtime treats `/server` as CJS-only, and the Node build doesn't export `renderToReadableStream` anyway). Fix: `import { renderToReadableStream } from 'react-dom/server.browser'`. Web Streams path works in both runtimes. Added `app/react-dom-server-browser.d.ts` to shim types since `@types/react-dom` doesn't declare the subpath.
+- **`workers/app.ts`'s `../build/server` import needs eslint-disable for `import/no-unresolved`.** The file only exists after `npm run build`; CI runs lint before build. Locally you might not notice if `build/` is present. Same pattern the old `functions/[[path]].ts` used.
+- **Phase C (`Route.LoaderArgs` type migration) was skipped as unnecessary.** The pre-migration plan called for adopting the generated `Route.LoaderArgs` / `Route.ComponentProps` pattern because `useLoaderData<typeof loader>()` "silently lies" under Single Fetch's turbo-stream serialiser (which preserves `Date`/`Map`/`undefined` where JSON-narrowed types don't). Audited our loaders post-migration: none of them return those types in their payloads (Date is used internally to compute numbers; nothing exports Map or undefined). The classic typing is accurate for our codebase. Not worth the mechanical churn or the tsc-`.js`-extension fight in `.react-router/types/`. Re-open if a future loader returns a `Date` object.
 
 **What the investigation surfaced** (record so future-self doesn't relearn it cold):
 
@@ -191,11 +194,13 @@ The safety-net branch `remix-version-backup` remains on origin at the last known
 - **Cloudflare's official 2026 stance is "RR v7 apps run on Workers, not Pages".** There is no first-party `@react-router/cloudflare-pages` adapter, and the "Pages-via-bridge" path I documented in the original investigation is fragile — the codemod doesn't support it cleanly, so the migration is effectively forced into a Pages → Workers deploy change in the same PR as the framework swap.
 - **Scope estimate:** 30–50 files changed in one combined PR (codemod output + manual fixes + `workers/app.ts` + `wrangler.jsonc` + `_headers`/`_routes.json` port + `ci.yml` updates + `load-context.ts` + test-utils + Storybook preview). Multi-hour focused session, not "do it while we chat".
 
-**Original three-PR plan (kept for reference if Bundle 4 is unparked):**
+**Original three-PR plan** (kept for reference — actually shipped as a single combined PR + a follow-up docs commit, not the split originally imagined):
 
 1. **PR 1 — Codemod + dep swap.** Run codemod, manually fix the bogus `@react-router/cloudflare-pages` reference, create `app/routes.ts` + `react-router.config.ts`, drop `app/single-fetch.d.ts`, delete the `react-router-dom` pin, drop all `v3_*` future flags. Keep deploying to CF Pages via the transitional bridge.
 2. **PR 2 — Cloudflare Workers cutover.** Replace `functions/[[path]].ts` with `workers/app.ts`, port `_headers` + `_routes.json` into `wrangler.jsonc`, set `run_worker_first: true`, smoke-test against a `*.workers.dev` URL **before** flipping the custom-domain DNS. Highest-risk PR.
-3. **PR 3 — Type cleanup.** Migrate loaders/components to `Route.LoaderArgs` / `Route.ComponentProps`; regen visual baselines if anything shifts.
+3. **PR 3 — Type cleanup.** _Dropped_ — the audit showed our loaders don't emit types Single Fetch would preserve differently. See the last bullet under "Migration notes captured for posterity" above.
+
+The single-PR path ended up being cleaner because PRs 1 + 2 turned out to be entangled: the CF Pages bridge the plan assumed (`@react-router/cloudflare-pages`) doesn't exist on npm, so keeping the Pages deploy path alive between PR 1 and PR 2 wasn't actually feasible.
 
 **Investigation findings** (kept verbatim since they're the substantive research output):
 
