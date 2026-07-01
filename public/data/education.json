@@ -50,6 +50,16 @@
     {
       "title": "Certification",
       "title_es": "Certificación",
+      "startDate": "2026-06",
+      "institution": "Claude Certified Architect — Foundations (CCA-F)",
+      "description": "Anthropic's foundational certification for AI-application architects — covers Claude API surface, tool use, MCP, agents, caching, and prompt engineering patterns.",
+      "description_es": "Certificación fundacional de Anthropic para arquitectos de aplicaciones de IA — cubre la API de Claude, tool use, MCP, agentes, caching y patrones de prompt engineering.",
+      "url": "https://www.anthropic.com/claude-certifications",
+      "inProgress": true
+    },
+    {
+      "title": "Certification",
+      "title_es": "Certificación",
       "startDate": "2007-03",
       "institution": "University of Cambridge",
       "description": "Level 1 Certificate in English (ESOL), First Certificate in English",

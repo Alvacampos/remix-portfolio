@@ -201,6 +201,16 @@
       ]
     },
     {
+      "name": "Claude Code",
+      "category": "ai",
+      "ranges": [
+        {
+          "jobId": 6,
+          "from": "2025-06"
+        }
+      ]
+    },
+    {
       "name": "Cloudflare",
       "category": "infra",
       "ranges": [
@@ -306,6 +316,16 @@
         },
         {
           "jobId": 6
+        }
+      ]
+    },
+    {
+      "name": "GitHub Copilot",
+      "category": "ai",
+      "ranges": [
+        {
+          "jobId": 6,
+          "from": "2024-01"
         }
       ]
     },

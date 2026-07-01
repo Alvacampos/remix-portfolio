@@ -97,6 +97,7 @@ export default function Skills() {
 
   const certificationsCards = certifications.map((certification) => ({
     key: certification.institution,
+    inProgress: certification.inProgress ?? false,
     title: localized(certification, 'title', loc),
     texts: [
       `${dateLabel}: ${formatDate(certification.startDate, '', undefined, loc)}`,
@@ -139,8 +140,14 @@ export default function Skills() {
           <FormattedMessage id="CERTIFICATIONS" />
         </h2>
         <div className={getClasses('card-wrapper', 'certification-wrapper')}>
-          {certificationsCards.map(({ key, ...card }) => (
-            <Card {...card} key={key} />
+          {certificationsCards.map(({ key, inProgress, ...card }) => (
+            // Individual wrapper per certification so the in-progress
+            // badge can hang off its top edge via absolute positioning
+            // — mirrors the pattern used for the two degree cards above.
+            <div className={getClasses('card-wrapper')} key={key}>
+              {inProgress && inProgressBadge}
+              <Card {...card} />
+            </div>
           ))}
         </div>
       </div>

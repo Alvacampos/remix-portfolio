@@ -397,12 +397,25 @@ If anything goes wrong post-DNS-flip:
 
 ## 7. Known landmines (re-read before starting)
 
+**Discovered pre-migration** (in the investigation phase):
+
 - **`@react-router/cloudflare-pages` does not exist.** The codemod's package.json template adds it; delete the line manually. Forgetting this is the #1 way to get stuck on `npm install`.
 - **`overrides.@remix-run/dev` block** in package.json must be deleted too — the wrangler-peer-dep workaround it carries is no longer needed since RR v7's adapter is fine with wrangler v4.
-- **`useLoaderData<typeof loader>()` silently degrades.** Tsc won't catch it. Only the generated `Route.ComponentProps` pattern (Phase C) gives accurate types under Single Fetch's turbo-stream serialiser.
 - **Visual baselines will likely shift.** Hydration script tags and the Layout export pattern can produce a few-px diff. Plan one CI regen pass via `gh workflow run regen-baselines.yml`.
-- **CF Pages auto-deploy via git is the deploy path today.** After migrating, **verify Workers has a similar git-integration set up** in the CF dashboard, OR be ready to deploy manually via `wrangler deploy` on every push. If CF Workers doesn't auto-deploy from git on your account tier, you'll need a GitHub Actions step calling `wrangler deploy`.
 - **`.dev.vars` keeps working** for local dev — both Pages and Workers wrangler dev loads it. No change needed for the contact form's local-dev secret.
+
+**Discovered during the actual migration** (added post-hoc, so any future reader has them):
+
+- **`renderToReadableStream` is not on `react-dom/server` in Node.** The codemod leaves `import { renderToReadableStream } from 'react-dom/server'` in `entry.server.tsx`. Workers is fine with this (V8 has Web Streams). Node isn't — the plain `/server` subpath is CJS-only, and the Node build doesn't export `renderToReadableStream` at all. Fix: `import { renderToReadableStream } from 'react-dom/server.browser'`. Web Streams works in both Node 18+ and Workers. `@types/react-dom` doesn't type `.browser`; add a `.d.ts` shim that re-exports from `react-dom/server`.
+- **The `flatRoutes()` scanner sees every file in `app/routes/`, including `.css`.** Under Remix v2, `app/routes/style.css` (used by the home route) was harmless — the routes plugin only looked at `.tsx`. RR v7's `@react-router/fs-routes` treats it as a route candidate and crashes. Move the home route into a folder (`app/routes/_index/index.tsx` + `_index/style.css`) so the CSS is a route-adjacent asset, not a top-level file.
+- **Loader response headers don't propagate without an explicit `headers` export.** Remix v2's `data(payload, { headers })` set the response headers automatically. RR v7's Single Fetch aggregates across matched routes and requires each route that wants headers exposed to `export function headers({ loaderHeaders }) { return loaderHeaders; }`. Only `/skills` needed this in our app (for its 1h cache); if you add another cache-header route, add the export.
+- **`run_worker_first: true` needs an explicit `env.ASSETS.fetch()` fallback for static paths.** Without one, `/assets/*`, `/fonts/*`, `/favicon.ico` all return 404 because the Worker's RR handler doesn't recognise them. `workers/app.ts` checks a small allowlist before invoking the request handler.
+- **The `../build/server` import in `workers/app.ts` fails lint on a fresh clone.** `import/no-unresolved` fires because `build/` is gitignored and CI runs lint before build. Add both rules to the eslint-disable directive (`no-restricted-imports, import/no-unresolved`).
+- **CF Pages git-integration doesn't carry over to Workers.** After the migration, the Pages project is orphaned but its git-auto-deploy is still active — meaning any push to `main` will trigger a Pages build that no longer has `wrangler.toml` or `functions/`. Either (a) disconnect the Pages git integration before merging the migration PR, or (b) accept that Pages builds will fail post-migration until you remove the project. Separately, wire up **CF Workers Build** (git integration on the Worker side) or a GitHub Actions `wrangler deploy` step for the new deploy path.
+
+**Non-issues that the pre-migration plan flagged but didn't materialise:**
+
+- **`useLoaderData<typeof loader>()` typing under Single Fetch.** The pre-migration plan called out that this "silently lies" about preserved `Date`/`Map`/`undefined`. In practice, none of our loaders emit those types in their return payloads — they compute `Date` internally to derive numbers (e.g., `yearsOfExp`) but don't pass Date objects out. The classic typing works fine for our codebase; no Phase C `Route.LoaderArgs` adoption needed. If a future loader returns a `Date`, revisit.
 
 ---
 
