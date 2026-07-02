@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-26T17:13:53.577Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-07-02T16:33:23.767Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "f4995be",
+  "commit": "b0daa9d",
   "categories": {
-    "performance": 0.98,
+    "performance": 0.93,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "1.5 s",
-      "numericValue": 1522.2221,
-      "score": 0.95
+      "displayValue": "2.2 s",
+      "numericValue": 2182.4675,
+      "score": 0.78
     },
     "lcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2272.2221,
-      "score": 0.94
+      "displayValue": "2.9 s",
+      "numericValue": 2898.7012499999996,
+      "score": 0.81
     },
     "si": {
-      "displayValue": "1.5 s",
-      "numericValue": 1522.2221,
-      "score": 1
+      "displayValue": "2.2 s",
+      "numericValue": 2182.4675,
+      "score": 0.99
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,27 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.3 s",
-      "numericValue": 2272.2221,
-      "score": 0.99
+      "displayValue": "2.9 s",
+      "numericValue": 2906.20125,
+      "score": 0.96
     },
-    "ttfb": 73
+    "ttfb": 48
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.95
+      "score": 0.78
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.94
+      "score": 0.81
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.99
+      "score": 0.96
     },
     {
       "id": "unused-javascript",
@@ -77,7 +82,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }

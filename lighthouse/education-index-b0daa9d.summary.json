@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-26T19:37:23.219Z",
+  "fetchTime": "2026-07-02T16:33:11.197Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "f2347f5",
+  "commit": "b0daa9d",
   "categories": {
-    "performance": 0.94,
+    "performance": 0.92,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2190.4758,
-      "score": 0.78
+      "displayValue": "2.3 s",
+      "numericValue": 2331.4082000000003,
+      "score": 0.73
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2636.5826500000003,
-      "score": 0.87
+      "displayValue": "2.9 s",
+      "numericValue": 2869.2246,
+      "score": 0.81
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2190.4758,
-      "score": 0.99
+      "displayValue": "2.3 s",
+      "numericValue": 2331.4082000000003,
+      "score": 0.98
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,32 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2637.8195450000003,
-      "score": 0.98
+      "displayValue": "2.9 s",
+      "numericValue": 2876.7246000000005,
+      "score": 0.96
     },
-    "ttfb": 96
+    "ttfb": 28
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.78
+      "score": 0.73
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.87
+      "score": 0.81
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
+      "score": 0.96
     },
     {
       "id": "unused-javascript",
@@ -72,7 +72,7 @@
     {
       "id": "cache-insight",
       "title": "Use efficient cache lifetimes",
-      "score": 0
+      "score": 0.5
     },
     {
       "id": "network-dependency-tree-insight",
@@ -82,7 +82,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
