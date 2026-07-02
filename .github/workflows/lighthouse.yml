@@ -1,11 +1,14 @@
 name: Lighthouse
 
-# Runs Lighthouse against production after a push to main lands. Cloudflare
-# Pages auto-deploys merged main commits in ~30-90s, so the workflow waits
-# 90s before measuring to make sure it scores the new code, not the prior
-# version still cached at the edge. (Cloudflare Pages doesn't expose the
-# deployed commit SHA in response headers, so polling-until-match isn't
-# straightforward — a fixed sleep is the pragmatic compromise.)
+# Runs Lighthouse against production after a push to main lands. The
+# sibling `deploy.yml` workflow builds + deploys the same commit; the
+# 90s sleep below gives it time to finish (~60-90s wall-clock in
+# practice: npm ci + build + wrangler upload) before we start scoring
+# the new code. Loose coupling — Lighthouse doesn't `needs: deploy`
+# because a deploy failure shouldn't hide a Lighthouse regression on
+# the currently-serving bundle. If deploy hung, we'd notice via the
+# deploy workflow failing surface, not by Lighthouse silently scoring
+# stale code.
 #
 # Output: a small JSON per route at lighthouse/<route>-<sha>.json with
 # the categories + key metrics + failing audits. The workflow commits
