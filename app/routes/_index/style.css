@@ -7,8 +7,12 @@
   justify-content: center;
   /* Fill the visible viewport, minus the bottom-nav height on mobile.
    * --nav-h is 0 at $bp-md (nav is fixed-position there, claims no
-   * vertical space). */
-  min-height: calc(100vh - var(--nav-h));
+   * vertical space). Use `dvh` (dynamic viewport height) so iOS
+   * Chrome's collapsible URL bar doesn't cause the home page to
+   * overflow: `vh` is the *largest* viewport (URL bar hidden), so on
+   * first paint — when the URL bar is still visible — the element
+   * would be taller than the visible area and the page scrolls. */
+  min-height: calc(100dvh - var(--nav-h));
   text-align: center;
   gap: var(--space-32);
   padding: 0 var(--space-20);
