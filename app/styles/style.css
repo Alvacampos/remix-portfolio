@@ -174,7 +174,10 @@ html {
 
 body {
   display: grid;
-  height: 100vh;
+  /* `dvh` tracks the *visible* viewport so iOS Chrome's collapsible
+   * URL bar doesn't leave a ~120px overflow strip below the fold on
+   * first paint (`vh` is the largest viewport = URL bar hidden). */
+  height: 100dvh;
   margin: 0;
   padding: 0;
   grid-template-rows: 1fr min-content;
@@ -217,7 +220,7 @@ main {
   padding: var(--space-40) var(--space-20);
   margin: 0 auto;
   max-width: 600px;
-  min-height: calc(100vh - var(--nav-h));
+  min-height: calc(100dvh - var(--nav-h));
 
   &__code {
     margin: 0;
@@ -328,7 +331,7 @@ main {
      * under it. */
     display: block;
     height: auto;
-    min-height: 100vh;
+    min-height: 100dvh;
     padding-left: var(--space-200);
   }
 }
