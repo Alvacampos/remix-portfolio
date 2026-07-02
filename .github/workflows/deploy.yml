@@ -1,0 +1,73 @@
+name: Deploy
+
+# Post-merge deploy to Cloudflare Workers. Runs on every push to `main`
+# and ships `npm run build` + `wrangler deploy`. Replaces the (flaky)
+# Cloudflare Workers Build git-integration path — see PR #245 for the
+# background: CF's build queue silently hung a merge for 24+ hours,
+# leaving prod on the pre-merge bundle without any surface signal.
+#
+# Why GitHub Actions:
+#   - Deploy logs sit next to the other CI checks — visible, retryable,
+#     easy to correlate with a failing merge commit.
+#   - The `npm ci` + `wrangler deploy` chain uses the same commands
+#     `npm run deploy` runs locally, so a "did the deploy succeed?"
+#     answer is one workflow-run inspection away.
+#   - No dependency on CF's opaque build queue.
+#
+# Auth: `CLOUDFLARE_API_TOKEN` (Workers Edit permission, account-scoped)
+# and `CLOUDFLARE_ACCOUNT_ID` live as repo secrets. The token is created
+# in the CF dashboard under My Profile → API Tokens → "Edit Cloudflare
+# Workers" template.
+#
+# Interaction with the Lighthouse workflow: both listen to push-to-main
+# with concurrency groups. Lighthouse's fixed 90s sleep pre-dates this
+# workflow (was working around CF Workers Build's ~30-90s deploy
+# latency); with this deploy job in the same commit hook, that sleep
+# now runs while this workflow does the actual deploy, which is roughly
+# the right timing. If we ever tighten the Lighthouse wait, we can
+# `needs: deploy` from the Lighthouse workflow — for now the loose
+# coupling is fine.
+
+on:
+  push:
+    branches: [main]
+  # Manual trigger for one-off redeploys (e.g. rollback via `git revert`
+  # + push, or if a deploy needs to run without a code change).
+  workflow_dispatch:
+
+# Never let two deploys race. Latest push wins — an older queued deploy
+# for a superseded commit gets cancelled, so prod always ends up on the
+# latest main.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build + deploy to Cloudflare Workers
+    runs-on: ubuntu-latest
+    # Skip the auto-committed Lighthouse post-scoring commits (`[skip ci]`
+    # in the subject). Those don't touch code, so redeploying them would
+    # only bump the version ID in CF without changing what ships.
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # `wrangler deploy` reads main + assets + bindings from
+          # wrangler.jsonc. No extra flags needed.
+          command: deploy

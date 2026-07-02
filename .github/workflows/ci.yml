@@ -102,11 +102,10 @@ jobs:
   lighthouse-pr:
     name: Lighthouse gate
     # Pre-merge Lighthouse against a production-shape preview build
-    # running locally on the runner. Faster than waiting for the
-    # Cloudflare Pages preview deploy URL (no Cloudflare round-trip
-    # to plumb in), and gates the same code path that ships.
-    # Doesn't catch CDN/edge regressions — the post-merge
-    # .github/workflows/lighthouse.yml run against prod still does.
+    # running locally on the runner. Faster than waiting for a Workers
+    # preview URL (no CF round-trip to plumb in), and gates the same
+    # code path that ships. Doesn't catch CDN/edge regressions — the
+    # post-merge .github/workflows/lighthouse.yml run against prod does.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

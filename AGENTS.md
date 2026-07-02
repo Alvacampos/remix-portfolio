@@ -42,7 +42,7 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 
 **Storybook:** Storybook 10 (Vite framework) with stories colocated next to each component as `index.stories.tsx`. See "Storybook" section below.
 
-CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/workflows/ci.yml](.github/workflows/ci.yml)). A separate Lighthouse workflow ([.github/workflows/lighthouse.yml](.github/workflows/lighthouse.yml)) runs on push to `main`, scores the deployed prod URL across five routes, and commits the per-route summaries back to `lighthouse/` with `[skip ci]` — see [lighthouse/README.md](lighthouse/README.md) for the full flow. Dependabot ([.github/dependabot.yml](.github/dependabot.yml)) bumps deps weekly in grouped ecosystems, prefixed `chore(deps)`.
+CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/workflows/ci.yml](.github/workflows/ci.yml)). A deploy workflow ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) runs on push to `main` and ships `npm run build` + `wrangler deploy` via the `cloudflare/wrangler-action`. A separate Lighthouse workflow ([.github/workflows/lighthouse.yml](.github/workflows/lighthouse.yml)) runs on push to `main`, scores the deployed prod URL across five routes, and commits the per-route summaries back to `lighthouse/` with `[skip ci]` — see [lighthouse/README.md](lighthouse/README.md) for the full flow. Dependabot ([.github/dependabot.yml](.github/dependabot.yml)) bumps deps weekly in grouped ecosystems, prefixed `chore(deps)`.
 
 ---
 
@@ -110,9 +110,9 @@ From [package.json](package.json):
 | ---------------------------- | ---------------------------------------------------------------------------------- |
 | `npm run dev`                | `react-router dev` — local dev server on **port 8788**                             |
 | `npm run build`              | `NODE_ENV=production react-router build` — emits `build/client` and `build/server` |
-| `npm run start`              | `wrangler pages dev ./build/client` — preview the built bundle on Pages            |
-| `npm run preview`            | `npm run build && wrangler pages dev`                                              |
-| `npm run deploy`             | `npm run build && wrangler pages deploy` — deploys to Cloudflare Pages             |
+| `npm run start`              | `wrangler dev` — preview the built bundle locally                                  |
+| `npm run preview`            | `npm run build && wrangler dev`                                                    |
+| `npm run deploy`             | `npm run build && wrangler deploy` — deploys to Cloudflare Workers                 |
 | `npm run typecheck`          | `tsc` (no emit)                                                                    |
 | `npm run typegen`            | `wrangler types` — regenerates `worker-configuration.d.ts` from bindings           |
 | `npm run cf-typegen`         | Alias of the above                                                                 |
