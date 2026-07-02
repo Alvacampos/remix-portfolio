@@ -1,0 +1,50 @@
+name: Dependabot auto-merge
+
+# Auto-merge Dependabot PRs that clear all CI checks — but only for
+# safe update types (patch + minor). Majors always go through a human
+# because they've historically been the ones that broke (eslint@9→10
+# peer chain, react-router@7→8 framework churn, etc.).
+#
+# Interaction with branch protection: this uses `gh pr merge --auto`,
+# which QUEUES the merge until required status checks pass. Without
+# branch protection requiring status checks on `main`, `--auto` would
+# merge immediately without waiting — so branch protection is a
+# load-bearing prerequisite. See AGENTS.md CI section for the setting.
+#
+# The `dependabot/fetch-metadata` action reads the PR body and tells us
+# the semver bump size (patch/minor/major). We gate on that to keep
+# majors out of the auto-lane; a human still reviews them.
+
+on: pull_request_target
+
+# `pull_request_target` grants secrets to the workflow even though the
+# PR is authored by a bot. Required for `gh pr merge` to authenticate;
+# we don't check out PR code so we're not exposing secrets to
+# untrusted code.
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    # Only run on Dependabot's own PRs — every other author is out
+    # of scope.
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for patch or minor updates
+        # `--auto` queues the merge until required status checks pass.
+        # `--squash` matches this repo's merge style.
+        if: >
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --squash "$PR_URL"

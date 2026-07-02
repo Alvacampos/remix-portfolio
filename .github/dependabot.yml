@@ -47,6 +47,42 @@ updates:
         patterns:
           - "wrangler"
           - "@cloudflare/*"
+    # Deferred majors — Dependabot reopens the same PR every week
+    # otherwise. Each entry has a specific reason; revisit the reasons
+    # when TECH-DEBT.md flips them to "in progress" or upstream unblocks.
+    ignore:
+      # ESLint 10 blocked by eslint-plugin-import@2.32's peer cap at
+      # eslint@9. Revisit when the plugin drops eslint@9 support.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "globals"
+        update-types: ["version-update:semver-major"]
+      # React Router 8 migration is deliberately deferred — see the
+      # 2026-07-02 conversation and TECH-DEBT.md. We just landed RR 7
+      # from Remix v2; another framework migration would be pure churn.
+      - dependency-name: "react-router"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@react-router/*"
+        update-types: ["version-update:semver-major"]
+      # React 19 is a separate investigation: defaultProps deprecation
+      # on function components, new JSX transform, hydration behaviour
+      # changes. Also gated by react-intl@7's TS peer of `^5.6.0` (see
+      # 2026-07-01 TS 6 rollback), and by @types/react needing to
+      # stay in lock-step with react itself.
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
+      # TypeScript 6 blocked by react-intl@7 peer cap at `^5.6.0`.
+      # Revisit on react-intl@8+.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
