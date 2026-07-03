@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-30T19:03:29.480Z",
+  "fetchTime": "2026-07-03T17:20:23.858Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "lighthouseVersion": "13.4.0",
-  "commit": "1f9fb58",
+  "commit": "31ee6da",
   "categories": {
-    "performance": 0.93,
+    "performance": 0.9,
     "accessibility": 1,
     "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2166.5279,
-      "score": 0.79
+      "displayValue": "2.4 s",
+      "numericValue": 2423.0580999999997,
+      "score": 0.7
     },
     "lcp": {
-      "displayValue": "2.9 s",
-      "numericValue": 2949.79185,
-      "score": 0.79
+      "displayValue": "3.2 s",
+      "numericValue": 3207.6452500000005,
+      "score": 0.72
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2166.5279,
-      "score": 0.99
+      "displayValue": "2.4 s",
+      "numericValue": 2423.0580999999997,
+      "score": 0.98
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,32 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.9 s",
-      "numericValue": 2949.79185,
-      "score": 0.96
+      "displayValue": "3.2 s",
+      "numericValue": 3215.1452500000005,
+      "score": 0.94
     },
-    "ttfb": 94
+    "ttfb": 38
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.79
+      "score": 0.7
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.79
+      "score": 0.72
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.96
+      "score": 0.94
     },
     {
       "id": "image-aspect-ratio",
@@ -87,7 +87,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
