@@ -14,7 +14,7 @@ import { isbot } from 'isbot';
 // Cloudflare adapter installed a shim that made the export available
 // from the plain `react-dom/server` path; RR v7 does not.
 import { renderToReadableStream } from 'react-dom/server.browser';
-import type { AppLoadContext, EntryContext } from 'react-router';
+import type { EntryContext, RouterContextProvider } from 'react-router';
 import { ServerRouter } from 'react-router';
 
 export default async function handleRequest(
@@ -25,7 +25,7 @@ export default async function handleRequest(
   // This is ignored so we can keep it in the template for visibility.  Feel
   // free to delete this parameter in your app if you're not using it!
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: AppLoadContext
+  loadContext: RouterContextProvider
 ) {
   let status = responseStatusCode;
   const body = await renderToReadableStream(

@@ -11,7 +11,7 @@ Personal portfolio / online CV for **Gonzalo Alvarez Campos**, deployed at <http
 
 - Single-page-feel multi-route web app showcasing work history, skills, education, and a downloadable CV (PDF).
 - The frontend is the entire product today. Cloudflare Workers handle SSR via the Worker at [workers/app.ts](workers/app.ts); there's no separate backend service. Future server-side concerns (e.g. the `/contact` route's action) land as route actions inside the same Worker.
-- Migrated from Remix v2 → React Router v7 in Bundle 4 (see [TECH-DEBT.md](TECH-DEBT.md) T9). Full migration notes + landmines in [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md).
+- Migrated from Remix v2 → React Router v7 in Bundle 4, then to React Router v8 in the 2026-07-03 deps sweep (see [TECH-DEBT.md](TECH-DEBT.md) T9). Full v2→v7 migration notes + landmines in [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md); v7→v8 was mostly a rename (`MetaArgs.data` → `.loaderData`) + the load-context refactor from plain object to `RouterContextProvider`.
 
 The site is content-driven: routes load static JSON files from [public/data/](public/data/) at request time and render them.
 
@@ -21,11 +21,11 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 
 | Layer             | Tech                                                                                                         |
 | ----------------- | ------------------------------------------------------------------------------------------------------------ |
-| Framework         | [React Router](https://reactrouter.com/) v7 (framework mode, Vite plugin)                                    |
+| Framework         | [React Router](https://reactrouter.com/) v8 (framework mode, Vite plugin)                                    |
 | Build / dev       | Vite 5 + `@react-router/dev` Vite plugin, Terser minification (sourcemaps off in prod)                       |
 | Runtime / hosting | Cloudflare Workers + Static Assets (Worker at [workers/app.ts](workers/app.ts))                              |
 | Wrangler          | v4 (`wrangler dev` / `wrangler deploy`)                                                                      |
-| UI                | React 18 + TypeScript                                                                                        |
+| UI                | React 19 + TypeScript 6                                                                                      |
 | Routing           | React Router flat routes via `@react-router/fs-routes` ([app/routes.ts](app/routes.ts))                      |
 | Styling           | PostCSS (extend-rule, import, nested, simple-vars) + BEM via `getClassMaker`                                 |
 | i18n              | `react-intl` (English + Spanish; `?lang=` → `locale` cookie → `Accept-Language`; see [app/intl/](app/intl/)) |
@@ -36,13 +36,13 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Linting           | ESLint 9 flat-config + Prettier, Stylelint, ls-lint                                                          |
 | Type-check        | `tsc --noEmit` (Vite handles emit)                                                                           |
 | Node              | `>=22.0.0` (`.nvmrc` pins `v22.22.2` — Wrangler 4 floor)                                                     |
-| npm               | strict peer deps; no overrides block required post-RR v7 migration                                           |
+| npm               | strict peer deps; no overrides block required post-RR v8 migration                                           |
 
 **Tests:** Vitest + React Testing Library for components/utils, Playwright for E2E (chromium + Pixel 7 mobile project). See "Tests" section below.
 
 **Storybook:** Storybook 10 (Vite framework) with stories colocated next to each component as `index.stories.tsx`. See "Storybook" section below.
 
-CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/workflows/ci.yml](.github/workflows/ci.yml)). A deploy workflow ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) runs on push to `main` and ships `npm run build` + `wrangler deploy` via the `cloudflare/wrangler-action`. A separate Lighthouse workflow ([.github/workflows/lighthouse.yml](.github/workflows/lighthouse.yml)) runs on push to `main`, scores the deployed prod URL across five routes, and commits the per-route summaries back to `lighthouse/` with `[skip ci]` — see [lighthouse/README.md](lighthouse/README.md) for the full flow. Dependabot ([.github/dependabot.yml](.github/dependabot.yml)) bumps deps weekly in grouped ecosystems, prefixed `chore(deps)`; patch + minor bumps that pass CI are auto-merged by [.github/workflows/dependabot-auto-merge.yml](.github/workflows/dependabot-auto-merge.yml), which relies on branch protection to require all status checks before merging. Blocked major upgrades (ESLint 10, React 19, React Router 8, TypeScript 6 — see the `ignore` block in `dependabot.yml` for the reason on each) are excluded from update proposals entirely; revisit the reasons when unblocking.
+CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/workflows/ci.yml](.github/workflows/ci.yml)). A deploy workflow ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) runs on push to `main` and ships `npm run build` + `wrangler deploy` via the `cloudflare/wrangler-action`. A separate Lighthouse workflow ([.github/workflows/lighthouse.yml](.github/workflows/lighthouse.yml)) runs on push to `main`, scores the deployed prod URL across five routes, and commits the per-route summaries back to `lighthouse/` with `[skip ci]` — see [lighthouse/README.md](lighthouse/README.md) for the full flow. Dependabot ([.github/dependabot.yml](.github/dependabot.yml)) bumps deps weekly in grouped ecosystems, prefixed `chore(deps)`; patch + minor bumps that pass CI are auto-merged by [.github/workflows/dependabot-auto-merge.yml](.github/workflows/dependabot-auto-merge.yml), which relies on branch protection to require all status checks before merging. Blocked major upgrades (ESLint 10, `@cloudflare/workers-types` 5 — see the `ignore` block in `dependabot.yml` for the reason on each) are excluded from update proposals entirely; revisit the reasons when unblocking.
 
 ---
 
@@ -50,7 +50,7 @@ CI runs lint, typecheck, unit, E2E, and `build-storybook` on every PR ([.github/
 
 ```
 remix-portfolio/
-├── app/                          # React Router v7 app source
+├── app/                          # React Router v8 app source
 │   ├── root.tsx                  # HTML shell, IntlProvider, NavBar, error boundary
 │   ├── routes.ts                 # `flatRoutes()` — file-based routing entry
 │   ├── entry.client.tsx          # hydrateRoot in StrictMode (HydratedRouter)
@@ -81,7 +81,7 @@ remix-portfolio/
 │   └── utils/
 │       ├── utils.tsx              # getClassMaker, formatDate, getSkillHeatmapData, getSkillGroupsForJob, getAllSkillGroups, getSkillSuggestions, localized, getCvUrl
 │       └── meta.ts                # mergeRouteMeta (per-route title + OG/Twitter merger)
-├── workers/app.ts                # Cloudflare Worker — serves the RR v7 server build + delegates static assets to `env.ASSETS`
+├── workers/app.ts                # Cloudflare Worker — serves the RR v8 server build + delegates static assets to `env.ASSETS`
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
 │   ├── robots.txt + sitemap.xml  # SEO basics
@@ -90,10 +90,10 @@ remix-portfolio/
 │   ├── assets/files/             # CV PDF
 │   └── _headers                  # Cache-Control headers for static assets (read by CF Workers + Static Assets)
 ├── build/                        # Vite output (gitignored): build/client + build/server
-├── load-context.ts               # Augments RR v7 AppLoadContext with `cloudflare: { env, ctx }`
+├── load-context.ts               # Augments the wrangler-generated `Env` with secret-only bindings (RESEND_API_KEY, ...)
 ├── worker-configuration.d.ts     # Generated `interface Env` (run `npm run cf-typegen`)
 ├── wrangler.jsonc                # Workers config: main, assets, KV bindings, vars, `run_worker_first`
-├── react-router.config.ts        # RR v7 config: `{ ssr: true }`
+├── react-router.config.ts        # RR v8 config: `{ ssr: true }`
 ├── vite.config.ts
 ├── tsconfig.json + jsconfig.json # `~/*` → `./app/*`
 ├── postcss.config.js + svgo.config.cjs + svgr.config.cjs
@@ -137,11 +137,11 @@ From [package.json](package.json):
 
 ## 5. Routing
 
-React Router v7 flat-routes convention via `@react-router/fs-routes`'s `flatRoutes()`, wired in [app/routes.ts](app/routes.ts). The route directory names (`_index/`, `skills.$uuid/`, `contact._index/`, etc.) carry over unchanged from the Remix v2 era.
+React Router v8 flat-routes convention via `@react-router/fs-routes`'s `flatRoutes()`, wired in [app/routes.ts](app/routes.ts). The route directory names (`_index/`, `skills.$uuid/`, `contact._index/`, etc.) carry over unchanged from the Remix v2 era.
 
-**Single Fetch is the default in RR v7.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `react-router` only when you need to set response headers or a custom status.
+**Single Fetch is the default in RR v8.** Loaders return raw objects (no `json()`). Use `data(payload, { headers, status })` from `react-router` only when you need to set response headers or a custom status.
 
-**Response headers from loaders require an explicit `headers` export.** In Remix v2 the second arg to `data()` propagated response headers automatically; in RR v7's Single Fetch aggregation, each route has to opt in:
+**Response headers from loaders require an explicit `headers` export.** In Remix v2 the second arg to `data()` propagated response headers automatically; in RR v8's Single Fetch aggregation, each route has to opt in:
 
 ```ts
 export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
@@ -305,11 +305,12 @@ The English CV PDF is at [public/assets/files/gonzalo_alvarez_campos_cv.pdf](pub
 ## 10. Cloudflare Workers
 
 - [wrangler.jsonc](wrangler.jsonc) — Workers config: `main = "./workers/app.ts"`, `compatibility_date = "2024-07-18"`, `assets.directory = "./build/client"`, `assets.run_worker_first = true`, plus vars (`CONTACT_FROM`, `CONTACT_TO`) and the `RATELIMIT_KV` binding used by the `/contact` action.
-- [workers/app.ts](workers/app.ts) — the Worker's `fetch` entrypoint. Delegates `/assets/*`, `/fonts/*`, `/.well-known/*`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml` to `env.ASSETS.fetch(request)`; everything else routes through the RR v7 request handler with `{ cloudflare: { env, ctx } }` as the load context.
+- [workers/app.ts](workers/app.ts) — the Worker's `fetch` entrypoint. Delegates `/assets/*`, `/fonts/*`, `/.well-known/*`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml` to `env.ASSETS.fetch(request)`; everything else routes through the RR v8 request handler. Builds a `RouterContextProvider` with `{ env, ctx }` pre-set via `cloudflareContext` and passes it as the second argument to `requestHandler(request, context)`.
 - [public/\_headers](public/_headers) — `Cache-Control` headers for the static-asset paths delegated to `env.ASSETS` (`/favicon.ico`, `/assets/*`, `/fonts/*`, `/robots.txt`, `/sitemap.xml`).
-- [load-context.ts](load-context.ts) — augments `AppLoadContext` with `cloudflare: PlatformProxy<Env>`; bindings are accessed via `context.cloudflare.env.*` inside loaders / actions (e.g. `env.RATELIMIT_KV` in the `/contact` action).
+- [app/utils/load-context.ts](app/utils/load-context.ts) — declares `cloudflareContext` (a `RouterContext<Cloudflare>`) and exports `getCloudflare(context)` so loaders/actions can read `{ env, ctx }` off the RR v8 `RouterContextProvider`. Under RR v7 this was a plain-object `AppLoadContext`; the v7→v8 migration replaced it with the typed context API.
+- [load-context.ts](load-context.ts) at the repo root — only augments the wrangler-generated `Env` with secret-only bindings (e.g. `RESEND_API_KEY`). The wrangler-CLI convention expects the file to live at the root; that's the only reason it isn't merged into `app/utils/load-context.ts`.
 
-When you add or change vars / bindings in `wrangler.jsonc`, run `npm run cf-typegen` to regenerate [worker-configuration.d.ts](worker-configuration.d.ts) so `context.cloudflare.env.*` picks up the new fields. Secrets (`RESEND_API_KEY`) are set via `npx wrangler secret put NAME` — no `pages` subcommand, no `--project-name` flag.
+When you add or change vars / bindings in `wrangler.jsonc`, run `npm run cf-typegen` to regenerate [worker-configuration.d.ts](worker-configuration.d.ts) so `env.*` picks up the new fields. Secrets (`RESEND_API_KEY`) are set via `npx wrangler secret put NAME` — no `pages` subcommand, no `--project-name` flag.
 
 ---
 
@@ -400,7 +401,7 @@ Every component in [app/components/](app/components/) has a colocated `index.sto
 
 ### Config
 
-- [.storybook/main.ts](.storybook/main.ts) — picks up `app/**/*.stories.@(ts|tsx|mdx)`, points the Vite builder at [.storybook/vite.config.ts](.storybook/vite.config.ts) (a clean Vite config without the `@react-router/dev` plugin, which only works inside RR v7's own pipeline). Add-ons: a11y, docs, chromatic.
+- [.storybook/main.ts](.storybook/main.ts) — picks up `app/**/*.stories.@(ts|tsx|mdx)`, points the Vite builder at [.storybook/vite.config.ts](.storybook/vite.config.ts) (a clean Vite config without the `@react-router/dev` plugin, which only works inside RR v8's own pipeline). Add-ons: a11y, docs, chromatic.
 - [.storybook/preview.tsx](.storybook/preview.tsx) — one global decorator wraps stories in `IntlProvider` (so `FormattedMessage` works) and a `createMemoryRouter` data router (so `react-router`'s `<Link>` doesn't trip the `useHref` invariant). Imports `app/styles/style.css` so design tokens render.
 
 ### Adding a story
@@ -501,8 +502,8 @@ When adding a new route:
 - **Don't lazy-load + statically import the same component.** Vite emits a "dynamic import will not move module into another chunk" warning and silently falls back to eager loading — defeats the code split. If you `lazy(() => import('~/components/Foo'))` in a route, do **not** also `import { links as fooLinks }` from the same path; let Foo's CSS ride along with the lazy chunk.
 - **Production sourcemaps are off** ([vite.config.ts](vite.config.ts)). Stack traces show minified names. Re-enable temporarily if you're debugging a prod-only crash.
 - **Verify UI changes in a browser.** `npm run dev` is the truth source for visual regressions — type-check, lint, and tests catch a lot but not everything (CSS layout, font rendering, animation timing).
-- **`entry.server.tsx` imports from `react-dom/server.browser`, not `react-dom/server`.** Under Remix v2 the CF adapter installed a shim that made `renderToReadableStream` available from the plain `react-dom/server` path in Node dev. RR v7 doesn't ship that shim — the plain path is CJS-only + no `renderToReadableStream` in Node. The `.browser` subpath ships the Web Streams API which works in both Cloudflare Workers (V8) and Node 18+ (Vite dev). If you ever swap this back to `react-dom/server`, `npm run dev` returns 500s and CI's Playwright webserver times out. `@types/react-dom` doesn't type `.browser`; the shim is in [app/react-dom-server-browser.d.ts](app/react-dom-server-browser.d.ts).
-- **Route loaders that want response headers need an explicit `headers` export.** RR v7's Single Fetch aggregates loader responses across matched routes — `data(payload, { headers })` alone no longer propagates them. Each route that wants edge-cache behaviour (`/skills` is the only one today) also exports `export function headers({ loaderHeaders }) { return loaderHeaders; }`. Copy the export into any new route that returns cache headers.
+- **`entry.server.tsx` imports from `react-dom/server.browser`, not `react-dom/server`.** Under Remix v2 the CF adapter installed a shim that made `renderToReadableStream` available from the plain `react-dom/server` path in Node dev. RR v8 doesn't ship that shim — the plain path is CJS-only + no `renderToReadableStream` in Node. The `.browser` subpath ships the Web Streams API which works in both Cloudflare Workers (V8) and Node 18+ (Vite dev). If you ever swap this back to `react-dom/server`, `npm run dev` returns 500s and CI's Playwright webserver times out. `@types/react-dom` doesn't type `.browser`; the shim is in [app/react-dom-server-browser.d.ts](app/react-dom-server-browser.d.ts).
+- **Route loaders that want response headers need an explicit `headers` export.** RR v8's Single Fetch aggregates loader responses across matched routes — `data(payload, { headers })` alone no longer propagates them. Each route that wants edge-cache behaviour (`/skills` is the only one today) also exports `export function headers({ loaderHeaders }) { return loaderHeaders; }`. Copy the export into any new route that returns cache headers.
 - **Static-asset paths need explicit delegation from `workers/app.ts`.** `run_worker_first: true` in `wrangler.jsonc` means the Worker sees every request first, including `/assets/*`. The RR handler returns 404 for those; `workers/app.ts` checks a small allowlist (`/assets/`, `/fonts/`, `/.well-known/`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml`) and hands them to `env.ASSETS.fetch(request)`. New static-file paths need to be added there.
 - **The workers/app.ts build-server import is un-lint-friendly on a fresh clone.** `import * as build from '../build/server'` points at a file that only exists after `npm run build`. eslint's `import/no-unresolved` + our `no-restricted-imports` both complain. The line has an `eslint-disable-next-line` for both rules — don't strip it thinking the comment is stale.
 

@@ -10,13 +10,10 @@ updates:
     # Group related ecosystems into single PRs so Dependabot opens
     # roughly one PR per ecosystem per week instead of 5+ per day.
     groups:
-      remix:
-        patterns:
-          - "@remix-run/*"
       react-router:
         patterns:
-          - "react-router-dom"
           - "react-router"
+          - "@react-router/*"
       eslint:
         patterns:
           - "eslint"
@@ -48,40 +45,29 @@ updates:
           - "wrangler"
           - "@cloudflare/*"
     # Deferred majors — Dependabot reopens the same PR every week
-    # otherwise. Each entry has a specific reason; revisit the reasons
-    # when TECH-DEBT.md flips them to "in progress" or upstream unblocks.
+    # otherwise. Each entry has a specific reason; revisit when the
+    # upstream unblocks.
     ignore:
-      # ESLint 10 blocked by eslint-plugin-import@2.32's peer cap at
-      # eslint@9. Revisit when the plugin drops eslint@9 support.
+      # ESLint 10 blocked by three plugins that still cap their eslint
+      # peer at ^9 as of 2026-07-03:
+      #   - eslint-plugin-import@2.32   (peer: ^2 || ... || ^9)
+      #   - eslint-plugin-jsx-a11y@6.10  (peer: ^3 || ... || ^9)
+      #   - eslint-plugin-react@7.37     (peer: ^3 || ... || ^9.7)
+      # eslint-plugin-react-hooks@7.x and typescript-eslint@8.x already
+      # widened to ^10, so this comes down to those three. Revisit when
+      # any of them ships a release that accepts eslint@10.
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@eslint/js"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "globals"
-        update-types: ["version-update:semver-major"]
-      # React Router 8 migration is deliberately deferred — see the
-      # 2026-07-02 conversation and TECH-DEBT.md. We just landed RR 7
-      # from Remix v2; another framework migration would be pure churn.
-      - dependency-name: "react-router"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@react-router/*"
-        update-types: ["version-update:semver-major"]
-      # React 19 is a separate investigation: defaultProps deprecation
-      # on function components, new JSX transform, hydration behaviour
-      # changes. Also gated by react-intl@7's TS peer of `^5.6.0` (see
-      # 2026-07-01 TS 6 rollback), and by @types/react needing to
-      # stay in lock-step with react itself.
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-dom"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@types/react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@types/react-dom"
-        update-types: ["version-update:semver-major"]
-      # TypeScript 6 blocked by react-intl@7 peer cap at `^5.6.0`.
-      # Revisit on react-intl@8+.
-      - dependency-name: "typescript"
+      # @cloudflare/workers-types v5 dropped the dated compatibility
+      # subpaths (`/2023-07-01`, `/latest`, ...) — the only entrypoint
+      # left is the main index. Our tsconfig.json still imports
+      # `@cloudflare/workers-types/2023-07-01`. Also blocked by
+      # wrangler@4's peer on `^4.x`; wrangler needs a matching release
+      # before v5 can land. Revisit when wrangler ships v4-that-accepts-5
+      # (or a new major with a widened peer).
+      - dependency-name: "@cloudflare/workers-types"
         update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
