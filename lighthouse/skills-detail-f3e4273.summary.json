@@ -1,34 +1,34 @@
 {
-  "fetchTime": "2026-07-02T18:49:44.138Z",
+  "fetchTime": "2026-07-03T18:57:01.814Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "lighthouseVersion": "13.4.0",
-  "commit": "10d71a5",
+  "commit": "f3e4273",
   "categories": {
-    "performance": 0.92,
+    "performance": 0.97,
     "accessibility": 1,
     "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2205.2655,
-      "score": 0.77
+      "displayValue": "1.5 s",
+      "numericValue": 1548.8726000000001,
+      "score": 0.95
     },
     "lcp": {
-      "displayValue": "3.1 s",
-      "numericValue": 3053.531,
-      "score": 0.76
+      "displayValue": "2.6 s",
+      "numericValue": 2598.8726,
+      "score": 0.88
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2205.2655,
-      "score": 0.99
+      "displayValue": "1.5 s",
+      "numericValue": 1548.8726000000001,
+      "score": 1
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "10 ms",
+      "numericValue": 6,
       "score": 1
     },
     "cls": {
@@ -37,32 +37,27 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.1 s",
-      "numericValue": 3053.531,
-      "score": 0.95
+      "displayValue": "2.6 s",
+      "numericValue": 2598.8726000000006,
+      "score": 0.98
     },
-    "ttfb": 20
+    "ttfb": 32
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.77
+      "score": 0.95
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.76
-    },
-    {
-      "id": "speed-index",
-      "title": "Speed Index",
-      "score": 0.99
+      "score": 0.88
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.95
+      "score": 0.98
     },
     {
       "id": "image-aspect-ratio",
