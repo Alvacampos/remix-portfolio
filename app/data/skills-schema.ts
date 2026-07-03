@@ -58,6 +58,13 @@ const skill = z.object({
   name_es: z.string().optional(),
   category: skillCategory,
   ranges: z.array(skillRange).min(1),
+  // Optional curator weight for heatmap row ordering. Higher = more
+  // prominent. Purely editorial signal — "this is more relevant than
+  // that" — since cumulative months alone treats CSS/HTML/Git (used
+  // for a decade) as more important than TypeScript/Playwright/Claude
+  // Code (newer but recruiter-facing). Sort within each group (active,
+  // lapsed) is: weight DESC → existing tiebreakers. Unset = 0.
+  weight: z.number().optional(),
 });
 
 // Localizable string fields carry an optional `_es` sibling — the
