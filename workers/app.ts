@@ -1,5 +1,11 @@
-import { createRequestHandler, type ServerBuild } from 'react-router';
+import { createRequestHandler, RouterContextProvider, type ServerBuild } from 'react-router';
 
+// The cloudflareContext + getCloudflare helper live under `app/utils/`
+// so route code can import them via the `~/` alias. The Worker sits
+// outside `app/`, so it goes through a relative parent import — same
+// story as the build/server import below.
+// eslint-disable-next-line no-restricted-imports -- `~/` alias resolves inside `app/`, and workers/ is a sibling
+import { cloudflareContext } from '../app/utils/load-context';
 // Import the compiled server build. `react-router build` emits it at
 // build/server/index.js — the Worker bundle picks it up directly.
 // This is the RR v7 replacement for Remix v2's `import * as build
@@ -38,6 +44,8 @@ export default {
     if (STATIC_EXACT.has(url.pathname) || STATIC_PREFIXES.some((p) => url.pathname.startsWith(p))) {
       return env.ASSETS.fetch(request);
     }
-    return requestHandler(request, { cloudflare: { env, ctx } });
+    const context = new RouterContextProvider();
+    context.set(cloudflareContext, { env, ctx });
+    return requestHandler(request, context);
   },
 } satisfies ExportedHandler<Env>;

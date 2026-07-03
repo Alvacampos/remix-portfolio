@@ -4,6 +4,7 @@ import type { ActionFunctionArgs, MetaFunction } from 'react-router';
 import { data, Form, useActionData, useNavigation } from 'react-router';
 import { z } from 'zod';
 
+import { getCloudflare } from '~/utils/load-context';
 import { mergeRouteMeta } from '~/utils/meta';
 import { getClassMaker } from '~/utils/utils';
 
@@ -54,7 +55,7 @@ async function hashIp(ip: string): Promise<string> {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
-  const env = context.cloudflare.env;
+  const { env } = getCloudflare(context);
   const formData = await request.formData();
   const raw = Object.fromEntries(formData);
 

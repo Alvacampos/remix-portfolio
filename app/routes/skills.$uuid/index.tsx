@@ -24,8 +24,8 @@ export const links = () => [
 
 export const meta: MetaFunction<typeof loader> = (args) =>
   mergeRouteMeta(args, {
-    title: `${args.data?.data?.title ?? 'Work item'} — Gonzalo Alvarez Campos`,
-    description: args.data?.data?.rol ?? 'Work experience detail.',
+    title: `${args.loaderData?.data?.title ?? 'Work item'} — Gonzalo Alvarez Campos`,
+    description: args.loaderData?.data?.rol ?? 'Work experience detail.',
     // Detail page inherits the parent section's OG — no per-item template.
     ogImage: 'skills',
   });
