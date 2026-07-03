@@ -22,6 +22,7 @@ const fixture = (
     name: string;
     name_es?: string;
     category?: 'language' | 'framework' | 'tooling' | 'infra' | 'meta';
+    weight?: number;
     ranges: Array<{ jobId: number; from?: string; to?: string }>;
   }>
 ): SkillsData => ({
@@ -36,6 +37,7 @@ const fixture = (
     name: s.name,
     name_es: s.name_es,
     category: s.category ?? 'language',
+    weight: s.weight,
     ranges: s.ranges,
   })),
   EXTRA_ACTIVITIES: [],
@@ -144,6 +146,24 @@ describe('getSkillHeatmapData', () => {
       ]
     );
     expect(getSkillHeatmapData(data).rows.map((r) => r.skill)).toEqual(['React']);
+  });
+
+  it('sorts by weight DESC within the active group, ahead of total DESC', () => {
+    // CSS (long total, no weight) vs TypeScript (short total, weight=100).
+    // Without weight, CSS wins on total; with weight, TypeScript floats above.
+    const data = fixture(
+      [{ id: 1, startDate: '2020-01' }],
+      [
+        { name: 'CSS', ranges: [{ jobId: 1 }] },
+        {
+          name: 'TypeScript',
+          weight: 100,
+          ranges: [{ jobId: 1, from: '2025-01' }],
+        },
+      ]
+    );
+    const order = getSkillHeatmapData(data).rows.map((r) => r.skill);
+    expect(order[0]).toBe('TypeScript');
   });
 
   it('sorts active skills before lapsed, total DESC within active', () => {

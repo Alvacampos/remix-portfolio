@@ -107,18 +107,25 @@ export const formatDate = (
 //     experience per year; `total` is the cell sum.
 //   - Cells are clamped to [0, 12] so a January-to-December year reads
 //     as 12 months even if multiple concurrent ranges both used the skill.
-//   - Row order: active skills first (any cells in the last column,
-//     sorted by total months DESC) then lapsed skills (sorted by
-//     last-used year DESC, total DESC). Splitting the two groups gives
-//     the chart a clean recency tail at the bottom instead of mixing
-//     long-cumulative-but-stale skills (".NET", "Vue") into the
-//     upper-middle. `isActive` is exposed so the consumer can render
-//     a divider between the groups if it wants.
+//   - Row order: active skills first (any cells in the last column)
+//     then lapsed skills. Within each group, sort is:
+//       weight DESC → total DESC (active) / last-used year DESC, total DESC (lapsed)
+//     `weight` is an optional curator signal on each skill (see the
+//     schema): raw cumulative months treats CSS/HTML/Git (used for a
+//     decade) as more important than TypeScript/Playwright/Claude Code
+//     (newer but recruiter-facing), so weight lets an author pin what
+//     matters. Splitting active/lapsed keeps the chart's recency tail
+//     at the bottom. `isActive` is exposed so consumers can render a
+//     divider between the groups if they want.
 export type SkillHeatmapRow = {
   skill: string;
   monthsPerYear: number[];
   total: number;
   isActive: boolean;
+  // Curator weight carried on the row so the sort can use it — no
+  // consumer reads it, so it's optional to keep test fixtures and
+  // Storybook stubs from having to invent a value they don't care about.
+  weight?: number;
 };
 
 export type SkillHeatmapData = {
@@ -256,16 +263,17 @@ export function getSkillHeatmapData(skillsData: SkillsData): SkillHeatmapData {
           // "Active" = has any months in the rightmost column (current year
           // when a job is ongoing, otherwise the latest job's end year).
           const isActive = monthsPerYear[monthsPerYear.length - 1] > 0;
-          rows.push({ skill: skill.name, monthsPerYear, total, isActive });
+          const weight = skill.weight ?? 0;
+          rows.push({ skill: skill.name, monthsPerYear, total, isActive, weight });
         }
       }
     }
   }
 
-  // Active group sorts by total DESC (depth ranking among current stack).
-  // Lapsed group sorts by last-used year DESC, then total DESC — so a
-  // skill last touched in 2021 sits above one last touched in 2019, and
-  // ties break on cumulative depth. Active rows always precede lapsed.
+  // Sort: active-first, then within each group `weight DESC` (curator
+  // signal) is the primary key. Ties fall back to the historical
+  // ordering — total DESC among active, last-used year DESC / total
+  // DESC among lapsed — so skills without a weight still rank sanely.
   const lastUsedYear = (row: SkillHeatmapRow): number => {
     for (let i = row.monthsPerYear.length - 1; i >= 0; i--) {
       if (row.monthsPerYear[i] > 0) return i;
@@ -274,6 +282,9 @@ export function getSkillHeatmapData(skillsData: SkillsData): SkillHeatmapData {
   };
   rows.sort((a, b) => {
     if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+    const aw = a.weight ?? 0;
+    const bw = b.weight ?? 0;
+    if (aw !== bw) return bw - aw;
     if (a.isActive) return b.total - a.total;
     const aLast = lastUsedYear(a);
     const bLast = lastUsedYear(b);
