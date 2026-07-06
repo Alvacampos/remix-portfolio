@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-07-01T18:34:00.404Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "fetchTime": "2026-07-06T12:24:26.881Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
   "lighthouseVersion": "13.4.0",
-  "commit": "237cdc2",
+  "commit": "b8f2ee3",
   "categories": {
-    "performance": 0.85,
+    "performance": 0.97,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.9 s",
-      "numericValue": 2922.957,
-      "score": 0.52
+      "displayValue": "1.7 s",
+      "numericValue": 1678.0817,
+      "score": 0.92
     },
     "lcp": {
-      "displayValue": "3.6 s",
-      "numericValue": 3592.5684999999994,
-      "score": 0.61
+      "displayValue": "2.4 s",
+      "numericValue": 2353.0816999999997,
+      "score": 0.92
     },
     "si": {
-      "displayValue": "3.3 s",
-      "numericValue": 3271.086281999964,
-      "score": 0.91
+      "displayValue": "1.7 s",
+      "numericValue": 1678.0817,
+      "score": 1
     },
     "tbt": {
       "displayValue": "10 ms",
@@ -37,37 +37,27 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.6 s",
-      "numericValue": 3601.03205,
-      "score": 0.91
+      "displayValue": "2.4 s",
+      "numericValue": 2360.5816999999997,
+      "score": 0.99
     },
-    "ttfb": 192
+    "ttfb": 23
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.52
+      "score": 0.92
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.61
-    },
-    {
-      "id": "speed-index",
-      "title": "Speed Index",
-      "score": 0.91
-    },
-    {
-      "id": "errors-in-console",
-      "title": "Browser errors were logged to the console",
-      "score": 0
+      "score": 0.92
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.91
+      "score": 0.99
     },
     {
       "id": "unused-javascript",
