@@ -50,6 +50,15 @@
     {
       "title": "Certification",
       "title_es": "Certificación",
+      "startDate": "2026-07",
+      "institution": "Claude 101 — Anthropic",
+      "description": "Anthropic's introductory Claude course — API basics, prompt engineering fundamentals, tool use, and MCP overview.",
+      "description_es": "Curso introductorio de Anthropic sobre Claude — bases de la API, fundamentos de prompt engineering, tool use y overview de MCP.",
+      "url": "/assets/files/claude101-certificate.pdf"
+    },
+    {
+      "title": "Certification",
+      "title_es": "Certificación",
       "startDate": "2026-06",
       "institution": "Claude Certified Architect — Foundations (CCA-F)",
       "description": "Anthropic's foundational certification for AI-application architects — covers Claude API surface, tool use, MCP, agents, caching, and prompt engineering patterns.",

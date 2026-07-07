@@ -138,7 +138,10 @@
       & .vertical-timeline-element-icon {
         height: var(--space-80);
         width: var(--space-80);
-        margin-left: -var(--space-40);
+        /* `-var(--space-40)` is invalid CSS — browsers silently drop the
+         * declaration. Use `calc()` to negate. This restored the icon
+         * centering that regressed with the T10b custom-property migration. */
+        margin-left: calc(-1 * var(--space-40));
 
         svg {
           width: var(--space-40);
