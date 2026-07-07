@@ -1,0 +1,83 @@
+{
+  "fetchTime": "2026-07-07T20:07:04.889Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "lighthouseVersion": "13.4.0",
+  "commit": "027851a",
+  "categories": {
+    "performance": 0.89,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "2.6 s",
+      "numericValue": 2551.7908,
+      "score": 0.65
+    },
+    "lcp": {
+      "displayValue": "3.2 s",
+      "numericValue": 3171.9775,
+      "score": 0.73
+    },
+    "si": {
+      "displayValue": "2.6 s",
+      "numericValue": 2551.7908,
+      "score": 0.97
+    },
+    "tbt": {
+      "displayValue": "10 ms",
+      "numericValue": 6,
+      "score": 1
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "3.2 s",
+      "numericValue": 3176.7342100000005,
+      "score": 0.95
+    },
+    "ttfb": 67
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.65
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.73
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.97
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.95
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
