@@ -1,0 +1,19 @@
+/* PendingBoundary is a bare wrapper — layout comes from the route
+ * skeletons themselves. The shimmer + block primitives live in the
+ * shared skeleton stylesheet imported below. */
+@import '../skeletons/style.css';
+
+.pending-boundary {
+  /* Prevent CLS between skeleton and real content: reserve a viewport-
+   * height minimum so the page's total height stays stable during the
+   * swap. Skeletons themselves render at their natural intrinsic sizes. */
+  min-height: 100dvh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Kill the shimmer sweep for users who opt out; the boxes still
+   * render, they just don't animate. */
+  .skeleton-block::after {
+    animation: none;
+  }
+}

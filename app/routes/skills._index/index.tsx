@@ -7,7 +7,7 @@ import Card from '~/components/Card';
 import Input from '~/components/Input';
 import LoadingSpinner from '~/components/LoadingSpinner';
 import { loadSkills } from '~/data/skills-schema';
-import { pickLocale } from '~/intl';
+import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import {
   formatDate,
@@ -65,30 +65,65 @@ const SKILLS = loadSkills(skillsJson);
 const SUGGESTIONS = getSkillSuggestions(SKILLS);
 const WORK_ITEMS_REVERSED = [...SKILLS.WORK_ITEMS].reverse();
 
+// Per-locale derivations are pure functions over the deploy-time-frozen
+// `SKILLS` payload, so memoize them at module scope. The Map is keyed by
+// Locale (currently `'en' | 'es'`) and populated lazily on first request
+// per worker. Each entry sticks until the next deploy replaces the
+// worker. Safe: the JSON is baked into the server bundle, so nothing
+// under `SKILLS` mutates at runtime.
+type LocalizedSkillsBundle = {
+  timelineCards: Array<{
+    id: string;
+    title: string;
+    date: string;
+    texts: string[];
+    textsLabel: string;
+    skills: string[];
+  }>;
+  techTreeGroups: ReturnType<typeof getAllSkillGroups>;
+  extraActivities: Array<{
+    title: string;
+    data: Array<{ title: string; text: string }>;
+  }>;
+};
+
+const LOCALIZED_CACHE = new Map<Locale, LocalizedSkillsBundle>();
+
+function getLocalizedBundle(locale: Locale): LocalizedSkillsBundle {
+  const cached = LOCALIZED_CACHE.get(locale);
+  if (cached) return cached;
+  const bundle: LocalizedSkillsBundle = {
+    timelineCards: WORK_ITEMS_REVERSED.map((item) => ({
+      id: String(item.id),
+      title: item.title,
+      date: formatDate(item.startDate, item.endDate ?? undefined),
+      texts: [localized(item, 'rol', locale)],
+      textsLabel: 'ROLE',
+      skills: getSkillGroupsForJob(SKILLS, item.id, locale).flatMap((g) => g.items),
+    })),
+    techTreeGroups: getAllSkillGroups(SKILLS, locale),
+    extraActivities: SKILLS.EXTRA_ACTIVITIES.map((activity) => ({
+      title: activity.title,
+      data: activity.data.map((d) => ({
+        title: localized(d, 'title', locale),
+        text: localized(d, 'text', locale),
+      })),
+    })),
+  };
+  LOCALIZED_CACHE.set(locale, bundle);
+  return bundle;
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
-  const timelineCards = WORK_ITEMS_REVERSED.map((item) => ({
-    id: String(item.id),
-    title: item.title,
-    date: formatDate(item.startDate, item.endDate ?? undefined),
-    texts: [localized(item, 'rol', locale)],
-    textsLabel: 'ROLE',
-    skills: getSkillGroupsForJob(SKILLS, item.id, locale).flatMap((g) => g.items),
-  }));
-  const extraActivities = SKILLS.EXTRA_ACTIVITIES.map((activity) => ({
-    title: activity.title,
-    data: activity.data.map((d) => ({
-      title: localized(d, 'title', locale),
-      text: localized(d, 'text', locale),
-    })),
-  }));
+  const { timelineCards, techTreeGroups, extraActivities } = getLocalizedBundle(locale);
   return remixData(
     {
       data: timelineCards,
       yearsOfExp: formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
       skills: SUGGESTIONS,
       heatmapData: getSkillHeatmapData(SKILLS),
-      techTreeGroups: getAllSkillGroups(SKILLS, locale),
+      techTreeGroups,
       extraActivities,
     },
     {

@@ -13,6 +13,7 @@ import {
 } from 'react-router';
 
 import NavBar from '~/components/NavBar';
+import PendingBoundary from '~/components/PendingBoundary';
 import { type Locale, messagesFor, pickLocale } from '~/intl';
 import styles from '~/styles/style.css?url';
 import { getClassMaker } from '~/utils/utils';
@@ -227,7 +228,9 @@ export default function App() {
     <IntlProvider messages={messages} locale={locale} defaultLocale="en">
       <NavBar />
       <main id="main-content">
-        <Outlet />
+        <PendingBoundary>
+          <Outlet />
+        </PendingBoundary>
       </main>
     </IntlProvider>
   );

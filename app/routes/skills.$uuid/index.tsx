@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl } from 'react-intl';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
+import { data, isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
 
 import Card from '~/components/Card';
 import { loadSkills } from '~/data/skills-schema';
@@ -92,23 +92,39 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const endLabel = item.endDate ? formatDate(item.endDate, '', undefined, locale) : null;
   const duration = formatDate(item.startDate, item.endDate ?? undefined, 'fullYearMonth', locale);
 
-  return {
-    data: {
-      id: item.id,
-      title: item.title,
-      startDate: item.startDate,
-      endDate: item.endDate,
-      rol: localized(item, 'rol', locale),
-      description: localized(item, 'description', locale),
-      projects,
-      skillGroups: getSkillGroupsForJob(SKILLS, item.id, locale),
-      startLabel,
-      endLabel,
-      duration,
+  return data(
+    {
+      data: {
+        id: item.id,
+        title: item.title,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        rol: localized(item, 'rol', locale),
+        description: localized(item, 'description', locale),
+        projects,
+        skillGroups: getSkillGroupsForJob(SKILLS, item.id, locale),
+        startLabel,
+        endLabel,
+        duration,
+      },
+      imagePath,
+      imageDims,
     },
-    imagePath,
-    imageDims,
-  };
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600',
+        // Same reasoning as /skills — payload varies by locale, and
+        // `pickLocale` reads both `?lang=` and the `locale` cookie.
+        Vary: 'Accept-Language, Cookie',
+      },
+    }
+  );
+}
+
+// Explicit `headers` export required to propagate the loader's response
+// headers under RR v8's Single Fetch aggregation.
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export function ErrorBoundary() {
