@@ -1,6 +1,5 @@
 @import '../../components/Card/style.css';
 @import '../../components/Input/style.css';
-@import '../../components/LoadingSpinner/style.css';
 
 /* Lazy-component sheets are inlined here too. They were on Pattern B
  * (manual CSS-preload + stylesheet) so the components didn't FOUC when
@@ -41,6 +40,14 @@
       width: 100%;
       padding: 0 var(--space-12);
     }
+  }
+
+  &__empty-state {
+    padding: var(--space-40) var(--space-20);
+    text-align: center;
+    color: var(--fg-muted);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: var(--font-14);
   }
 
   &__years-of-exp {
