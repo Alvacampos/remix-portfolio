@@ -1,29 +1,29 @@
 {
-  "fetchTime": "2026-06-24T21:48:55.791Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-07-07T11:57:51.267Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "a5e9236",
+  "commit": "0f2824f",
   "categories": {
-    "performance": 0.94,
-    "accessibility": 0.96,
-    "best-practices": 0.96,
+    "performance": 0.96,
+    "accessibility": 1,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
       "displayValue": "2.1 s",
-      "numericValue": 2132.7853,
+      "numericValue": 2131.1022000000003,
       "score": 0.8
     },
     "lcp": {
-      "displayValue": "2.8 s",
-      "numericValue": 2807.7853,
-      "score": 0.83
+      "displayValue": "2.4 s",
+      "numericValue": 2431.1193999999996,
+      "score": 0.91
     },
     "si": {
       "displayValue": "2.1 s",
-      "numericValue": 2132.7853,
+      "numericValue": 2131.1022000000003,
       "score": 0.99
     },
     "tbt": {
@@ -37,11 +37,11 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.8 s",
-      "numericValue": 2815.2853,
-      "score": 0.97
+      "displayValue": "2.4 s",
+      "numericValue": 2431.1193999999996,
+      "score": 0.98
     },
-    "ttfb": 45
+    "ttfb": 20
   },
   "failingAudits": [
     {
@@ -52,7 +52,7 @@
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.83
+      "score": 0.91
     },
     {
       "id": "speed-index",
@@ -62,17 +62,7 @@
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.97
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
-    },
-    {
-      "id": "color-contrast",
-      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
-      "score": 0
+      "score": 0.98
     },
     {
       "id": "unused-javascript",

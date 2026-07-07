@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-07-02T16:33:17.650Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-07-07T11:57:31.451Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "b0daa9d",
+  "commit": "0f2824f",
   "categories": {
-    "performance": 0.91,
+    "performance": 0.93,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.2 s",
-      "numericValue": 2208.166,
-      "score": 0.77
+      "displayValue": "2.3 s",
+      "numericValue": 2335.0097000000005,
+      "score": 0.73
     },
     "lcp": {
-      "displayValue": "3.1 s",
-      "numericValue": 3136.3320000000003,
-      "score": 0.74
+      "displayValue": "2.7 s",
+      "numericValue": 2741.0154000000007,
+      "score": 0.84
     },
     "si": {
-      "displayValue": "2.2 s",
-      "numericValue": 2208.166,
-      "score": 0.99
+      "displayValue": "2.3 s",
+      "numericValue": 2335.0097000000005,
+      "score": 0.98
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -32,47 +32,37 @@
       "score": 1
     },
     "cls": {
-      "displayValue": "0.001",
-      "numericValue": 0.0006151654099647578,
+      "displayValue": "0",
+      "numericValue": 0,
       "score": 1
     },
     "tti": {
-      "displayValue": "3.1 s",
-      "numericValue": 3139.7403000000004,
-      "score": 0.95
+      "displayValue": "2.7 s",
+      "numericValue": 2741.0154000000007,
+      "score": 0.97
     },
-    "ttfb": 23
+    "ttfb": 62
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.77
+      "score": 0.73
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.74
+      "score": 0.84
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.95
-    },
-    {
-      "id": "image-aspect-ratio",
-      "title": "Displays images with incorrect aspect ratio",
-      "score": 0
-    },
-    {
-      "id": "unused-javascript",
-      "title": "Reduce unused JavaScript",
-      "score": 0
+      "score": 0.97
     },
     {
       "id": "cache-insight",
