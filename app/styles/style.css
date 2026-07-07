@@ -1,6 +1,7 @@
 /* stylelint-disable font-family-name-quotes */
 
 @import '../components/NavBar/style.css';
+@import '../components/PendingBoundary/style.css';
 
 /* ─── Theme system ────────────────────────────────────────────────
  *

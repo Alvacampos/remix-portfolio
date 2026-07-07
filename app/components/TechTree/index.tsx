@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import type { SkillGroup } from '~/utils/utils';
@@ -15,7 +16,9 @@ type Props = {
   groups: SkillGroup[];
 };
 
-export default function TechTree({ groups }: Props) {
+// Memoized so /skills autocomplete keystrokes don't reconcile this
+// tree — `groups` is a stable loader reference.
+function TechTreeImpl({ groups }: Props) {
   return (
     <div className={getClasses()}>
       {groups.map((group) => (
@@ -55,3 +58,6 @@ export default function TechTree({ groups }: Props) {
     </div>
   );
 }
+
+const TechTree = memo(TechTreeImpl);
+export default TechTree;

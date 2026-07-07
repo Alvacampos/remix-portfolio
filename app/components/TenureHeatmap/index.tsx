@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import type { SkillHeatmapData } from '~/utils/utils';
@@ -38,7 +38,10 @@ type Props = {
   data: SkillHeatmapData;
 };
 
-export default function TenureHeatmap({ data }: Props) {
+// Memoized so the /skills autocomplete keystrokes (which re-render the
+// route, but with a stable `data` reference from the loader) don't
+// reconcile the ~30×9 cell grid on every input event.
+function TenureHeatmapImpl({ data }: Props) {
   const { formatMessage } = useIntl();
   const [showAll, setShowAll] = useState(false);
   // Desktop expands the rendered set to all skills (columns are
@@ -168,3 +171,6 @@ export default function TenureHeatmap({ data }: Props) {
     </div>
   );
 }
+
+const TenureHeatmap = memo(TenureHeatmapImpl);
+export default TenureHeatmap;

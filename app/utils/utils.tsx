@@ -199,8 +199,20 @@ function resolveRange(
   return clippedEnd > clippedStart ? { start: clippedStart, end: clippedEnd } : null;
 }
 
+// Cache keyed by the SkillsData reference + `${year}-${month}` so a
+// worker instance that serves multiple cold-start /skills requests
+// within the same calendar month only builds the heatmap once. Output
+// depends on `new Date()` (for the year span's "ongoing job" clamp and
+// current-month bucket), so invalidate when the month rolls over. Also
+// keyed by reference so unit tests with different fixtures each get a
+// fresh compute — production always passes the deploy-frozen singleton.
+const HEATMAP_CACHE = new WeakMap<SkillsData, { key: string; value: SkillHeatmapData }>();
+
 export function getSkillHeatmapData(skillsData: SkillsData): SkillHeatmapData {
   const now = new Date();
+  const cacheKey = `${now.getFullYear()}-${now.getMonth()}`;
+  const cached = HEATMAP_CACHE.get(skillsData);
+  if (cached && cached.key === cacheKey) return cached.value;
   const nowMs = now.getTime();
   const currentYear = now.getFullYear();
 
@@ -291,7 +303,9 @@ export function getSkillHeatmapData(skillsData: SkillsData): SkillHeatmapData {
     if (aLast !== bLast) return bLast - aLast;
     return b.total - a.total;
   });
-  return { years, rows };
+  const value: SkillHeatmapData = { years, rows };
+  HEATMAP_CACHE.set(skillsData, { key: cacheKey, value });
+  return value;
 }
 
 // Skills attached to a single job, bucketed by category. The `id` on
