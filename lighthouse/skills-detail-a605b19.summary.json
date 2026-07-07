@@ -1,34 +1,34 @@
 {
-  "fetchTime": "2026-06-29T21:10:56.392Z",
+  "fetchTime": "2026-07-07T21:33:33.897Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
   "lighthouseVersion": "13.4.0",
-  "commit": "9bd47e7",
+  "commit": "a605b19",
   "categories": {
-    "performance": 0.92,
+    "performance": 0.88,
     "accessibility": 1,
     "best-practices": 0.96,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.3 s",
-      "numericValue": 2295.5735,
-      "score": 0.74
+      "displayValue": "2.6 s",
+      "numericValue": 2632.2812,
+      "score": 0.62
     },
     "lcp": {
-      "displayValue": "2.9 s",
-      "numericValue": 2918.3602500000006,
-      "score": 0.8
+      "displayValue": "3.4 s",
+      "numericValue": 3382.491900000001,
+      "score": 0.67
     },
     "si": {
-      "displayValue": "2.3 s",
-      "numericValue": 2295.5735,
-      "score": 0.99
+      "displayValue": "2.6 s",
+      "numericValue": 2632.2812,
+      "score": 0.97
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "10 ms",
+      "numericValue": 6,
       "score": 1
     },
     "cls": {
@@ -37,32 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.9 s",
-      "numericValue": 2918.3602500000006,
-      "score": 0.96
+      "displayValue": "3.4 s",
+      "numericValue": 3382.491900000001,
+      "score": 0.93
     },
-    "ttfb": 46
+    "ttfb": 72
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.74
+      "score": 0.62
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.8
+      "score": 0.67
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.97
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.96
+      "score": 0.93
     },
     {
       "id": "image-aspect-ratio",
