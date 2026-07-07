@@ -1,20 +1,10 @@
-/**
- * By default, Remix will handle generating the HTTP Response for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * For more information, see https://remix.run/file-conventions/entry.server
- */
-
 import { isbot } from 'isbot';
-// `react-dom/server` only ships `renderToPipeableStream` (Node
-// streams) in the Node ESM entry — `renderToReadableStream` (Web
-// Streams) lives at `react-dom/server.edge`. React 19's browser
-// SSR entry started calling `MessageChannel` for scheduling, which
-// Cloudflare Workers doesn't expose at the current compat date — the
-// `.edge` subpath avoids MessageChannel and works in both Workers
-// (V8, no scheduler shim) and Node 18+ (Vite's SSR dev runtime).
-// Under Remix v2 the Cloudflare adapter installed a shim that made
-// the export available from the plain `react-dom/server` path; RR v8
-// does not, so we're explicit about the subpath.
+// Use `react-dom/server.edge` (not the plain `/server` or `.browser`).
+// React 19's `.browser` SSR entry calls `MessageChannel` for scheduling,
+// which Cloudflare Workers doesn't expose at our compat_date; `.edge`
+// ships the same Web Streams surface without the scheduler shim, and
+// works in both Workers (V8) and Node 18+ (Vite SSR dev). See
+// [app/react-dom-server-edge.d.ts](app/react-dom-server-edge.d.ts) for the type shim.
 import { renderToReadableStream } from 'react-dom/server.edge';
 import type { EntryContext, RouterContextProvider } from 'react-router';
 import { ServerRouter } from 'react-router';
@@ -24,8 +14,7 @@ export default async function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   reactRouterContext: EntryContext,
-  // This is ignored so we can keep it in the template for visibility.  Feel
-  // free to delete this parameter in your app if you're not using it!
+  // Retained in the signature for the RR handler contract but unused here.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: RouterContextProvider
 ) {

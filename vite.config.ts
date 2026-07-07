@@ -1,10 +1,15 @@
 import { reactRouter } from '@react-router/dev/vite';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   server: {
     port: 8788,
+  },
+  resolve: {
+    // Vite 8 resolves tsconfig `paths` (`~/*` → `./app/*`, etc.)
+    // natively — no plugin needed. Vitest already uses the same flag
+    // (see vitest.config.ts).
+    tsconfigPaths: true,
   },
   build: {
     // No sourcemaps in production — they leak source paths and add MB to
@@ -19,10 +24,8 @@ export default defineConfig({
     },
   },
   plugins: [
-    // RR v7 Vite plugin. Single Fetch is on by default; the v3_* future
-    // flags Remix v2 needed are all default behaviour now. Non-app config
-    // (ssr, prerender) lives in react-router.config.ts, not here.
+    // Non-app config (ssr, prerender) lives in react-router.config.ts,
+    // not here.
     reactRouter(),
-    tsconfigPaths(),
   ],
 });

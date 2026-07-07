@@ -7,7 +7,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import messages from '~/intl/en-US.json';
 
-// Stories that render @remix-run/react's <Link> need a data router in
+// Stories that render `react-router`'s <Link> need a data router in
 // scope (useHref invariant) — same trick as the unit test render helper.
 function StoryWrapper({ children }: { children: ReactNode }) {
   const router = createMemoryRouter([{ path: '*', element: <>{children}</> }], {

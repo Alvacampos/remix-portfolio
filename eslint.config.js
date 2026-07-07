@@ -86,11 +86,6 @@ export default [
         ...globals.browser,
         ...globals.commonjs,
         ...globals.es2021,
-        // Cypress globals — left in case anything legacy still uses
-        // them; harmless if no file references them.
-        context: 'readonly',
-        cy: 'readonly',
-        Cypress: 'readonly',
       },
     },
     settings: {
@@ -161,7 +156,6 @@ export default [
         'error',
         {
           devDependencies: [
-            '/**/*.cy.{ts,tsx,js,jsx}',
             'tests/**/*.{ts,tsx,js,jsx}',
             'test/**/*.{ts,tsx,js,jsx}',
             '**/*.test.{ts,tsx,js,jsx}',

@@ -22,7 +22,7 @@ The site is content-driven: routes load static JSON files from [public/data/](pu
 | Layer             | Tech                                                                                                         |
 | ----------------- | ------------------------------------------------------------------------------------------------------------ |
 | Framework         | [React Router](https://reactrouter.com/) v8 (framework mode, Vite plugin)                                    |
-| Build / dev       | Vite 5 + `@react-router/dev` Vite plugin, Terser minification (sourcemaps off in prod)                       |
+| Build / dev       | Vite 8 + `@react-router/dev` Vite plugin, Terser minification (sourcemaps off in prod)                       |
 | Runtime / hosting | Cloudflare Workers + Static Assets (Worker at [workers/app.ts](workers/app.ts))                              |
 | Wrangler          | v4 (`wrangler dev` / `wrangler deploy`)                                                                      |
 | UI                | React 19 + TypeScript 6                                                                                      |
@@ -496,7 +496,7 @@ When adding a new route:
 ## 15. Gotchas
 
 - **`app/components/icons/` is generated** — it's in `eslint.config.js`'s `ignores` block and `.ls-lint.yml`'s ignore list, and the lint pipeline will fail if you check it in by hand with bad names. Always go through SVGR.
-- **npm peer-deps resolve cleanly without `--legacy-peer-deps`.** `@types/react` + `@types/react-dom` are pinned to `^18.x` to match `react@18`. The pre-migration `overrides` block for `@remix-run/dev`'s `wrangler@^3` peer is gone; `@react-router/dev` doesn't need it.
+- **npm peer-deps resolve cleanly without `--legacy-peer-deps`.** `@types/react` + `@types/react-dom` track `^19.x` to match `react@19`. The pre-migration `overrides` block for `@remix-run/dev`'s `wrangler@^3` peer is gone; `@react-router/dev` doesn't need it.
 - **Type annotations on dates**: `formatDate(start, end)` has three overloaded behaviors keyed off `formatType` and the shape of `end` (`undefined` → `"MM/yyyy - Present"`, `''` → `"MMMM yyyy"`, otherwise → `"MM/yyyy - MM/yyyy"`); see [app/utils/utils.tsx](app/utils/utils.tsx).
 - **Skills route loader 1h cache**: `/skills` sets `Cache-Control: public, max-age=3600`. After editing `skills.json`, expect up to an hour of stale data on prod.
 - **Image path lookup in `skills.$uuid`** lowercases the work-item title; new companies need a `public/assets/img/<lowercased-title>.webp` file or another override branch. Also add an entry to `LOGO_DIMS` in the loader so the `<img>` gets `width`/`height` and doesn't cause CLS.

@@ -12,7 +12,7 @@ Lighthouse JSON snapshots for tracking perf, a11y, best-practices, and SEO over 
 The workflow:
 
 1. Triggers on `push: main` (or manual `workflow_dispatch`).
-2. Sleeps 90s to let Cloudflare Pages auto-deploy the merged commit. Cloudflare Pages doesn't expose the commit SHA in response headers, so polling-until-match isn't trivial — a fixed sleep is the pragmatic compromise. If you see scores capture the _previous_ deploy occasionally, bump the sleep in the workflow.
+2. Sleeps 90s to let Cloudflare Workers finish deploying the merged commit (via the `deploy.yml` workflow that also runs on push to main). The deploy doesn't expose the commit SHA in response headers, so polling-until-match isn't trivial — a fixed sleep is the pragmatic compromise. If you see scores capture the _previous_ deploy occasionally, bump the sleep in the workflow.
 3. Runs Lighthouse against five routes: `/`, `/skills`, `/education`, `/skills/1`, `/education/degree`. Mobile profile, Lantern simulation (matching the historical baselines).
 4. Writes a small summary per route to `lighthouse/<route>-<sha>.summary.json` and commits it back to `main` with `[skip ci]`.
 5. Uploads the full reports as a 14-day artifact for debugging when a score moves unexpectedly.
