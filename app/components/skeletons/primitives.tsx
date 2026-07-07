@@ -37,3 +37,29 @@ export function SkeletonGrid({ children }: { children: React.ReactNode }) {
 export function SkeletonColumn({ children }: { children: React.ReactNode }) {
   return <div className="skeleton-column">{children}</div>;
 }
+
+// Mirrors app/components/Card — bordered surface with a darker header
+// stripe (title-wrapper equivalent) and a padded body with role/skills
+// lines + a divider + chip row. Used inside the timeline skeleton so
+// each placeholder looks like a real work-item card silhouette rather
+// than a flat rectangle.
+export function SkeletonCard() {
+  return (
+    <div className="skeleton-card" aria-hidden="true">
+      <div className="skeleton-card__header">
+        <SkeletonBlock style={{ width: '40%', height: 24 }} />
+      </div>
+      <div className="skeleton-card__body">
+        <SkeletonBlock variant="text-short" style={{ width: '55%' }} />
+        <div className="skeleton-card__divider" />
+        <div className="skeleton-row">
+          <SkeletonBlock variant="chip" style={{ width: 60 }} />
+          <SkeletonBlock variant="chip" style={{ width: 80 }} />
+          <SkeletonBlock variant="chip" style={{ width: 100 }} />
+          <SkeletonBlock variant="chip" style={{ width: 70 }} />
+          <SkeletonBlock variant="chip" style={{ width: 90 }} />
+        </div>
+      </div>
+    </div>
+  );
+}

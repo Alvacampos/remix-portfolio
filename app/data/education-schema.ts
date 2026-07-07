@@ -33,7 +33,16 @@ const certification = z.object({
   institution: z.string().min(1),
   description: z.string(),
   description_es: z.string().optional(),
-  url: z.string().url().optional(),
+  // Either a full URL (external issuer's verification page) or a
+  // site-relative path starting with `/` (a certificate PDF committed
+  // under `public/assets/files/`). The consumer renders it verbatim
+  // inside a `target="_blank"` link, so both open in a new tab.
+  url: z
+    .string()
+    .refine((v) => /^(https?:\/\/|\/)/.test(v), {
+      message: 'Expected a full URL (https://…) or a site-relative path starting with /',
+    })
+    .optional(),
   // When true, the certification renders with the "Currently studying"
   // badge — matches how in-progress degrees are surfaced. Degrees infer
   // in-progress state from `endDate > todayYearMonth`; certifications

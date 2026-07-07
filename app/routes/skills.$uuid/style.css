@@ -13,7 +13,7 @@
     font-size: var(--font-14);
     text-decoration: none;
     padding: var(--space-4) var(--space-8);
-    margin-left: -var(--space-8);
+    margin-left: calc(-1 * var(--space-8));
     border-radius: var(--border-10);
     transition:
       color 120ms ease,

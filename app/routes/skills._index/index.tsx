@@ -4,7 +4,9 @@ import { data, type LoaderFunctionArgs, type MetaFunction, useLoaderData } from 
 
 import Card from '~/components/Card';
 import Input from '~/components/Input';
-import LoadingSpinner from '~/components/LoadingSpinner';
+import TechTreeSkeleton from '~/components/skeletons/parts/TechTreeSkeleton';
+import TenureHeatmapSkeleton from '~/components/skeletons/parts/TenureHeatmapSkeleton';
+import TimelineSkeleton from '~/components/skeletons/parts/TimelineSkeleton';
 import { loadSkills } from '~/data/skills-schema';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
@@ -183,9 +185,15 @@ export default function Skills() {
           />
         </div>
         {filteredData.length === 0 ? (
-          <LoadingSpinner />
+          // Only fires when the user's filter query matches no work
+          // items. The loader guarantees `data` is populated, so this
+          // isn't a loading state — surface the intl "no matches"
+          // message instead of a spinner.
+          <p className={getClasses('empty-state')} role="status">
+            <FormattedMessage id="NO_MATCHES_FOUND" />
+          </p>
         ) : (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<TimelineSkeleton />}>
             <LazyTimeline filteredData={filteredData} />
           </Suspense>
         )}
@@ -198,10 +206,10 @@ export default function Skills() {
           <FormattedMessage id="SKILLS_SECTION_TITLE" />
         </h2>
         <div className={getClasses('skills-and-tools-grid')}>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<TenureHeatmapSkeleton />}>
             <LazyTenureHeatmap data={heatmapData} />
           </Suspense>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<TechTreeSkeleton />}>
             <LazyTechTree groups={techTreeGroups} />
           </Suspense>
         </div>

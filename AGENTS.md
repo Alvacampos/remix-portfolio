@@ -66,7 +66,6 @@ remix-portfolio/
 │   │   ├── TechTree/             # Categorized tech-stack chip grid (rendered from skills.json)
 │   │   ├── DownloadBtn/          # Download CV PDF
 │   │   ├── Input/                # Autocomplete combobox (a11y-compliant)
-│   │   ├── LoadingSpinner/
 │   │   ├── NavBar/               # Side / bottom nav with social icons
 │   │   ├── TenureHeatmap/        # GitHub-style skill × year contribution graph
 │   │   ├── ThemeToggle/          # Sliding sun/moon dark/light toggle
@@ -201,7 +200,7 @@ The component itself just owns its `style.css`. **No `links()` export, no `?url`
 }
 ```
 
-Components currently inlined this way: `Card`, `DownloadBtn`, `Input`, `LoadingSpinner`, `NavBar`, `TechTree`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
+Components currently inlined this way: `Card`, `DownloadBtn`, `Input`, `NavBar`, `TechTree`, `TenureHeatmap`, `ThemeToggle`, `Timeline`. NavBar + ThemeToggle are inlined into [app/styles/style.css](app/styles/style.css) since they ride on every page; the rest are inlined into the routes that consume them. The `/skills` route stylesheet also `@import`s the vendor `react-vertical-timeline-component/style.min.css` for the same reason.
 
 > **Lazy-loaded components inline their CSS too.** `TechTree`, `TenureHeatmap`, and `Timeline` are JS-lazy-loaded on `/skills` via `lazy()` + `Suspense`, but their CSS rides eagerly with the route stylesheet — it's tiny (~19 KB raw / ~3.5 KB gzipped including the vendor sheet) and Lighthouse's Lantern simulator was charging ~360 ms of element-render-delay across the four separate render-blocking sheets. One inlined route stylesheet beats four small ones. The JS chunk-split is preserved — only the CSS coalesces.
 
