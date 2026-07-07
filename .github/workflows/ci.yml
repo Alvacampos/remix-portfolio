@@ -11,8 +11,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & typecheck
+  # ─── Fast fanout (A3 + A4) ─────────────────────────────────────────
+  # Every downstream job restores `node_modules` from a lockfile-keyed
+  # cache instead of doing its own `npm ci`. Cache-hit runs elide the
+  # 15-25s install on each job; cache-miss falls back to a fresh install
+  # (still cached at the `~/.npm` level via setup-node). Same key across
+  # containerized (playwright) + non-containerized jobs — the cache
+  # lives on the runner host, mounted into the container.
+  #
+  # Lint and typecheck used to share a job; splitting them here (A4)
+  # gives typecheck feedback in parallel with lint instead of after it.
+
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -22,11 +33,87 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
       - run: npm run lint
 
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
+
       - run: npm run typecheck
+
+  # B1 — Guard rail against the class of bug that produced the
+  # `MessageChannel is not defined` incident on the React 19 upgrade.
+  # Cloudflare Workers ships new globals as newer compat_dates flip; a
+  # year-stale compat_date drifts our runtime behind the ecosystem
+  # (React 19 SSR here, but the same pattern hits Node compat surface,
+  # timezone data, streaming primitives). Fails CI on >365 days old so
+  # the next major-dep upgrade doesn't discover a missing global at
+  # deploy time.
+  compat-date:
+    name: Compat date freshness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Fail if wrangler.jsonc compat_date is older than 365 days
+        run: |
+          node <<'EOF'
+          const fs = require('node:fs');
+          const src = fs.readFileSync('wrangler.jsonc', 'utf8');
+          // Turn JSONC into JSON: strip line comments (both leading-
+          // whitespace and inline `... // note`) and drop trailing
+          // commas before `]` / `}`. Regex-based; good enough for our
+          // small config and avoids adding a jsonc-parser dep just for
+          // this check.
+          const stripped = src
+            .replace(/\/\/.*$/gm, '')
+            .replace(/,(\s*[}\]])/g, '$1');
+          const config = JSON.parse(stripped);
+          const compat = config.compatibility_date;
+          if (!compat) {
+            console.error('wrangler.jsonc has no compatibility_date');
+            process.exit(1);
+          }
+          const compatMs = new Date(compat + 'T00:00:00Z').getTime();
+          const ageDays = Math.floor((Date.now() - compatMs) / (24 * 60 * 60 * 1000));
+          console.log(`compat_date=${compat} (${ageDays} days old)`);
+          const MAX_DAYS = 365;
+          if (ageDays > MAX_DAYS) {
+            console.error(`compat_date is ${ageDays} days old (max ${MAX_DAYS}).`);
+            console.error('Bump wrangler.jsonc compatibility_date to a recent date and');
+            console.error('verify the app still boots (wrangler dev, then hit /).');
+            process.exit(1);
+          }
+          EOF
 
   unit-tests:
     name: Unit tests (Vitest)
@@ -39,13 +126,30 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
       - run: npm test
 
+  # A5 — matrix chromium + mobile so each project runs on its own
+  # runner. Halves wall-clock vs the previous serialized run. The
+  # node_modules cache means the second job's install cost is near-zero,
+  # so the doubled install budget doesn't erase the gain.
   e2e-tests:
-    name: E2E tests (Playwright)
+    name: E2E tests (Playwright / ${{ matrix.project }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, mobile]
     # Run inside the same Playwright image used by scripts/update-visual-baselines.sh
     # so visual-regression baselines (committed as *-chromium-linux.png) compare
     # against pixel-identical fontconfig/freetype as the regen environment.
@@ -62,23 +166,34 @@ jobs:
       # Pin to .nvmrc so this job uses the same Node as the other jobs and
       # as the local dev environment. Without this, esbuild's postinstall
       # races on parallel npm extraction (ETXTBSY) under newer Node.
+      # `cache: 'npm'` caches `~/.npm` so a cache-miss on node_modules
+      # below still has warm tarballs to install from.
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
+          cache: 'npm'
 
-      - run: npm ci
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      # Run both projects so the mobile (Pixel 7) visual baselines
-      # are also gated on CI. Behavioural specs run on both projects
-      # too — duplicates the chromium pass on mobile viewports, which
-      # catches layout regressions that only show up below $bp-md.
-      - run: npm run test:e2e -- --project=chromium --project=mobile
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
+
+      # Behavioural specs run on both projects; the visual spec is
+      # gated per-project via the committed *-chromium-linux.png /
+      # *-mobile-linux.png baselines. Each matrix leg runs its slice.
+      - run: npm run test:e2e -- --project=${{ matrix.project }}
 
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: |
             playwright-report/
             test-results/
@@ -95,9 +210,50 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
       - run: npm run build-storybook
+
+  # B2 — Bundle-size budget. Fails CI if any chunk in
+  # build/client/assets/ exceeds its `.size-limit.json` budget. Catches
+  # a stray dep pulling in a heavy chunk, or a lazy-chunk regression
+  # that quietly bloats the eager path.
+  bundle-size:
+    name: Bundle size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Check size budget
+        run: npx size-limit
 
   lighthouse-pr:
     name: Lighthouse gate
@@ -115,12 +271,49 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      # lighthouse + chrome-launcher are runtime-only (same pattern as
-      # the post-merge workflow). Install fresh per run.
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
+
+      # A2 — lighthouse + chrome-launcher are runtime-only tools (not
+      # `devDependencies` because the rest of the project doesn't need
+      # them). Cache them so we don't re-download ~40MB on every run.
+      # Keyed by the pinned versions so bumping either invalidates.
+      - name: Cache Lighthouse tools
+        id: cache-lh
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/lighthouse-tools
+          key: lighthouse-tools-lighthouse13-chrome1
+
       - name: Install Lighthouse runtime
-        run: npm install --no-save --no-audit --no-fund lighthouse@13 chrome-launcher@1
+        if: steps.cache-lh.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p node_modules/.cache/lighthouse-tools
+          cd node_modules/.cache/lighthouse-tools
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund lighthouse@13 chrome-launcher@1
+
+      - name: Symlink Lighthouse tools into node_modules
+        # Present the cached tools at the same import path the pre-A2
+        # setup used (`node_modules/lighthouse`, `node_modules/chrome-launcher`),
+        # so scripts/run-lighthouse.mjs and any lighthouse binaries keep
+        # working unchanged.
+        run: |
+          for pkg in lighthouse chrome-launcher; do
+            src="node_modules/.cache/lighthouse-tools/node_modules/${pkg}"
+            dest="node_modules/${pkg}"
+            if [ -d "$src" ] && [ ! -e "$dest" ]; then
+              ln -s "$(pwd)/${src}" "$dest"
+            fi
+          done
 
       - name: Build production bundle
         run: npm run build

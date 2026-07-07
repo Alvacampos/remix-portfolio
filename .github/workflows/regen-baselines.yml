@@ -61,8 +61,20 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
+          cache: 'npm'
 
-      - run: npm ci
+      # Share the node_modules cache with the CI workflow so a warm
+      # regen run installs in seconds instead of ~40s.
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
       - name: Build project list arg
         id: projects

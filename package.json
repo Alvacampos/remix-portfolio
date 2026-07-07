@@ -27,6 +27,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:visual": "playwright test visual.spec.ts --project=chromium --project=mobile",
     "test:visual:update": "scripts/update-visual-baselines.sh",
+    "size": "size-limit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepare": "simple-git-hooks"
@@ -58,6 +59,7 @@
     "@playwright/test": "^1.61.0",
     "@react-router/dev": "^8.1.0",
     "@react-router/fs-routes": "^8.1.0",
+    "@size-limit/preset-app": "^12.1.0",
     "@storybook/addon-a11y": "^10.4.6",
     "@storybook/addon-docs": "^10.4.6",
     "@storybook/react-vite": "^10.4.6",
@@ -87,6 +89,7 @@
     "postcss": "^8.5.16",
     "prettier": "^3.8.4",
     "simple-git-hooks": "^2.13.1",
+    "size-limit": "^12.1.0",
     "storybook": "^10.4.6",
     "stylelint": "^17.13.0",
     "stylelint-config-standard": "^40.0.0",

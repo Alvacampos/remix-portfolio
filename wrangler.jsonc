@@ -5,7 +5,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "gonzalo-alvarez-campos-cv",
-  "compatibility_date": "2024-07-18",
+  "compatibility_date": "2026-06-01",
   // Workers-side entrypoint (was `functions/[[path]].ts` under Pages).
   // Every request hits this file first; the Worker delegates static
   // assets to `env.ASSETS.fetch()` via the RR v7 request handler.
