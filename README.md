@@ -1,10 +1,10 @@
 # Remix Portfolio
 
-Personal portfolio + online CV for Gonzalo Alvarez Campos, built with [React Router v7](https://reactrouter.com/) (framework mode) and deployed on [Cloudflare Workers](https://developers.cloudflare.com/workers/). Live at <https://gonzalo-alvarez-campos-cv.com/>.
+Personal portfolio + online CV for Gonzalo Alvarez Campos, built with [React Router v8](https://reactrouter.com/) (framework mode) and deployed on [Cloudflare Workers](https://developers.cloudflare.com/workers/). Live at <https://gonzalo-alvarez-campos-cv.com/>.
 
 Bilingual (English + Spanish) with a visible locale toggle, a downloadable CV (PDF), per-route Open Graph previews, dark/light theming, and a print stylesheet.
 
-**Framework:** [React Router v7](https://reactrouter.com/) in framework mode, deployed to Cloudflare Workers + Static Assets. Migrated from Remix v2 + CF Pages in July 2026 — see [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md) for the migration story.
+**Framework:** [React Router v8](https://reactrouter.com/) in framework mode, deployed to Cloudflare Workers + Static Assets. Migrated from Remix v2 + CF Pages in July 2026, then bumped to React Router v8 later that month — see [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md) for the v2→v7 migration notes (v7→v8 was a small rename-only follow-up, absorbed into the standard deps sweep).
 
 ---
 
@@ -71,11 +71,11 @@ For the full agent-facing reference (architecture, conventions, gotchas), see [A
 
 What this project ships that goes beyond a "static CV page":
 
-- **Multi-route React Router v7 app** with file-based flat routing — Home, Skills (with detail pages per work item), Education (with detail pages per degree), `/projects` case studies (with detail pages per write-up), a `/contact` form (Resend + Cloudflare KV rate-limiting), and a downloadable CV PDF.
+- **Multi-route React Router v8 app** with file-based flat routing — Home, Skills (with detail pages per work item), Education (with detail pages per degree), `/projects` case studies (with detail pages per write-up), a `/contact` form (Resend + Cloudflare KV rate-limiting), and a downloadable CV PDF.
 - **Internationalization** via `react-intl` — English and Spanish, with a visible `EN | ES` toggle in the NavBar. The active locale is resolved server-side by `pickLocale(request)` in priority order: `?lang=` URL param → `locale` cookie (set by the toggle) → `Accept-Language` header. The cookie ships on every request so the chosen locale persists across page navigations.
-- **Single Fetch** is on by default in RR v7. Loaders return raw objects; the tenure heatmap, tech-grid, and timeline are JS-lazy-loaded so the initial `/skills` bundle stays small.
+- **Single Fetch** is the default in RR v8. Loaders return raw objects; the tenure heatmap, tech-grid, and timeline are JS-lazy-loaded so the initial `/skills` bundle stays small.
 - **Skill-first JSON schema with Zod validation** — `public/data/skills.json` follows a skill-first model: every skill is authored once with a list of date-bounded ranges that point at jobs by id. Validated at worker boot (a malformed file throws a path-precise error before any consumer reads it). The tenure heatmap, autocomplete suggestions, and per-job chip lists all derive from the same payload — no parallel data sources. Static JSON files in `public/data/` are imported server-side and baked into the bundle; they're not served publicly (the `/data/*` path is not exposed on the Worker) so scrapers can't lift the entire payload.
-- **Cloudflare Workers deployment** — the Worker at [workers/app.ts](workers/app.ts) serves the RR v7 SSR build; static assets are delegated to `env.ASSETS.fetch()`. Edge-cached static assets (`Cache-Control: public, max-age=31536000, immutable`) and a per-route 1h cache on `/skills`.
+- **Cloudflare Workers deployment** — the Worker at [workers/app.ts](workers/app.ts) serves the RR v8 SSR build; static assets are delegated to `env.ASSETS.fetch()`. Edge-cached static assets (`Cache-Control: public, max-age=31536000, immutable`) and a per-route 1h cache on `/skills`.
 - **Theme system on CSS custom properties** — `:root` + `[data-theme='light']` blocks in [app/styles/style.css](app/styles/style.css) drive every component's colors via `var(--accent)`, `var(--bg-base)`, etc. Numeric scale tokens (`--space-*`, `--font-*`, `--border-*`, `--weight-*`) live in the same block. Breakpoint tokens stay on `postcss-simple-vars` because `var()` is invalid inside `@media` preludes — the Tailwind-aligned scale (`$bp-sm`/`$bp-md`/`$bp-lg`/`$bp-xl`/`$bp-2xl`) lives in [app/styles/constants.js](app/styles/constants.js).
 - **Per-route Open Graph images** — `scripts/og/<slug>.svg` templates render to `public/assets/img/og-<slug>.png` via `@resvg/resvg-js`. `mergeRouteMeta(args, { ogImage: '<slug>' })` picks the right variant per route. Run `npm run build:og` after editing a template.
 - **Comprehensive test suite**:

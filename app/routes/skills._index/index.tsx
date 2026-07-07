@@ -1,7 +1,6 @@
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { data as remixData, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
-import { useLoaderData } from 'react-router';
+import { data, type LoaderFunctionArgs, type MetaFunction, useLoaderData } from 'react-router';
 
 import Card from '~/components/Card';
 import Input from '~/components/Input';
@@ -117,7 +116,7 @@ function getLocalizedBundle(locale: Locale): LocalizedSkillsBundle {
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
   const { timelineCards, techTreeGroups, extraActivities } = getLocalizedBundle(locale);
-  return remixData(
+  return data(
     {
       data: timelineCards,
       yearsOfExp: formatDate(SKILLS.WORK_ITEMS[0].startDate, undefined, 'fullYearMonth'),
@@ -143,11 +142,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   );
 }
 
-// RR v7 requires an explicit `headers` export to propagate the
-// response headers set by `data()` in the loader. Under Remix v2
-// this was automatic; the aggregated Single Fetch response now
-// asks each route which headers it wants exposed. Pass the
-// loader-set headers through untouched.
+// Required to propagate `data(payload, { headers })` under Single
+// Fetch — the aggregated response asks each matched route which
+// headers it wants exposed.
 export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
   return loaderHeaders;
 }
