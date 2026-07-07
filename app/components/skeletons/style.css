@@ -131,3 +131,58 @@
   flex-direction: column;
   gap: var(--space-12);
 }
+
+/* --- SkeletonCard ------------------------------------------------------
+ * Mirrors the real .card-component silhouette: outer bordered surface,
+ * darker header stripe with a centered title-shape, then a padded body
+ * with role/description lines, a horizontal divider, and a chip row.
+ * Uses the same theme tokens as the real card so the swap is seamless. */
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--border-8);
+  overflow: hidden;
+}
+
+.skeleton-card__header {
+  background-color: var(--bg-elevated);
+  box-shadow: inset 0 -1px 0 var(--border-default);
+  padding: var(--space-16) var(--space-4);
+  display: flex;
+  justify-content: center;
+}
+
+.skeleton-card__body {
+  padding: var(--space-20);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.skeleton-card__divider {
+  width: 80%;
+  height: 1px;
+  border-bottom: 1px solid var(--border-default);
+  margin: var(--space-12) auto;
+}
+
+/* --- SkeletonTechTree --------------------------------------------------
+ * Mirrors the real .tech-tree-component surface: bordered padded box
+ * with stacked category groups (small uppercase label + wrapping chip row). */
+.skeleton-tech-tree {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--border-8);
+  padding: var(--space-20);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-20);
+}
+
+.skeleton-tech-tree__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}

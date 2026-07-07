@@ -1,11 +1,12 @@
-import { SkeletonBlock } from '~/components/skeletons/primitives';
+import { SkeletonBlock, SkeletonCard } from '~/components/skeletons/primitives';
 
 // Placeholder for the lazy-loaded Timeline chunk on /skills. Reuses
 // react-vertical-timeline-component's own DOM structure + class names so
 // it inherits the existing Timeline styles (accent-colored vertical line,
 // circular icon dots, alternating card sides on desktop) with no extra
-// CSS. Icon circles and card silhouettes render as SkeletonBlocks so the
-// shimmer sweeps consistently with the rest of the app's skeletons.
+// CSS. The card silhouettes come from SkeletonCard so each placeholder
+// mirrors the real work-item card: title-wrapper header + body with
+// role line, divider, and tech chips.
 const PLACEHOLDER_COUNT = 4;
 
 export default function TimelineSkeleton() {
@@ -19,7 +20,7 @@ export default function TimelineSkeleton() {
             </span>
             <div className="vertical-timeline-element-content">
               <div className="bounce-in">
-                <SkeletonBlock variant="card" />
+                <SkeletonCard />
               </div>
             </div>
           </div>
