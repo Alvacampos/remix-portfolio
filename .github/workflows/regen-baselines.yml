@@ -67,7 +67,7 @@ jobs:
       # regen run installs in seconds instead of ~40s.
       - name: Cache node_modules
         id: cache-nm
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}

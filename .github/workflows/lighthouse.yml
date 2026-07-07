@@ -50,7 +50,7 @@ jobs:
 
       - name: Cache node_modules
         id: cache-nm
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -65,7 +65,7 @@ jobs:
       # the pinned major versions so bumping either invalidates.
       - name: Cache Lighthouse tools
         id: cache-lh
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules/.cache/lighthouse-tools
           key: lighthouse-tools-lighthouse13-chrome1
