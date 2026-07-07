@@ -1,0 +1,56 @@
+[
+  {
+    "name": "entry.client (eager JS)",
+    "path": "build/client/assets/entry.client-*.js",
+    "limit": "70 KB",
+    "gzip": true
+  },
+  {
+    "name": "components (react-router)",
+    "path": "build/client/assets/components-*.js",
+    "limit": "34 KB",
+    "gzip": true
+  },
+  {
+    "name": "utils (react-intl + IntlMessageFormat)",
+    "path": "build/client/assets/utils-*.js",
+    "limit": "28 KB",
+    "gzip": true
+  },
+  {
+    "name": "root",
+    "path": "build/client/assets/root-*.js",
+    "limit": "13 KB",
+    "gzip": true
+  },
+  {
+    "name": "errorBoundaries",
+    "path": "build/client/assets/errorBoundaries-*.js",
+    "limit": "14 KB",
+    "gzip": true
+  },
+  {
+    "name": "total CSS (all route stylesheets)",
+    "path": "build/client/assets/style-*.css",
+    "limit": "20 KB",
+    "gzip": true
+  },
+  {
+    "name": "Timeline (lazy chunk)",
+    "path": "build/client/assets/Timeline-*.js",
+    "limit": "5 KB",
+    "gzip": true
+  },
+  {
+    "name": "TenureHeatmap (lazy chunk)",
+    "path": "build/client/assets/TenureHeatmap-*.js",
+    "limit": "2 KB",
+    "gzip": true
+  },
+  {
+    "name": "TechTree (lazy chunk)",
+    "path": "build/client/assets/TechTree-*.js",
+    "limit": "1.5 KB",
+    "gzip": true
+  }
+]

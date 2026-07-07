@@ -48,14 +48,47 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      # lighthouse + chrome-launcher are runtime-only — not deps because
-      # the rest of the project doesn't need them. Install fresh in CI.
+      - name: Install if cache miss
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
+
+      # lighthouse + chrome-launcher are runtime-only (not deps because
+      # the rest of the project doesn't need them). Cache the install
+      # so we don't re-download ~40MB on every merge to main. Keyed by
+      # the pinned major versions so bumping either invalidates.
+      - name: Cache Lighthouse tools
+        id: cache-lh
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/lighthouse-tools
+          key: lighthouse-tools-lighthouse13-chrome1
+
       - name: Install Lighthouse runtime
-        run: npm install --no-save --no-audit --no-fund lighthouse@13 chrome-launcher@1
+        if: steps.cache-lh.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p node_modules/.cache/lighthouse-tools
+          cd node_modules/.cache/lighthouse-tools
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund lighthouse@13 chrome-launcher@1
 
-      - name: Wait for Cloudflare Pages deploy
+      - name: Symlink Lighthouse tools into node_modules
+        run: |
+          for pkg in lighthouse chrome-launcher; do
+            src="node_modules/.cache/lighthouse-tools/node_modules/${pkg}"
+            dest="node_modules/${pkg}"
+            if [ -d "$src" ] && [ ! -e "$dest" ]; then
+              ln -s "$(pwd)/${src}" "$dest"
+            fi
+          done
+
+      - name: Wait for Cloudflare Workers deploy
         run: sleep 90
 
       - name: Run Lighthouse

@@ -1,0 +1,61 @@
+name: Link check
+
+# Monthly cron that runs lychee across the repo's markdown + HTML +
+# source-file URL literals to catch external-link rot before a visitor
+# does. Warn-only: creates a GitHub issue when links break, doesn't fail
+# CI or block merges. Broken external links (LinkedIn migrations, GitHub
+# repo renames, CV mirror moves) are a signal to update, not a merge
+# blocker.
+#
+# Not run per-PR because the internet's rate limits and transient
+# failures would produce false-positive noise on unrelated changes.
+# Monthly cadence catches the class of rot we actually care about — a
+# link that was fine when merged but died between then and now.
+#
+# Manual trigger via workflow_dispatch when you want to check now.
+
+on:
+  schedule:
+    # 08:00 UTC on the 1st of each month.
+    - cron: '0 8 1 * *'
+  workflow_dispatch:
+
+permissions:
+  # Needed for `--create-issue` in the lychee action.
+  issues: write
+  contents: read
+
+jobs:
+  link-check:
+    name: lychee
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run lychee
+        uses: lycheeverse/lychee-action@v3
+        with:
+          # Config file at .lycheerc.toml controls what's scanned and
+          # what gets excluded (localhost, feature-flag prod URLs, etc.).
+          args: >-
+            --config .lycheerc.toml
+            --no-progress
+            .
+          fail: false
+          # Post any newly-broken links to a GitHub issue instead of
+          # tanking the workflow — see docstring above.
+          format: markdown
+          output: lychee-report.md
+
+      - name: Create issue on breakage
+        # Only opens/updates an issue if lychee actually reported errors.
+        # Reuses a well-known issue title so we don't churn out a new
+        # issue every month.
+        if: env.lychee_exit_code != '0'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: 'Broken links found by monthly lychee scan'
+          content-filepath: ./lychee-report.md
+          labels: |
+            report
+            automated-issue

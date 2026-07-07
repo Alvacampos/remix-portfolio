@@ -1,0 +1,60 @@
+#############################################################################
+# Config for the monthly lychee link check (.github/workflows/links.yml).
+# Runs on the 1st of each month; opens a GitHub issue if any live external
+# link stops resolving. Warn-only — never blocks a merge.
+#############################################################################
+
+# What to scan. Markdown docs + source-file URL literals are the useful
+# surface; ignore build outputs, node_modules, lockfiles, and generated
+# lighthouse summaries (they're just JSON, no clickable links).
+include = [
+  "**/*.md",
+  "app/**/*.{ts,tsx,js,jsx,css}",
+  "public/robots.txt",
+  "public/sitemap.xml",
+]
+exclude_path = [
+  "node_modules",
+  "build",
+  "storybook-static",
+  ".react-router",
+  ".wrangler",
+  "playwright-report",
+  "test-results",
+  "lighthouse-reports",
+  "lighthouse",
+  "tests/e2e/visual.spec.ts-snapshots",
+]
+
+# URL-pattern exclusions.
+#
+#   - `localhost` / `127.0.0.1` — dev-only references (E2E specs, docs).
+#   - `example.com` / example URLs in generated types.
+#   - `gonzalo-alvarez-campos-cv.com/...#...` fragments — the site's SPA
+#     fragment routing means lychee's per-fragment check fires false
+#     positives for hashes lychee can't dereference.
+exclude = [
+  "^https?://localhost",
+  "^https?://127\\.0\\.0\\.1",
+  "^https?://.*\\.example\\.com",
+  "^https?://example\\.com",
+  # LinkedIn 999s crawlers hard — treat 999 as OK below via accept codes.
+]
+
+# Accept these HTTP status codes as OK. LinkedIn returns 999 to non-
+# browser agents (anti-scraping); 429 = rate limited (transient); 403
+# often means "we don't like bots" (also transient/policy).
+accept = [200, 204, 206, 301, 302, 307, 308, 401, 403, 429, 999]
+
+# Networking knobs — generous to reduce transient false positives.
+timeout = 20
+retry_wait_time = 2
+max_retries = 3
+# 4 concurrent requests keeps traffic polite for a monthly cron.
+max_concurrency = 4
+
+# Follow HTTPS redirects; don't recurse.
+scheme = ["https", "http"]
+
+# Verbose output for the workflow to include in the issue body.
+verbose = "info"
