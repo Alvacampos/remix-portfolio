@@ -60,16 +60,12 @@ const schemaMeta = z
   })
   .optional();
 
-export const EducationSchema = z.object({
+const EducationSchema = z.object({
   _schema: schemaMeta,
   degree,
   associateDegree: degree,
   certifications: z.array(certification),
 });
-
-export type EducationData = z.infer<typeof EducationSchema>;
-export type Degree = z.infer<typeof degree>;
-export type Certification = z.infer<typeof certification>;
 
 // Format a Zod error tree into a multi-line, path-prefixed list for
 // log output — same shape as the skills-schema helper so failures in
@@ -92,7 +88,7 @@ function prettyZodError(err: z.ZodError): string {
 // error that lists every failing path; fix all of them in one pass
 // instead of one-at-a-time. Called once per worker boot from the
 // route loaders that consume it.
-export function loadEducation(raw: unknown): EducationData {
+export function loadEducation(raw: unknown): z.infer<typeof EducationSchema> {
   const result = EducationSchema.safeParse(raw);
   if (!result.success) {
     throw new Error(prettyZodError(result.error));

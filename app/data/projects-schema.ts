@@ -73,7 +73,7 @@ const schemaMeta = z
   })
   .optional();
 
-export const ProjectsSchema = z
+const ProjectsSchema = z
   .object({
     _schema: schemaMeta,
     PROJECTS: z.array(project).min(1),

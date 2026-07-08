@@ -4,6 +4,7 @@ import type { ActionFunctionArgs, MetaFunction } from 'react-router';
 import { data, Form, useActionData, useNavigation } from 'react-router';
 import { z } from 'zod';
 
+import { hashIp } from '~/utils/hash-ip';
 import { getCloudflare } from '~/utils/load-context';
 import { mergeRouteMeta } from '~/utils/meta';
 import { getClassMaker } from '~/utils/utils';
@@ -45,14 +46,6 @@ type ActionResponse =
 // visitor would never hit the cap. Hashing the IP keeps the KV key
 // shape opaque if the namespace is ever inspected.
 const RATE_LIMIT_PER_HOUR = 3;
-
-async function hashIp(ip: string): Promise<string> {
-  const data = new TextEncoder().encode(ip);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
 
 // CSRF defense: only accept POSTs from a page served by our own
 // origin. Same-origin `<Form>` submissions from the app always carry

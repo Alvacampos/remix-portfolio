@@ -1,5 +1,6 @@
 /* stylelint-disable font-family-name-quotes */
 
+@import '../components/Card/style.css';
 @import '../components/NavBar/style.css';
 @import '../components/PendingBoundary/style.css';
 

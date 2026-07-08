@@ -4,6 +4,7 @@ import { IntlProvider } from 'react-intl';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import messages from '~/intl/en-US.json';
+import { NonceProvider } from '~/utils/nonce-context';
 
 type RenderWithProvidersOptions = Omit<RenderOptions, 'wrapper'> & {
   initialEntries?: string[];
@@ -19,9 +20,11 @@ export function renderWithProviders(
         {
           path: '*',
           element: (
-            <IntlProvider messages={messages} locale="en" defaultLocale="en">
-              {children}
-            </IntlProvider>
+            <NonceProvider nonce="dev">
+              <IntlProvider messages={messages} locale="en" defaultLocale="en">
+                {children}
+              </IntlProvider>
+            </NonceProvider>
           ),
         },
       ],

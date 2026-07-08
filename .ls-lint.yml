@@ -19,17 +19,13 @@ ls:
 ignore:
   - .git
   - .github
-  - .cache
-  - .eslintrc.cjs
   - .vscode
   - .wrangler
   - public
   - node_modules
   - build
-  - functions
   - app/components/icons
   - playwright/.cache
   - playwright-report
   - test-results
   - storybook-static
-  - .test

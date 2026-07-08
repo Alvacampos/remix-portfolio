@@ -35,7 +35,11 @@ export default function DownloadButton({
     link.rel = 'prefetch';
     link.href = fileUrl;
     link.as = 'fetch';
-    link.crossOrigin = 'anonymous';
+    // NOTE: no `link.crossOrigin`. The CV PDF is same-origin; setting
+    // `crossOrigin` keys the prefetch cache separately from the
+    // credentialed click navigation, which defeats the prefetch (the
+    // browser downloads it twice — once for the prefetch, once for the
+    // click).
     document.head.appendChild(link);
   }, [fileUrl]);
 
@@ -46,9 +50,14 @@ export default function DownloadButton({
       className={getClasses()}
       target="_blank"
       rel="noopener noreferrer"
+      // `onPointerDown` covers mouse, pen, and touch in one handler,
+      // AND (unlike `onTouchStart`) only fires when the pointer
+      // actually presses — a finger just landing on the button during
+      // a scroll doesn't trigger it. Keeps the click-feels-instant
+      // benefit without prefetching on scroll-drag mis-fires.
       onMouseEnter={prefetch}
       onFocus={prefetch}
-      onTouchStart={prefetch}
+      onPointerDown={prefetch}
     >
       {children}
     </a>
