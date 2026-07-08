@@ -67,10 +67,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export const meta: MetaFunction = () => {
+const OG_LOCALES: Record<Locale, string> = { en: 'en_US', es: 'es_ES' };
+
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
   const title = 'Gonzalo Alvarez Campos — Senior Software Engineer';
   const description =
     'Full-stack engineer with 7+ years building React, TypeScript, Remix, and Next.js apps in fintech and education.';
+  const ogLocale = OG_LOCALES[loaderData?.locale ?? 'en'];
   return [
     { title },
     { name: 'description', content: description },
@@ -85,7 +88,7 @@ export const meta: MetaFunction = () => {
     { property: 'og:description', content: description },
     { property: 'og:url', content: SITE_URL },
     { property: 'og:site_name', content: 'Gonzalo Alvarez Campos' },
-    { property: 'og:locale', content: 'en_US' },
+    { property: 'og:locale', content: ogLocale },
     { property: 'og:image', content: OG_IMAGE_URL },
     { property: 'og:image:secure_url', content: OG_IMAGE_URL },
     { property: 'og:image:type', content: 'image/png' },
