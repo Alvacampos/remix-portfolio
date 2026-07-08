@@ -1,11 +1,11 @@
 {
-  "fetchTime": "2026-07-08T11:41:49.469Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "fetchTime": "2026-07-08T12:11:48.515Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "c4cd5e2",
+  "commit": "2fce120",
   "categories": {
-    "performance": 0.97,
+    "performance": 0.95,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
@@ -13,22 +13,22 @@
   "metrics": {
     "fcp": {
       "displayValue": "1.7 s",
-      "numericValue": 1681.1505,
-      "score": 0.92
+      "numericValue": 1736.5563000000002,
+      "score": 0.91
     },
     "lcp": {
-      "displayValue": "2.4 s",
-      "numericValue": 2431.1504999999997,
-      "score": 0.91
+      "displayValue": "2.7 s",
+      "numericValue": 2740.5983,
+      "score": 0.84
     },
     "si": {
       "displayValue": "1.7 s",
-      "numericValue": 1681.1505,
+      "numericValue": 1736.5563000000002,
       "score": 1
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "10 ms",
+      "numericValue": 9.999999999999773,
       "score": 1
     },
     "cls": {
@@ -37,32 +37,27 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.4 s",
-      "numericValue": 2431.1504999999997,
-      "score": 0.98
+      "displayValue": "2.7 s",
+      "numericValue": 2740.5983,
+      "score": 0.97
     },
-    "ttfb": 22
+    "ttfb": 70
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.92
+      "score": 0.91
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.91
+      "score": 0.84
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
-    },
-    {
-      "id": "unused-javascript",
-      "title": "Reduce unused JavaScript",
-      "score": 0
+      "score": 0.97
     },
     {
       "id": "cache-insight",
@@ -77,7 +72,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
