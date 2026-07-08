@@ -52,7 +52,7 @@ jobs:
         # Reuses a well-known issue title so we don't churn out a new
         # issue every month.
         if: env.lychee_exit_code != '0'
-        uses: peter-evans/create-issue-from-file@v5
+        uses: peter-evans/create-issue-from-file@v6
         with:
           title: 'Broken links found by monthly lychee scan'
           content-filepath: ./lychee-report.md
