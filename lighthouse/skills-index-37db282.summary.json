@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-06-26T19:37:13.786Z",
+  "fetchTime": "2026-07-08T21:15:24.726Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "f2347f5",
+  "commit": "37db282",
   "categories": {
-    "performance": 0.88,
+    "performance": 0.95,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.4 s",
-      "numericValue": 2409.3055,
-      "score": 0.7
+      "displayValue": "2.2 s",
+      "numericValue": 2168.9249,
+      "score": 0.79
     },
     "lcp": {
-      "displayValue": "3.0 s",
-      "numericValue": 3033.7666,
-      "score": 0.77
+      "displayValue": "2.5 s",
+      "numericValue": 2468.9249,
+      "score": 0.9
     },
     "si": {
-      "displayValue": "4.6 s",
-      "numericValue": 4619.695916000028,
-      "score": 0.7
+      "displayValue": "2.2 s",
+      "numericValue": 2168.9249,
+      "score": 0.99
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,37 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.0 s",
-      "numericValue": 3041.2666,
-      "score": 0.95
+      "displayValue": "2.5 s",
+      "numericValue": 2468.9249,
+      "score": 0.98
     },
-    "ttfb": 160
+    "ttfb": 90
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.7
+      "score": 0.79
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.77
+      "score": 0.9
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.7
+      "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.95
-    },
-    {
-      "id": "unused-javascript",
-      "title": "Reduce unused JavaScript",
-      "score": 0
+      "score": 0.98
     },
     {
       "id": "cache-insight",
@@ -82,7 +77,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0
+      "score": 0.5
     }
   ]
 }
