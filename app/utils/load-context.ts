@@ -48,15 +48,19 @@ const DEV_STUB_CLOUDFLARE: Cloudflare = {
 
 export function getCloudflare(context: Readonly<RouterContextProvider>): Cloudflare {
   const cloudflare = (context as AppLoadContext).cloudflare;
-  if (!cloudflare) {
-    // Vite's SSR dev runtime (`npm run dev`) doesn't go through
-    // `workers/app.ts`, so `cloudflare` is undefined there. Return
-    // the stub above so route actions like `/contact` still exercise
-    // their happy path in dev. Prod always populates this via the
-    // Worker before invoking the handler.
-    return DEV_STUB_CLOUDFLARE;
+  if (cloudflare) return cloudflare;
+  // Vite's SSR dev runtime skips `workers/app.ts`, so `cloudflare` is
+  // undefined and we hand out a stub so `/contact` runs end-to-end
+  // locally. In prod the Worker always populates the context — a
+  // regression that skips it would silently `RESEND_API_KEY: 'dev-stub-key'`
+  // its way to a 401 loop. Throw loudly instead.
+  if (import.meta.env.PROD) {
+    throw new Error(
+      'load-context: cloudflare bindings missing on the request context. ' +
+        'This should never happen in prod; check workers/app.ts for a broken wrapping.'
+    );
   }
-  return cloudflare;
+  return DEV_STUB_CLOUDFLARE;
 }
 
 // Per-request CSP nonce. Falls back to '' when the context wasn't

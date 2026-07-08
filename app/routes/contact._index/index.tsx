@@ -76,10 +76,27 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const formData = await request.formData();
   const raw = Object.fromEntries(formData);
 
-  // Validate first so a malformed payload can't poison the rate
-  // limit. Silent-drop honeypot failures before validation reports
-  // them — a bot getting "website too long" back is a signal.
-  if (typeof raw.website === 'string' && raw.website.length > 0) {
+  // Rate limit by client IP. CF-Connecting-IP is set by Cloudflare's
+  // edge and is the canonical visitor IP regardless of any
+  // X-Forwarded-For chain. Fall back to a sentinel so the rule still
+  // fires under local dev. Runs BEFORE honeypot / validation so both
+  // the silent-drop and the real send path pay the same KV round-trip
+  // — otherwise a bot could distinguish honeypot-drop from a real send
+  // by response latency.
+  const ip = request.headers.get('CF-Connecting-IP') ?? 'local-dev';
+  const key = `ratelimit:contact:${await hashIp(ip)}`;
+  const current = await env.RATELIMIT_KV.get(key);
+  const count = current ? Number.parseInt(current, 10) || 0 : 0;
+  if (count >= RATE_LIMIT_PER_HOUR) {
+    return data<ActionResponse>({ status: 'error', reason: 'rate-limit' }, { status: 429 });
+  }
+
+  // Silent-drop honeypot. Any non-empty value, or any non-string entry
+  // (bots have posted `File` payloads to leak the field name via Zod's
+  // `invalid_type` error map), returns 200 as if the message went out.
+  const hp = raw.website;
+  if (hp !== undefined && (typeof hp !== 'string' || hp.length > 0)) {
+    await env.RATELIMIT_KV.put(key, String(count + 1), { expirationTtl: 3600 });
     return data<ActionResponse>({ status: 'ok' });
   }
 
@@ -88,7 +105,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     const fieldErrors: FieldErrors = {};
     for (const issue of parsed.error.issues) {
       const path = issue.path[0];
-      if (typeof path === 'string') {
+      if (typeof path === 'string' && path !== 'website') {
         fieldErrors[path as keyof FieldErrors] = mapIssueToIntlKey(path, issue.code);
       }
     }
@@ -98,17 +115,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
     );
   }
 
-  // Rate limit by client IP. CF-Connecting-IP is set by Cloudflare's
-  // edge and is the canonical visitor IP regardless of any
-  // X-Forwarded-For chain. Fall back to a sentinel so the rule still
-  // fires under local dev (where the header is unset).
-  const ip = request.headers.get('CF-Connecting-IP') ?? 'local-dev';
-  const key = `ratelimit:contact:${await hashIp(ip)}`;
-  const current = await env.RATELIMIT_KV.get(key);
-  const count = current ? Number.parseInt(current, 10) || 0 : 0;
-  if (count >= RATE_LIMIT_PER_HOUR) {
-    return data<ActionResponse>({ status: 'error', reason: 'rate-limit' }, { status: 429 });
-  }
   await env.RATELIMIT_KV.put(key, String(count + 1), { expirationTtl: 3600 });
 
   // Send via Resend. Bare fetch — no SDK dependency, no Node-isms to

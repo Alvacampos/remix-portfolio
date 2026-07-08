@@ -73,7 +73,7 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
   return [
     { title },
     { name: 'description', content: description },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { name: 'viewport', content: 'width=device-width,initial-scale=1,minimum-scale=1' },
     // Match the actual app background so mobile browser chrome doesn't
     // flash white on the dark theme.
     { name: 'theme-color', content: '#010408' },
@@ -131,22 +131,11 @@ const PERSON_JSONLD = {
 // [data-theme='light'] selector swaps the palette tokens.
 const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';}catch(e){}`;
 
-// Inline locale-replay script. Runs synchronously in <head>; covers
-// the pre-cookie migration case where a user previously chose a locale
-// (persisted in localStorage.locale by older builds) but the cookie
-// channel hasn't been seeded yet. If localStorage holds a locale that
-// differs from what the loader resolved, write the cookie and redirect
-// to ?lang=<saved> so the next render picks it up. Once the cookie
-// lands, every subsequent request — including internal <Link> nav —
-// resolves the right locale server-side and this branch becomes a
-// no-op (the loader already matches localStorage).
-//
-// Reads the loader-resolved locale off `document.documentElement.lang`
-// (the `<html lang>` attribute) instead of interpolating it into the
-// script body — keeps the script a static string so its CSP script
-// hash stays stable across locales. `?lang=` is the highest-priority
-// signal in pickLocale so the redirect always wins on first paint.
-const LOCALE_REPLAY_SCRIPT = `try{var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!==document.documentElement.lang){document.cookie='locale='+s+';Path=/;Max-Age=31536000;SameSite=Lax';var u=new URL(location.href);if(u.searchParams.get('lang')!==s){u.searchParams.set('lang',s);location.replace(u.toString());}}}catch(e){}`;
+// Replay a saved localStorage locale for pre-cookie visitors. Reads
+// the loader locale off `<html lang>` so the script body stays static
+// across locales. Bails when the URL already has `?lang=` so explicit
+// share/deep-links win over stored preferences.
+const LOCALE_REPLAY_SCRIPT = `try{if(new URL(location.href).searchParams.has('lang'))throw 0;var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!==document.documentElement.lang){document.cookie='locale='+s+';Path=/;Max-Age=31536000;SameSite=Lax';var u=new URL(location.href);u.searchParams.set('lang',s);location.replace(u.toString());}}catch(e){}`;
 
 // WebSite schema gives Google enough to surface a sitelinks search box
 // in SERPs and helps disambiguate the property when crawled. Kept
@@ -160,6 +149,16 @@ const WEBSITE_JSONLD = {
   inLanguage: ['en', 'es'],
   author: { '@type': 'Person', name: 'Gonzalo Alvarez Campos' },
 };
+
+// Escape the two characters that can break out of an inline
+// <script type="application/ld+json"> — `</` closes the tag early,
+// U+2028/U+2029 break JS parsers pre-ES2019 rendered payloads.
+function jsonLd(obj: unknown): string {
+  return JSON.stringify(obj)
+    .replace(/</g, '\\u003c')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
 
 type LayoutData = {
   locale: Locale;
@@ -198,7 +197,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang={locale} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
         {/* Theme init runs before paint; keep it before any <link>
             tags that pull stylesheets. */}
         <script nonce={cspNonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
@@ -212,12 +210,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <script
           type="application/ld+json"
           nonce={cspNonce}
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(PERSON_JSONLD) }}
         />
         <script
           type="application/ld+json"
           nonce={cspNonce}
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(WEBSITE_JSONLD) }}
         />
       </head>
       <body className={getClasses()}>
