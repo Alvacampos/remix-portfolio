@@ -64,9 +64,8 @@ export const getClassMaker =
 // shifts to the prior day in negative-offset timezones.
 const parseYearMonth = (s: string): Date => new Date(`${s}-01T00:00:00`);
 
-// `locale` only affects the human-readable formats — `fullYearMonth`
-// ("4 años 2 meses") and the single-month case ("agosto 2018"). The
-// numeric `MM/yyyy` branches are locale-neutral.
+const PRESENT_LITERAL: Record<Locale, string> = { en: 'Present', es: 'Presente' };
+
 export const formatDate = (
   dateA: string,
   dateB?: string,
@@ -83,7 +82,7 @@ export const formatDate = (
   }
 
   if (dateB === null || dateB === undefined) {
-    return `${format(parseYearMonth(dateA), 'MM/yyyy')} - Present`;
+    return `${format(parseYearMonth(dateA), 'MM/yyyy')} - ${PRESENT_LITERAL[locale]}`;
   }
 
   if (dateB === '') {

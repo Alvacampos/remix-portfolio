@@ -98,6 +98,10 @@ describe('formatDate', () => {
     expect(out).toMatch(/años|meses/);
     expect(out).not.toMatch(/years|months/);
   });
+
+  it('renders "Presente" when locale=es and end is undefined', () => {
+    expect(formatDate('2020-01', undefined, undefined, 'es')).toBe('01/2020 - Presente');
+  });
 });
 
 describe('getSkillHeatmapData', () => {
