@@ -41,6 +41,29 @@ test.describe('Education (/education)', () => {
     const certLinks = page.getByRole('link', { name: /Certification Link/i });
     await expect(certLinks.first()).toBeVisible();
   });
+
+  test('in-progress items sort before completed ones', async ({ page }) => {
+    // Degree section: the AI Bachelor is `inProgress` (endDate 2027-09);
+    // the Associate Degree ended 2021. AI Bachelor must render first —
+    // its card title is unique so `<h2>` text discriminates.
+    const degreeH2s = await page.locator('.education-route__degree-container h2').allTextContents();
+    expect(degreeH2s[0]).toMatch(/Bachelor of Science.*Artificial Intelligence/i);
+
+    // Certifications section: CCA-F is the only `inProgress: true`
+    // cert; must render first even though a newer cert (Claude 101,
+    // 2026-07) sits above it in JSON authoring order. All cert `<h2>`
+    // values are "Certification"/"Certificación" so we key off the
+    // institution text one level deeper (texts[1] in the Card body).
+    const firstCertInstitution = await page
+      .locator(
+        '.education-route__card-wrapper--certification-wrapper > .education-route__card-wrapper'
+      )
+      .first()
+      .locator('p')
+      .nth(1)
+      .textContent();
+    expect(firstCertInstitution).toMatch(/Claude Certified Architect/i);
+  });
 });
 
 test.describe('Education detail (/education/:slug)', () => {

@@ -29,24 +29,48 @@ const getClasses = getClassMaker(BLOCK);
 // runs once on cold start, not per request.
 const EDUCATION = loadEducation(educationJson);
 
+// Certifications ordered: in-progress first, then startDate DESC.
+// Applied once at module scope — the JSON's authored order is roughly
+// newest-first already but the `inProgress` items don't reliably float
+// to the top. `startDate` is `YYYY-MM`, zero-padded, so localeCompare
+// gives correct chronological order.
+const ORDERED_CERTIFICATIONS = [...EDUCATION.certifications].sort((a, b) => {
+  const aInProgress = a.inProgress ?? false;
+  const bInProgress = b.inProgress ?? false;
+  if (aInProgress !== bInProgress) return aInProgress ? -1 : 1;
+  return b.startDate.localeCompare(a.startDate);
+});
+
 export async function loader() {
   // Cloudflare Workers freeze Date at module-init (Spectre mitigation),
   // so `new Date()` must run inside the loader. YYYY-MM string compare
   // is enough — both sides are zero-padded ISO-like.
   const now = new Date();
   const todayYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const degreeInProgress = EDUCATION.degree.endDate > todayYearMonth;
+  const associateInProgress = EDUCATION.associateDegree.endDate > todayYearMonth;
+  // Degrees ordered: in-progress first. Two-entry list so a hand-rolled
+  // ternary is clearer than a generic sort. Slug is stapled onto each
+  // entry so the JSX can render both from a single .map().
+  const degrees = [
+    { ...EDUCATION.degree, slug: 'degree' as const, inProgress: degreeInProgress },
+    {
+      ...EDUCATION.associateDegree,
+      slug: 'associate-degree' as const,
+      inProgress: associateInProgress,
+    },
+  ].sort((a, b) => {
+    if (a.inProgress !== b.inProgress) return a.inProgress ? -1 : 1;
+    return b.startDate.localeCompare(a.startDate);
+  });
   return {
-    degree: EDUCATION.degree,
-    associateDegree: EDUCATION.associateDegree,
-    certifications: EDUCATION.certifications,
-    degreeInProgress: EDUCATION.degree.endDate > todayYearMonth,
-    associateInProgress: EDUCATION.associateDegree.endDate > todayYearMonth,
+    degrees,
+    certifications: ORDERED_CERTIFICATIONS,
   };
 }
 
 export default function Skills() {
-  const { degree, associateDegree, certifications, degreeInProgress, associateInProgress } =
-    useLoaderData<typeof loader>();
+  const { degrees, certifications } = useLoaderData<typeof loader>();
   const { formatMessage, locale } = useIntl();
   const loc = locale as Locale;
   const dateLabel = formatMessage({ id: 'DATE' });
@@ -63,26 +87,6 @@ export default function Skills() {
   const formatRange = (start: string, end: string) =>
     `${formatDate(start, '', undefined, loc)} → ${formatDate(end, '', undefined, loc)}`;
 
-  const degreeCard = {
-    title: localized(degree, 'title', loc),
-    texts: [
-      `${dateLabel}: ${formatRange(degree.startDate, degree.endDate)}`,
-      degree.institution,
-      localized(degree, 'summary', loc),
-    ],
-    children: learnMore,
-  };
-
-  const associateDegreeCard = {
-    title: localized(associateDegree, 'title', loc),
-    texts: [
-      `${dateLabel}: ${formatRange(associateDegree.startDate, associateDegree.endDate)}`,
-      associateDegree.institution,
-      localized(associateDegree, 'summary', loc),
-    ],
-    children: learnMore,
-  };
-
   const inProgressBadge = (
     <span
       className={getClasses('in-progress-badge')}
@@ -92,6 +96,18 @@ export default function Skills() {
       <FormattedMessage id="CURRENTLY_STUDYING" />
     </span>
   );
+
+  const degreeCards = degrees.map((d) => ({
+    key: d.slug,
+    slug: d.slug,
+    inProgress: d.inProgress,
+    title: localized(d, 'title', loc),
+    texts: [
+      `${dateLabel}: ${formatRange(d.startDate, d.endDate)}`,
+      d.institution,
+      localized(d, 'summary', loc),
+    ],
+  }));
 
   const certificationsCards = certifications.map((certification) => ({
     key: certification.institution,
@@ -119,18 +135,14 @@ export default function Skills() {
           <FormattedMessage id="DEGREES" />
         </h2>
         <div className={getClasses('degree-container')}>
-          <Link to="/education/degree" className={getClasses('card-link')}>
-            <div className={getClasses('card-wrapper')}>
-              {degreeInProgress && inProgressBadge}
-              <Card {...degreeCard} />
-            </div>
-          </Link>
-          <Link to="/education/associate-degree" className={getClasses('card-link')}>
-            <div className={getClasses('card-wrapper')}>
-              {associateInProgress && inProgressBadge}
-              <Card {...associateDegreeCard} />
-            </div>
-          </Link>
+          {degreeCards.map(({ key, slug, inProgress, ...card }) => (
+            <Link key={key} to={`/education/${slug}`} className={getClasses('card-link')}>
+              <div className={getClasses('card-wrapper')}>
+                {inProgress && inProgressBadge}
+                <Card {...card}>{learnMore}</Card>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
       <div className={getClasses('certification')}>

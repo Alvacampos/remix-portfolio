@@ -26,8 +26,22 @@ const getClasses = getClassMaker(BLOCK);
 
 const PROJECTS = loadProjects(projectsJson);
 
+// Ordering rule: ongoing projects (no `endDate`) first, then everyone
+// else newest-end-date first. Applied once at boot; the JSON's
+// authored order is chronological (oldest first) which is the wrong
+// direction for surfacing the most recent work.
+const ORDERED_PROJECTS = [...PROJECTS.PROJECTS].sort((a, b) => {
+  const aOngoing = a.endDate === undefined;
+  const bOngoing = b.endDate === undefined;
+  if (aOngoing !== bOngoing) return aOngoing ? -1 : 1;
+  // Both ongoing (unlikely) or both ended — sort by endDate DESC.
+  // `endDate` is a `YYYY-MM` string; localeCompare works because both
+  // sides are zero-padded.
+  return (b.endDate ?? '').localeCompare(a.endDate ?? '');
+});
+
 export async function loader() {
-  return { projects: PROJECTS.PROJECTS };
+  return { projects: ORDERED_PROJECTS };
 }
 
 export default function ProjectsIndex() {
