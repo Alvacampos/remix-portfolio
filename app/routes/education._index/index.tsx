@@ -1,13 +1,12 @@
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { MetaFunction } from 'react-router';
+import { data, type MetaFunction } from 'react-router';
 import { Link, useLoaderData } from 'react-router';
 
 import Card from '~/components/Card';
-import { loadEducation } from '~/data/education-schema';
+import { EDUCATION } from '~/data/loaded';
 import type { Locale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
-import educationJson from '~data/education.json';
 
 import styles from './style.css?url';
 
@@ -23,11 +22,6 @@ export const meta: MetaFunction = (args) =>
 
 const BLOCK = 'education-route';
 const getClasses = getClassMaker(BLOCK);
-
-// Validate at worker boot — single source of truth for shape and
-// localization metadata. Hoisted out of the loader so the parse
-// runs once on cold start, not per request.
-const EDUCATION = loadEducation(educationJson);
 
 // Certifications ordered: in-progress first, then startDate DESC.
 // Applied once at module scope — the JSON's authored order is roughly
@@ -63,10 +57,19 @@ export async function loader() {
     if (a.inProgress !== b.inProgress) return a.inProgress ? -1 : 1;
     return b.startDate.localeCompare(a.startDate);
   });
-  return {
-    degrees,
-    certifications: ORDERED_CERTIFICATIONS,
-  };
+  return data(
+    { degrees, certifications: ORDERED_CERTIFICATIONS },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        Vary: 'Accept-Language, Cookie',
+      },
+    }
+  );
+}
+
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export default function Skills() {

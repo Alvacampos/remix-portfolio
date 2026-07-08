@@ -1,13 +1,12 @@
 import { FormattedMessage, useIntl } from 'react-intl';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
+import { data, isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
 
 import Card from '~/components/Card';
-import { loadProjects } from '~/data/projects-schema';
+import { PROJECTS } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
-import projectsJson from '~data/projects.json';
 
 import styles from './style.css?url';
 
@@ -33,8 +32,6 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 const BLOCK = 'projects-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-const PROJECTS = loadProjects(projectsJson);
-
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const slug = params?.slug;
   if (!slug) throw new Response('Missing project slug', { status: 400 });
@@ -43,7 +40,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   if (!raw) throw new Response(`Project not found: ${slug}`, { status: 404 });
 
   const locale: Locale = pickLocale(request);
-  const data = {
+  const payload = {
     title: localized(raw, 'title', locale),
     summary: localized(raw, 'summary', locale),
     role: localized(raw, 'role', locale),
@@ -56,7 +53,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     approach: localized(raw, 'approach', locale),
     outcome: localized(raw, 'outcome', locale),
   };
-  return { data };
+  return data(
+    { data: payload },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        Vary: 'Accept-Language, Cookie',
+      },
+    }
+  );
+}
+
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export function ErrorBoundary() {

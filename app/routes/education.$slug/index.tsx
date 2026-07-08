@@ -1,13 +1,12 @@
 import { FormattedMessage, useIntl } from 'react-intl';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
+import { data, isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
 
 import Card from '~/components/Card';
-import { loadEducation } from '~/data/education-schema';
+import { EDUCATION } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
-import educationJson from '~data/education.json';
 
 import styles from './style.css?url';
 
@@ -33,8 +32,6 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 const BLOCK = 'education-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-const EDUCATION = loadEducation(educationJson);
-
 const SLUG_MAP: Record<string, 'degree' | 'associateDegree'> = {
   degree: 'degree',
   'associate-degree': 'associateDegree',
@@ -47,7 +44,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const locale: Locale = pickLocale(request);
   const raw = EDUCATION[key];
-  const data = {
+  const payload = {
     title: localized(raw, 'title', locale),
     startLabel: formatDate(raw.startDate, '', undefined, locale),
     endLabel: formatDate(raw.endDate, '', undefined, locale),
@@ -57,7 +54,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     skills: raw.skills,
   };
 
-  return { data };
+  return data(
+    { data: payload },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        Vary: 'Accept-Language, Cookie',
+      },
+    }
+  );
+}
+
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export function ErrorBoundary() {

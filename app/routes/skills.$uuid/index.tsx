@@ -3,11 +3,10 @@ import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { data, isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router';
 
 import Card from '~/components/Card';
-import { loadSkills } from '~/data/skills-schema';
+import { SKILLS } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, getSkillGroupsForJob, localized } from '~/utils/utils';
-import skillsJson from '~data/skills.json';
 
 import styles from './style.css?url';
 
@@ -33,16 +32,17 @@ export const meta: MetaFunction<typeof loader> = (args) =>
 const BLOCK = 'skills-id-route';
 const getClasses = getClassMaker(BLOCK);
 
-// Hand-picked banner dimensions per logo (height is narrowed from the
-// source webp to render the image as a banner rather than its full
-// aspect). Re-pick if a logo is swapped.
+// Intrinsic pixel dimensions per logo — the browser reserves the
+// right aspect ratio in the layout so there's no CLS and Lighthouse's
+// image-aspect-ratio audit passes. Read with `sips -g pixelWidth -g
+// pixelHeight public/assets/img/<file>.webp` when adding a new logo.
 const LOGO_DIMS: Record<string, { width: number; height: number }> = {
-  'unsta2.webp': { width: 968, height: 400 },
+  'unsta2.webp': { width: 968, height: 519 },
   'coderhouse.webp': { width: 976, height: 272 },
-  'globant.webp': { width: 3000, height: 200 },
-  'cliengo.webp': { width: 999, height: 200 },
+  'globant.webp': { width: 3000, height: 2000 },
+  'cliengo.webp': { width: 999, height: 300 },
   'endava.webp': { width: 541, height: 184 },
-  'qubika.webp': { width: 800, height: 400 },
+  'qubika.webp': { width: 800, height: 600 },
 };
 const FALLBACK_DIMS = { width: 1000, height: 500 };
 
@@ -53,8 +53,6 @@ const IMAGE_OVERRIDES: Record<string, string> = {
   'professor (part-time)': 'unsta2.webp',
   teacher: 'coderhouse.webp',
 };
-
-const SKILLS = loadSkills(skillsJson);
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const id = params?.uuid;
@@ -112,7 +110,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     },
     {
       headers: {
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
         // Same reasoning as /skills — payload varies by locale, and
         // `pickLocale` reads both `?lang=` and the `locale` cookie.
         Vary: 'Accept-Language, Cookie',
