@@ -1,30 +1,30 @@
 {
-  "fetchTime": "2026-07-03T17:20:17.272Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education",
+  "fetchTime": "2026-07-08T23:08:59.289Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills",
   "lighthouseVersion": "13.4.0",
-  "commit": "31ee6da",
+  "commit": "5f59cd8",
   "categories": {
-    "performance": 0.93,
+    "performance": 0.94,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.4 s",
-      "numericValue": 2352.3429000000006,
-      "score": 0.72
+      "displayValue": "2.3 s",
+      "numericValue": 2288.8158,
+      "score": 0.75
     },
     "lcp": {
-      "displayValue": "2.7 s",
-      "numericValue": 2730.85725,
-      "score": 0.85
+      "displayValue": "2.6 s",
+      "numericValue": 2588.8158,
+      "score": 0.88
     },
     "si": {
-      "displayValue": "2.4 s",
-      "numericValue": 2352.3429000000006,
-      "score": 0.98
+      "displayValue": "2.3 s",
+      "numericValue": 2288.8158,
+      "score": 0.99
     },
     "tbt": {
       "displayValue": "0 ms",
@@ -37,42 +37,42 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.7 s",
-      "numericValue": 2738.3572500000005,
-      "score": 0.97
+      "displayValue": "2.6 s",
+      "numericValue": 2588.8158000000003,
+      "score": 0.98
     },
-    "ttfb": 40
+    "ttfb": 68
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.72
+      "score": 0.75
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.85
+      "score": 0.88
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.98
+      "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.97
-    },
-    {
-      "id": "unused-javascript",
-      "title": "Reduce unused JavaScript",
-      "score": 0
+      "score": 0.98
     },
     {
       "id": "cache-insight",
       "title": "Use efficient cache lifetimes",
       "score": 0.5
+    },
+    {
+      "id": "forced-reflow-insight",
+      "title": "Forced reflow",
+      "score": 0
     },
     {
       "id": "network-dependency-tree-insight",
