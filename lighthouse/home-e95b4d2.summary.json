@@ -1,35 +1,35 @@
 {
-  "fetchTime": "2026-06-29T22:10:35.013Z",
+  "fetchTime": "2026-07-08T16:30:59.723Z",
   "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
   "lighthouseVersion": "13.4.0",
-  "commit": "f35a2df",
+  "commit": "e95b4d2",
   "categories": {
-    "performance": 0.86,
+    "performance": 0.89,
     "accessibility": 1,
-    "best-practices": 0.96,
+    "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.4 s",
-      "numericValue": 2439.179,
-      "score": 0.69
+      "displayValue": "2.7 s",
+      "numericValue": 2707.118,
+      "score": 0.6
     },
     "lcp": {
-      "displayValue": "2.8 s",
-      "numericValue": 2786.6139999999996,
-      "score": 0.83
+      "displayValue": "3.1 s",
+      "numericValue": 3132.450500000001,
+      "score": 0.74
     },
     "si": {
-      "displayValue": "2.4 s",
-      "numericValue": 2439.179,
-      "score": 0.98
+      "displayValue": "3.0 s",
+      "numericValue": 3016.581757999992,
+      "score": 0.94
     },
     "tbt": {
-      "displayValue": "320 ms",
-      "numericValue": 318.4599999999996,
-      "score": 0.77
+      "displayValue": "20 ms",
+      "numericValue": 22,
+      "score": 1
     },
     "cls": {
       "displayValue": "0",
@@ -37,52 +37,37 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "3.2 s",
-      "numericValue": 3208.5854,
-      "score": 0.94
+      "displayValue": "3.1 s",
+      "numericValue": 3138.179350000001,
+      "score": 0.95
     },
-    "ttfb": 222
+    "ttfb": 151
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.69
+      "score": 0.6
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.83
+      "score": 0.74
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.98
-    },
-    {
-      "id": "total-blocking-time",
-      "title": "Total Blocking Time",
-      "score": 0.77
+      "score": 0.94
     },
     {
       "id": "max-potential-fid",
       "title": "Max Potential First Input Delay",
-      "score": 0.49
-    },
-    {
-      "id": "errors-in-console",
-      "title": "Browser errors were logged to the console",
-      "score": 0
+      "score": 0.99
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.94
-    },
-    {
-      "id": "mainthread-work-breakdown",
-      "title": "Minimize main-thread work",
-      "score": 0
+      "score": 0.95
     },
     {
       "id": "unused-javascript",
@@ -92,7 +77,7 @@
     {
       "id": "cache-insight",
       "title": "Use efficient cache lifetimes",
-      "score": 0
+      "score": 0.5
     },
     {
       "id": "network-dependency-tree-insight",
@@ -102,7 +87,7 @@
     {
       "id": "render-blocking-insight",
       "title": "Render-blocking requests",
-      "score": 0.5
+      "score": 0
     }
   ]
 }
