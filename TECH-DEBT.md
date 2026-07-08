@@ -449,6 +449,14 @@ Sources consulted:
 - [MDN Responsive Design](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design) — prefer content-driven over device-driven breakpoints; rem/em over px.
 - [web.dev — Responsive Web Design basics](https://web.dev/articles/responsive-web-design-basics) — let content dictate; minimise breakpoint count.
 
+### T17 — Locale-split intl bundles (P3)
+
+Currently both `en-US.json` (~10 KB) and `es-ES.json` (~10 KB) statically import into the root chunk, so English visitors ship the Spanish messages and vice-versa. Splitting into per-locale chunks with a `<link rel="preload" as="fetch">` for the resolved locale would save ~2 KB gz per visitor. Non-trivial: IntlProvider needs the messages synchronously at render, so this means either (a) an async loader ping before hydration completes, or (b) SSR emits the compiled locale as an inline JSON island and hydration reads it back. Deferred until the payload becomes a bottleneck.
+
+### T18 — AST-precompile intl messages (P3) — INVESTIGATED, no win
+
+Ran an experiment on 2026-07-08: `@formatjs/cli compile --ast --format simple` output at `app/intl/compiled/*.json`, wired into `IntlProvider` via a build step. Bundle-size delta on real chunks: **`root` +0.26 KB gz, `utils` unchanged**. The perf agent's ~8-10 KB gz claim assumed the ICU parser would tree-shake once messages arrive as AST — in practice `react-intl` v10 already tree-shakes the parser aggressively (source references to `icu-messageformat-parser` symbols don't appear in the built `utils` chunk), so precompile is a wash. Reverted the whole approach. Reopen only if a future react-intl major regresses the current tree-shake.
+
 ---
 
 ## 2. Cleanup / data / docs
