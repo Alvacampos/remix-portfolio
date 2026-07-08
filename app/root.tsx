@@ -16,7 +16,7 @@ import NavBar from '~/components/NavBar';
 import PendingBoundary from '~/components/PendingBoundary';
 import { type Locale, messagesFor, pickLocale } from '~/intl';
 import styles from '~/styles/style.css?url';
-import { getCspNonce } from '~/utils/load-context';
+import { useNonce } from '~/utils/nonce-context';
 import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
@@ -51,7 +51,7 @@ export function links() {
 const BLOCK = 'root';
 const getClasses = getClassMaker(BLOCK);
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
   // Build the canonical URL from the request path, anchored to SITE_URL so
   // it always points at the production origin even on previews/local dev.
@@ -60,15 +60,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const canonical = `${SITE_URL}${path}`;
-  // CSP nonce minted per-request in workers/app.ts. Echoed onto every
-  // inline <script> tag (ours + RR's) so `script-src 'nonce-<val>'`
-  // matches under the strict CSP.
-  const cspNonce = getCspNonce(context);
   return {
     locale,
     messages: messagesFor(locale),
     canonical,
-    cspNonce,
   };
 }
 
@@ -170,7 +165,6 @@ const WEBSITE_JSONLD = {
 type LayoutData = {
   locale: Locale;
   canonical: string;
-  cspNonce: string;
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -181,12 +175,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<LayoutData>('root');
   const locale: Locale = data?.locale ?? 'en';
   const canonical = data?.canonical ?? SITE_URL;
-  // `cspNonce` is empty when the loader hasn't run (error boundary
-  // pre-loader). RR's <Scripts nonce=""> is a no-op with empty string;
-  // browsers reject empty-string nonces so the strict CSP will block
-  // any inline script in the error path — which is safe (the boundary
-  // is server-rendered HTML, no client-side JS needed to display it).
-  const cspNonce = data?.cspNonce ?? '';
+  // CSP nonce read off the SSR-only React context populated by
+  // entry.server.tsx's <NonceProvider>. NOT plumbed via loader data
+  // because loader payloads are serialized into an inline hydration
+  // script (`window.__reactRouterContext = ...`), which would defeat
+  // the DOM-inspection protection nonces are supposed to provide.
+  // Empty on the client (hydration + subsequent navigations): only
+  // needed at SSR time to attribute the emitted <script> tags.
+  const cspNonce = useNonce();
   // The skip-link sits OUTSIDE the IntlProvider (which is mounted in
   // App() around <Outlet />), so we resolve its string by direct lookup
   // against messagesFor(locale) — keeps a11y copy translated without
