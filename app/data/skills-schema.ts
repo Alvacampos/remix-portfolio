@@ -206,7 +206,6 @@ export const SkillsSchema = z
 export type SkillsData = z.infer<typeof SkillsSchema>;
 export type WorkItem = z.infer<typeof workItem>;
 export type Skill = z.infer<typeof skill>;
-export type SkillRange = z.infer<typeof skillRange>;
 export type SkillCategory = z.infer<typeof skillCategory>;
 
 // Format a Zod error tree into a multi-line, path-prefixed list for log

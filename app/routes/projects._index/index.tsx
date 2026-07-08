@@ -34,9 +34,10 @@ const ORDERED_PROJECTS = [...PROJECTS.PROJECTS].sort((a, b) => {
   const aOngoing = a.endDate === undefined;
   const bOngoing = b.endDate === undefined;
   if (aOngoing !== bOngoing) return aOngoing ? -1 : 1;
-  // Both ongoing (unlikely) or both ended — sort by endDate DESC.
-  // `endDate` is a `YYYY-MM` string; localeCompare works because both
-  // sides are zero-padded.
+  // Both ongoing → sort by startDate DESC (newest ongoing first).
+  // Both ended → sort by endDate DESC. `YYYY-MM` strings compare
+  // correctly with localeCompare because they're zero-padded.
+  if (aOngoing) return b.startDate.localeCompare(a.startDate);
   return (b.endDate ?? '').localeCompare(a.endDate ?? '');
 });
 

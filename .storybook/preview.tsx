@@ -6,6 +6,7 @@ import { IntlProvider } from 'react-intl';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import messages from '~/intl/en-US.json';
+import { NonceProvider } from '~/utils/nonce-context';
 
 // Stories that render `react-router`'s <Link> need a data router in
 // scope (useHref invariant) — same trick as the unit test render helper.
@@ -14,9 +15,11 @@ function StoryWrapper({ children }: { children: ReactNode }) {
     initialEntries: ['/'],
   });
   return (
-    <IntlProvider messages={messages} locale="en" defaultLocale="en">
-      <RouterProvider router={router} />
-    </IntlProvider>
+    <NonceProvider nonce="dev">
+      <IntlProvider messages={messages} locale="en" defaultLocale="en">
+        <RouterProvider router={router} />
+      </IntlProvider>
+    </NonceProvider>
   );
 }
 

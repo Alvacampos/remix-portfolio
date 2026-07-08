@@ -60,13 +60,8 @@ export const getClassMaker =
     return className;
   };
 
-// Parse a YYYY-MM (or longer ISO) string at LOCAL midnight on the 1st of
-// the month. Plain `new Date('2018-08')` parses as UTC midnight, which
-// shifts to the prior day in negative-offset timezones — for the CV that
-// means an August start renders as July. Force local-zone parsing.
-//
-// Both data files (skills.json, education.json) are validated to
-// `YYYY-MM` at the Zod boundary, so this only handles that format.
+// Local-midnight parse. Plain `new Date('2018-08')` parses as UTC and
+// shifts to the prior day in negative-offset timezones.
 const parseYearMonth = (s: string): Date => new Date(`${s}-01T00:00:00`);
 
 // `locale` only affects the human-readable formats — `fullYearMonth`
@@ -98,33 +93,14 @@ export const formatDate = (
   return `${format(parseYearMonth(dateA), 'MM/yyyy')} - ${format(parseYearMonth(dateB), 'MM/yyyy')}`;
 };
 
-// Skill × Year matrix used by the tenure heatmap on /skills.
-//   - `years` is the contiguous span from the earliest job year to the
-//     latest job's end year (or current year if any job is ongoing).
-//     Including all years between makes the gap years explicit instead
-//     of silently collapsing the timeline.
-//   - `rows` lists each skill (excluding `meta` category) with months of
-//     experience per year; `total` is the cell sum.
-//   - Cells are clamped to [0, 12] so a January-to-December year reads
-//     as 12 months even if multiple concurrent ranges both used the skill.
-//   - Row order: active skills first (any cells in the last column)
-//     then lapsed skills. Within each group, sort is:
-//       weight DESC → total DESC (active) / last-used year DESC, total DESC (lapsed)
-//     `weight` is an optional curator signal on each skill (see the
-//     schema): raw cumulative months treats CSS/HTML/Git (used for a
-//     decade) as more important than TypeScript/Playwright/Claude Code
-//     (newer but recruiter-facing), so weight lets an author pin what
-//     matters. Splitting active/lapsed keeps the chart's recency tail
-//     at the bottom. `isActive` is exposed so consumers can render a
-//     divider between the groups if they want.
+// Row order: active skills (any cells in the last column) first, lapsed
+// after. Sort within each group is weight DESC → total DESC (active) /
+// last-used year DESC → total DESC (lapsed).
 export type SkillHeatmapRow = {
   skill: string;
   monthsPerYear: number[];
   total: number;
   isActive: boolean;
-  // Curator weight carried on the row so the sort can use it — no
-  // consumer reads it, so it's optional to keep test fixtures and
-  // Storybook stubs from having to invent a value they don't care about.
   weight?: number;
 };
 

@@ -11,7 +11,7 @@ const MESSAGES: Record<Locale, Record<string, string>> = {
 const SUPPORTED_LOCALES: Locale[] = ['en', 'es'];
 const DEFAULT_LOCALE: Locale = 'en';
 
-export const LOCALE_COOKIE = 'locale';
+const LOCALE_COOKIE = 'locale';
 
 function readCookie(request: Request, name: string): string | null {
   const header = request.headers.get('cookie');
@@ -77,4 +77,4 @@ export function messagesFor(locale: Locale): Record<string, string> {
   return MESSAGES[locale] ?? MESSAGES[DEFAULT_LOCALE];
 }
 
-export { DEFAULT_LOCALE, SUPPORTED_LOCALES };
+export { SUPPORTED_LOCALES };

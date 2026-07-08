@@ -1,29 +1,15 @@
-import type { RouterContextProvider } from 'react-router';
+import { RouterContextProvider } from 'react-router';
 
 // Cloudflare bindings surfaced to route loaders/actions.
-// `workers/app.ts` attaches these to the RouterContextProvider as a
-// plain `cloudflare` property before calling `requestHandler`, and
-// route code reads it via `getCloudflare(context)`.
-//
-// Historical note: we used to use `createContext<Cloudflare>()` +
-// `context.set(cloudflareContext, ...)`. That silently broke after the
-// RR v8 migration because the SSR route bundle and the wrangler-built
-// worker bundle each got their own `createContext()` call → two
-// different context instances → `.set` in the worker never matched
-// `.get` in the route (Map keyed by object identity). The whole
-// contact form 500'd in production for four days without anyone
-// noticing. Attaching data by property name sidesteps identity
-// entirely: `provider.cloudflare` resolves the same way regardless of
-// which bundle constructed the provider.
+// `workers/app.ts` attaches these to the RouterContextProvider as plain
+// properties (`cloudflare`, `cspNonce`); route code reads them via
+// `getCloudflare(context)` / `getCspNonce(context)`. See
+// docs/migrations/rr7-to-rr8.md for the rationale.
 export type Cloudflare = {
   env: Env;
   ctx: ExecutionContext;
 };
 
-// Augmented RouterContextProvider shape. The base class is opaque to
-// TypeScript beyond its `get`/`set` methods; we widen it here for the
-// specific fields we attach in `workers/app.ts`. Consumers should read
-// via the helpers below rather than reaching for the property directly.
 export type AppLoadContext = Readonly<RouterContextProvider> & {
   cloudflare?: Cloudflare;
   cspNonce?: string;
@@ -73,16 +59,21 @@ export function getCloudflare(context: Readonly<RouterContextProvider>): Cloudfl
   return cloudflare;
 }
 
-// Per-request CSP nonce. `workers/app.ts` mints a fresh random value
-// per fetch and attaches it here; app/root.tsx reads it via
-// `getCspNonce(...)` and passes it to `<Scripts nonce>`,
-// `<ScrollRestoration nonce>`, and its own inline `<script>` tags.
-// The same nonce is echoed into the response `Content-Security-Policy`
-// header so `script-src 'nonce-<val>'` matches.
-//
-// Falls back to '' when the context wasn't populated (e.g. Vite SSR
-// dev mode, prerender). Empty nonce disables CSP for that request
-// which is the safe default in dev.
+// Per-request CSP nonce. Falls back to '' when the context wasn't
+// populated (Vite SSR dev, prerender), which is the safe dev default.
 export function getCspNonce(context: Readonly<RouterContextProvider>): string {
   return (context as AppLoadContext).cspNonce ?? '';
+}
+
+export function createAppLoadContext(
+  cloudflare: Cloudflare,
+  cspNonce: string
+): RouterContextProvider {
+  const provider = new RouterContextProvider() as RouterContextProvider & {
+    cloudflare: Cloudflare;
+    cspNonce: string;
+  };
+  provider.cloudflare = cloudflare;
+  provider.cspNonce = cspNonce;
+  return provider;
 }
