@@ -4,8 +4,6 @@ import { useNavigation } from 'react-router';
 
 import { getClassMaker } from '~/utils/utils';
 
-import { renderSkeleton } from './registry';
-
 // Show the skeleton only if the loader hasn't resolved after this many
 // ms. Warm/prefetched navigations (NavBar uses `prefetch="intent"`)
 // resolve in tens of ms and would otherwise flash a skeleton pointlessly.
@@ -24,28 +22,33 @@ type Props = {
 // skeleton picked by the target pathname. Prevents the "outgoing page
 // stays visible" flash on cold nav and gives a stable, layout-preserving
 // placeholder while the loader resolves.
+//
+// The skeleton registry (all 8 route skeletons + primitives, ~1.5 KB gz)
+// only imports when a nav exceeds the delay threshold — the vast
+// majority of prefetched/warm navs never touch it.
 export default function PendingBoundary({ children }: Props) {
   const { formatMessage } = useIntl();
   const navigation = useNavigation();
 
-  // Only treat this as pending if we're actually navigating to a new
-  // location (not just revalidating on a form submission — form actions
-  // go through `state === 'submitting'` first, then 'loading' with a
-  // `formMethod` set; we don't want to swap in a skeleton mid-form).
   const isPendingNav = navigation.state === 'loading' && navigation.formMethod === undefined;
   const targetPathname = navigation.location?.pathname;
 
-  const [showSkeleton, setShowSkeleton] = useState(false);
+  const [skeleton, setSkeleton] = useState<React.ReactElement | null>(null);
   useEffect(() => {
-    if (!isPendingNav) return undefined;
-    const id = setTimeout(() => setShowSkeleton(true), SKELETON_DELAY_MS);
+    if (!isPendingNav || !targetPathname) return undefined;
+    let cancelled = false;
+    const id = setTimeout(async () => {
+      const { renderSkeleton } = await import('./registry');
+      if (!cancelled) setSkeleton(renderSkeleton(targetPathname));
+    }, SKELETON_DELAY_MS);
     return () => {
+      cancelled = true;
       clearTimeout(id);
-      setShowSkeleton(false);
+      setSkeleton(null);
     };
-  }, [isPendingNav]);
+  }, [isPendingNav, targetPathname]);
 
-  if (showSkeleton && targetPathname) {
+  if (skeleton) {
     return (
       <div
         className={getClasses()}
@@ -54,7 +57,7 @@ export default function PendingBoundary({ children }: Props) {
         aria-busy="true"
         aria-label={formatMessage({ id: 'LOADING_ROUTE' })}
       >
-        {renderSkeleton(targetPathname)}
+        {skeleton}
       </div>
     );
   }
