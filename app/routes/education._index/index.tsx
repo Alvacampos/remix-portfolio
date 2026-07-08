@@ -6,6 +6,7 @@ import Card from '~/components/Card';
 import { EDUCATION } from '~/data/loaded';
 import type { Locale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
+import { passLoaderHeaders } from '~/utils/route-headers';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -68,9 +69,7 @@ export async function loader() {
   );
 }
 
-export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
-  return loaderHeaders;
-}
+export { passLoaderHeaders as headers };
 
 export default function Skills() {
   const { degrees, certifications } = useLoaderData<typeof loader>();

@@ -95,7 +95,7 @@ export const formatDate = (
 // Row order: active skills (any cells in the last column) first, lapsed
 // after. Sort within each group is weight DESC → total DESC (active) /
 // last-used year DESC → total DESC (lapsed).
-export type SkillHeatmapRow = {
+type SkillHeatmapRow = {
   skill: string;
   monthsPerYear: number[];
   total: number;

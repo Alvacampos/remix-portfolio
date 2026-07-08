@@ -4,7 +4,7 @@
 // are literals (proper nouns / certifications), so they aren't run
 // through `localized()`. The `id` on each group is the intl message
 // id for the heading rendered above the chip list.
-export type ForwardGroup = {
+type ForwardGroup = {
   id: string;
   variant: 'learning' | 'future';
   tech: string[];

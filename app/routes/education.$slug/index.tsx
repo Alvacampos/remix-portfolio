@@ -6,6 +6,7 @@ import Card from '~/components/Card';
 import { EDUCATION } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
+import { passLoaderHeaders } from '~/utils/route-headers';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -65,9 +66,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   );
 }
 
-export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
-  return loaderHeaders;
-}
+export { passLoaderHeaders as headers };
 
 export function ErrorBoundary() {
   const error = useRouteError();

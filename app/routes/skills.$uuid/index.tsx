@@ -6,6 +6,7 @@ import Card from '~/components/Card';
 import { SKILLS } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
+import { passLoaderHeaders } from '~/utils/route-headers';
 import { formatDate, getClassMaker, getSkillGroupsForJob, localized } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -119,11 +120,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   );
 }
 
-// Explicit `headers` export required to propagate the loader's response
-// headers under RR v8's Single Fetch aggregation.
-export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
-  return loaderHeaders;
-}
+export { passLoaderHeaders as headers };
 
 export function ErrorBoundary() {
   const error = useRouteError();

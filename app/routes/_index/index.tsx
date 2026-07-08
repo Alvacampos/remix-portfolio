@@ -6,6 +6,7 @@ import DownloadButton from '~/components/DownloadBtn';
 import { SKILLS } from '~/data/loaded';
 import { pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
+import { passLoaderHeaders } from '~/utils/route-headers';
 import { getClassMaker, getCvUrl } from '~/utils/utils';
 
 import styles from './style.css?url';
@@ -35,9 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   );
 }
 
-export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
-  return loaderHeaders;
-}
+export { passLoaderHeaders as headers };
 
 export const meta: MetaFunction = (args) =>
   mergeRouteMeta(args, {

@@ -1,14 +1,13 @@
-// Cloudflare Workers + Static Assets config for the RR v7 build.
-// Migrated from wrangler.toml (Pages) during the Bundle 4 cutover —
-// same edge, same V8 runtime, same SSR pipeline; different CF product
-// wrapping it. See docs/migrations/remix-to-rr7.md §B for context.
+// Cloudflare Workers + Static Assets config for the RR v8 build.
+// See docs/migrations/remix-to-rr7.md and docs/migrations/rr7-to-rr8.md
+// for the migration history.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "gonzalo-alvarez-campos-cv",
   "compatibility_date": "2026-06-01",
-  // Workers-side entrypoint (was `functions/[[path]].ts` under Pages).
-  // Every request hits this file first; the Worker delegates static
-  // assets to `env.ASSETS.fetch()` via the RR v7 request handler.
+  // Workers entrypoint. Every request hits this file first; the Worker
+  // delegates static assets to `env.ASSETS.fetch()` and everything else
+  // to the RR v8 request handler.
   "main": "./workers/app.ts",
   "assets": {
     // `react-router build` writes the client bundle here. Wrangler

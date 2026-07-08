@@ -5,7 +5,7 @@ import { RouterContextProvider } from 'react-router';
 // properties (`cloudflare`, `cspNonce`); route code reads them via
 // `getCloudflare(context)` / `getCspNonce(context)`. See
 // docs/migrations/rr7-to-rr8.md for the rationale.
-export type Cloudflare = {
+type Cloudflare = {
   env: Env;
   ctx: ExecutionContext;
 };

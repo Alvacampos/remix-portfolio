@@ -13,7 +13,7 @@ import { getClassMaker } from '~/utils/utils';
 const BLOCK = 'timeline-component';
 const getClasses = getClassMaker(BLOCK);
 
-export type DataTypes = {
+type DataTypes = {
   id: string;
   title: string;
   date: string;

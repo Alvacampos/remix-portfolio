@@ -13,24 +13,13 @@ import { createAppLoadContext } from '../app/utils/load-context';
 // eslint-disable-next-line no-restricted-imports, import/no-unresolved -- generated at build time
 import * as build from '../build/server';
 
-// Cloudflare Workers entrypoint. `wrangler.jsonc` pins `main` to this
-// file with `run_worker_first: true`, so every request hits here first.
-// Static-asset paths get handed back to `env.ASSETS.fetch()`; everything
-// else routes through the React Router request handler.
+// Cloudflare Workers entrypoint. See docs/security.md for the CSP,
+// rate-limit, and private-cache posture this file enforces.
 const STATIC_PREFIXES = ['/assets/', '/fonts/', '/.well-known/'];
 const STATIC_EXACT = new Set(['/favicon.ico', '/robots.txt', '/sitemap.xml']);
 
 const requestHandler = createRequestHandler(build as unknown as ServerBuild);
 
-// ─── CSP nonce ────────────────────────────────────────────────────────
-// RR v8's SSR emits inline <script> tags for the hydration payload
-// (`window.__reactRouterContext = ...`, the stream controller enqueue
-// calls, and scroll-restoration). Their contents are per-request, so
-// SHA-256 hashes can't cover them. Instead we mint a fresh nonce per
-// request, set it on every inline script (via `<Scripts nonce>` and
-// our own `<script nonce={...}>` in root.tsx), and echo the same value
-// into the CSP header's `script-src 'nonce-<val>'`.
-//
 // 128 bits of entropy in url-safe base64 (16 random bytes → 22 chars).
 function mintNonce(): string {
   const bytes = new Uint8Array(16);
@@ -41,29 +30,14 @@ function mintNonce(): string {
     .replaceAll('=', '');
 }
 
-// ─── Security headers ─────────────────────────────────────────────────
-// Applied to every response the Worker generates (SSR HTML, .data,
-// contact action, and static assets forwarded via env.ASSETS). CSP is
-// built per-request because it embeds the nonce; the other headers are
-// static.
-//
-// style-src carries 'unsafe-inline' because 40+ components use inline
-// `style={{ }}` attrs (skeleton widths, heatmap grid vars, etc.).
-// Hashing every inline style declaration is impractical; the trade-off
-// is documented. Everything else uses strict allow-lists.
-//
-// The CSP body is 99% static, so we hoist the pre-nonce prefix and
-// post-nonce suffix to module scope. Only the nonce changes per
-// request, so building the header per request is just two string
-// concats instead of a 10-element array + join.
+// `style-src 'unsafe-inline'` is the one intentional relaxation — 40+
+// inline `style={{ }}` sites (skeleton widths, heatmap grid vars) can't
+// be hashed practically. Everything else uses strict allow-lists.
 const CSP_TAIL =
   "'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';" +
   " connect-src 'self'; manifest-src 'self'; base-uri 'self';" +
   " frame-ancestors 'none'; form-action 'self'; object-src 'none'";
 const CSP_HEAD_WITH_NONCE = "default-src 'none'; script-src 'self' 'nonce-";
-
-// Static assets carry no inline scripts. Pre-computed nonce-less CSP
-// keeps that path off the concat.
 const CSP_STATIC_ASSETS = `default-src 'none'; script-src 'self${CSP_TAIL}`;
 
 const STATIC_SECURITY_HEADERS: Record<string, string> = {
@@ -112,25 +86,11 @@ function withSecurityHeaders(
   });
 }
 
-// ─── `.data` rate limit ───────────────────────────────────────────────
-// RR v8's Single-Fetch `.data` endpoints return the destination
-// loader's JSON payload. Real visitors hit at most a handful per
-// session; bulk scrapers looping every route land here first. Cap
-// 60/hour per IP: invisible to humans, breaks a curl-in-a-for-loop
-// after ~7 URLs.
-//
-// KV key hashes the IP so the namespace isn't a readable audit trail
-// of who's visiting. Sentinel `local-dev` fallback keeps the rule
-// inert under `wrangler dev` where `CF-Connecting-IP` is unset.
 const DATA_RATE_LIMIT_PER_HOUR = 60;
 
-// Real client-side nav from the app sends all THREE `Sec-Fetch-*`
-// headers plus a same-origin Referer. Individually each signal is
-// spoofable, but a scraper has to match all four correctly to bypass
-// the cap — versus checking just `Sec-Fetch-Site: same-origin` which
-// is a one-header spoof if they read the source. Multiplying the
-// number of matching signals raises effort meaningfully without
-// affecting real visitors.
+// Match all four browser-set signals so a scraper has to spoof each
+// one to bypass the .data cap. See docs/security.md § ".data rate
+// limit".
 function isTrustedInternalNav(request: Request, origin: string): boolean {
   const site = request.headers.get('Sec-Fetch-Site');
   const dest = request.headers.get('Sec-Fetch-Dest');
@@ -155,10 +115,8 @@ async function isDataRequestOverLimit(
   const current = await env.RATELIMIT_KV.get(key);
   const count = current ? Number.parseInt(current, 10) || 0 : 0;
   if (count >= DATA_RATE_LIMIT_PER_HOUR) return true;
-  // waitUntil lets the response race the KV write — the counter
-  // converges within seconds and a scraper can't outrun eventually-
-  // consistent reads long enough to matter (worst case: 1-2 extra
-  // requests through per warm-worker window).
+  // waitUntil lets the response race the KV write; worst-case
+  // undercount is 1-2 extra requests per warm-worker window.
   ctx.waitUntil(env.RATELIMIT_KV.put(key, String(count + 1), { expirationTtl: 3600 }));
   return false;
 }
