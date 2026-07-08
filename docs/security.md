@@ -75,9 +75,11 @@ namespace from being a readable audit trail of visitors. Sentinel
 origin (or `null` for stripped-privacy submissions) and get rejected
 with a 403.
 
-**Honeypot.** Hidden `_gotcha` field on the form; any submission with
+**Honeypot.** Hidden `website` field on the form; any submission with
 a non-empty value is silently accepted (200) without actually sending —
-bots think they succeeded, retry rate stays flat.
+bots think they succeeded, retry rate stays flat. Field is optional in
+the schema so an omitted field and an empty field are indistinguishable
+from the response side (both parse as OK).
 
 **Rate limit.** 3/hour per hashed IP via `RATELIMIT_KV`. Same hashing
 strategy as `.data`; different key prefix (`ratelimit:contact:`).
@@ -85,6 +87,32 @@ strategy as `.data`; different key prefix (`ratelimit:contact:`).
 **Zod validation.** Body parsed by a `z.object({...})` schema at the
 top of the action; invalid submissions get a 400 with a per-field
 error map.
+
+## `RATELIMIT_KV` keys
+
+Both rate limits share the `RATELIMIT_KV` namespace. New rate-limited
+surfaces MUST add a purpose prefix so keys can't collide:
+
+| Purpose       | Key shape                        | TTL   | Cap     |
+| ------------- | -------------------------------- | ----- | ------- |
+| `.data` reads | `ratelimit:data:<sha256(ip)>`    | 3600s | 60/hour |
+| `/contact`    | `ratelimit:contact:<sha256(ip)>` | 3600s | 3/hour  |
+
+Hashing uses the shared helper in [app/utils/hash-ip.ts](../app/utils/hash-ip.ts).
+
+## SSR HTML is `Cache-Control: private`
+
+Route loaders emit `Cache-Control: public, max-age=3600, s-maxage=86400`
+so the JSON `.data` payload edge-caches. But the SSR HTML for the same
+routes embeds the per-request CSP nonce on every inline `<script>` —
+if a shared cache served one visitor's HTML to another, they'd share
+a nonce for `max-age`, defeating the DOM-inspection hiding.
+
+`workers/app.ts` handles this by rewriting `Cache-Control: public →
+private` on HTML responses (`isHtml=true` passed to
+`withSecurityHeaders`). Browsers still cache per-visitor; the edge
+doesn't hold nonced HTML. The `.data` path is unaffected and stays
+edge-cacheable — its payload is nonce-free.
 
 ## Static assets
 

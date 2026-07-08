@@ -2,8 +2,8 @@
 
 ## Specs
 
-- `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts`, `projects.spec.ts`, `error.spec.ts`, `a11y.spec.ts` — behavioural + a11y specs (route loaders, navigation, content assertions, axe violations).
-- `visual.spec.ts` — full-page screenshot diffs. Covers `/`, `/education`, `/education/:slug`, and `/skills/1` (a stable detail page). The `/skills` index is intentionally excluded — see "Why `/skills` index isn't gated" below.
+- `home.spec.ts`, `skills.spec.ts`, `education.spec.ts`, `navbar.spec.ts`, `projects.spec.ts`, `contact.spec.ts`, `error.spec.ts`, `a11y.spec.ts` — behavioural + a11y specs (route loaders, navigation, content assertions, form submission, axe violations).
+- `visual.spec.ts` — full-page screenshot diffs. Covers `/`, `/education`, `/education/:slug`, `/skills/1` (a stable detail page), and `/contact`. The `/skills` index is intentionally excluded — see "Why `/skills` index isn't gated" below.
 
 ## Visual regression
 

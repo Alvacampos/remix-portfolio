@@ -36,11 +36,22 @@ read it back by property name:
 
 ```ts
 // worker (workers/app.ts)
-const context = new RouterContextProvider() as unknown as AppLoadContext & RouterContextProvider;
-context.cloudflare = { env, ctx };
-context.cspNonce = nonce;
+const context = createAppLoadContext({ env, ctx }, nonce);
 
-// route helper (app/utils/load-context.ts)
+// helper (app/utils/load-context.ts)
+export function createAppLoadContext(
+  cloudflare: Cloudflare,
+  cspNonce: string
+): RouterContextProvider {
+  const provider = new RouterContextProvider() as RouterContextProvider & {
+    cloudflare: Cloudflare;
+    cspNonce: string;
+  };
+  provider.cloudflare = cloudflare;
+  provider.cspNonce = cspNonce;
+  return provider;
+}
+
 export function getCloudflare(context: Readonly<RouterContextProvider>) {
   return (context as AppLoadContext).cloudflare ?? DEV_STUB_CLOUDFLARE;
 }
@@ -48,8 +59,8 @@ export function getCloudflare(context: Readonly<RouterContextProvider>) {
 
 Property names are strings — identical across bundles by construction —
 so the handoff works regardless of which bundle instantiated the
-provider. The `as unknown as` cast is the ugly part but it's local to
-`workers/app.ts` and typed properly at the read side via `AppLoadContext`.
+provider. The type cast lives inside `createAppLoadContext`; call sites
+just receive a typed `RouterContextProvider`.
 
 ## CSP nonce: React context, not loader data
 
