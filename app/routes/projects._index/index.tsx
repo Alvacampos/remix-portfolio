@@ -1,13 +1,12 @@
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { MetaFunction } from 'react-router';
+import { data, type MetaFunction } from 'react-router';
 import { Link, useLoaderData } from 'react-router';
 
 import Card from '~/components/Card';
-import { loadProjects } from '~/data/projects-schema';
+import { PROJECTS } from '~/data/loaded';
 import type { Locale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { formatDate, getClassMaker, localized } from '~/utils/utils';
-import projectsJson from '~data/projects.json';
 
 import styles from './style.css?url';
 
@@ -23,8 +22,6 @@ export const meta: MetaFunction = (args) =>
 
 const BLOCK = 'projects-route';
 const getClasses = getClassMaker(BLOCK);
-
-const PROJECTS = loadProjects(projectsJson);
 
 // Ordering rule: ongoing projects (no `endDate`) first, then everyone
 // else newest-end-date first. Applied once at boot; the JSON's
@@ -42,7 +39,19 @@ const ORDERED_PROJECTS = [...PROJECTS.PROJECTS].sort((a, b) => {
 });
 
 export async function loader() {
-  return { projects: ORDERED_PROJECTS };
+  return data(
+    { projects: ORDERED_PROJECTS },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        Vary: 'Accept-Language, Cookie',
+      },
+    }
+  );
+}
+
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export default function ProjectsIndex() {

@@ -60,11 +60,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const canonical = `${SITE_URL}${path}`;
-  return {
-    locale,
-    messages: messagesFor(locale),
-    canonical,
-  };
+  return { locale, canonical };
 }
 
 const OG_LOCALES: Record<Locale, string> = { en: 'en_US', es: 'es_ES' };
@@ -237,9 +233,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { locale, messages } = useLoaderData<typeof loader>();
+  const { locale } = useLoaderData<typeof loader>();
   return (
-    <IntlProvider messages={messages} locale={locale} defaultLocale="en">
+    <IntlProvider messages={messagesFor(locale)} locale={locale} defaultLocale="en">
       <NavBar />
       <main id="main-content">
         <PendingBoundary>

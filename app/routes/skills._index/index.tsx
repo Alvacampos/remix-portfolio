@@ -7,7 +7,7 @@ import Input from '~/components/Input';
 import TechTreeSkeleton from '~/components/skeletons/parts/TechTreeSkeleton';
 import TenureHeatmapSkeleton from '~/components/skeletons/parts/TenureHeatmapSkeleton';
 import TimelineSkeleton from '~/components/skeletons/parts/TimelineSkeleton';
-import { loadSkills } from '~/data/skills-schema';
+import { SKILLS } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import {
@@ -19,7 +19,6 @@ import {
   getSkillSuggestions,
   localized,
 } from '~/utils/utils';
-import skillsJson from '~data/skills.json';
 
 import styles from './style.css?url';
 
@@ -27,16 +26,11 @@ import styles from './style.css?url';
 // vertical-timeline) is now `@import`-inlined into ./style.css via
 // postcss-import — see that file for the rationale. The lazy chunks
 // themselves still split off the eager bundle through `lazy()` below.
-export const links = () => [
-  {
-    rel: 'preload',
-    href: '/fonts/monaspace/MonaspaceNeon-Regular.v2.woff2',
-    as: 'font',
-    type: 'font/woff2',
-    crossOrigin: 'anonymous',
-  },
-  { rel: 'stylesheet', href: styles },
-];
+// Monaspace is *not* preloaded here: on /skills it only paints the
+// "Total years of experience" chip and empty-state text — neither is
+// on the LCP path, and preloading fights Roboto for the first
+// connection window. It still ships lazily via @font-face.
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 const LazyTimeline = lazy(() => import('~/components/Timeline'));
 const LazyTechTree = lazy(() => import('~/components/TechTree'));
@@ -53,16 +47,10 @@ export const meta: MetaFunction = (args) =>
 const BLOCK = 'skills-route';
 const getClasses = getClassMaker(BLOCK);
 
-// Validated + derived once per worker boot for everything that's
-// time-independent AND locale-independent. Anything that calls
-// `new Date()` (heatmap year span, "ongoing" job clamp, total-years
-// figure) stays in the loader: on Cloudflare Workers, `Date.now()`
-// at module init returns 0 (Spectre mitigation freezes Date until
-// the first I/O event), so module-scope derivations would lock the
-// year-since to 1970 in production. Anything that needs the locale
-// (work-item rol/description, EXTRA_ACTIVITIES item copy) is also
-// resolved inside the loader where the request is in scope.
-const SKILLS = loadSkills(skillsJson);
+// SKILLS validates once at boot (see ~/data/loaded). Anything Date-
+// derived stays in the loader — on Cloudflare Workers, `new Date()` at
+// module init returns 0 (Spectre mitigation) so module-scope time math
+// would lock to 1970 in production.
 const SUGGESTIONS = getSkillSuggestions(SKILLS);
 const WORK_ITEMS_REVERSED = [...SKILLS.WORK_ITEMS].reverse();
 
@@ -129,7 +117,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     },
     {
       headers: {
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
         // Loader output varies by locale (work-item rol/description,
         // extra-activity copy). Tell the edge to segment its cache key
         // by both `Accept-Language` (browser default for new visitors)

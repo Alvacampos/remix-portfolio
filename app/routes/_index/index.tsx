@@ -1,19 +1,16 @@
 import { FormattedMessage } from 'react-intl';
-import { type LoaderFunctionArgs, type MetaFunction } from 'react-router';
+import { data, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
 import { Link, useLoaderData } from 'react-router';
 
 import DownloadButton from '~/components/DownloadBtn';
-import { loadSkills } from '~/data/skills-schema';
+import { SKILLS } from '~/data/loaded';
 import { pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
 import { getClassMaker, getCvUrl } from '~/utils/utils';
-import skillsJson from '~data/skills.json';
 
 import styles from './style.css?url';
 
 export const links = () => [{ rel: 'stylesheet', href: styles }];
-
-const SKILLS = loadSkills(skillsJson);
 const CURRENT_COMPANY = 'Qubika';
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -27,10 +24,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
     now.getFullYear() - startYear + (now.getMonth() + 1 - startMonth) / 12
   );
 
-  return {
-    cvUrl: getCvUrl(pickLocale(request)),
-    yearsOfExp,
-  };
+  return data(
+    { cvUrl: getCvUrl(pickLocale(request)), yearsOfExp },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+        Vary: 'Accept-Language, Cookie',
+      },
+    }
+  );
+}
+
+export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
+  return loaderHeaders;
 }
 
 export const meta: MetaFunction = (args) =>
