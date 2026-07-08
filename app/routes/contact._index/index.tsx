@@ -31,7 +31,11 @@ const ContactSchema = z.object({
   email: z.string().email(),
   subject: z.string().min(2).max(120),
   message: z.string().min(10).max(4000),
-  website: z.string().max(0), // honeypot — must be empty
+  // Honeypot — omitted OR empty passes validation (real form always
+  // posts the empty field). Anything non-empty gets silent-dropped as
+  // a 200 in the pre-parse branch below. Marking `optional()` makes
+  // the omit and fill paths indistinguishable from the response side.
+  website: z.string().max(0).optional(),
 });
 
 type FieldErrors = Partial<Record<keyof z.infer<typeof ContactSchema>, string>>;
@@ -99,7 +103,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
   // X-Forwarded-For chain. Fall back to a sentinel so the rule still
   // fires under local dev (where the header is unset).
   const ip = request.headers.get('CF-Connecting-IP') ?? 'local-dev';
-  const key = `ratelimit:${await hashIp(ip)}`;
+  const key = `ratelimit:contact:${await hashIp(ip)}`;
   const current = await env.RATELIMIT_KV.get(key);
   const count = current ? Number.parseInt(current, 10) || 0 : 0;
   if (count >= RATE_LIMIT_PER_HOUR) {
@@ -138,10 +142,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
   });
 
   if (!resendResponse.ok) {
-    // Log the body server-side for debugging without leaking it to
-    // the client. The visitor sees a generic "try again" message.
-    const body = await resendResponse.text();
-    console.error('Resend send failed', resendResponse.status, body);
+    // Log status only — Resend echoes request-body fields (to/from/subject)
+    // in its error payloads, which would leak visitor PII into observability
+    // logs.
+    console.error('Resend send failed', resendResponse.status);
     return data<ActionResponse>({ status: 'error', reason: 'send-failed' }, { status: 502 });
   }
 

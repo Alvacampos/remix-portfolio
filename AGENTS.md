@@ -56,30 +56,44 @@ remix-portfolio/
 │   ├── entry.client.tsx          # hydrateRoot in StrictMode (HydratedRouter)
 │   ├── entry.server.tsx          # renderToReadableStream + isbot (ServerRouter)
 │   ├── routes/
+│   │   ├── $.tsx                 # Splat route — RR-native 404 renderer
 │   │   ├── _index/               # /                  → Home
+│   │   ├── contact._index/       # /contact           → Contact form (Zod + Resend + rate limit + CSRF + honeypot)
 │   │   ├── education._index/     # /education         → Degrees + certifications grid
 │   │   ├── education.$slug/      # /education/:slug   → Single degree detail
+│   │   ├── projects._index/      # /projects          → Case-studies grid
+│   │   ├── projects.$slug/       # /projects/:slug    → Single case-study detail
 │   │   ├── skills._index/        # /skills            → Work timeline + tech grid + tenure heatmap
 │   │   └── skills.$uuid/         # /skills/:uuid      → Single work-item detail
 │   ├── components/
 │   │   ├── Card/                 # Generic card (title / texts / itemList / skills / children)
-│   │   ├── TechTree/             # Categorized tech-stack chip grid (rendered from skills.json)
 │   │   ├── DownloadBtn/          # Download CV PDF
 │   │   ├── Input/                # Autocomplete combobox (a11y-compliant)
+│   │   ├── LocaleToggle/         # EN/ES sliding knob (writes cookie + localStorage)
 │   │   ├── NavBar/               # Side / bottom nav with social icons
+│   │   ├── PendingBoundary/      # Route-scoped Suspense wrapper + skeleton dispatch
+│   │   ├── TechTree/             # Categorized tech-stack chip grid (rendered from skills.json)
 │   │   ├── TenureHeatmap/        # GitHub-style skill × year contribution graph
 │   │   ├── ThemeToggle/          # Sliding sun/moon dark/light toggle
 │   │   ├── Timeline/             # Wraps react-vertical-timeline-component
-│   │   └── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
-│   ├── data/skills-schema.ts     # Zod schema + types + loadSkills() boot validator
+│   │   ├── icons/                # *** SVGR-generated, gitignored, do NOT edit ***
+│   │   └── skeletons/            # Route-shaped skeleton components used by PendingBoundary
+│   ├── data/
+│   │   ├── loaded.ts             # Boot-time Zod parse for skills/education/projects JSON
+│   │   ├── skills-schema.ts      # Zod schema + types + loadSkills()
+│   │   ├── education-schema.ts   # Zod schema + types + loadEducation()
+│   │   └── projects-schema.ts    # Zod schema + types + loadProjects()
 │   ├── assets/icons/             # Source .svg files (kebab-case)
 │   ├── intl/                     # en-US.json + es-ES.json + locale picker (index.ts)
 │   ├── styles/
 │   │   ├── constants.js          # Design tokens (colors, spacing, fonts, breakpoints)
 │   │   └── style.css             # Global body/html/main + @font-face Roboto + Monaspace
 │   └── utils/
-│       ├── utils.tsx              # getClassMaker, formatDate, getSkillHeatmapData, getSkillGroupsForJob, getAllSkillGroups, getSkillSuggestions, localized, getCvUrl
-│       └── meta.ts                # mergeRouteMeta (per-route title + OG/Twitter merger)
+│       ├── utils.tsx             # getClassMaker, formatDate, getSkillHeatmapData, getSkillGroupsForJob, getAllSkillGroups, getSkillSuggestions, localized, getCvUrl
+│       ├── meta.ts               # mergeRouteMeta (per-route title + OG/Twitter merger)
+│       ├── hash-ip.ts            # SHA-256 hex digest of a client IP (rate-limit key builder)
+│       ├── load-context.ts       # AppLoadContext + createAppLoadContext + getCloudflare / getCspNonce
+│       └── nonce-context.tsx     # React context for the per-request CSP nonce (not loader data)
 ├── workers/app.ts                # Cloudflare Worker — serves the RR v8 server build + delegates static assets to `env.ASSETS`
 ├── public/
 │   ├── data/                     # Static JSON consumed by route loaders (education, skills)
@@ -122,6 +136,7 @@ From [package.json](package.json):
 | `npm run lint:prettier`      | `prettier --check .`                                                               |
 | `npm run build:svg`          | `svgo -f ./app/assets/icons` — optimize source SVGs                                |
 | `npm run build:icons`        | `svgr` over `./app/assets/icons` → `app/components/icons/*.jsx`                    |
+| `npm run build:og`           | `node scripts/render-og-image.mjs` — re-renders per-route OG PNGs                  |
 | `npm test`                   | `vitest run` — unit / component tests                                              |
 | `npm run test:watch`         | `vitest` watch mode                                                                |
 | `npm run test:e2e`           | `playwright test` — chromium + Pixel 7 mobile projects                             |

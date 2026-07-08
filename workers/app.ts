@@ -75,10 +75,25 @@ const STATIC_SECURITY_HEADERS: Record<string, string> = {
     'camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
 };
 
+// SSR HTML embeds the per-request nonce on every inline <script>.
+// Route loaders set `Cache-Control: public, ...` for edge caching of
+// the JSON `.data` payload (nonce-free) — but the same header rides
+// the HTML response, and a shared cache would then serve one visitor's
+// nonce to every visitor for up to `max-age`. Force `private` on the
+// HTML path so the browser can still cache but no shared cache holds
+// the nonce.
+function privatizeCacheControl(headers: Headers): void {
+  const cc = headers.get('Cache-Control');
+  if (cc && /\bpublic\b/i.test(cc)) {
+    headers.set('Cache-Control', cc.replace(/\bpublic\b/gi, 'private'));
+  }
+}
+
 function withSecurityHeaders(
   response: Response,
   nonce: string,
-  extra?: Record<string, string>
+  extra?: Record<string, string>,
+  isHtml = false
 ): Response {
   const headers = new Headers(response.headers);
   for (const [k, v] of Object.entries(STATIC_SECURITY_HEADERS)) headers.set(k, v);
@@ -86,6 +101,7 @@ function withSecurityHeaders(
     'Content-Security-Policy',
     nonce ? `${CSP_HEAD_WITH_NONCE}${nonce}${CSP_TAIL}` : CSP_STATIC_ASSETS
   );
+  if (isHtml) privatizeCacheControl(headers);
   if (extra) for (const [k, v] of Object.entries(extra)) headers.set(k, v);
   return new Response(response.body, {
     status: response.status,
@@ -174,6 +190,6 @@ export default {
       return withSecurityHeaders(response, nonce, { 'X-Robots-Tag': 'noindex' });
     }
     const context = createAppLoadContext({ env, ctx }, nonce);
-    return withSecurityHeaders(await requestHandler(request, context), nonce);
+    return withSecurityHeaders(await requestHandler(request, context), nonce, undefined, true);
   },
 } satisfies ExportedHandler<Env>;
