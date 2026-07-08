@@ -1,5 +1,3 @@
-import 'react-vertical-timeline-component/style.min.css';
-
 import { FormattedMessage, useIntl } from 'react-intl';
 import type { MetaFunction } from 'react-router';
 import { Link, useLoaderData } from 'react-router';

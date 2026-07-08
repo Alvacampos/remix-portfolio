@@ -11,19 +11,7 @@ import skillsJson from '~data/skills.json';
 
 import styles from './style.css?url';
 
-// The CV PDF is the primary CTA; prefetch it so the Download click is
-// ~instant. `links()` runs without the request in scope so we always
-// prefetch the English file — Spanish visitors still get it warmed in
-// cache, only the URL differs at click time.
-export const links = () => [
-  { rel: 'stylesheet', href: styles },
-  {
-    rel: 'prefetch',
-    href: '/assets/files/gonzalo_alvarez_campos_cv.pdf',
-    as: 'fetch',
-    crossOrigin: 'anonymous' as const,
-  },
-];
+export const links = () => [{ rel: 'stylesheet', href: styles }];
 
 const SKILLS = loadSkills(skillsJson);
 const CURRENT_COMPANY = 'Qubika';

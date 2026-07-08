@@ -10,6 +10,7 @@ import type { EntryContext, RouterContextProvider } from 'react-router';
 import { ServerRouter } from 'react-router';
 
 import { getCspNonce } from './utils/load-context';
+import { NonceProvider } from './utils/nonce-context';
 
 export default async function handleRequest(
   request: Request,
@@ -19,12 +20,19 @@ export default async function handleRequest(
   loadContext: RouterContextProvider
 ) {
   // CSP nonce for RR's streaming hydration scripts (bootstrapScriptContent
-  // + `<Scripts>` reserve blocks). ServerRouter forwards this to every
-  // inline script it emits so `script-src 'nonce-<val>'` matches.
+  // + `<Scripts>` reserve blocks) and for our own inline scripts in
+  // app/root.tsx. `ServerRouter` gets it via prop for the RR-emitted
+  // blocks; app code reads it via `useNonce()` off the React context
+  // populated by <NonceProvider>. Reading via React context (rather
+  // than returning the nonce from a loader) keeps it out of the
+  // client-side hydration payload — nonces must not be exfiltrable via
+  // DOM inspection.
   const nonce = getCspNonce(loadContext);
   let status = responseStatusCode;
   const body = await renderToReadableStream(
-    <ServerRouter context={reactRouterContext} url={request.url} nonce={nonce} />,
+    <NonceProvider nonce={nonce}>
+      <ServerRouter context={reactRouterContext} url={request.url} nonce={nonce} />
+    </NonceProvider>,
     {
       nonce,
       signal: request.signal,

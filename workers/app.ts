@@ -64,21 +64,20 @@ function mintNonce(): string {
 // `style={{ }}` attrs (skeleton widths, heatmap grid vars, etc.).
 // Hashing every inline style declaration is impractical; the trade-off
 // is documented. Everything else uses strict allow-lists.
-function buildCsp(nonce: string): string {
-  return [
-    "default-src 'none'",
-    `script-src 'self' 'nonce-${nonce}'`,
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    "font-src 'self'",
-    "connect-src 'self'",
-    "manifest-src 'self'",
-    "base-uri 'self'",
-    "frame-ancestors 'none'",
-    "form-action 'self'",
-    "object-src 'none'",
-  ].join('; ');
-}
+//
+// The CSP body is 99% static, so we hoist the pre-nonce prefix and
+// post-nonce suffix to module scope. Only the nonce changes per
+// request, so building the header per request is just two string
+// concats instead of a 10-element array + join.
+const CSP_TAIL =
+  "'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';" +
+  " connect-src 'self'; manifest-src 'self'; base-uri 'self';" +
+  " frame-ancestors 'none'; form-action 'self'; object-src 'none'";
+const CSP_HEAD_WITH_NONCE = "default-src 'none'; script-src 'self' 'nonce-";
+
+// Static assets carry no inline scripts. Pre-computed nonce-less CSP
+// keeps that path off the concat.
+const CSP_STATIC_ASSETS = `default-src 'none'; script-src 'self${CSP_TAIL}`;
 
 const STATIC_SECURITY_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
@@ -89,10 +88,18 @@ const STATIC_SECURITY_HEADERS: Record<string, string> = {
     'camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
 };
 
-function withSecurityHeaders(response: Response, nonce: string): Response {
+function withSecurityHeaders(
+  response: Response,
+  nonce: string,
+  extra?: Record<string, string>
+): Response {
   const headers = new Headers(response.headers);
   for (const [k, v] of Object.entries(STATIC_SECURITY_HEADERS)) headers.set(k, v);
-  headers.set('Content-Security-Policy', buildCsp(nonce));
+  headers.set(
+    'Content-Security-Policy',
+    nonce ? `${CSP_HEAD_WITH_NONCE}${nonce}${CSP_TAIL}` : CSP_STATIC_ASSETS
+  );
+  if (extra) for (const [k, v] of Object.entries(extra)) headers.set(k, v);
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -141,30 +148,34 @@ async function isDataRequestOverLimit(
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    // Static assets carry no inline scripts, so they get the nonce-less
+    // CSP and skip the mint entirely.
+    if (STATIC_EXACT.has(url.pathname) || STATIC_PREFIXES.some((p) => url.pathname.startsWith(p))) {
+      return withSecurityHeaders(await env.ASSETS.fetch(request), '');
+    }
+
     const nonce = mintNonce();
 
-    if (STATIC_EXACT.has(url.pathname) || STATIC_PREFIXES.some((p) => url.pathname.startsWith(p))) {
-      return withSecurityHeaders(await env.ASSETS.fetch(request), nonce);
-    }
     if (url.pathname.endsWith('.data')) {
-      if (await isDataRequestOverLimit(request, env, ctx)) {
-        return withSecurityHeaders(
-          new Response('Too Many Requests', {
-            status: 429,
-            headers: { 'Retry-After': '3600', 'X-Robots-Tag': 'noindex' },
-          }),
-          nonce
-        );
+      // Client-side navigation from our own pages sends `Sec-Fetch-Site:
+      // same-origin`. Skip the rate-limit KV read on that path — real
+      // visitors clicking around the app shouldn't pay 5–50 ms per
+      // internal nav for a scraper defense. Cross-origin / cross-site
+      // / no-header requests (curl, direct hits, embedded scrapers)
+      // still go through the limiter.
+      const secFetchSite = request.headers.get('Sec-Fetch-Site');
+      if (secFetchSite !== 'same-origin' && (await isDataRequestOverLimit(request, env, ctx))) {
+        return withSecurityHeaders(new Response('Too Many Requests', { status: 429 }), nonce, {
+          'Retry-After': '3600',
+          'X-Robots-Tag': 'noindex',
+        });
       }
       const context = buildLoadContext({ env, ctx }, nonce);
       const response = await requestHandler(request, context);
-      const headers = new Headers(response.headers);
-      // Search engines shouldn't index the raw JSON payloads.
-      headers.set('X-Robots-Tag', 'noindex');
-      return withSecurityHeaders(
-        new Response(response.body, { status: response.status, headers }),
-        nonce
-      );
+      // Merge `X-Robots-Tag: noindex` in the same header pass as the
+      // rest of the security headers — avoids a second Response wrap.
+      return withSecurityHeaders(response, nonce, { 'X-Robots-Tag': 'noindex' });
     }
     const context = buildLoadContext({ env, ctx }, nonce);
     return withSecurityHeaders(await requestHandler(request, context), nonce);
