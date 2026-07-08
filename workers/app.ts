@@ -75,18 +75,20 @@ const STATIC_SECURITY_HEADERS: Record<string, string> = {
     'camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
 };
 
-// SSR HTML embeds the per-request nonce on every inline <script>.
-// Route loaders set `Cache-Control: public, ...` for edge caching of
-// the JSON `.data` payload (nonce-free) — but the same header rides
-// the HTML response, and a shared cache would then serve one visitor's
-// nonce to every visitor for up to `max-age`. Force `private` on the
-// HTML path so the browser can still cache but no shared cache holds
-// the nonce.
+// See docs/security.md § "SSR HTML is Cache-Control: private". Also
+// strip `s-maxage` / `proxy-revalidate` — those directives are for
+// shared caches and would let a non-conforming intermediary hold the
+// nonced HTML despite `private`.
 function privatizeCacheControl(headers: Headers): void {
   const cc = headers.get('Cache-Control');
-  if (cc && /\bpublic\b/i.test(cc)) {
-    headers.set('Cache-Control', cc.replace(/\bpublic\b/gi, 'private'));
-  }
+  if (!cc) return;
+  const scrubbed = cc
+    .split(',')
+    .map((d) => d.trim())
+    .filter((d) => !/^(s-maxage|proxy-revalidate)\b/i.test(d))
+    .map((d) => (/^public\b/i.test(d) ? 'private' : d))
+    .join(', ');
+  if (scrubbed !== cc) headers.set('Cache-Control', scrubbed);
 }
 
 function withSecurityHeaders(
