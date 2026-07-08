@@ -54,7 +54,27 @@ async function hashIp(ip: string): Promise<string> {
     .join('');
 }
 
+// CSRF defense: only accept POSTs from a page served by our own
+// origin. Same-origin `<Form>` submissions from the app always carry
+// `Origin: <site>`; a cross-site form posts a different origin (or
+// `null` for stripped-privacy submissions). Cheaper than a full CSRF
+// token because our action is idempotent-ish (rate-limited + no
+// user-mutable state).
+const ALLOWED_ORIGINS = new Set([
+  'https://gonzalo-alvarez-campos-cv.com',
+  // Local dev + wrangler preview both use this origin.
+  'http://localhost:8788',
+]);
+
 export async function action({ request, context }: ActionFunctionArgs) {
+  const origin = request.headers.get('Origin');
+  if (origin === null || !ALLOWED_ORIGINS.has(origin)) {
+    // Return 403 without leaking why. Legitimate submissions from the
+    // real form always carry an allowed Origin; anything else is an
+    // attacker or a misconfigured client.
+    return data<ActionResponse>({ status: 'error', reason: 'send-failed' }, { status: 403 });
+  }
+
   const { env } = getCloudflare(context);
   const formData = await request.formData();
   const raw = Object.fromEntries(formData);

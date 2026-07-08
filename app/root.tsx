@@ -16,6 +16,7 @@ import NavBar from '~/components/NavBar';
 import PendingBoundary from '~/components/PendingBoundary';
 import { type Locale, messagesFor, pickLocale } from '~/intl';
 import styles from '~/styles/style.css?url';
+import { getCspNonce } from '~/utils/load-context';
 import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
@@ -50,7 +51,7 @@ export function links() {
 const BLOCK = 'root';
 const getClasses = getClassMaker(BLOCK);
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
   // Build the canonical URL from the request path, anchored to SITE_URL so
   // it always points at the production origin even on previews/local dev.
@@ -59,10 +60,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const canonical = `${SITE_URL}${path}`;
+  // CSP nonce minted per-request in workers/app.ts. Echoed onto every
+  // inline <script> tag (ours + RR's) so `script-src 'nonce-<val>'`
+  // matches under the strict CSP.
+  const cspNonce = getCspNonce(context);
   return {
     locale,
     messages: messagesFor(locale),
     canonical,
+    cspNonce,
   };
 }
 
@@ -141,12 +147,12 @@ const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light
 // resolves the right locale server-side and this branch becomes a
 // no-op (the loader already matches localStorage).
 //
-// The current `<html lang>` value identifies what the loader resolved,
-// used as the comparison anchor. `?lang=` is the highest-priority
+// Reads the loader-resolved locale off `document.documentElement.lang`
+// (the `<html lang>` attribute) instead of interpolating it into the
+// script body — keeps the script a static string so its CSP script
+// hash stays stable across locales. `?lang=` is the highest-priority
 // signal in pickLocale so the redirect always wins on first paint.
-function buildLocaleReplayScript(currentLocale: Locale) {
-  return `try{var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!=='${currentLocale}'){document.cookie='locale='+s+';Path=/;Max-Age=31536000;SameSite=Lax';var u=new URL(location.href);if(u.searchParams.get('lang')!==s){u.searchParams.set('lang',s);location.replace(u.toString());}}}catch(e){}`;
-}
+const LOCALE_REPLAY_SCRIPT = `try{var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!==document.documentElement.lang){document.cookie='locale='+s+';Path=/;Max-Age=31536000;SameSite=Lax';var u=new URL(location.href);if(u.searchParams.get('lang')!==s){u.searchParams.set('lang',s);location.replace(u.toString());}}}catch(e){}`;
 
 // WebSite schema gives Google enough to surface a sitelinks search box
 // in SERPs and helps disambiguate the property when crawled. Kept
@@ -164,6 +170,7 @@ const WEBSITE_JSONLD = {
 type LayoutData = {
   locale: Locale;
   canonical: string;
+  cspNonce: string;
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -174,6 +181,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<LayoutData>('root');
   const locale: Locale = data?.locale ?? 'en';
   const canonical = data?.canonical ?? SITE_URL;
+  // `cspNonce` is empty when the loader hasn't run (error boundary
+  // pre-loader). RR's <Scripts nonce=""> is a no-op with empty string;
+  // browsers reject empty-string nonces so the strict CSP will block
+  // any inline script in the error path — which is safe (the boundary
+  // is server-rendered HTML, no client-side JS needed to display it).
+  const cspNonce = data?.cspNonce ?? '';
   // The skip-link sits OUTSIDE the IntlProvider (which is mounted in
   // App() around <Outlet />), so we resolve its string by direct lookup
   // against messagesFor(locale) — keeps a11y copy translated without
@@ -193,20 +206,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
         {/* Theme init runs before paint; keep it before any <link>
             tags that pull stylesheets. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script nonce={cspNonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {/* Locale replay also runs before paint — kicks the document
             back to ?lang=<saved> if the user picked a locale on a
             previous visit but the current URL doesn't pin it. */}
-        <script dangerouslySetInnerHTML={{ __html: buildLocaleReplayScript(locale) }} />
+        <script nonce={cspNonce} dangerouslySetInnerHTML={{ __html: LOCALE_REPLAY_SCRIPT }} />
         <Meta />
         <Links />
         <link rel="canonical" href={canonical} />
         <script
           type="application/ld+json"
+          nonce={cspNonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
         />
         <script
           type="application/ld+json"
+          nonce={cspNonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
         />
       </head>
@@ -215,8 +230,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {skipLinkLabel}
         </a>
         {children}
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={cspNonce} />
+        <Scripts nonce={cspNonce} />
       </body>
     </html>
   );
