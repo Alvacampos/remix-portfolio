@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /data/
 
 Sitemap: https://gonzalo-alvarez-campos-cv.com/sitemap.xml

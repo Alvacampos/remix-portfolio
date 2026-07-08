@@ -9,19 +9,24 @@ import { renderToReadableStream } from 'react-dom/server.edge';
 import type { EntryContext, RouterContextProvider } from 'react-router';
 import { ServerRouter } from 'react-router';
 
+import { getCspNonce } from './utils/load-context';
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   reactRouterContext: EntryContext,
-  // Retained in the signature for the RR handler contract but unused here.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: RouterContextProvider
 ) {
+  // CSP nonce for RR's streaming hydration scripts (bootstrapScriptContent
+  // + `<Scripts>` reserve blocks). ServerRouter forwards this to every
+  // inline script it emits so `script-src 'nonce-<val>'` matches.
+  const nonce = getCspNonce(loadContext);
   let status = responseStatusCode;
   const body = await renderToReadableStream(
-    <ServerRouter context={reactRouterContext} url={request.url} />,
+    <ServerRouter context={reactRouterContext} url={request.url} nonce={nonce} />,
     {
+      nonce,
       signal: request.signal,
       onError(error: unknown) {
         // Log streaming rendering errors from inside the shell
