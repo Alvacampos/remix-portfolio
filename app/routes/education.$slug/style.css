@@ -49,6 +49,33 @@
     color: var(--accent);
   }
 
+  /* Same visual as education._index's badge — inline in the meta row
+   * here (no absolute positioning) since the detail layout doesn't
+   * have a positioned card wrapper to anchor against. */
+  &__in-progress-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-4) var(--space-12);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-muted);
+    color: var(--accent-on-muted);
+    font-family: 'Monaspace Neon', ui-monospace, 'SF Mono', monospace;
+    font-size: var(--font-12);
+    font-weight: var(--weight-700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__in-progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: in-progress-pulse 2s ease-in-out infinite;
+  }
+
   &__bottom-grid {
     display: flex;
     flex-direction: column;
@@ -215,5 +242,20 @@
 @media screen and (min-width: $bp-lg) {
   .education-id-route {
     padding: 0 var(--space-20);
+  }
+}
+
+/* Shared with education._index — same-named keyframe is idempotent
+ * at the stylesheet level; either route stylesheet can carry it. */
+@keyframes in-progress-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
   }
 }

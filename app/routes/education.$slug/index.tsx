@@ -45,6 +45,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const locale: Locale = pickLocale(request);
   const raw = EDUCATION[key];
+  // Cloudflare Workers freeze Date at module init, so the YYYY-MM
+  // compare has to run in the loader (same pattern as education._index).
+  const now = new Date();
+  const todayYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const payload = {
     title: localized(raw, 'title', locale),
     startLabel: formatDate(raw.startDate, '', undefined, locale),
@@ -53,6 +57,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     summary: localized(raw, 'summary', locale),
     description: localized(raw, 'description', locale),
     skills: raw.skills,
+    inProgress: raw.endDate > todayYearMonth,
   };
 
   return data(
@@ -91,7 +96,7 @@ export function ErrorBoundary() {
 export default function EducationDetail() {
   const { data } = useLoaderData<typeof loader>();
   const { formatMessage } = useIntl();
-  const { title, startLabel, endLabel, institution, description, skills } = data;
+  const { title, startLabel, endLabel, institution, description, skills, inProgress } = data;
 
   return (
     <div className={getClasses()}>
@@ -107,6 +112,20 @@ export default function EducationDetail() {
           ·
         </span>
         <span>{institution}</span>
+        {inProgress && (
+          <>
+            <span aria-hidden className={getClasses('meta-sep')}>
+              ·
+            </span>
+            <span
+              className={getClasses('in-progress-badge')}
+              aria-label={formatMessage({ id: 'CURRENTLY_STUDYING' })}
+            >
+              <span className={getClasses('in-progress-dot')} aria-hidden="true" />
+              <FormattedMessage id="CURRENTLY_STUDYING" />
+            </span>
+          </>
+        )}
       </p>
       <div className={getClasses('bottom-grid')}>
         <div className={getClasses('description')}>
