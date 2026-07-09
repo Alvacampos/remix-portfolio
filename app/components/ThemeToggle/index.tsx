@@ -60,17 +60,24 @@ export default function ThemeToggle() {
   }
 
   const isDark = theme === 'dark';
-  const label = formatMessage({
-    id: isDark ? 'THEME_TOGGLE_TO_LIGHT' : 'THEME_TOGGLE_TO_DARK',
-  });
+  // Pre-mount the button is state-agnostic — SSR can't know the visitor's
+  // actual theme, so we render neutral copy + omit `aria-pressed`. Once
+  // the effect hydrates the real theme, we swap in the toggle affordance.
+  const label = mounted
+    ? formatMessage({ id: isDark ? 'THEME_TOGGLE_TO_LIGHT' : 'THEME_TOGGLE_TO_DARK' })
+    : formatMessage({ id: 'THEME_TOGGLE_TO_DARK' });
 
   return (
     <button
       type="button"
-      className={`${getClasses()} ${isDark ? getClasses('', 'dark') : getClasses('', 'light')}`}
+      className={
+        mounted
+          ? `${getClasses()} ${isDark ? getClasses('', 'dark') : getClasses('', 'light')}`
+          : getClasses()
+      }
       onClick={toggle}
       aria-label={label}
-      aria-pressed={isDark}
+      aria-pressed={mounted ? isDark : undefined}
       title={label}
     >
       {/* Both icons are stacked at the same spot; CSS rotates the

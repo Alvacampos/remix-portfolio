@@ -57,11 +57,13 @@ const IMAGE_OVERRIDES: Record<string, string> = {
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const id = params?.uuid;
-  if (!id) throw new Response('Missing work item id', { status: 400 });
+  // Accept only canonical decimal ids — `Number("1e0")` / `"01"` /
+  // `" 5"` all pass `Number.isInteger` and would return the same work
+  // item at multiple URLs, splitting SEO / canonical signals.
+  if (!id || !/^[1-9][0-9]*$/.test(id))
+    throw new Response(`Invalid work item id: ${id ?? ''}`, { status: 400 });
 
   const numericId = Number(id);
-  if (!Number.isInteger(numericId))
-    throw new Response(`Invalid work item id: ${id}`, { status: 400 });
 
   const item = SKILLS.WORK_ITEMS.find((w) => w.id === numericId);
   if (!item) throw new Response(`Work item ${id} not found`, { status: 404 });
@@ -89,7 +91,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const startLabel = formatDate(item.startDate, '', undefined, locale);
   const endLabel = item.endDate ? formatDate(item.endDate, '', undefined, locale) : null;
-  const duration = formatDate(item.startDate, item.endDate ?? undefined, 'fullYearMonth', locale);
+  const duration = formatDate(item.startDate, item.endDate, 'fullYearMonth', locale);
 
   return data(
     {

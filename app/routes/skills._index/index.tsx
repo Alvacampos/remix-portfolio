@@ -86,7 +86,7 @@ function getLocalizedBundle(locale: Locale): LocalizedSkillsBundle {
     timelineCards: WORK_ITEMS_REVERSED.map((item) => ({
       id: String(item.id),
       title: item.title,
-      date: formatDate(item.startDate, item.endDate ?? undefined, undefined, locale),
+      date: formatDate(item.startDate, item.endDate, undefined, locale),
       texts: [localized(item, 'rol', locale)],
       textsLabel: 'ROLE',
       skills: getSkillGroupsForJob(SKILLS, item.id, locale).flatMap((g) => g.items),
