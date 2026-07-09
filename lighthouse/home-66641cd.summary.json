@@ -1,0 +1,108 @@
+{
+  "fetchTime": "2026-07-09T02:26:22.965Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/",
+  "lighthouseVersion": "13.4.0",
+  "commit": "66641cd",
+  "categories": {
+    "performance": 0.63,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  },
+  "metrics": {
+    "fcp": {
+      "displayValue": "2.6 s",
+      "numericValue": 2637.934,
+      "score": 0.62
+    },
+    "lcp": {
+      "displayValue": "3.2 s",
+      "numericValue": 3237.934,
+      "score": 0.71
+    },
+    "si": {
+      "displayValue": "2.7 s",
+      "numericValue": 2746.3144947329592,
+      "score": 0.96
+    },
+    "tbt": {
+      "displayValue": "1,460 ms",
+      "numericValue": 1463.5,
+      "score": 0.14
+    },
+    "cls": {
+      "displayValue": "0",
+      "numericValue": 0.0001990404033765582,
+      "score": 1
+    },
+    "tti": {
+      "displayValue": "4.8 s",
+      "numericValue": 4790.184000000001,
+      "score": 0.79
+    },
+    "ttfb": 171
+  },
+  "failingAudits": [
+    {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.62
+    },
+    {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.71
+    },
+    {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.96
+    },
+    {
+      "id": "total-blocking-time",
+      "title": "Total Blocking Time",
+      "score": 0.14
+    },
+    {
+      "id": "max-potential-fid",
+      "title": "Max Potential First Input Delay",
+      "score": 0.02
+    },
+    {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.79
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "score": 0
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "score": 0
+    },
+    {
+      "id": "unused-javascript",
+      "title": "Reduce unused JavaScript",
+      "score": 0
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "score": 0.5
+    },
+    {
+      "id": "network-dependency-tree-insight",
+      "title": "Network dependency tree",
+      "score": 0
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render-blocking requests",
+      "score": 0.5
+    }
+  ]
+}
