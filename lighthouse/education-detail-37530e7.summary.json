@@ -1,34 +1,34 @@
 {
-  "fetchTime": "2026-07-08T23:09:12.776Z",
-  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
-  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/skills/1",
+  "fetchTime": "2026-07-09T01:08:25.151Z",
+  "requestedUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
+  "finalUrl": "https://gonzalo-alvarez-campos-cv.com/education/degree",
   "lighthouseVersion": "13.4.0",
-  "commit": "5f59cd8",
+  "commit": "37530e7",
   "categories": {
-    "performance": 0.95,
+    "performance": 0.92,
     "accessibility": 1,
     "best-practices": 1,
     "seo": 1
   },
   "metrics": {
     "fcp": {
-      "displayValue": "2.1 s",
-      "numericValue": 2136.5019,
-      "score": 0.8
+      "displayValue": "2.4 s",
+      "numericValue": 2377.2848,
+      "score": 0.72
     },
     "lcp": {
-      "displayValue": "2.6 s",
-      "numericValue": 2586.5181000000002,
-      "score": 0.88
+      "displayValue": "3.0 s",
+      "numericValue": 3004.0331999999994,
+      "score": 0.78
     },
     "si": {
-      "displayValue": "2.1 s",
-      "numericValue": 2136.5019,
-      "score": 0.99
+      "displayValue": "2.4 s",
+      "numericValue": 2377.2848,
+      "score": 0.98
     },
     "tbt": {
-      "displayValue": "0 ms",
-      "numericValue": 0,
+      "displayValue": "10 ms",
+      "numericValue": 12,
       "score": 1
     },
     "cls": {
@@ -37,32 +37,32 @@
       "score": 1
     },
     "tti": {
-      "displayValue": "2.6 s",
-      "numericValue": 2586.5181000000002,
-      "score": 0.98
+      "displayValue": "3.0 s",
+      "numericValue": 3009.45108,
+      "score": 0.96
     },
-    "ttfb": 24
+    "ttfb": 29
   },
   "failingAudits": [
     {
       "id": "first-contentful-paint",
       "title": "First Contentful Paint",
-      "score": 0.8
+      "score": 0.72
     },
     {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
-      "score": 0.88
+      "score": 0.78
     },
     {
       "id": "speed-index",
       "title": "Speed Index",
-      "score": 0.99
+      "score": 0.98
     },
     {
       "id": "interactive",
       "title": "Time to Interactive",
-      "score": 0.98
+      "score": 0.96
     },
     {
       "id": "unused-javascript",
