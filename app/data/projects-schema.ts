@@ -1,20 +1,6 @@
 import { z } from 'zod';
 
-// Zod schema for public/data/projects.json — case studies for the
-// `/projects` and `/projects/<slug>` routes.
-//
-// Each entry is a single project write-up: who the client was (in
-// abstracted form — no NDA-violating names), the role at the time,
-// the dates, the tech stack, plus four narrative sections that mirror
-// the engineering-case-study standard: Problem / Constraints /
-// Approach / Outcome.
-//
-// Localizable string fields carry an optional `_es` sibling resolved
-// at the loader via `localized(item, key, locale)`. Tech names + the
-// slug stay literal in both locales (slugs are URL identifiers).
-//
-// Mirrors the skills/education schema patterns: single source of
-// truth for types + boot-time validation + path-precise errors.
+import { formatZodError } from './format-zod-error';
 
 const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Expected YYYY-MM');
 
@@ -94,27 +80,12 @@ const ProjectsSchema = z
     });
   });
 
-export type ProjectsData = z.infer<typeof ProjectsSchema>;
-export type Project = z.infer<typeof project>;
-
-function prettyZodError(err: z.ZodError): string {
-  const lines = err.issues.map((issue) => {
-    const path = issue.path
-      .map((seg) => (typeof seg === 'number' ? `[${seg}]` : `.${String(seg)}`))
-      .join('')
-      .replace(/^\./, '');
-    return `  ✗ ${path || '(root)'}: ${issue.message}`;
-  });
-  return [
-    `projects.json failed validation (${err.issues.length} issue${err.issues.length === 1 ? '' : 's'}):`,
-    ...lines,
-  ].join('\n');
-}
+type ProjectsData = z.infer<typeof ProjectsSchema>;
 
 export function loadProjects(raw: unknown): ProjectsData {
   const result = ProjectsSchema.safeParse(raw);
   if (!result.success) {
-    throw new Error(prettyZodError(result.error));
+    throw new Error(formatZodError('projects.json', result.error));
   }
   return result.data;
 }

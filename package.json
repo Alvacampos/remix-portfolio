@@ -36,7 +36,6 @@
     "pre-push": "scripts/pre-push.sh"
   },
   "dependencies": {
-    "@react-router/cloudflare": "^8.1.0",
     "date-fns": "^4.4.0",
     "isbot": "^5.2.0",
     "postcss-extend-rule": "^4.0.0",

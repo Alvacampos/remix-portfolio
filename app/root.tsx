@@ -21,12 +21,8 @@ import { getClassMaker } from '~/utils/utils';
 
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
 const FONT_URL = '/fonts/roboto/Roboto-VariableFont_wdth,wght.v2.woff2';
-// Absolute URL — Open Graph crawlers (LinkedIn, Slack, X, iMessage) require
-// non-relative image URLs. The PNG itself is rendered offline from
-// scripts/og-image.svg via scripts/render-og-image.mjs.
-// Default OG image (the home variant). Per-route overrides flow
-// through mergeRouteMeta's `ogImage` prop in app/utils/meta.ts —
-// see scripts/og/ for the per-route SVG templates.
+// Absolute URL — OG crawlers reject relative paths. Per-route overrides
+// go through mergeRouteMeta's `ogImage` prop.
 const OG_IMAGE_URL = `${SITE_URL}/assets/img/og-home.png`;
 
 export function links() {
@@ -53,10 +49,7 @@ const getClasses = getClassMaker(BLOCK);
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = pickLocale(request);
-  // Build the canonical URL from the request path, anchored to SITE_URL so
-  // it always points at the production origin even on previews/local dev.
-  // Drop trailing slash (except root) and strip query/hash so duplicate
-  // URLs collapse to one canonical entry per route.
+  // Anchor canonical to prod SITE_URL so previews/dev don't leak.
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const canonical = `${SITE_URL}${path}`;
@@ -108,27 +101,40 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
   ];
 };
 
-const PERSON_JSONLD = {
+// Combined Person + WebSite schema as a `@graph` — one script tag, one
+// `@context`. The WebSite entry helps Google disambiguate the property
+// when crawled; the Person entry drives the knowledge panel.
+const JSONLD_GRAPH = {
   '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Gonzalo Alvarez Campos',
-  jobTitle: 'Senior Software Engineer',
-  url: SITE_URL,
-  worksFor: { '@type': 'Organization', name: 'Qubika' },
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Tucumán',
-    addressCountry: 'AR',
-  },
-  sameAs: ['https://github.com/Alvacampos', 'https://www.linkedin.com/in/gonzaloalvarezcampos/'],
+  '@graph': [
+    {
+      '@type': 'Person',
+      name: 'Gonzalo Alvarez Campos',
+      jobTitle: 'Senior Software Engineer',
+      url: SITE_URL,
+      worksFor: { '@type': 'Organization', name: 'Qubika' },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Tucumán',
+        addressCountry: 'AR',
+      },
+      sameAs: [
+        'https://github.com/Alvacampos',
+        'https://www.linkedin.com/in/gonzaloalvarezcampos/',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Gonzalo Alvarez Campos',
+      url: SITE_URL,
+      inLanguage: ['en', 'es'],
+      author: { '@type': 'Person', name: 'Gonzalo Alvarez Campos' },
+    },
+  ],
 };
 
-// Inline theme initializer. Runs synchronously in <head> before paint,
-// so the body never flashes the wrong theme on first render. Reads
-// localStorage.theme (set by the NavBar toggle), falls back to the
-// OS-level prefers-color-scheme, defaults to dark when undecidable.
-// Sets `<html data-theme="…">` so app/styles/style.css's
-// [data-theme='light'] selector swaps the palette tokens.
+// Sets `<html data-theme>` before paint so the body never flashes the
+// wrong palette. Must stay inline + synchronous in <head>.
 const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(matchMedia('(prefers-color-scheme: light)').matches)document.documentElement.dataset.theme='light';}catch(e){}`;
 
 // Replay a saved localStorage locale for pre-cookie visitors. Reads
@@ -136,19 +142,6 @@ const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light
 // across locales. Bails when the URL already has `?lang=` so explicit
 // share/deep-links win over stored preferences.
 const LOCALE_REPLAY_SCRIPT = `try{if(new URL(location.href).searchParams.has('lang'))throw 0;var s=localStorage.getItem('locale');if((s==='en'||s==='es')&&s!==document.documentElement.lang){document.cookie='locale='+s+';Path=/;Max-Age=31536000;SameSite=Lax';var u=new URL(location.href);u.searchParams.set('lang',s);location.replace(u.toString());}}catch(e){}`;
-
-// WebSite schema gives Google enough to surface a sitelinks search box
-// in SERPs and helps disambiguate the property when crawled. Kept
-// minimal — no `potentialAction` SearchAction since this isn't a
-// searchable site.
-const WEBSITE_JSONLD = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Gonzalo Alvarez Campos',
-  url: SITE_URL,
-  inLanguage: ['en', 'es'],
-  author: { '@type': 'Person', name: 'Gonzalo Alvarez Campos' },
-};
 
 // Escape the two characters that can break out of an inline
 // <script type="application/ld+json"> — `</` closes the tag early,
@@ -166,43 +159,25 @@ type LayoutData = {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Layout runs both during normal rendering and the error boundary.
-  // useRouteLoaderData('root') returns undefined in the error path
-  // without warning, where useLoaderData would log "you cannot useLoaderData
-  // in an errorElement" on every error render.
+  // useRouteLoaderData (not useLoaderData) so Layout works in the
+  // error boundary path where the child loader threw.
   const data = useRouteLoaderData<LayoutData>('root');
   const locale: Locale = data?.locale ?? 'en';
   const canonical = data?.canonical ?? SITE_URL;
-  // CSP nonce read off the SSR-only React context populated by
-  // entry.server.tsx's <NonceProvider>. NOT plumbed via loader data
-  // because loader payloads are serialized into an inline hydration
-  // script (`window.__reactRouterContext = ...`), which would defeat
-  // the DOM-inspection protection nonces are supposed to provide.
-  // Empty on the client (hydration + subsequent navigations): only
-  // needed at SSR time to attribute the emitted <script> tags.
   const cspNonce = useNonce();
-  // The skip-link sits OUTSIDE the IntlProvider (which is mounted in
-  // App() around <Outlet />), so we resolve its string by direct lookup
-  // against messagesFor(locale) — keeps a11y copy translated without
-  // restructuring provider scope.
+  // Skip-link is rendered outside the IntlProvider scope, hence the
+  // direct lookup instead of <FormattedMessage>.
   const skipLinkLabel = messagesFor(locale).SKIP_TO_CONTENT;
 
   return (
-    // suppressHydrationWarning: the inline theme-init script (below) sets
-    // `<html data-theme>` from localStorage / prefers-color-scheme on the
-    // client BEFORE React hydrates. SSR can't know the user's preference,
-    // so the attribute legitimately differs between server + client. This
-    // attribute IS the only thing that drifts; React still warns on
-    // children, so unintended drift elsewhere is still caught.
+    // suppressHydrationWarning: THEME_INIT_SCRIPT sets `<html data-theme>`
+    // pre-hydration from localStorage/prefers-color-scheme, which SSR
+    // can't know. Only that attribute drifts; React still warns on
+    // children.
     <html lang={locale} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        {/* Theme init runs before paint; keep it before any <link>
-            tags that pull stylesheets. */}
         <script nonce={cspNonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        {/* Locale replay also runs before paint — kicks the document
-            back to ?lang=<saved> if the user picked a locale on a
-            previous visit but the current URL doesn't pin it. */}
         <script nonce={cspNonce} dangerouslySetInnerHTML={{ __html: LOCALE_REPLAY_SCRIPT }} />
         <Meta />
         <Links />
@@ -210,12 +185,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <script
           type="application/ld+json"
           nonce={cspNonce}
-          dangerouslySetInnerHTML={{ __html: jsonLd(PERSON_JSONLD) }}
-        />
-        <script
-          type="application/ld+json"
-          nonce={cspNonce}
-          dangerouslySetInnerHTML={{ __html: jsonLd(WEBSITE_JSONLD) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(JSONLD_GRAPH) }}
         />
       </head>
       <body className={getClasses()}>

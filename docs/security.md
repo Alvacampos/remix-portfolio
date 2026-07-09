@@ -143,6 +143,6 @@ nonce>`, `<ServerRouter nonce>`. Emitted by RR itself; pass nonce
 - **Locale replay** (`app/root.tsx`) — reads `localStorage.locale`
   from pre-cookie sessions and writes it into a `locale` cookie so
   the next SSR request can `pickLocale()` from it.
-- **JSON-LD** (`app/root.tsx`) — two `<script type="application/ld+json">`
-  blocks (Person schema + WebSite schema) for search-engine
-  structured-data markup.
+- **JSON-LD** (`app/root.tsx`) — one `<script type="application/ld+json">`
+  block carrying a `@graph` with Person + WebSite entries for
+  search-engine structured-data markup.

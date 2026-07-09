@@ -11,7 +11,7 @@
 // section's OG (e.g. `/skills/:uuid` inherits `/skills`).
 const SITE_URL = 'https://gonzalo-alvarez-campos-cv.com';
 
-export type RouteMetaOverrides = {
+type RouteMetaOverrides = {
   title: string;
   description: string;
   ogImage?: string;

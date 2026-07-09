@@ -1,14 +1,6 @@
 import { z } from 'zod';
 
-// Zod schema for public/data/skills.json (skill-first model, v2 shape).
-//
-// Single source of truth for the data layer:
-//   - TS types (`SkillsData`, `WorkItem`, `Skill`, etc.) inferred via z.infer
-//   - Loader-time validation: malformed JSON throws before any consumer reads it
-//   - Pretty-printed errors in the throw so the failing path is obvious
-//   - Referential integrity check: every range.jobId resolves to a WORK_ITEMS.id
-//
-// Add a new field here, regenerate types automatically, get errors at boot.
+import { formatZodError } from './format-zod-error';
 
 const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Expected YYYY-MM');
 
@@ -208,34 +200,10 @@ export type WorkItem = z.infer<typeof workItem>;
 export type Skill = z.infer<typeof skill>;
 export type SkillCategory = z.infer<typeof skillCategory>;
 
-// Format a Zod error tree into a multi-line, path-prefixed list for log
-// output. Replaces Zod's default JSON dump (which is dense and includes
-// the entire input tree) with a human-readable summary.
-//
-// Example:
-//   ✗ SKILLS[27].category: Invalid enum value. Expected language|framework|tooling|infra|meta
-//   ✗ SKILLS[12].ranges[0].jobId: jobId 99 does not exist in WORK_ITEMS (skill: "Python")
-function prettyZodError(err: z.ZodError): string {
-  const lines = err.issues.map((issue) => {
-    const path = issue.path
-      .map((seg) => (typeof seg === 'number' ? `[${seg}]` : `.${String(seg)}`))
-      .join('')
-      .replace(/^\./, '');
-    return `  ✗ ${path || '(root)'}: ${issue.message}`;
-  });
-  return [
-    `skills.json failed validation (${err.issues.length} issue${err.issues.length === 1 ? '' : 's'}):`,
-    ...lines,
-  ].join('\n');
-}
-
-// Parse + validate skills.json content. Throws a pretty-printed error
-// that lists every failing path; fix all of them in one pass instead
-// of one-at-a-time. Called once per worker boot from the loader.
 export function loadSkills(raw: unknown): SkillsData {
   const result = SkillsSchema.safeParse(raw);
   if (!result.success) {
-    throw new Error(prettyZodError(result.error));
+    throw new Error(formatZodError('skills.json', result.error));
   }
   return result.data;
 }

@@ -3,7 +3,6 @@
   "BACK_TO_HOME": "Back to Home",
   "BACK_TO_PROJECTS": "Back to Projects",
   "BACK_TO_SKILLS": "Back to Skills",
-  "CERTIFICATION": "Certification",
   "CERTIFICATIONS": "Certifications",
   "CERTIFICATION_LINK": "Certification Link",
   "CHART_SHOW_ALL": "Show more",
@@ -30,7 +29,6 @@
   "CURRENTLY_STUDYING": "Currently studying",
   "CV": "CV",
   "DATE": "Date",
-  "DEGREE": "Degree",
   "DEGREES": "Degrees",
   "DESCRIPTION": "Description",
   "DOWNLOAD_CV": "Download my CV (PDF)",
@@ -59,7 +57,6 @@
   "HOME_YEARS_OF_EXP": "{years}+ years",
   "LEARN_MORE": "Learn more",
   "LINKEDIN_PROFILE": "LinkedIn profile",
-  "LOADING": "Loading",
   "LOADING_ROUTE": "Loading page…",
   "LOCALE_TOGGLE_LABEL": "Language",
   "LOCALE_TOGGLE_SWITCH_TO": "Switch to {locale}",
@@ -95,7 +92,5 @@
   "THEME_TOGGLE_TO_LIGHT": "Switch to light mode",
   "TOPICS": "Topics",
   "TOTAL_YEARS_OF_EXPERIENCE": "Total years of experience",
-  "WELCOME_MY_NAME_IS": "Welcome, my name is Gonzalo Alvarez Campos.",
-  "YEARS": "Years",
-  "YEARS_OF_EXPERIENCE": "Years of experience"
+  "WELCOME_MY_NAME_IS": "Welcome, my name is Gonzalo Alvarez Campos."
 }

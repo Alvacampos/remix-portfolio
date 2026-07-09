@@ -4,7 +4,7 @@ Personal portfolio + online CV for Gonzalo Alvarez Campos, built with [React Rou
 
 Bilingual (English + Spanish) with a visible locale toggle, a downloadable CV (PDF), per-route Open Graph previews, dark/light theming, and a print stylesheet.
 
-**Framework:** [React Router v8](https://reactrouter.com/) in framework mode, deployed to Cloudflare Workers + Static Assets. Migrated from Remix v2 + CF Pages in July 2026, then bumped to React Router v8 later that month — see [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md) for the v2→v7 migration notes (v7→v8 was a small rename-only follow-up, absorbed into the standard deps sweep).
+**Framework:** [React Router v8](https://reactrouter.com/) in framework mode, deployed to Cloudflare Workers + Static Assets. Migrated from Remix v2 + CF Pages in July 2026, then bumped to React Router v8 later that month — see [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md) for the v2→v7 migration notes and [docs/migrations/rr7-to-rr8.md](docs/migrations/rr7-to-rr8.md) for the v7→v8 sweep (property-based load-context handoff, nonce-via-React-context, `.edge` SSR entry).
 
 ---
 

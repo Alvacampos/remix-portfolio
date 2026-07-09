@@ -10,6 +10,7 @@ import TimelineSkeleton from '~/components/skeletons/parts/TimelineSkeleton';
 import { SKILLS } from '~/data/loaded';
 import { type Locale, pickLocale } from '~/intl';
 import { mergeRouteMeta } from '~/utils/meta';
+import { passLoaderHeaders } from '~/utils/route-headers';
 import {
   formatDate,
   getAllSkillGroups,
@@ -132,12 +133,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   );
 }
 
-// Required to propagate `data(payload, { headers })` under Single
-// Fetch — the aggregated response asks each matched route which
-// headers it wants exposed.
-export function headers({ loaderHeaders }: { loaderHeaders: Headers }) {
-  return loaderHeaders;
-}
+export { passLoaderHeaders as headers };
 
 export default function Skills() {
   const { formatMessage } = useIntl();
