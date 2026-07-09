@@ -271,6 +271,8 @@ The single-PR path ended up being cleaner because PRs 1 + 2 turned out to be ent
 | T14 | Technical | P3       | Replace husky with simple-git-hooks                            | done   |
 | T15 | Technical | P3       | `import/no-relative-parent-imports` ESLint rule                | done   |
 | T16 | Technical | P1       | Standardise breakpoints (legacy → Tailwind-aligned scale)      | done   |
+| T17 | Technical | P3       | Locale-split intl bundles                                      | parked |
+| T18 | Technical | P3       | AST-precompile intl messages                                   | closed |
 | C1  | Cleanup   | P0       | Doc drift: README locale claims                                | done   |
 | C2  | Cleanup   | P0       | Doc drift: README "Future Plans" (Python/Django, contact form) | done   |
 | C3  | Cleanup   | P0       | Doc drift: AGENTS.md cross-refs to README plans                | done   |
@@ -313,21 +315,21 @@ The single-PR path ended up being cleaner because PRs 1 + 2 turned out to be ent
 
 ## 1. Technical
 
-### T1 — a11y test coverage in CI (P0)
+### T1 — a11y test coverage in CI (P0) — DONE
 
-`@axe-core/playwright` integration in `tests/e2e/`. Run axe on each route, fail on serious/critical violations. Catches what Lighthouse misses. ~30 lines of spec code + 1 new devDep.
+`@axe-core/playwright` is wired into [tests/e2e/a11y.spec.ts](tests/e2e/a11y.spec.ts) and runs on every route as part of the `e2e-tests` CI job. Serious/critical violations fail the build; other levels are surfaced as report annotations.
 
-### T2 — Lighthouse gating in CI (P0)
+### T2 — Lighthouse gating in CI (P0) — DONE
 
-Lighthouse CI runs post-merge today and commits scores under `lighthouse/`. Add a pre-merge run against the preview deploy; fail the PR if Performance < 0.85 mobile. Stops perf regressions before they ship.
+`lighthouse-pr` job in [.github/workflows/ci.yml](.github/workflows/ci.yml) runs pre-merge against the wrangler-built preview and fails the PR on performance regressions. Post-merge scoring still commits summaries under `lighthouse/` for the trend view.
 
-### T3 — Stop serving `/data/*` publicly (P0)
+### T3 — Stop serving `/data/*` publicly (P0) — DONE
 
-`public/_routes.json` excludes `/data/*` from the Pages Function, exposing `skills.json` + `education.json` at `gonzalo-alvarez-campos-cv.com/data/skills.json`. No external consumer today; scrapers can lift the entire CV including draft Spanish copy. Vite bakes the JSON into the server bundle, so we don't need it served. Drop the exclude.
+Superseded by the Pages → Workers migration. [workers/app.ts](workers/app.ts) delegates only a small allowlist to `env.ASSETS.fetch()` (`/assets/`, `/fonts/`, `/.well-known/`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml`); everything else — including `/data/*` — falls through to the RR handler, which has no route and 404s. Vite bakes the JSON into the server bundle, so route loaders read it without an HTTP hop.
 
-### T4 — `fetchpriority="high"` on company logo (P0)
+### T4 — `fetchpriority="high"` on company logo (P0) — DONE
 
-Likely the LCP element on `/skills/:uuid`. Add `fetchpriority="high"` + `decoding="async"`. One-line change in [app/routes/skills.$uuid/index.tsx](app/routes/skills.$uuid/index.tsx).
+Added `fetchPriority="high"` + `decoding="async"` on the `<img>` in [app/routes/skills.$uuid/index.tsx](app/routes/skills.$uuid/index.tsx).
 
 ### T5 — Recover `/skills` Lighthouse perf (P1) — DONE
 
@@ -345,17 +347,17 @@ Ran `npx vite-bundle-visualizer` on a fresh `npm run build`. **Total client JS: 
 
 **Conclusion: JS payload is not the perf bottleneck.** T5's 0.87 LCP on `/skills` is more likely CSS-side (route stylesheet bundling, font critical path) or server-response latency. Bundle audit findings reduced the T5 search space significantly.
 
-### T7 — Move visual-baseline regen to CI workflow (P1)
+### T7 — Move visual-baseline regen to CI workflow (P1) — DONE
 
-The `useLocation()` hydration race only reproduces in local Docker regen — not on CI runners. A "regen baselines" GitHub Action triggered manually (`workflow_dispatch`) would run the regen inside the actual CI environment, eliminate the race, and let us re-include `/education` index (T11 → also `/skills` routes).
+[.github/workflows/regen-baselines.yml](.github/workflows/regen-baselines.yml) provides `workflow_dispatch`-triggered baseline regeneration in the CI environment. Commits the fresh PNGs back to the dispatched branch. The hydration race that plagued the local Docker path never reproduces here.
 
-### T8 — Remove `legacy-peer-deps=true` (P1)
+### T8 — Remove `legacy-peer-deps=true` (P1) — DONE
 
-Set because of `@types/react@19` vs `react@18` mismatch. Either upgrade React to 19 (Remix v2 supports it) or pin types to 18. Removes a long-running install warning.
+Resolved by the React 19 upgrade + the Remix v2 → RR v7 → RR v8 sweep. No `.npmrc` in the repo; peer-deps resolve cleanly under strict mode.
 
-### T9 — React Router v7 migration (P2)
+### T9 — React Router v7 migration (P2) — DONE
 
-Remix v2 is in maintenance mode; RRv7 is the official upgrade path. Resolves T15 (formerly TECH-DEBT #2 — react-router-dom pin). Route file conventions change. Large effort, but eventual.
+Migrated Remix v2 → RR v7 → RR v8. Landed alongside the CF Pages → Workers cutover. Framework notes in [docs/migrations/remix-to-rr7.md](docs/migrations/remix-to-rr7.md) and [docs/migrations/rr7-to-rr8.md](docs/migrations/rr7-to-rr8.md) — the RR v8 doc captures the property-based load-context handoff, the `.edge` SSR entry, and the nonce-via-React-context pattern that superseded the loader-data approach.
 
 ### T10 — postcss-simple-vars → CSS custom properties (P2) — DONE
 
@@ -377,9 +379,9 @@ So T11 dissolves: no tool switch needed, the visual gate now covers `/`, `/educa
 
 Landed with Bundle 3 (U6 `/contact` route). [wrangler.jsonc](wrangler.jsonc) now declares the `RATELIMIT_KV` binding + `CONTACT_FROM` / `CONTACT_TO` vars; [worker-configuration.d.ts](worker-configuration.d.ts) is regenerated via `npm run cf-typegen`, and the contact action reads them via `context.cloudflare.env.*`. Additional bindings (D1, R2, Durable Objects) can slot in the same file when a consumer lands.
 
-### T13 — Drop unused `@chromatic-com/storybook` (P3)
+### T13 — Drop unused `@chromatic-com/storybook` (P3) — DONE
 
-Visual regression is covered by Playwright. Storybook addon is installed but unused.
+Dep removed from `package.json`. Visual regression is covered by Playwright ([tests/e2e/visual.spec.ts](tests/e2e/visual.spec.ts)).
 
 ### T14 — Replace husky with simple-git-hooks (P3) — DONE
 
@@ -461,25 +463,25 @@ Ran an experiment on 2026-07-08: `@formatjs/cli compile --ast --format simple` o
 
 ## 2. Cleanup / data / docs
 
-### C1 — Doc drift: README locale claims (P0)
+### C1 — Doc drift: README locale claims (P0) — DONE
 
-[README.md:3](README.md#L3) and lines 67-68 + 117 still describe i18n as Accept-Language-only with the switcher "on the backlog." LocaleToggle shipped in PR #190, cookie-based cross-page persistence in PR #193. Rewrite to reflect the actual priority chain (`?lang=` → cookie → header) and the visible NavBar toggle.
+[README.md](README.md) describes the actual chain: `?lang=` URL param → `locale` cookie → `Accept-Language` header, with the visible NavBar toggle.
 
-### C2 — Doc drift: README "Future Plans" (P0)
+### C2 — Doc drift: README "Future Plans" (P0) — DONE
 
-[README.md:111-118](README.md#L111) lists Python/Django backend + contact form. If neither is happening, delete the section. If the contact form is still on the table, move it to U6 and delete the rest.
+Section removed. Contact form shipped as U6; the Python/Django backend never happened and stays deleted.
 
-### C3 — Doc drift: AGENTS.md cross-refs to README plans (P0)
+### C3 — Doc drift: AGENTS.md cross-refs to README plans (P0) — DONE
 
-[AGENTS.md:13](AGENTS.md#L13) references the stale README claims. Sync once C2 lands.
+AGENTS.md no longer references the removed "Future Plans" section; the intl description now matches the actual `?lang=` → cookie → header chain.
 
-### C4 — Data: `Mentoring` ranges (P1)
+### C4 — Data: `Mentoring` ranges (P1) — DONE
 
-Currently `[{ jobId: 3 }]` (Professor only). Description text shows mentoring at Endava (id 4, "organized and mentored the Endava Argentina Internship program") and Qubika (id 6, EXTRA_ACTIVITIES has "Senior Internship" + "Frontend Mentor"). Add those ranges.
+Ranges now `[{ jobId: 3 }, { jobId: 4 }, { jobId: 6 }]` — Professor + Endava (internship program) + Qubika (senior internship + frontend mentor).
 
-### C5 — Data: `Leadership` ranges (P1)
+### C5 — Data: `Leadership` ranges (P1) — DONE
 
-Currently `[{ jobId: 4 }]` (Endava only). Qubika (id 6) senior-track work likely includes leadership moments. User to confirm.
+Ranges now `[{ jobId: 4 }, { jobId: 6 }]` — Endava + Qubika.
 
 ### C6 — Rename ambiguous `Programming` meta skill (P2) — DONE
 
@@ -542,41 +544,41 @@ Bundled into Bundle 2 (`/skills` quality) because the perf investigation phase t
 
 ## 3. UI / features
 
-### U1 — Real Home hero (P0)
+### U1 — Real Home hero (P0) — DONE
 
-Current home is a welcome paragraph + repo link + CV download. Both audiences (recruiters, tech leads) land here. Add a one-line value prop, 3-5 top metrics (years, roles), a "Currently at Qubika" badge, and 3 link-CTAs. Same shape as tomdale.net, kentcdodds.com.
+[app/routes/\_index/index.tsx](app/routes/_index/index.tsx) renders the hero: value prop, `yearsOfExp` chip, "Currently at Qubika" badge, and CTA row (CV download + primary section links).
 
-### U2 — Print stylesheet (P0)
+### U2 — Print stylesheet (P0) — DONE
 
-Recruiters Ctrl-P CV pages surprisingly often. Current dark theme + sidebar nav makes the print preview unusable. `@media print { ... }` block, ~50 lines.
+`@media print { ... }` block in [app/styles/style.css](app/styles/style.css) forces the light palette, hides the nav, and reflows the content column for A4.
 
-### U3 — Promote in-progress Bachelor's on `/education` (P0)
+### U3 — Promote in-progress Bachelor's on `/education` (P0) — DONE
 
-Bachelor's (in progress) and Associate Degree (completed) render at the same visual weight. Add a "Currently studying" badge or top-row treatment to the active degree.
+Both `/education` index and `/education/:slug` render a "Currently studying" badge on any entry whose `endDate > todayYearMonth`. Detail-page parity added in [fix/minor-ux-and-size-budgets](.).
 
-### U4 — Locale-aware date format on `/education` (P0)
+### U4 — Locale-aware date format on `/education` (P0) — DONE
 
-Index route still uses `01/2024 - 09/2027` numeric format. `/education/:slug` was upgraded to "March 2024 → September 2027" with the recent PR. Match the index format for consistency.
+Index now uses `formatDate(..., 'MMMM yyyy', locale)` for both degrees and certifications — "March 2024 → September 2027" / "marzo 2024 → septiembre 2027" — matching the detail page.
 
-### U5 — Match contrast fix on DownloadBtn hover state (P0)
+### U5 — Match contrast fix on DownloadBtn hover state (P0) — DONE
 
-[app/components/DownloadBtn/style.css:26](app/components/DownloadBtn/style.css#L26) — hover sets `color: #ffffff` on `background: var(--accent)` (#0fbf3e green). Same ~2.4:1 contrast issue as the LocaleToggle finding (already fixed). Lighthouse hasn't flagged this one yet but the math is identical. Swap to `var(--bg-base)` or `$gray-6`.
+Hover state now resolves via the `--accent-on-muted` token in [app/components/DownloadBtn/style.css](app/components/DownloadBtn/style.css) — same primitive as the fixed LocaleToggle. Passes axe contrast checks in both palettes.
 
-### U6 — `/contact` route (P1)
+### U6 — `/contact` route (P1) — DONE
 
-Cloudflare Pages Function POSTing to Resend or Loops. Rate-limited via Cloudflare KV. Demonstrates CF Workers chops in an interview. Drop the "future contact form" promise from README (C2).
+`/contact` action at [app/routes/contact.\_index/index.tsx](app/routes/contact._index/index.tsx) validates via Zod, rate-limits per hashed IP (`ratelimit:contact:<sha>` in `RATELIMIT_KV`, 3/hour), silent-drops honeypot fills (including non-string bypass attempts), and posts to Resend via bare fetch. See [docs/security.md](docs/security.md) for the full posture.
 
-### U7 — Case studies — `/projects/<slug>` (P1)
+### U7 — Case studies — `/projects/<slug>` (P1) — DONE
 
-3-5 abstracted write-ups of representative work (e.g. "AI-powered finance docs platform" from your Adalabs work at Qubika). Each: Problem / Constraints / Approach / Outcome, 300-500 words. No client names, no code samples. Solves the "no public repos" gap — depth signal lives in the writing.
+`/projects` index + `/projects/<slug>` detail routes shipped with [app/data/projects-schema.ts](app/data/projects-schema.ts) driving the content. Each case study carries Problem / Constraints / Approach / Outcome sections, tech-stack chips, and `_es` sibling localization.
 
-### U8 — Per-route OG images (P1)
+### U8 — Per-route OG images (P1) — DONE
 
-OG image is generated from SVG today (`scripts/render-og-image.mjs`). Add per-route variants: `/skills` shows heatmap snapshot, `/projects/<slug>` shows project hero. CF Workers OG generation is the idiomatic pattern.
+`scripts/render-og-image.mjs` (invoked via `npm run build:og`) renders `og-home.png`, `og-skills.png`, `og-education.png`, `og-projects.png` from per-route SVG templates. `mergeRouteMeta` picks the right one via the `ogImage` prop on each route.
 
-### U9 — 404 page polish (P1)
+### U9 — 404 page polish (P1) — DONE
 
-Route-level ErrorBoundary on `/skills/:uuid` and `/education/:slug` looks good. The root error boundary (unknown URLs) doesn't match. Unify the design.
+[app/routes/$.tsx](app/routes/$.tsx) is a splat that throws a 404 Response inside its loader, so the root `ErrorBoundary` runs with locale resolved. Shared 404 copy across every unknown URL.
 
 ### U10–U24 — Parked (2026-07-01)
 
