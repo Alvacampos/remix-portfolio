@@ -53,7 +53,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@cloudflare/workers-types": "^4.20260702.1",
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^9.39.5",
     "@ls-lint/ls-lint": "^2.3.1",
     "@playwright/test": "^1.61.0",
     "@react-router/dev": "^8.2.0",
